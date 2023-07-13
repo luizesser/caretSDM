@@ -34,11 +34,13 @@ predictors.RasterStack <- function(x){
   resolution <- res(r)
   epsg <- as.character(x@crs)
   df <- cbind(coords,as.data.frame(x))
+  cell_id <- na.omit(data.frame(cell_id=1:ncell(x), df))[,'cell_id']
   occ <- structure(list(predictors_names=predictors_names,
                         coords=coords,
                         bbox=bbox,
                         resolution=resolution,
                         epsg=epsg,
+                        cell_id=cell_id,
                         data.frame=x),
                    class = "occurrences")
   return(occ)
