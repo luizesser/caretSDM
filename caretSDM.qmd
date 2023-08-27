@@ -2,24 +2,43 @@
 title: "caretSDM"
 author: "Luíz Fernando Esser"
 format: html
+   code-link: true
 editor: visual
 ---
 
-## caretSDM
+# caretSDM
 
 caretSDM is a under development R package that uses the powerful caret package as the main engine to obtain Species Distribution Models. As caret is a packaged turned to build machine learning models, caretSDM has a strong focus on this approach.
 
-## Running caretSDM
+## Installing
 
-First we will install the package from github. For that we will need to install the devtools package first and then install the caretSDM package.
+First we will install the package from github. For that we will need to install the `devtools` package first and then install the caretSDM package.
 
 ```{r}
 install.packages(setdiff("devtools", rownames(installed.packages())))
-devtools::install_github('luiz')
+devtools::install_github('luizesser/caretSDM')
 ```
 
-You can add options to executable code like this
+## Obtaining example data
+
+Now we will create some example data. Starting with occurrences and then predictors data. The first one is a function to obtain species data from GBIF, while the second is a function to obtain climatic variables from WorldClim 2.1. You can read more about them by running in the console `?GBIF_data` and `?WorldClim_data`.
 
 ```{r}
-2 * 2
+occ_data <- GBIF_data("Araucaria angustifolia")
+pred_data <- WorldClim_data()
 ```
+
+## The occurrences class
+
+In this package we will create some objects with specific classes. This objects will be used in different functions.
+
+```{r}
+occ <- occurrences(occ_data)
+occ
+```
+
+```{r}
+pred <- predictors(pred_data)
+```
+
+## 
