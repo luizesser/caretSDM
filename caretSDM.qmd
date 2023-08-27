@@ -1,0 +1,25 @@
+---
+title: "caretSDM"
+author: "Luíz Fernando Esser"
+format: html
+editor: visual
+---
+
+## caretSDM
+
+caretSDM is a under development R package that uses the powerful caret package as the main engine to obtain Species Distribution Models. As caret is a packaged turned to build machine learning models, caretSDM has a strong focus on this approach.
+
+## Running caretSDM
+
+First we will install the package from github. For that we will need to install the devtools package first and then install the caretSDM package.
+
+```{r}
+install.packages(setdiff("devtools", rownames(installed.packages())))
+devtools::install_github('luiz')
+```
+
+You can add options to executable code like this
+
+```{r}
+2 * 2
+```

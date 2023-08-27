@@ -20,6 +20,7 @@
 #' var_names <- c("bio_1", "bio_12")
 #' t <- transform_gcms(s, var_names, study_area)
 #'
+#' @import raster
 #' @importFrom here here
 #'
 #' @export
@@ -27,11 +28,12 @@ predictors <- function(x, ...){
   UseMethod("predictors", x)
 }
 
+#' @export
 predictors.RasterStack <- function(x){
   predictors_names <- names(x)
   coords <- coordinates(x)
   bbox <- as.numeric(bbox(x))
-  resolution <- res(r)
+  resolution <- res(x)
   epsg <- as.character(x@crs)
   df <- cbind(coords,as.data.frame(x))
   cell_id <- na.omit(data.frame(cell_id=1:ncell(x), df))[,'cell_id']
@@ -41,29 +43,61 @@ predictors.RasterStack <- function(x){
                         resolution=resolution,
                         epsg=epsg,
                         cell_id=cell_id,
-                        data.frame=x),
-                   class = "occurrences")
+                        df=x),
+                   class = "predictors")
   return(occ)
 }
 
-predictors.data.frame <- function(x, ...){
-  col_names <- find_columns(x, spp=FALSE, ...)
-  predictor_names <- colnames(df)[,-c(col_names)]
-  coords <- x[,col_names]
-  bbox <- c(min(x[,col_names[1]]),
-            min(x[,col_names[2]]),
-            max(x[,col_names[1]]),
-            max(x[,col_names[2]]))
+#' @export
+predictors.data.frame <- function(x, ...){ # pode entrar tanto uma tabela com coord e spp quanto sem.
+  resolution <- NULL
+  epsg <- NULL
+  col_names <- find_columns(x, ...) # colocar um try
+  if(!length(col_names) == 0){
+    if(any(col_names %in% colnames(x))){predictors_names <- colnames(x)[!colnames(x) %in% col_names]}
+    coords <- x[,col_names[-1]]
+    bbox <- c(min(coords[,1]),
+              min(coords[,2]),
+              max(coords[,1]),
+              max(coords[,2]))
+    df <- x[,predictors_names]
+  } else {
+    coords <- NULL
+    bbox <- NULL
+    predictors_names <- colnames(x)
+    df <- x
+  }
+  x <- list(predictors_names=predictors_names,
+            coords=coords,
+            bbox=bbox,
+            resolution=resolution,
+            epsg=epsg,
+            df=df)
+  occ <- .predictors(x)
+  return(occ)
 }
 
+#' @export
 .predictors <- function(x){
-  occ <- structure(list(predictors_names=predictors_names,
-                        coords=coords,
-                        bbox=bbox,
-                        resolution=resolution,
-                        epsg=epsg,
-                        data.frame=x),
-                   class = "occurrences")
+  occ <- structure(list(predictors_names=x$predictors_names,
+                        coords=x$coords,
+                        bbox=x$bbox,
+                        resolution=x$resolution,
+                        epsg=x$epsg,
+                        df=x$df),
+                   class = "predictors")
   return(occ)
 }
 
+#' Print method for predictors
+#' @export
+print.predictors <- function(x) {
+  cat("Predictors Object:\n")
+  cat("Predictors Names:", x$predictors_names, "\n")
+  cat("Number of Predictors:", length(x$predictors_names), "\n")
+  if(!is.null(x$bbox)){cat("Bounding Box:", x$bbox, "\n")}
+  if(!is.null(x$epsg)){cat("EPSG:", x$epsg, "\n")}
+  if(!is.null(x$resolution)){cat("Resolution:", x$resolution, "\n")}
+  cat("\nData:\n")
+  print(head(x$df))
+}
