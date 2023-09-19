@@ -32,7 +32,7 @@ predictors <- function(x, ...){
 predictors.RasterStack <- function(x){
   predictors_names <- names(x)
   coords <- coordinates(x)
-  bbox <- as.numeric(bbox(x))
+  bbox <- bbox(x)[c(1,3,2,4)]
   resolution <- res(x)
   epsg <- as.character(x@crs)
   df <- cbind(coords,as.data.frame(x))
@@ -43,7 +43,8 @@ predictors.RasterStack <- function(x){
                         resolution=resolution,
                         epsg=epsg,
                         cell_id=cell_id,
-                        df=x),
+                        df=df,
+                        grid=x),
                    class = "predictors")
   return(occ)
 }
@@ -56,10 +57,8 @@ predictors.data.frame <- function(x, ...){ # pode entrar tanto uma tabela com co
   if(!length(col_names) == 0){
     if(any(col_names %in% colnames(x))){predictors_names <- colnames(x)[!colnames(x) %in% col_names]}
     coords <- x[,col_names[-1]]
-    bbox <- c(min(coords[,1]),
-              min(coords[,2]),
-              max(coords[,1]),
-              max(coords[,2]))
+    bbox <- c(min(coords[,1]), max(coords[,1]),
+              min(coords[,2]), max(coords[,2]))
     df <- x[,predictors_names]
   } else {
     coords <- NULL
@@ -84,7 +83,8 @@ predictors.data.frame <- function(x, ...){ # pode entrar tanto uma tabela com co
                         bbox=x$bbox,
                         resolution=x$resolution,
                         epsg=x$epsg,
-                        df=x$df),
+                        df=x$df,
+                        grid=x$grid),
                    class = "predictors")
   return(occ)
 }
@@ -98,6 +98,7 @@ print.predictors <- function(x) {
   if(!is.null(x$bbox)){cat("Bounding Box:", x$bbox, "\n")}
   if(!is.null(x$epsg)){cat("EPSG:", x$epsg, "\n")}
   if(!is.null(x$resolution)){cat("Resolution:", x$resolution, "\n")}
+  if(!is.null(x$variable_selection$vif)){cat("Selected Variables (VIF):", x$variable_selection$vif$selected_variables, "\n")}
   cat("\nData:\n")
   print(head(x$df))
 }

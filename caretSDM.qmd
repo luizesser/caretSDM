@@ -14,31 +14,85 @@ caretSDM is a under development R package that uses the powerful caret package a
 
 First we will install the package from github. For that we will need to install the `devtools` package first and then install the caretSDM package.
 
-```{r}
+```{r, eval=F}
 install.packages(setdiff("devtools", rownames(installed.packages())))
 devtools::install_github('luizesser/caretSDM')
 ```
 
-## Obtaining example data
+## Pre-Processing
 
-Now we will create some example data. Starting with occurrences and then predictors data. The first one is a function to obtain species data from GBIF, while the second is a function to obtain climatic variables from WorldClim 2.1. You can read more about them by running in the console `?GBIF_data` and `?WorldClim_data`.
+### Obtaining example data
+
+Now we will create some example data. Starting with occurrences and then predictors data. The first one is a function to obtain species data from GBIF, while the second is a function to obtain climatic variables from WorldClim 2.1. You can read more about them by running in the console `?GBIF_data` and `?WorldClim_data`. In this package we will use the following classes to perform our analysis: occurrences, predictors, models and ensembles. Every time we use those objects to perform some kind of analysis, the object will keep the information of what we did. Ideally, the workflow will have only one object to each class.
 
 ```{r}
 occ_data <- GBIF_data("Araucaria angustifolia")
+# occ_data <- data.frame(sp = rep('Aa', 100), lon = runif(100, min=-180, max=180), lat = runif(100, min=-90, max=90))
 pred_data <- WorldClim_data()
 ```
 
-## The occurrences class
+### The occurrences class
 
-In this package we will create some objects with specific classes. This objects will be used in different functions.
+The first class we will use in this tutorial is the occurrences class (*i.e.* "response variable", "target" or "label"). This class receives the occurrence data of the species and its transformations, such as data cleaning. We consider here in this package that occurrence data is composed of two classes: presences and absences. If absences are not available in species data, we will build multiple sets of pseudo-absences to be used in substitution. Those datasets will be stored in the occurrences object.
 
 ```{r}
 occ <- occurrences(occ_data)
-occ
+print.occurrences(occ)
 ```
 
+**TIP:** pay attention on the information printed above. As we follow this tutorial, informations will get richer.
+
+### The predictors class
+
+Parallel to the occurrences class, we will have the predictors class to receive the environmental/climatic data (*i.e.* "predictor variables", "covariates", "explanatory variables", "features" or "control variables"). With this class we will perform analysis using only the predictors (such as geoprocessing transformations) and together with the occurrences class (such as variable selection routines).
+
 ```{r}
-pred <- predictors(pred_data)
+pred <- predictors(pred_data[[1]])
+print.predictors(pred)
+```
+
+### Data Cleaning
+
+As the first step in our workflow, we will clean our occurrences data by applying a group of functions from the package `CoordinateCleaner`. In this function, we also provide a way to check for environmental duplicates, by including a predictors object. This function also checks for records in the sea if the species is terrestrial, but note that this can be switched off if the studied species is not terrestrial.
+
+```{r}
+occ <- data_clean(occ)
+print.occurrences(occ)
+```
+
+**TIP:** Note that the information regarding the `occ` object changed. Now it includes the information that we performed a Data Cleaning routine and explicitly informs what methods were used.
+
+### Variable Selection
+
+```{r}
+pred <- vif_predictors(pred, th=0.5)
+print.predictors(pred)
+```
+
+### Generate Pseudoabsences
+
+As we mentioned before, pseudoabsence data will be stored in the occurrences object. To generate them, you can inform some parameters, but always associated with the predictors data, which will be used to inform environmental information from each pseudoabsence selected. The argument `variables_selected` will inform which variables you want to use to build your pseudoabsences/models. This can either be a vector of variables names or a previously performed selection method.
+
+```{r}
+occ <- pseudoabsences(occ, pred, variables_selected='vif')
+print.occurrences(occ)
+```
+
+**TIP:** Note, again, that the information regarding the `occ` object has increased. Now it includes the information that we performed a Data Cleaning routine, explicitly informing what methods were used and the information regarding the pseudoabsences.
+
+## Processing
+
+With the occurrences and predictors data put together, we can pass to the modeling. As the name suggests, this package uses the caret package underlying its modeling procedure. For those who are not familiar, caret is the easiest way to perform Machine Learning analysis in R. It works by setting the modeling arguments, but can provide a lot of automation mostly regarding algorithms fine-tuning.
+
+```{r, warnings = FALSE, message=FALSE}
+m <- train_sdm(occ, pred, algo=c('svmLinear2', 'fda', 'monmlp'))
+print.models(m)
+```
+
+## Post-Processing
+
+```{r}
+p <- predict_sdm(m, pred, th=0.8, tp='prob', file='teste.csv')
 ```
 
 ## 

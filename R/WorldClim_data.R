@@ -59,7 +59,7 @@
 #'
 #' @import checkmate
 #' @import httr
-#' @import raster # used to import rasters to R.
+#' @import raster
 #'
 #' @export
 

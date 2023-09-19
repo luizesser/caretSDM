@@ -4,7 +4,14 @@
 \alias{pseudoabsences}
 \title{Indlude pseudoabsence data in a occurrences object}
 \usage{
-pseudoabsences(occ, pred, method = "random", n_set = 10, n_pa = NULL)
+pseudoabsences(
+  occ,
+  pred,
+  method = "random",
+  n_set = 10,
+  n_pa = NULL,
+  variables_selected = NULL
+)
 }
 \arguments{
 \item{occ}{A occurrences object}

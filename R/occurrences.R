@@ -43,9 +43,7 @@ occurrences.tibble <- function(x, ...){
   spp_names <- unique(x[,1])
   occ <- structure(list(occurrences=x,
                         spp_names=spp_names,
-                        n_presences=table(x[,1]),
-                        pseudoabsences=NULL,
-                        background=NULL), class = "occurrences")
+                        n_presences=table(x[,1])), class = "occurrences")
   return(occ)
 }
 
@@ -55,8 +53,12 @@ print.occurrences <- function(x) {
   cat("Occurrences Object:\n")
   cat("Species Names:", x$spp_names, "\n")
   cat("Number of presences:", table(x$occurrences[,1]), "\n")
-  if(!is.null(x$pseudoabsences)){cat("Pseudoabsence sets:", length(x$pseudoabsences), "\n")}
+  if(!is.null(x$pseudoabsences)){cat("Pseudoabsence methods:\n",
+                                     "Method to obtain PAs:", x$pseudoabsences$method, "\n",
+                                     "Number of PA sets:", x$pseudoabsences$n_set, "\n",
+                                     "Number of PAs in each set:", x$pseudoabsences$n_pa, "\n" )}
   if(!is.null(x$background)){cat("Background sets:", length(x$background), "\n")}
+  if(!is.null(x$data_cleaning)){cat("Data Cleaning:", x$data_cleaning, "\n")}
   cat("\nData:\n")
   print(head(x$occurrences))
 }
