@@ -19,6 +19,10 @@ install.packages(setdiff("devtools", rownames(installed.packages())))
 devtools::install_github('luizesser/caretSDM')
 ```
 
+```{r}
+library(caretSDM)
+```
+
 ## Pre-Processing
 
 ### Obtaining example data
@@ -85,14 +89,41 @@ print.occurrences(occ)
 With the occurrences and predictors data put together, we can pass to the modeling. As the name suggests, this package uses the caret package underlying its modeling procedure. For those who are not familiar, caret is the easiest way to perform Machine Learning analysis in R. It works by setting the modeling arguments, but can provide a lot of automation mostly regarding algorithms fine-tuning.
 
 ```{r, warnings = FALSE, message=FALSE}
-m <- train_sdm(occ, pred, algo=c('svmLinear2', 'fda', 'monmlp'))
+m <- train_sdm(occ, pred, algo=c('svmLinear2', 'fda'))
 print.models(m)
+```
+
+Check mean metrics:
+
+```{r, eval=F}
+m$validation$metrics %>%
+     group_by(algo) %>%
+     summarise(ROC = mean(ROC), Sensitivity = mean(Sens), Specificity = mean(Spec) )
 ```
 
 ## Post-Processing
 
 ```{r}
-p <- predict_sdm(m, pred, th=0.8, tp='prob', file='teste.csv')
+p <- predict_sdm(m, pred, th=0.985, tp='prob')
+
 ```
 
-## 
+## Projecting in new scenarios
+
+```{r}
+folder <- "/Users/luizesser/Documents/Mapas/Rasters/WorldClim 2.1/future_5m"
+s <- scenarios(folder, var_select=m$predictors)
+print.scenarios(s)
+```
+
+```{r}
+p2 <- predict_sdm(m, s, th=0.985, tp='prob')
+```
+
+## Mapping
+
+```{r}
+temp_map <- pred$grid[[1]]
+temp_map[] <- p2$predictions[[1]]
+plot(temp_map)
+```

@@ -12,6 +12,7 @@
 #' https://luizfesser.wordpress.com
 #'
 #' @import caret
+#' @import raster
 #' @importFrom dplyr arrange
 #'
 #' @export
@@ -33,9 +34,9 @@ train_sdm <- function(occ, pred, algo, ctrl=NULL){
     x <- rbind(occ2,pa)
     y <- as.factor(c(rep('presence', nrow(occ2)),rep('pseudoabsence',nrow(pa))))
     m <- lapply(algo, function(a){train(x,
-                                          y,
-                                          method=a,
-                                          trControl = ctrl)
+                                        y,
+                                        method = a,
+                                        trControl = ctrl)
     })
     l[[paste0("m",i)]] <- m
   }
@@ -53,6 +54,7 @@ train_sdm <- function(occ, pred, algo, ctrl=NULL){
   # round(with(metrics, by(ROC, algo, function(x){mean(x, na.rm=T)})), digits=3)
 
   m2 <- list(validation=list(method=ctrl$method, number=ctrl$number, metrics=metrics),
+             predictors=colnames(pa),
              algorithms=algo,
              models=m)
   models <- .models(m2)
@@ -63,6 +65,7 @@ train_sdm <- function(occ, pred, algo, ctrl=NULL){
 #' @export
 .models <- function(x){
   models <- structure(list(validation=list(method=x$validation$method, number=x$validation$number, metrics=x$validation$metrics),
+                           predictors=x$predictors,
                            algorithms=x$algorithms,
                            models=x$models,
                            tuning=10),
@@ -75,6 +78,7 @@ train_sdm <- function(occ, pred, algo, ctrl=NULL){
 print.models <- function(x) {
   cat("Models Object:\n")
   cat("Algorithms Names:", x$algorithms, "\n")
+  cat("Variables Names:", x$predictors, "\n")
   cat("Model Validation:\n",
       "Method:", x$validation$method, "\n",
       "Number:", x$validation$number, "\n",

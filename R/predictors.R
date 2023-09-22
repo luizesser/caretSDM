@@ -3,25 +3,18 @@
 #' This function creates a new predictors object
 #'
 #' @param x A string with the path to GCM files.
-#' @param extension Extension of stack files. Standard is ".tif", which is the extension from WorldClim 2.1.
-#' @param recursive Logical. Should the function import stacks recursively (i.e. search files from folders within folders)? Standard is TRUE.
-#' @param gcm_names A vector with names to be addressed to each GCM. S
+#' @param predictors_names A vector with names to be addressed to each predictor.
 #'
-#' @return A list of stacks, with each element of the list corresponding to a GCM from given path.
+#' @return A predictors object.
 #'
 #' @seealso \code{\link{WorldClim_data}}
 #'
 #' @author Luíz Fernando Esser (luizesser@gmail.com)
 #' https://luizfesser.wordpress.com
 #'
-#' @examples
-#' s <- import_gcms(path='input_data/WorldClim_data_future', extension=".tif", recursive=TRUE, gcm_names=NULL)
-#' study_area <- extent(c(-57, -22, -48, -33))
-#' var_names <- c("bio_1", "bio_12")
-#' t <- transform_gcms(s, var_names, study_area)
 #'
 #' @import raster
-#' @importFrom here here
+#' @importFrom gtools mixedsort
 #'
 #' @export
 predictors <- function(x, ...){
@@ -29,8 +22,8 @@ predictors <- function(x, ...){
 }
 
 #' @export
-predictors.RasterStack <- function(x){
-  predictors_names <- names(x)
+predictors.RasterStack <- function(x, predictors_names=NULL){
+  if(is.null(predictors_names)){predictors_names <- names(x)}
   coords <- coordinates(x)
   bbox <- bbox(x)[c(1,3,2,4)]
   resolution <- res(x)
@@ -43,7 +36,7 @@ predictors.RasterStack <- function(x){
                         resolution=resolution,
                         epsg=epsg,
                         cell_id=cell_id,
-                        df=df,
+                        data=df,
                         grid=x),
                    class = "predictors")
   return(occ)
@@ -71,7 +64,7 @@ predictors.data.frame <- function(x, ...){ # pode entrar tanto uma tabela com co
             bbox=bbox,
             resolution=resolution,
             epsg=epsg,
-            df=df)
+            data=df)
   occ <- .predictors(x)
   return(occ)
 }
@@ -83,8 +76,8 @@ predictors.data.frame <- function(x, ...){ # pode entrar tanto uma tabela com co
                         bbox=x$bbox,
                         resolution=x$resolution,
                         epsg=x$epsg,
-                        df=x$df,
-                        grid=x$grid),
+                        grid=x$grid,
+                        data=x$data),
                    class = "predictors")
   return(occ)
 }

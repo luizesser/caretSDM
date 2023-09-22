@@ -12,6 +12,8 @@
 #' https://luizfesser.wordpress.com
 #'
 #' @import caret
+#' @importFrom purrr reduce
+#' @importFrom dplyr inner_join
 #'
 #' @export
 predict_sdm <- function(m, scen, th=0.8, tp='prob', file=NULL){
@@ -27,23 +29,41 @@ predict_sdm <- function(m, scen, th=0.8, tp='prob', file=NULL){
   }
 
   m1 <- subset(m$models,names(m$models) %in% rownames(th1))
-  scen$df$cell_id <- seq_along(scen$df[,1])
-  p <- predict(m1, newdata=scen$df, type=tp)
-  p <- lapply(p, function(x){x <- na.omit(subset(x,select=c('presence')))})
-  p2 <- do.call(cbind, p)
-  colnames(p2) <- names(p)
-  p2$cell_id <- rownames(p2)
-  p2 <- merge(scen$df, p2, by = "cell_id", all.x = TRUE)
-  p2 <- p2[,c('cell_id', 'x', 'y', names(p))]
-  if(!is.null(file)){
-    write.csv(p2, file)
+  #scen$df$cell_id <- seq_along(scen$df[,1])
+  #p <- predict(m1, newdata=na.omit(scen$df), type=tp)
+  if(class(scen$data)=='data.frame'){scen$data <- list(current=scen$data)}
+  p <- list()
+  for (i in 1:length(scen$data)) {
+    print(paste0('Projecting: ',i,'/',length(scen$data)))
+    x <- scen$data[[i]]
+    if(class(x)!='data.frame'){x <- as.data.frame(x)}
+    x <- x[,m$predictors]
+    p[[i]] <- predict(m1, newdata=x, type=tp)
+    write.csv(p[[i]], paste0(names(scen$data)[i], '.csv'))
   }
+  names(p) <- names(scen$data)
+  ##p <- lapply(p, function(x){x <- subset(x,select=c('presence'))
+  ##                           x$cell_id <- rownames(x)
+  ##                           x <- x[,c('cell_id', 'presence')]
+  ##                           return(x)})
+  ##models_names <- names(p)
+  ##p <- reduce(p,inner_join, by='cell_id')
+  ##colnames(p) <- c('cell_id',models_names)
+  ##p <- merge(scen$df, p, by = "cell_id", all.x = TRUE)
+  ##p <- p[,c('cell_id', 'x', 'y', models_names)]
+#
+  ##if(!is.null(file)){
+  ##  write.csv(p, file)
+  ##}
 
-  p3 <- list(thresholds=list(values=th1, method=tm, criteria=th),
-             predictions=p2,
+  ### INCLUIR ENSEMBLES AQUI ###
+
+
+  p <- list(thresholds=list(values=th1, method=tm, criteria=th),
+             predictions=p,
              models=m,
              file=file)
-  predictions <- predictions(p3)
+  predictions <- .predictions(p)
   return(predictions)
 }
 
@@ -63,7 +83,6 @@ predict_sdm <- function(m, scen, th=0.8, tp='prob', file=NULL){
 #' @export
 print.predictions <- function(x) {
   cat("Predictions Object:\n")
-  cat("Thresholds Names:", x$algorithms, "\n")
   cat("Thresholds:\n",
       "Method:", x$thresholds$method, "\n",
       "Criteria:", x$thresholds$criteria, "\n",

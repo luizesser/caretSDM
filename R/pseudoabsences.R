@@ -34,7 +34,7 @@ pseudoabsences <- function(occ, pred, method='random', n_set=10, n_pa=NULL, vari
     selected_vars <- unlist(pred$variable_selection[attributes(pred$variable_selection)$names %in% variables_selected], rec=F)[[paste0(variables_selected,'.selected_variables')]]
     print(cat('Using variables selected by ',variables_selected,': ', selected_vars))
   }
-  df <- na.omit(pred$df)
+  df <- na.omit(pred$data)
   df <- df[,selected_vars]
   if(method=="random"){
     l <- list()

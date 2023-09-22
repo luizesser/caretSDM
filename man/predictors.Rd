@@ -9,24 +9,13 @@ predictors(x, ...)
 \arguments{
 \item{x}{A string with the path to GCM files.}
 
-\item{extension}{Extension of stack files. Standard is ".tif", which is the extension from WorldClim 2.1.}
-
-\item{recursive}{Logical. Should the function import stacks recursively (i.e. search files from folders within folders)? Standard is TRUE.}
-
-\item{gcm_names}{A vector with names to be addressed to each GCM. S}
+\item{predictors_names}{A vector with names to be addressed to each predictor.}
 }
 \value{
-A list of stacks, with each element of the list corresponding to a GCM from given path.
+A predictors object.
 }
 \description{
 This function creates a new predictors object
-}
-\examples{
-s <- import_gcms(path='input_data/WorldClim_data_future', extension=".tif", recursive=TRUE, gcm_names=NULL)
-study_area <- extent(c(-57, -22, -48, -33))
-var_names <- c("bio_1", "bio_12")
-t <- transform_gcms(s, var_names, study_area)
-
 }
 \seealso{
 \code{\link{WorldClim_data}}
