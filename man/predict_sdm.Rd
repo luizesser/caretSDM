@@ -4,7 +4,7 @@
 \alias{predict_sdm}
 \title{Predict SDM models in new data}
 \usage{
-predict_sdm(m, scen, th = 0.8, tp = "prob", file = NULL)
+predict_sdm(m, scen, th = 0.9, tp = "prob", file = NULL, ensembles = TRUE)
 }
 \arguments{
 \item{m}{A models object}
@@ -14,7 +14,7 @@ predict_sdm(m, scen, th = 0.8, tp = "prob", file = NULL)
 \item{th}{Thresholds for metrics to be used}
 }
 \value{
-A models object
+A predictions object
 }
 \description{
 This function projects SDM models to new scenarios

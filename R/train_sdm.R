@@ -19,12 +19,12 @@
 train_sdm <- function(occ, pred, algo, ctrl=NULL){
   if(is.null(ctrl)){
     ctrl <- trainControl(method = "repeatedcv", number=4, repeats=1, classProbs = TRUE, returnResamp='all',# retornar folds
-                         summaryFunction = twoClassSummary)
+                         summaryFunction = twoClassSummary, savePredictions = 'all')
   }
   l <- list()
   occ2 <- occ$occurrences
   col_names <- find_columns(occ2)
-  coordinates(occ2) <- col_names[c(2,3)]
+  raster::coordinates(occ2) <- col_names[c(2,3)]
   pa <- occ$pseudoabsences$data[[1]]
   g <- intersect(names(pred$grid), colnames(pa))
   occ2 <- extract(pred$grid[[g]], occ2)

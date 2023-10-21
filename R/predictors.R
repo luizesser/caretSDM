@@ -30,15 +30,15 @@ predictors.RasterStack <- function(x, predictors_names=NULL){
   epsg <- as.character(x@crs)
   df <- cbind(coords,as.data.frame(x))
   cell_id <- na.omit(data.frame(cell_id=1:ncell(x), df))[,'cell_id']
-  occ <- structure(list(predictors_names=predictors_names,
+  x <- list(predictors_names=predictors_names,
                         coords=coords,
                         bbox=bbox,
                         resolution=resolution,
                         epsg=epsg,
                         cell_id=cell_id,
                         data=df,
-                        grid=x),
-                   class = "predictors")
+                        grid=x)
+  occ <- .predictors(x)
   return(occ)
 }
 

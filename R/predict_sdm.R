@@ -6,17 +6,18 @@
 #' @param scen A scenarios object
 #' @param th Thresholds for metrics to be used
 #'
-#' @return A models object
+#' @return A predictions object
 #'
 #' @author Luíz Fernando Esser (luizesser@gmail.com)
 #' https://luizfesser.wordpress.com
 #'
 #' @import caret
-#' @importFrom purrr reduce
-#' @importFrom dplyr inner_join
+#' @importFrom dplyr bind_cols
+#' @importFrom dplyr select
+#' @importFrom dplyr mutate
 #'
 #' @export
-predict_sdm <- function(m, scen, th=0.8, tp='prob', file=NULL){
+predict_sdm <- function(m, scen, th=0.9, tp='prob', file=NULL, ensembles=TRUE){
   if(th == 'mean'){
     tm <- paste0('threshold: mean')
     means <- with(m$validation$metrics, by(ROC, algo, function(x){mean(x, na.rm=T)}))
@@ -29,6 +30,11 @@ predict_sdm <- function(m, scen, th=0.8, tp='prob', file=NULL){
   }
 
   m1 <- subset(m$models,names(m$models) %in% rownames(th1))
+
+  if(length(m1)==0){
+    stop("No models passing the threshold.")
+  }
+
   #scen$df$cell_id <- seq_along(scen$df[,1])
   #p <- predict(m1, newdata=na.omit(scen$df), type=tp)
   if(class(scen$data)=='data.frame'){scen$data <- list(current=scen$data)}
@@ -57,13 +63,43 @@ predict_sdm <- function(m, scen, th=0.8, tp='prob', file=NULL){
   ##}
 
   ### INCLUIR ENSEMBLES AQUI ###
+  if(ensembles){
+    e <- sapply(p, function(x){
+      # Prepare data
+      df <- bind_cols(x)
+      df <- select(df, contains('presence'))
+      # mean_occ_prob
+      mean_occ_prob <- rowMeans(df)
+      # wmean_AUC
+      wmean_AUC <- apply(df,1,function(x){stats::weighted.mean(x,th1$ROC)})
+      # Obtain Thresholds:
+      th2 <- lapply(m1, function(x){thresholder(x,
+                                               threshold = seq(0, 1, by = 0.01),
+                                               final = TRUE,
+                                               statistics = "all")})
+      th2 <- lapply(th2, function(x){ x <- x %>% mutate(th=Sensitivity+Specificity)
+                                      th <- x[x$th==max(x$th),"prob_threshold"]
+                                      if(length(th)>1){th <- mean(th)}
+                                      return(th)})
+      # binary
+      for (i in 1:ncol(df)) {
+        df[,i] <- ifelse(df[,i][]>th2[i],1,0)
+      }
+      committee_avg <- rowMeans(df)
 
+      # save everything
+      df <- data.frame(mean_occ_prob, wmean_AUC, committee_avg)
+      return(df)
 
-  p <- list(thresholds=list(values=th1, method=tm, criteria=th),
+    }, USE.NAMES = T)
+  }
+
+  p2 <- list(thresholds=list(values=th1, method=tm, criteria=th),
              predictions=p,
              models=m,
-             file=file)
-  predictions <- .predictions(p)
+             file=file,
+             ensembles=e)
+  predictions <- .predictions(p2)
   return(predictions)
 }
 
@@ -74,7 +110,8 @@ predict_sdm <- function(m, scen, th=0.8, tp='prob', file=NULL){
                            thresholds=x$thresholds,
                            predictions=x$predictions,
                            models=x$models,
-                           file=x$file),
+                           file=x$file,
+                           ensembles=x$e),
                       class = "predictions")
   return(predictions)
 }
@@ -83,6 +120,8 @@ predict_sdm <- function(m, scen, th=0.8, tp='prob', file=NULL){
 #' @export
 print.predictions <- function(x) {
   cat("Predictions Object:\n")
+  cat("Ensembles:\n",
+      "Methods:", rownames(x$ensembles))
   cat("Thresholds:\n",
       "Method:", x$thresholds$method, "\n",
       "Criteria:", x$thresholds$criteria, "\n",
