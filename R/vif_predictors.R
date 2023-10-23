@@ -11,21 +11,41 @@
 #' @author Luíz Fernando Esser (luizesser@gmail.com)
 #' https://luizfesser.wordpress.com
 #'
+#' @importFrom raster extract
+#' @importFrom sp coordinates
 #' @importFrom usdm vifcor
 #' @export
-vif_predictors <- function(pred, th=0.5, maxobservations=5000, variables_selected=NULL){
+vif_predictors <- function(pred, area='all', th=0.5, maxobservations=5000, variables_selected=NULL){
+  if(class(pred)=='input_sdm'){
+    x <- pred$predictors
+    occ <- pred$occurrences$occurrences
+  } else {
+    x <- pred
+  }
   if(is.null(variables_selected)){
-    selected_vars <- pred$predictors_names
-    print(cat('Using all variables available: ', selected_vars))
+    selected_vars <- x$predictors_names
+    print(cat('Using all variables available: '), cat(selected_vars, sep=', '))
   }
-  if(any(variables_selected %in% pred$predictors_names) ){
-    selected_vars <- pred$predictors_names[pred$predictors_names %in% c("wc2.1_10m_bio_1"  ,"wc2.1_10m_bio_10", "wc2.1_10m_bio_11", "wc2.1_10m_bio_12")]
-    print(cat('Using given variables: ', selected_vars))
+  if(any(variables_selected %in% x$predictors_names) ){
+    selected_vars <- x$predictors_names[x$predictors_names %in% variables_selected]
+    print(cat('Using given variables: '), cat(selected_vars, sep=', '))
   }
-  p <- pred$grid[[selected_vars]]
-  v <- vifcor(p, th=th, maxobservations=maxobservations)
-  pred$variable_selection$vif$selected_variables <- v@variables[!v@variables %in% v@excluded]
-  pred$variable_selection$vif$threshold <- th
-  pred$variable_selection$vif$vifcor <- v
-  return(pred)
+  if(area=='all'){p <- as.data.frame(x$grid[[selected_vars]])}
+  if(area=='occurrences'){
+    if(!class(pred)=='input_sdm'){stop('Method only available with input_sdm class.')}
+    cols <- find_columns(i$occurrences$occurrences)
+    df <- i$occurrences$occurrences
+    coordinates(df) <- cols[2:3]
+    p <- extract(x$grid[[selected_vars]], df)
+  }
+  v <- vifcor(p, th=th, size=maxobservations)
+  x$variable_selection$vif$area <- area
+  x$variable_selection$vif$selected_variables <- v@variables[!v@variables %in% v@excluded]
+  x$variable_selection$vif$threshold <- th
+  x$variable_selection$vif$vifcor <- v
+  if(class(pred)=='input_sdm'){
+    i$predictors <- x
+    x <- i
+  }
+  return(x)
 }

@@ -117,14 +117,17 @@ predict_sdm <- function(m, scen, th=0.9, tp='prob', file=NULL, ensembles=TRUE){
 }
 
 #' Print method for predictors
-#' @export
+#' @exportS3Method base::print
 print.predictions <- function(x) {
-  cat("Predictions Object:\n")
-  cat("Ensembles:\n",
-      "Methods:", rownames(x$ensembles))
-  cat("Thresholds:\n",
-      "Method:", x$thresholds$method, "\n",
-      "Criteria:", x$thresholds$criteria, "\n",
-      "Metrics:\n" )
+  cat("         caretSDM        \n")
+  cat(".........................\n")
+  cat("Class             : Predictions\n")
+  cat("Ensembles         :\n",
+      "        Methods  :", rownames(x$ensembles), "\n")
+  cat("Thresholds        :\n",
+      "        Method   :", x$thresholds$method, "\n",
+      "        Criteria :", x$thresholds$criteria, "\n",
+      "        Metrics  :\n" )
   print(x$thresholds$values)
+
 }

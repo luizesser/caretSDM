@@ -12,7 +12,7 @@
 #' https://luizfesser.wordpress.com
 #'
 #' @import caret
-#' @import raster
+#' @import sp
 #' @importFrom dplyr arrange
 #'
 #' @export
@@ -24,7 +24,7 @@ train_sdm <- function(occ, pred, algo, ctrl=NULL){
   l <- list()
   occ2 <- occ$occurrences
   col_names <- find_columns(occ2)
-  raster::coordinates(occ2) <- col_names[c(2,3)]
+  sp::coordinates(occ2) <- col_names[c(2,3)]
   pa <- occ$pseudoabsences$data[[1]]
   g <- intersect(names(pred$grid), colnames(pa))
   occ2 <- extract(pred$grid[[g]], occ2)
@@ -74,14 +74,16 @@ train_sdm <- function(occ, pred, algo, ctrl=NULL){
 }
 
 #' Print method for predictors
-#' @export
+#' @exportS3Method base::print
 print.models <- function(x) {
-  cat("Models Object:\n")
-  cat("Algorithms Names:", x$algorithms, "\n")
-  cat("Variables Names:", x$predictors, "\n")
-  cat("Model Validation:\n",
-      "Method:", x$validation$method, "\n",
-      "Number:", x$validation$number, "\n",
-      "Metrics:\n" )
+  cat("      caretSDM     \n")
+  cat("...................\n")
+  cat("Class             : Models\n")
+  cat("Algorithms Names  :", x$algorithms, "\n")
+  cat("Variables Names   :", x$predictors, "\n")
+  cat("Model Validation  :\n",
+      "        Method    :", x$validation$method, "\n",
+      "        Number    :", x$validation$number, "\n",
+      "        Metrics   :\n" )
   print(x$validation$metrics)
 }

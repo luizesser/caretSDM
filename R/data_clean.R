@@ -22,25 +22,47 @@
 #' @import raster
 #'
 #' @export
-data_clean <- function(occ, pred=NULL, terrestrial=TRUE){
-  x <- occ$occurrences
-  x <- subset( x, !is.na("decimalLongitude") | !is.na("decimalLatitude"))
-  x <- cc_cap( x, lon = "decimalLongitude", lat = "decimalLatitude", species = "species")
-  x <- cc_cen( x, lon = "decimalLongitude", lat = "decimalLatitude", species = "species")
-  x <- cc_dupl(x, lon = "decimalLongitude", lat = "decimalLatitude", species = "species")
-  x <- cc_equ( x, lon = "decimalLongitude", lat = "decimalLatitude")
-  x <- cc_inst(x, lon = "decimalLongitude", lat = "decimalLatitude", species = "species")
-  x <- cc_val( x, lon = "decimalLongitude", lat = "decimalLatitude")
-  if(terrestrial){x <- cc_sea( x, lon = "decimalLongitude", lat = "decimalLatitude")}
+data_clean <- function(occ, pred=NULL, species=NA, long=NA, lat=NA, terrestrial=TRUE){
+  if(class(occ)=='input_sdm'){
+    y <- occ$occurrences
+    if(is.null(pred)){
+      pred <- occ$predictors
+    }
+  } else {
+    y <- occ
+  }
+  if(!is.na(species)){species=species} else {species='species'}
+  if(!is.na(long)){lon=long} else {lon='decimalLongitude'}
+  if(!is.na(lat)){lat=lat} else {lat='decimalLatitude'}
+  x <- y$occurrences
+  x <- subset( x, !is.na(lon) | !is.na(lat))
+  x <- cc_cap( x, lon = lon, lat = lat, species = species)
+  x <- cc_cen( x, lon = lon, lat = lat, species = species)
+  x <- cc_dupl(x, lon = lon, lat = lat, species = species)
+  x <- cc_equ( x, lon = lon, lat = lat)
+  #x <- cc_inst(x, lon = lon, lat = lat, species = species)
+  x <- cc_val( x, lon = lon, lat = lat)
+  if(terrestrial){x <- cc_sea( x, lon = lon, lat = lat)}
   if(!is.null(pred)){
     print('Predictors identified, procceding with grid filter.')
-    # falar com reginaldo/ incluir grid do próprio raster usado no predictors ou grid tirado por geoprocessamento.
+    r <- raster(i$predictors$grid)
+    values(r) <- 1:ncell(r)
+    x2 <- x
+    coordinates(x2) <- 2:3
+    cell_id <- extract(r, x2)
+    x <- cbind(x, cell_id)
+    x <- x[!duplicated(x[,c(1,4)]),-4]
   }
-  occ$occurrences <- x
+  y$occurrences <- x
   clean_methods <- c('NAs', 'Capitals', 'Centroids', 'Geographically Duplicated', 'Identical Lat/Long', 'Institutions', 'Invalid')
   if(terrestrial){clean_methods <- c(clean_methods,'Non-terrestrial')}
-  if(!is.null(pred)){clean_methods <- c(clean_methods,'Environmentally Duplicated')}
-  occ$data_cleaning <- clean_methods
-  occ$n_presences <- nrow(occ$occurrences)
-  return(occ)
+  if(!is.null(pred)){clean_methods <- c(clean_methods,'Duplicated Cell')}
+  y$data_cleaning <- clean_methods
+  y$n_presences <- nrow(y$occurrences)
+
+  if(class(occ)=='input_sdm'){
+    i$occurrences <- y
+    y <- i
+  }
+  return(y)
 }

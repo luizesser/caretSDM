@@ -48,17 +48,22 @@ occurrences.tibble <- function(x, ...){
 }
 
 #' Print method for occurrences
-#' @export
+#' @exportS3Method base::print
 print.occurrences <- function(x) {
-  cat("Occurrences Object:\n")
-  cat("Species Names:", x$spp_names, "\n")
-  cat("Number of presences:", table(x$occurrences[,1]), "\n")
-  if(!is.null(x$pseudoabsences)){cat("Pseudoabsence methods:\n",
-                                     "Method to obtain PAs:", x$pseudoabsences$method, "\n",
-                                     "Number of PA sets:", x$pseudoabsences$n_set, "\n",
-                                     "Number of PAs in each set:", x$pseudoabsences$n_pa, "\n" )}
-  if(!is.null(x$background)){cat("Background sets:", length(x$background), "\n")}
-  if(!is.null(x$data_cleaning)){cat("Data Cleaning:", x$data_cleaning, "\n")}
+  cat("        caretSDM       \n")
+  cat(".......................\n")
+  cat("Class                 : Occurrences\n")
+  cat("Species Names         :", x$spp_names, "\n")
+  cat("Number of presences   :", table(x$occurrences[,1]), "\n")
+  if(!is.null(x$pseudoabsences)){cat("Pseudoabsence methods :\n",
+                                     "        Method to obtain PAs       :", x$pseudoabsences$method, "\n",
+                                     "        Number of PA sets          :", x$pseudoabsences$n_set, "\n",
+                                     "        Number of PAs in each set  :", x$pseudoabsences$n_pa, "\n" )}
+  if(!is.null(x$background)){cat("Background sets       :", length(x$background), "\n")}
+  if(!is.null(x$data_cleaning)){cat(cat("Data Cleaning         : "), cat(x$data_cleaning, sep=', '), "\n")}
+  n <- max(nchar(colnames(x$occurrences)[1]),nchar(x$occurrences[,1])[1])
+  n <- n+sum(nchar(colnames(x$occurrences)[-1]))+ncol(x$occurrences)+1
+  cat(rep('=', n), sep='')
   cat("\nData:\n")
   print(head(x$occurrences))
 }

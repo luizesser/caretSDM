@@ -16,14 +16,23 @@
 #'
 #'
 #' @export
-pseudoabsences <- function(occ, pred, method='random', n_set=10, n_pa=NULL, variables_selected=NULL){
-  if(is.null(n_pa)){n_pa <- as.numeric(occ$n_presences)}
+pseudoabsences <- function(occ, pred=NULL, method='random', n_set=10, n_pa=NULL, variables_selected=NULL){
+  if(class(occ)=='input_sdm'){
+    y <- occ$occurrences
+    pred <- occ$predictors
+  } else {
+    y <- occ
+  }
+  if(!is.null(y$pseudoabsences)){
+    warning('Previous pseudoabsence element on Occurrences object was overwrited.', call.=F)
+  }
+  if(is.null(n_pa)){n_pa <- as.numeric(y$n_presences)}
   if(is.null(variables_selected)){
     selected_vars <- pred$predictors_names
     print(cat('Using all variables available: ', selected_vars))
   }
   if(any(variables_selected %in% pred$predictors_names) ){
-    selected_vars <- pred$predictors_names[pred$predictors_names %in% c("wc2.1_10m_bio_1"  ,"wc2.1_10m_bio_10", "wc2.1_10m_bio_11", "wc2.1_10m_bio_12")]
+    selected_vars <- pred$predictors_names[pred$predictors_names %in% variables_selected]
     print(cat('Using given variables: ', selected_vars))
   }
   if(length(variables_selected) == 1){
@@ -38,13 +47,23 @@ pseudoabsences <- function(occ, pred, method='random', n_set=10, n_pa=NULL, vari
   df <- df[,selected_vars]
   if(method=="random"){
     l <- list()
-
     for(i in 1:n_set){
       l[[i]] <- df[sample(rownames(df), size=n_pa),]
     }
-    pa <- .pseudoabsences(occ,l, method, n_set, n_pa)
-    return(pa)
+    pa <- .pseudoabsences(y,l, method, n_set, n_pa)
   }
+  if(method=="bioclim"){
+    # Criar envelope
+  }
+  if(method=="cluster"){
+    # Reginaldo
+  }
+
+  if(class(occ)=='input_sdm'){
+    i$occurrences <- y
+    pa <- i
+  }
+  return(pa)
 }
 
 .pseudoabsences <- function(occ, l, method, n_set, n_pa){

@@ -6,7 +6,7 @@
 \usage{
 pseudoabsences(
   occ,
-  pred,
+  pred = NULL,
   method = "random",
   n_set = 10,
   n_pa = NULL,

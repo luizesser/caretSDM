@@ -6,6 +6,7 @@
 \usage{
 vif_predictors(
   pred,
+  area = "all",
   th = 0.5,
   maxobservations = 5000,
   variables_selected = NULL

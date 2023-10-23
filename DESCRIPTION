@@ -9,6 +9,7 @@ Description: This package is intended to help modelers to
     The package uses caret as a underlying package to build and project models.
 License: MIT
 Imports:
+    caret,
     checkmate,
     cowplot,
     dplyr,
@@ -16,6 +17,7 @@ Imports:
     ggcorrplot,
     ggplot2,
     ggpubr,
+    gtools,
     httr,
     plyr,
     raster,

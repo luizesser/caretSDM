@@ -158,7 +158,7 @@ WorldClim_data <- function(period = 'current', variable = 'bioc', year = '2030',
                          paste0('input_data/WorldClim_data_future/',gcm[g], '_ssp', ssp[s],'_', resolution,res, '_', year[y],'.tif'),
                          ') is already downloaded.'))
             nome <- paste0(gcm[g], '_ssp', ssp[s],'_', resolution,res, '_', year[y])
-            print(paste0('Importing ', nome, 'from folder...'))
+            print(paste0('Importing ', nome, ' from folder...'))
             l[[nome]] <- stack(list.files("input_data/WorldClim_data_future",pattern='.tif$', full.names=T))
             l[[nome]] <- l[[nome]][[mixedsort(names(l[[nome]]))]]
             names(l[[nome]]) <- paste0('bio_', 1:19)

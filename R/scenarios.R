@@ -180,15 +180,15 @@ scenarios.list <- function(x, ...){
 }
 
 #' Print method for scenarios
-#' @export
+#' @exportS3Method base::print
 print.scenarios <- function(x) {
-  cat("Scenarios Object:\n")
-  cat("Scenarios Names:", names(x$data), "\n")
-  cat("Number of Scenarios:", length(x$data), "\n")
-  if(!is.null(x$bbox)){cat("Bounding Box:", x$bbox, "\n")}
-  if(!is.null(x$epsg)){cat("EPSG:", x$epsg, "\n")}
-  if(!is.null(x$resolution)){cat("Resolution:", x$resolution, "\n")}
-  if(!is.null(x$variable_selection$vif)){cat("Selected Variables (VIF):", x$variable_selection$vif$selected_variables, "\n")}
-  cat("\nData:\n")
-  print(head(x$df))
+                                         cat("          caretSDM         \n")
+                                         cat("...........................\n")
+                                         cat("Class                     : Scenarios\n")
+                                         cat("Scenarios Names           :", names(x$data), "\n")
+                                         cat("Number of Scenarios       :", length(x$data), "\n")
+  if(!is.null(x$bbox)){                  cat("Extent                    :", x$bbox, "(xmin, xmax, ymin, ymax)\n")}
+  if(!is.null(x$epsg)){                  cat("EPSG                      :", x$epsg, "\n")}
+  if(!is.null(x$resolution)){            cat("Resolution                :", x$resolution, "(x, y)\n")}
+  if(!is.null(x$variable_selection$vif)){cat(cat("Selected Variables (VIF)  :"), cat(x$variable_selection$vif$selected_variables, sep=', '), "\n")}
 }
