@@ -49,6 +49,7 @@ print.input_sdm <- function(x) {
                                                    "        Number of PA sets          :", x$occurrences$pseudoabsences$n_set, "\n",
                                                    "        Number of PAs in each set  :", x$occurrences$pseudoabsences$n_pa, "\n" )}
     if(!is.null(x$occurrences$background)){cat("Background sets           :", length(x$occurrences$background), "\n")}
+    if('independent_test' %in% names(x$occurrences)){cat("Independent Test          : TRUE (number of records = ",nrow(x$occurrences$independent_test),")\n")}
     if(!is.null(x$occurrences$data_cleaning)){cat(cat("Data Cleaning             : "), cat(x$occurrences$data_cleaning, sep=', '), "\n")}
   }
   if('predictors' %in% names(x)){
@@ -63,6 +64,34 @@ print.input_sdm <- function(x) {
   if('scenarios' %in% names(x)){
     cat("Scenarios Names           :", names( x$scenarios$data), "\n")
     cat("Number of Scenarios       :", length(x$scenarios$data), "\n")
-
+  }
+  if('models' %in% names(x)){
+    if(class(x$models$algorithms)=='list'){
+      cat("Algorithms Names          : Stacked Ensemble\n")
+      for(j in 1:length(x$models$algorithms)){
+        cat("        Layer ",j,": ",x$models$algorithms[[j]], '\n')
+      }
+    } else {
+      cat("Algorithms Names          :", x$models$algorithms, "\n")
+    }
+    cat("Variables Names           :", x$models$predictors, "\n")
+    cat("Model Validation          :\n",
+        "        Method    :", x$models$validation$method, "\n",
+        "        Number    :", x$models$validation$number, "\n",
+        "        Metrics   :\n" )
+    print(x$models$validation$metrics)
+  if('independent_validation' %in% names(x$models)){
+    cat("Independent Validation    :\n",
+        "        ROC (mean ± sd)  : ", round(mean(unlist(x$models$independent_validation)),3),
+        " ± ",
+        round(sd(unlist(x$models$independent_validation)),3), "\n")
+  }
+  }
+  if('predictions' %in% names(x)){
+    cat("Ensembles         :\n",
+        "        Methods  :", rownames(x$predictions$ensembles), "\n")
+    cat("Thresholds        :\n",
+        "        Method   :", x$predictions$thresholds$method, "\n",
+        "        Criteria :", x$predictions$thresholds$criteria, "\n")
   }
 }

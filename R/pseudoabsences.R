@@ -13,7 +13,9 @@
 #' @author Luíz Fernando Esser (luizesser@gmail.com)
 #' https://luizfesser.wordpress.com
 #'
-#'
+#' @import dismo
+#' @import sp
+#' @importFrom raster extract
 #'
 #' @export
 pseudoabsences <- function(occ, pred=NULL, method='random', n_set=10, n_pa=NULL, variables_selected=NULL){
@@ -53,15 +55,54 @@ pseudoabsences <- function(occ, pred=NULL, method='random', n_set=10, n_pa=NULL,
     pa <- .pseudoabsences(y,l, method, n_set, n_pa)
   }
   if(method=="bioclim"){
-    # Criar envelope
+    if(class(occ)=='input_sdm'){
+      occ2 <- y$occurrences
+      col_names <- find_columns(occ2)
+      sp::coordinates(occ2) <- col_names[c(2,3)]
+      occ2 <- extract(pred$grid[[selected_vars]], occ2)
+
+      model <- dismo::bioclim(x=occ2)
+      p <- predict(model, pred$grid[[selected_vars]])
+      p[p[]>0] <- NA
+      env2 <- as.data.frame(pred$grid[[selected_vars]])
+      env2 <- env2[!is.na(p[]),]
+      l <- list()
+      if(nrow(env2) > nrow(occ2)){
+        for(i in 1:n_set){l[[i]] <- env2[sample(nrow(env2), size=n_pa),]}
+      } else {
+        for(i in 1:n_set){l[[i]] <- env2[sample(nrow(env2), size=n_pa, replace = T),]}
+      }
+    }
+    pa <- .pseudoabsences(y,l, method, n_set, n_pa)
+  }
+  if(method=="mahal.dist"){
+    if(class(occ)=='input_sdm'){
+      occ2 <- y$occurrences
+      col_names <- find_columns(occ2)
+      sp::coordinates(occ2) <- col_names[c(2,3)]
+      occ2 <- extract(pred$grid[[selected_vars]], occ2)
+
+      model <- dismo::mahal(x=occ2)
+      p <- predict(model, pred$grid[[selected_vars]])
+      p[p[]>0] <- NA
+      env2 <- as.data.frame(pred$grid[[selected_vars]])
+      env2 <- env2[!is.na(p[]),]
+      l <- list()
+      if(nrow(env2) > nrow(occ2)){
+        for(i in 1:n_set){l[[i]] <- env2[sample(nrow(env2), size=n_pa),]}
+      } else {
+        for(i in 1:n_set){l[[i]] <- env2[sample(nrow(env2), size=n_pa, replace = T),]}
+      }
+    }
+    pa <- .pseudoabsences(y,l, method, n_set, n_pa)
   }
   if(method=="cluster"){
     # Reginaldo
   }
 
   if(class(occ)=='input_sdm'){
-    i$occurrences <- y
-    pa <- i
+    occ$occurrences <- pa
+    pa <- occ
   }
   return(pa)
 }

@@ -22,7 +22,7 @@
 #' @import raster
 #'
 #' @export
-data_clean <- function(occ, pred=NULL, species=NA, long=NA, lat=NA, terrestrial=TRUE){
+data_clean <- function(occ, pred=NULL, species=NA, long=NA, lat=NA, terrestrial=TRUE, independent_test=TRUE){
   if(class(occ)=='input_sdm'){
     y <- occ$occurrences
     if(is.null(pred)){
@@ -44,7 +44,7 @@ data_clean <- function(occ, pred=NULL, species=NA, long=NA, lat=NA, terrestrial=
   x <- cc_val( x, lon = lon, lat = lat)
   if(terrestrial){x <- cc_sea( x, lon = lon, lat = lat)}
   if(!is.null(pred)){
-    print('Predictors identified, procceding with grid filter.')
+    print('Predictors identified, procceding with grid filter (removing NA and duplicated data).')
     r <- raster(i$predictors$grid)
     values(r) <- 1:ncell(r)
     x2 <- x
@@ -52,13 +52,41 @@ data_clean <- function(occ, pred=NULL, species=NA, long=NA, lat=NA, terrestrial=
     cell_id <- extract(r, x2)
     x <- cbind(x, cell_id)
     x <- x[!duplicated(x[,c(1,4)]),-4]
+    x2 <- x
+    coordinates(x2) <- 2:3
+    vars <- as.data.frame(extract(i$predictors$grid, x2))
+    x <- na.omit(cbind(x, vars))[,c(species,lon,lat)]
   }
   y$occurrences <- x
   clean_methods <- c('NAs', 'Capitals', 'Centroids', 'Geographically Duplicated', 'Identical Lat/Long', 'Institutions', 'Invalid')
   if(terrestrial){clean_methods <- c(clean_methods,'Non-terrestrial')}
   if(!is.null(pred)){clean_methods <- c(clean_methods,'Duplicated Cell')}
-  y$data_cleaning <- clean_methods
   y$n_presences <- nrow(y$occurrences)
+
+  if('independent_test' %in% names(y) & independent_test){
+    x <- y$independent_test
+    x <- subset( x, !is.na(lon) | !is.na(lat))
+    x <- cc_cap( x, lon = lon, lat = lat, species = species)
+    x <- cc_cen( x, lon = lon, lat = lat, species = species)
+    x <- cc_dupl(x, lon = lon, lat = lat, species = species)
+    x <- cc_equ( x, lon = lon, lat = lat)
+    #x <- cc_inst(x, lon = lon, lat = lat, species = species)
+    x <- cc_val( x, lon = lon, lat = lat)
+    if(terrestrial){x <- cc_sea( x, lon = lon, lat = lat)}
+    if(!is.null(pred)){
+      print('Predictors identified, procceding with grid filter.')
+      r <- raster(i$predictors$grid)
+      values(r) <- 1:ncell(r)
+      x2 <- x
+      coordinates(x2) <- 2:3
+      cell_id <- extract(r, x2)
+      x <- cbind(x, cell_id)
+      x <- x[!duplicated(x[,c(1,4)]),-4]
+    }
+    y$independent_test <- x
+    clean_methods <- c(clean_methods,'Methods also applied in independent_test')
+  }
+  y$data_cleaning <- clean_methods
 
   if(class(occ)=='input_sdm'){
     i$occurrences <- y

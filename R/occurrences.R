@@ -23,8 +23,8 @@ occurrences <- function(x, ...){
 }
 
 #' @export
-occurrences.data.frame <- function(x, ...){
-  occ <- .occurrences(x, ...)
+occurrences.data.frame <- function(x, independent_test=NULL, ...){
+  occ <- .occurrences(x, independent_test, ...)
   return(occ)
 }
 
@@ -36,14 +36,27 @@ occurrences.tibble <- function(x, ...){
 }
 
 #' @export
-.occurrences <- function(x, ...){
+.occurrences <- function(x, independent_test=NULL, ...){
   col_names <- find_columns(x, ...)
   x <- x[,col_names]
   if(length(col_names)==2){ x <- cbind(rep('Sp_unknown',nrow(x)),x) }
   spp_names <- unique(x[,1])
-  occ <- structure(list(occurrences=x,
-                        spp_names=spp_names,
-                        n_presences=table(x[,1])), class = "occurrences")
+  if(!is.null(independent_test)){
+    independent_test <- as.data.frame(independent_test)
+    col_names <- find_columns(independent_test, ...)
+    independent_test <- independent_test[,col_names]
+    if(length(col_names)==2){ independent_test <- cbind(rep('Sp_unknown',nrow(independent_test)),independent_test) }
+    #spp_names2 <- unique(independent_test[,1]) ### Multiple Species?
+    occ <- structure(list(occurrences=x,
+                          spp_names=spp_names,
+                          n_presences=table(x[,1]),
+                          independent_test=independent_test), class = "occurrences")
+  } else {
+    occ <- structure(list(occurrences=x,
+                          spp_names=spp_names,
+                          n_presences=table(x[,1])), class = "occurrences")
+  }
+
   return(occ)
 }
 
@@ -60,6 +73,7 @@ print.occurrences <- function(x) {
                                      "        Number of PA sets          :", x$pseudoabsences$n_set, "\n",
                                      "        Number of PAs in each set  :", x$pseudoabsences$n_pa, "\n" )}
   if(!is.null(x$background)){cat("Background sets       :", length(x$background), "\n")}
+  if(!is.null(x$independent_test)){cat("Independent Test      : TRUE (number of records = ",nrow(x$independent_test),")\n")}
   if(!is.null(x$data_cleaning)){cat(cat("Data Cleaning         : "), cat(x$data_cleaning, sep=', '), "\n")}
   n <- max(nchar(colnames(x$occurrences)[1]),nchar(x$occurrences[,1])[1])
   n <- n+sum(nchar(colnames(x$occurrences)[-1]))+ncol(x$occurrences)+1

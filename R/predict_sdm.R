@@ -17,19 +17,25 @@
 #' @importFrom dplyr mutate
 #'
 #' @export
-predict_sdm <- function(m, scen, th=0.9, tp='prob', file=NULL, ensembles=TRUE){
+predict_sdm <- function(m, scen=NULL, th=0.9, tp='prob', file=NULL, ensembles=TRUE){
+  if(class(m)=='input_sdm'){
+    y <- m$models
+    scen <- m$scenarios
+  } else {
+    y <- m
+  }
   if(th == 'mean'){
     tm <- paste0('threshold: mean')
-    means <- with(m$validation$metrics, by(ROC, algo, function(x){mean(x, na.rm=T)}))
-    #th <- m$validation$metrics[m$validation$metrics[,'ROC']>means,]
+    means <- with(y$validation$metrics, by(ROC, algo, function(x){mean(x, na.rm=T)}))
+    #th <- y$validation$metrics[y$validation$metrics[,'ROC']>means,]
   } else {
     if(is.numeric(th)){
       tm <- paste0('threshold: ',th)
-      th1 <- m$validation$metrics[m$validation$metrics[,'ROC']>th,]
+      th1 <- y$validation$metrics[y$validation$metrics[,'ROC']>th,]
     }
   }
 
-  m1 <- subset(m$models,names(m$models) %in% rownames(th1))
+  m1 <- subset(y$models,names(y$models) %in% rownames(th1))
 
   if(length(m1)==0){
     stop("No models passing the threshold.")
@@ -43,9 +49,9 @@ predict_sdm <- function(m, scen, th=0.9, tp='prob', file=NULL, ensembles=TRUE){
     print(paste0('Projecting: ',i,'/',length(scen$data)))
     x <- scen$data[[i]]
     if(class(x)!='data.frame'){x <- as.data.frame(x)}
-    x <- x[,m$predictors]
+    x <- na.omit(x[,y$predictors])
     p[[i]] <- predict(m1, newdata=x, type=tp)
-    write.csv(p[[i]], paste0(names(scen$data)[i], '.csv'))
+    if(!ensembles){write.csv(p[[i]], paste0(names(scen$data)[i], '.csv'))}
   }
   names(p) <- names(scen$data)
   ##p <- lapply(p, function(x){x <- subset(x,select=c('presence'))
@@ -93,13 +99,17 @@ predict_sdm <- function(m, scen, th=0.9, tp='prob', file=NULL, ensembles=TRUE){
 
     }, USE.NAMES = T)
   }
-
   p2 <- list(thresholds=list(values=th1, method=tm, criteria=th),
              predictions=p,
              models=m,
              file=file,
-             ensembles=e)
+             ensembles=e,
+             grid=scen$grid)
   predictions <- .predictions(p2)
+  if(class(m)=='input_sdm'){
+    m$predictions <- predictions
+    predictions <- m
+  }
   return(predictions)
 }
 
@@ -111,7 +121,8 @@ predict_sdm <- function(m, scen, th=0.9, tp='prob', file=NULL, ensembles=TRUE){
                            predictions=x$predictions,
                            models=x$models,
                            file=x$file,
-                           ensembles=x$e),
+                           ensembles=x$ensembles,
+                           grid=x$grid),
                       class = "predictions")
   return(predictions)
 }
@@ -129,5 +140,4 @@ print.predictions <- function(x) {
       "        Criteria :", x$thresholds$criteria, "\n",
       "        Metrics  :\n" )
   print(x$thresholds$values)
-
 }

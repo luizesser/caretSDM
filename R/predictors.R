@@ -18,11 +18,13 @@
 #'
 #' @export
 predictors <- function(x, ...){
-  UseMethod("predictors", x)
+  print("")
+  UseMethod("predictors")
 }
 
 #' @export
 predictors.RasterStack <- function(x, predictors_names=NULL){
+  print("")
   if(is.null(predictors_names)){predictors_names <- names(x)}
   coords <- coordinates(x)
   bbox <- bbox(x)[c(1,3,2,4)]

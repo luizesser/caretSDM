@@ -14,6 +14,7 @@
 #' @importFrom raster extract
 #' @importFrom sp coordinates
 #' @importFrom usdm vifcor
+#'
 #' @export
 vif_predictors <- function(pred, area='all', th=0.5, maxobservations=5000, variables_selected=NULL){
   if(class(pred)=='input_sdm'){
@@ -33,10 +34,9 @@ vif_predictors <- function(pred, area='all', th=0.5, maxobservations=5000, varia
   if(area=='all'){p <- as.data.frame(x$grid[[selected_vars]])}
   if(area=='occurrences'){
     if(!class(pred)=='input_sdm'){stop('Method only available with input_sdm class.')}
-    cols <- find_columns(i$occurrences$occurrences)
-    df <- i$occurrences$occurrences
-    coordinates(df) <- cols[2:3]
-    p <- extract(x$grid[[selected_vars]], df)
+    cols <- find_columns(occ)
+    coordinates(occ) <- cols[2:3]
+    p <- extract(x$grid[[selected_vars]], occ)
   }
   v <- vifcor(p, th=th, size=maxobservations)
   x$variable_selection$vif$area <- area
@@ -44,8 +44,8 @@ vif_predictors <- function(pred, area='all', th=0.5, maxobservations=5000, varia
   x$variable_selection$vif$threshold <- th
   x$variable_selection$vif$vifcor <- v
   if(class(pred)=='input_sdm'){
-    i$predictors <- x
-    x <- i
+    pred$predictors <- x
+    x <- pred
   }
   return(x)
 }

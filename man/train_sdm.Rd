@@ -4,14 +4,26 @@
 \alias{train_sdm}
 \title{Train SDM models}
 \usage{
-train_sdm(occ, pred, algo, ctrl = NULL)
+train_sdm(
+  occ,
+  pred = NULL,
+  algo,
+  ctrl = NULL,
+  variables_selected = NULL,
+  parallel = FALSE,
+  ...
+)
 }
 \arguments{
-\item{occ}{A occurrences object}
+\item{occ}{A occurrences object or a input_sdm.}
 
-\item{pred}{A predictors object}
+\item{pred}{A predictors object. If a input_sdm object is used, then pred is obtained from it.}
 
-\item{algo}{Algorithms to be used}
+\item{algo}{Algorithms to be used. For a complete list see (https://topepo.github.io/caret/available-models.html). 'maxent', 'mahal.dist' and 'bioclim' are also implemented, but they are only available to run alone, with no other algorithm together.}
+
+\item{ctrl}{A trainControl object to be used to build models. See ?trainControl.}
+
+\item{variables_selected}{A vector of variables to be used as predictors. If NULL, predictors_names from pred will be used. Can also be a selection method (e.g. 'vif').}
 }
 \value{
 A models object

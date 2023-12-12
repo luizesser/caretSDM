@@ -27,7 +27,7 @@
 #'
 #' @export
 scenarios <- function(x, ...){
-  UseMethod("scenarios", x)
+  UseMethod("scenarios")
 }
 
 #' @export
@@ -100,6 +100,7 @@ scenarios.character <- function(x, extension='.tif$', recursive=T, scenarios_nam
                                variables_names <- paste0('bio_', 1:19)
                                names(x) <- variables_names
                                return(x)})
+    variables_names <- paste0('bio_', 1:19)
   } else {
     s <- lapply(s, function(x){names(x) <- variables_names
                                return(x)})
@@ -112,10 +113,10 @@ scenarios.character <- function(x, extension='.tif$', recursive=T, scenarios_nam
   s <- lapply(s, function(x){x <- x[[var_selected]]
                              return(x)})
   paths <- l
-  cell_id <- na.omit(data.frame(cell_id=1:ncell(x), as.data.frame(s[[1]][[1]])))[,'cell_id']
+  cell_id <- na.omit(data.frame(cell_id=1:ncell(x), as.data.frame(raster(s[[1]]))))[,'cell_id']
 
-  #df <- lapply(s,function(x){na.omit(as.data.frame(x))})
-  grid <- raster(s[[1]])
+  grid <- s[[1]]
+  grid[] <- ifelse(is.na(grid[]),NA,0)
 
   x <- list(predictors_names=var_selected,
             coords=coords,
@@ -131,20 +132,37 @@ scenarios.character <- function(x, extension='.tif$', recursive=T, scenarios_nam
 }
 
 #' @export
-scenarios.list <- function(x, ...){
+scenarios.list <- function(x, var_selected=NULL, ...){
+  s <- x
   if(class(s[[1]]) == 'RasterStack'){
-    s <- x
     resolution <- res(s[[1]])
     epsg <- as.character(crs(s[[1]]))
     coords <- coordinates(s[[1]])
     bbox <- bbox(s[[1]])[c(1,3,2,4)]
 
-    if(length(unique(l)) == length(l)){scenarios_names <- basename(l)} else {paste0('scenario_',1:length(l))}
-    names(s) <- scenarios_names
-    paths <- l
-    cell_id <- na.omit(data.frame(cell_id=1:ncell(x), df))[,'cell_id']
+    if(is.null(var_selected)){
+      var_selected <- names(s[[1]])
+    }
 
-    grid <- raster(s[[1]])
+    s <- lapply(s, function(x){x <- x[[var_selected]]
+                               return(x)})
+    paths <- NULL
+    cell_id <- na.omit(data.frame(cell_id=1:ncell(s[[1]]), as.data.frame(raster(s[[1]]))))[,'cell_id']
+
+    grid <- s[[1]]
+    grid[] <- ifelse(is.na(grid[]),NA,0)
+
+    x <- list(predictors_names=var_selected,
+              coords=coords,
+              bbox=bbox,
+              resolution=resolution,
+              epsg=epsg,
+              cell_id=cell_id,
+              paths=paths,
+              grid=grid,
+              data=s)
+    scen <- .scenarios(x)
+    return(scen)
   }
 
   if(class(s[[1]]) == 'data.frame'){
