@@ -214,10 +214,11 @@ train_sdm <- function(occ, pred=NULL, algo, ctrl=NULL, variables_selected=NULL, 
     sp::coordinates(it) <- col_names[c(2,3)]
     it <- extract(pred$grid[[selected_vars]], it)
   }
-  occ2 <- z$occurrences
-  col_names <- find_columns(occ2)
-  sp::coordinates(occ2) <- col_names[c(2,3)]
-  occ2 <- extract(pred$grid[[selected_vars]], occ2)
+
+  #occ2 <- z$occurrences
+  #col_names <- find_columns(occ2)
+  #sp::coordinates(occ2) <- col_names[c(2,3)]
+  #occ2 <- extract(pred$grid[[selected_vars]], occ2)
 
   ### parallel == TRUE
   #if(parallel){
@@ -267,10 +268,17 @@ train_sdm <- function(occ, pred=NULL, algo, ctrl=NULL, variables_selected=NULL, 
   #    return(l)
   #  }, mc.cores=6)
   #} else {
-    for(i in 1:length(z$pseudoabsences$data)){
-      pa <- z$pseudoabsences$data[[i]]
+
+  l <- sapply(z$spp_names, function(sp){
+    occ2 <- z$occurrences[z$occurrences$species==sp,]$cell_id
+    suppressWarnings(env <- select(cbind(st_centroid(st_as_sf(pred$data)),pred$grid),-'geometry.1'))
+    occ2 <- filter(env, env$cell_id %in% occ2)
+    occ2 <- select(occ2, all_of(selected_vars))
+    for(i in 1:length(z$pseudoabsences$data[[sp]])){
+      pa <- z$pseudoabsences$data[[sp]][[i]]
       pa <- pa[,match(colnames(occ2), colnames(pa))]
       x <- rbind(occ2,pa)
+      x <- select(as.data.frame(x),selected_vars)
       df <- as.factor(c(rep('presence', nrow(occ2)),rep('pseudoabsence',nrow(pa))))
 
       if(class(algo)=='list' & !'fit' %in% names(algo)){
@@ -296,18 +304,17 @@ train_sdm <- function(occ, pred=NULL, algo, ctrl=NULL, variables_selected=NULL, 
       } else {
         if(class(algo)=='list' & 'fit' %in% names(algo)){
           m <- caret::train(x,
-                     df,
-                     method = algo,
-                     trControl = ctrl)
+                            df,
+                            method = algo,
+                            trControl = ctrl)
           m$method <- algo2
           m <- list(m)
         } else {
           m <- lapply(algo, function(a){train(x,
-                                            df,
-                                            method = a,
-                                            trControl = ctrl) # lapply retorna diferentes valores de tuning (padronizar com seed?)
-                      })
-
+                                              df,
+                                              method = a,
+                                              trControl = ctrl) # lapply retorna diferentes valores de tuning (padronizar com seed?)
+          })
         }
       }
 
@@ -322,29 +329,40 @@ train_sdm <- function(occ, pred=NULL, algo, ctrl=NULL, variables_selected=NULL, 
       }
 
       l[[paste0("m",i)]] <- m
-  #  }
-  }
+      #  }
+    }
+    return(l)
+  }, simplify=TRUE, USE.NAMES=TRUE)
+
+##################################
 
   if(class(algo)=='list' & !'fit' %in% names(algo)){
     n <- length(algo)
     n <- paste0('layer_',n)
     m <- unlist(lapply(l, function(x)x[[n]]), recursive = F)
   } else {
-    m <- unlist(l, recursive = F)
+    if(ncol(l)>1){m <- apply(l,2, function(x){unlist(x, recursive = F)})
+    } else {
+      m <- unlist(l, recursive = F)
+    }
   }
 
-  metrics <- lapply(m, function(x){
-    bt <- names(x$bestTune)
-    res <- x$results[,!colnames(x$results) %in% bt]
-    mx <- apply(res,2,max)
-    r <- cbind(data.frame(algo=x$method),t(as.data.frame(mx)))
-    return(r)
-  })
-  metrics <- do.call(rbind, metrics)
-  metrics <- arrange(metrics, algo)
+  metrics <- sapply(z$spp_names,function(sp){
+    metrics <- lapply(m[[sp]], function(x){
+      bt <- names(x$bestTune)
+      res <- x$results[,!colnames(x$results) %in% bt]
+      mx <- apply(res,2,max)
+      r <- cbind(data.frame(algo=x$method),t(as.data.frame(mx)))
+      return(r)
+    })
+    metrics <- do.call(rbind, metrics)
+    metrics <- arrange(metrics, algo)
+    return(metrics)
+  }, simplify = FALSE, USE.NAMES = TRUE)
+
 
   m2 <- list(validation=list(method=ctrl$method, number=ctrl$number, metrics=metrics),
-             predictors=colnames(pa),
+             predictors=selected_vars,
              algorithms=algo2,
              models=m)
 

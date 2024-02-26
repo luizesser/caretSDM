@@ -36,11 +36,12 @@ occurrences.tibble <- function(x, ...){
 }
 
 #' @export
-.occurrences <- function(x, independent_test=NULL, ...){
+.occurrences <- function(x, independent_test=NULL, epsg=NULL, ...){
   col_names <- find_columns(x, ...)
   x <- x[,col_names]
   if(length(col_names)==2){ x <- cbind(rep('Sp_unknown',nrow(x)),x) }
   spp_names <- unique(x[,1])
+  if(is.null(epsg)){epsg <- 4326}
   if(!is.null(independent_test)){
     independent_test <- as.data.frame(independent_test)
     col_names <- find_columns(independent_test, ...)
@@ -50,11 +51,13 @@ occurrences.tibble <- function(x, ...){
     occ <- structure(list(occurrences=x,
                           spp_names=spp_names,
                           n_presences=table(x[,1]),
-                          independent_test=independent_test), class = "occurrences")
+                          independent_test=independent_test,
+                          epsg=epsg), class = "occurrences")
   } else {
     occ <- structure(list(occurrences=x,
                           spp_names=spp_names,
-                          n_presences=table(x[,1])), class = "occurrences")
+                          n_presences=table(x[,1]),
+                          epsg=epsg), class = "occurrences")
   }
 
   return(occ)
@@ -67,7 +70,7 @@ print.occurrences <- function(x) {
   cat(".......................\n")
   cat("Class                 : Occurrences\n")
   cat("Species Names         :", x$spp_names, "\n")
-  cat("Number of presences   :", table(x$occurrences[,1]), "\n")
+  cat("Number of presences   :", x$n_presences, "\n")
   if(!is.null(x$pseudoabsences)){cat("Pseudoabsence methods :\n",
                                      "        Method to obtain PAs       :", x$pseudoabsences$method, "\n",
                                      "        Number of PA sets          :", x$pseudoabsences$n_set, "\n",

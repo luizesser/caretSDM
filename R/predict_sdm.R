@@ -15,9 +15,11 @@
 #' @importFrom dplyr bind_cols
 #' @importFrom dplyr select
 #' @importFrom dplyr mutate
+#' @importFrom stringdist stringdist
+#' @importFrom gtools mixedsort
 #'
 #' @export
-predict_sdm <- function(m, scen=NULL, th=0.9, tp='prob', file=NULL, ensembles=TRUE){
+predict_sdm <- function(m, scen=NULL, th=0.9, tp='prob', file=NULL, ensembles=TRUE, add.current=TRUE){
   if(class(m)=='input_sdm'){
     y <- m$models
     scen <- m$scenarios
@@ -31,11 +33,11 @@ predict_sdm <- function(m, scen=NULL, th=0.9, tp='prob', file=NULL, ensembles=TR
   } else {
     if(is.numeric(th)){
       tm <- paste0('threshold: ',th)
-      th1 <- y$validation$metrics[y$validation$metrics[,'ROC']>th,]
+      th1 <- sapply(names(y$models), function(sp){y$validation$metrics[[sp]][y$validation$metrics[[sp]][,'ROC']>th,]}, simplify = FALSE, USE.NAMES = TRUE)
     }
   }
 
-  m1 <- subset(y$models,names(y$models) %in% rownames(th1))
+  m1 <- sapply(names(y$models), function(sp){subset(y$models[[sp]],names(y$models[[sp]]) %in% rownames(th1[[sp]]))}, simplify = FALSE, USE.NAMES = TRUE)
 
   if(length(m1)==0){
     stop("No models passing the threshold.")
@@ -43,14 +45,33 @@ predict_sdm <- function(m, scen=NULL, th=0.9, tp='prob', file=NULL, ensembles=TR
 
   #scen$df$cell_id <- seq_along(scen$df[,1])
   #p <- predict(m1, newdata=na.omit(scen$df), type=tp)
-  if(class(scen$data)=='data.frame'){scen$data <- list(current=scen$data)}
+  #if(class(scen$data)=='data.frame'){scen$data <- list(current=scen$data)}
+  find_closest_matches <- function(inputs, valid_inputs) {
+    closest_matches <- character(length(inputs))
+    for (i in seq_along(inputs)) {
+      distances <- stringdist::stringdist(inputs[i], valid_inputs)
+      closest_index <- which.min(distances)
+      closest_matches[i] <- valid_inputs[closest_index]
+      valid_inputs <- valid_inputs[-closest_index]
+    }
+    print(inputs)
+    print(closest_matches)
+    return(closest_matches)
+  }
+  if(add.current==TRUE){
+    closest_match <- find_closest_matches(st_dimensions(scen$data)$band$values, gtools::mixedsort(m$predictors$predictors_names))
+    st_dimensions(scen$data)$band$values <- closest_match
+    scen$data[['current']] <- m$predictors$data[['current']]
+  }
   p <- list()
   for (i in 1:length(scen$data)) {
     print(paste0('Projecting: ',i,'/',length(scen$data)))
-    x <- scen$data[[i]]
-    if(class(x)!='data.frame'){x <- as.data.frame(x)}
-    x <- na.omit(x[,y$predictors])
-    p[[i]] <- predict(m1, newdata=x, type=tp)
+    suppressWarnings(x <- cbind(st_coordinates(st_centroid(st_as_sf(scen$data[i]))),select(as.data.frame(st_as_sf(scen$data[i])),-'geometry')))
+    #x <- na.omit(x[,y$predictors])
+    #closest_match <- find_closest_matches(st_dimensions(scen$data)$band$values, gtools::mixedsort(m$predictors$predictors_names))
+    #colnames(x) <- c("x","y",closest_match)
+    x <- apply(x,2,function(x){as.numeric(gsub(NaN,NA,x))})
+    suppressWarnings(p[[i]] <- sapply(m1, function(m2){predict(m2, newdata=na.omit(x), type=tp)}, simplify=F, USE.NAMES = T))
     if(!ensembles){write.csv(p[[i]], paste0(names(scen$data)[i], '.csv'))}
   }
   names(p) <- names(scen$data)
@@ -70,33 +91,35 @@ predict_sdm <- function(m, scen=NULL, th=0.9, tp='prob', file=NULL, ensembles=TR
 
   ### INCLUIR ENSEMBLES AQUI ###
   if(ensembles){
-    e <- sapply(p, function(x){
-      # Prepare data
-      df <- bind_cols(x)
-      df <- select(df, contains('presence'))
-      # mean_occ_prob
-      mean_occ_prob <- rowMeans(df)
-      # wmean_AUC
-      wmean_AUC <- apply(df,1,function(x){stats::weighted.mean(x,th1$ROC)})
-      # Obtain Thresholds:
-      th2 <- lapply(m1, function(x){thresholder(x,
-                                               threshold = seq(0, 1, by = 0.01),
-                                               final = TRUE,
-                                               statistics = "all")})
-      th2 <- lapply(th2, function(x){ x <- x %>% mutate(th=Sensitivity+Specificity)
-                                      th <- x[x$th==max(x$th),"prob_threshold"]
-                                      if(length(th)>1){th <- mean(th)}
-                                      return(th)})
-      # binary
-      for (i in 1:ncol(df)) {
-        df[,i] <- ifelse(df[,i][]>th2[i],1,0)
-      }
-      committee_avg <- rowMeans(df)
+    e <- sapply(p, function(y){
+      e2 <- sapply(names(y), function(sp){
+        x <- y[[sp]]
+        # Prepare data
+        suppressMessages(df <- bind_cols(x))
+        df <- select(df, contains('presence'))
+        # mean_occ_prob
+        mean_occ_prob <- rowMeans(df)
+        # wmean_AUC
+        wmean_AUC <- apply(df,1,function(x){stats::weighted.mean(x,th1[[sp]]$ROC)})
+        # Obtain Thresholds:
+        suppressWarnings(th2 <- lapply(m1[[sp]], function(x){thresholder(x,
+                                                  threshold = seq(0, 1, by = 0.01),
+                                                  final = TRUE,
+                                                  statistics = "all")}))
+        th2 <- lapply(th2, function(x){ x <- x %>% mutate(th=Sensitivity+Specificity)
+        th <- x[x$th==max(x$th),"prob_threshold"]
+        if(length(th)>1){th <- mean(th)}
+        return(th)})
+        # binary
+        for (i in 1:ncol(df)) {
+          df[,i] <- ifelse(df[,i][]>th2[i],1,0)
+        }
+        committee_avg <- rowMeans(df)
 
-      # save everything
-      df <- data.frame(mean_occ_prob, wmean_AUC, committee_avg)
-      return(df)
-
+        # save everything
+        df <- data.frame(mean_occ_prob, wmean_AUC, committee_avg)
+        return(df)
+      }, simplify=FALSE, USE.NAMES=TRUE)
     }, USE.NAMES = T)
   }
   p2 <- list(thresholds=list(values=th1, method=tm, criteria=th),
@@ -134,7 +157,7 @@ print.predictions <- function(x) {
   cat(".........................\n")
   cat("Class             : Predictions\n")
   cat("Ensembles         :\n",
-      "        Methods  :", rownames(x$ensembles), "\n")
+      "        Methods  :", colnames(x$ensembles[1,1][[1]]), "\n")
   cat("Thresholds        :\n",
       "        Method   :", x$thresholds$method, "\n",
       "        Criteria :", x$thresholds$criteria, "\n",

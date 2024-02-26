@@ -7,9 +7,14 @@
 predictors(x, ...)
 }
 \arguments{
-\item{x}{A string with the path to GCM files.}
+\item{x}{A string with the path to GCM files or a RasterStack.}
+
+\item{study_area}{A string with the path to study area shapefile (.shp or .gpkg) or a sf polygon.
+If study_area is given, the function masks raster values to given study area.}
 
 \item{predictors_names}{A vector with names to be addressed to each predictor.}
+
+\item{rescaling}{A list of parameters to pass on rescaling function (optional).}
 }
 \value{
 A predictors object.

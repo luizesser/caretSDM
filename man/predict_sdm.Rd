@@ -10,7 +10,8 @@ predict_sdm(
   th = 0.9,
   tp = "prob",
   file = NULL,
-  ensembles = TRUE
+  ensembles = TRUE,
+  add.current = TRUE
 )
 }
 \arguments{

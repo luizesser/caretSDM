@@ -113,7 +113,7 @@ WorldClim_data <- function(period = 'current', variable = 'bioc', year = '2030',
       print(paste0('Importing current from folder...'))
       l[['current']] <- stack(list.files("input_data/WorldClim_data_current",pattern='.tif$', full.names=T))
       l[['current']] <- l[['current']][[mixedsort(names(l[['current']]))]]
-      names(l[['current']]) <- paste0('bio_', 1:19)
+      names(l[['current']]) <- paste0('bio', 1:19)
 
     }
   }
@@ -161,7 +161,7 @@ WorldClim_data <- function(period = 'current', variable = 'bioc', year = '2030',
             print(paste0('Importing ', nome, ' from folder...'))
             l[[nome]] <- stack(list.files("input_data/WorldClim_data_future",pattern=paste0(nome,'.tif$'), full.names=T))
             l[[nome]] <- l[[nome]][[mixedsort(names(l[[nome]]))]]
-            names(l[[nome]]) <- paste0('bio_', 1:19)
+            names(l[[nome]]) <- paste0('bio', 1:19)
           }
         }
       }

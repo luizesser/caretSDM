@@ -43,11 +43,11 @@ print.input_sdm <- function(x) {
   cat("Class                     : input_sdm\n")
   if('occurrences' %in% names(x)){
     cat("Species Names             :", x$occurrences$spp_names, "\n")
-    cat("Number of presences       :", table(x$occurrences$occurrences[,1]), "\n")
+    cat("Number of presences       :", x$occurrences$n_presences, "\n")
     if(!is.null(x$occurrences$pseudoabsences)){cat("Pseudoabsence methods     :\n",
                                                    "        Method to obtain PAs       :", x$occurrences$pseudoabsences$method, "\n",
                                                    "        Number of PA sets          :", x$occurrences$pseudoabsences$n_set, "\n",
-                                                   "        Number of PAs in each set  :", x$occurrences$pseudoabsences$n_pa, "\n" )}
+                                                   "        Number of PAs in each set  :", as.numeric(x$occurrences$pseudoabsences$n_pa), "\n" )}
     if(!is.null(x$occurrences$background)){cat("Background sets           :", length(x$occurrences$background), "\n")}
     if('independent_test' %in% names(x$occurrences)){cat("Independent Test          : TRUE (number of records = ",nrow(x$occurrences$independent_test),")\n")}
     if(!is.null(x$occurrences$data_cleaning)){cat(cat("Data Cleaning             : "), cat(x$occurrences$data_cleaning, sep=', '), "\n")}

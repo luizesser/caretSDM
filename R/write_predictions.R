@@ -11,7 +11,6 @@
 #' @author Luíz Fernando Esser (luizesser@gmail.com)
 #' https://luizfesser.wordpress.com
 #'
-#' @import caret
 #' @importFrom dplyr bind_cols
 #' @importFrom dplyr select
 #' @importFrom dplyr mutate

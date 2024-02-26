@@ -22,7 +22,7 @@ pseudoabsences(
 
 \item{n_set}{Number of sets of pseudoabsence to create}
 
-\item{n_pa}{Number of pseudoabsences to be generated in each dataset}
+\item{n_pa}{Number of pseudoabsences to be generated in each dataset (vector of size number of species, with species names)}
 }
 \value{
 A occurrences object with pseudoabsence data

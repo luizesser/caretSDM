@@ -6,7 +6,7 @@
 #' @param pred A predictors object
 #' @param method Method to create pseudoabsences
 #' @param n_set Number of sets of pseudoabsence to create
-#' @param n_pa Number of pseudoabsences to be generated in each dataset
+#' @param n_pa Number of pseudoabsences to be generated in each dataset (vector of size number of species, with species names)
 #'
 #' @return A occurrences object with pseudoabsence data
 #'
@@ -25,10 +25,10 @@ pseudoabsences <- function(occ, pred=NULL, method='random', n_set=10, n_pa=NULL,
   } else {
     y <- occ
   }
-  if(!is.null(y$pseudoabsences)){
+  if(!is.null(occ$pseudoabsences)){
     warning('Previous pseudoabsence element on Occurrences object was overwrited.', call.=F)
   }
-  if(is.null(n_pa)){n_pa <- as.numeric(y$n_presences)}
+  if(is.null(n_pa)){n_pa <- y$n_presences}
   if(is.null(variables_selected)){
     selected_vars <- pred$predictors_names
     print(cat('Using all variables available: ', selected_vars))
@@ -45,54 +45,67 @@ pseudoabsences <- function(occ, pred=NULL, method='random', n_set=10, n_pa=NULL,
     selected_vars <- unlist(pred$variable_selection[attributes(pred$variable_selection)$names %in% variables_selected], rec=F)[[paste0(variables_selected,'.selected_variables')]]
     print(cat('Using variables selected by ',variables_selected,': ', selected_vars))
   }
-  df <- na.omit(pred$data)
-  df <- df[,selected_vars]
+  suppressWarnings(df <- st_centroid(st_as_sf(filter(na.omit(pred$data), band %in% selected_vars))))
+  df <- select(cbind(pred$grid,df), -'geometry.1')
+
   if(method=="random"){
-    l <- list()
-    for(i in 1:n_set){
-      l[[i]] <- df[sample(rownames(df), size=n_pa),]
-    }
+    l <- sapply(y$spp_names,function(sp){
+        l <- list()
+        for(j in 1:n_set){
+          if(n_pa[sp] < nrow(df)){
+            samp <- sample(df$cell_id, n_pa[sp])
+          } else {
+            samp <- sample(df$cell_id, n_pa[sp], replace = T)
+          }
+          l[[j]] <- df[df$cell_id %in% samp,]
+        }
+        return(l)
+      }, simplify = FALSE, USE.NAMES = TRUE)
     pa <- .pseudoabsences(y,l, method, n_set, n_pa)
   }
   if(method=="bioclim"){
     if(class(occ)=='input_sdm'){
-      occ2 <- y$occurrences
-      col_names <- find_columns(occ2)
-      sp::coordinates(occ2) <- col_names[c(2,3)]
-      occ2 <- extract(pred$grid[[selected_vars]], occ2)
-
-      model <- dismo::bioclim(x=occ2)
-      p <- predict(model, pred$grid[[selected_vars]])
-      p[p[]>0] <- NA
-      env2 <- as.data.frame(pred$grid[[selected_vars]])
-      env2 <- env2[!is.na(p[]),]
-      l <- list()
-      if(nrow(env2) > nrow(occ2)){
-        for(i in 1:n_set){l[[i]] <- env2[sample(nrow(env2), size=n_pa),]}
-      } else {
-        for(i in 1:n_set){l[[i]] <- env2[sample(nrow(env2), size=n_pa, replace = T),]}
-      }
+      l <- sapply(y$spp_names,function(sp){
+        occ2 <- df[df$cell_id %in% y$occurrences[y$occurrences$species==sp,]$cell_id,]
+        model <- dismo::bioclim(x=select(as.data.frame(occ2), all_of(selected_vars)))
+        p <- predict(model, as.data.frame(df))
+        p[p[]>0] <- NA
+        p <- data.frame(cell_id=df$cell_id,pred=p)
+        p <- p[!is.na(p$pred),]
+        l <- list()
+        for(j in 1:n_set){
+          if(n_pa[sp] < length(p$cell_id)){
+            samp <- sample(p$cell_id, n_pa[sp])
+          } else {
+            samp <- sample(p$cell_id, n_pa[sp], replace = T)
+          }
+          l[[j]] <- df[df$cell_id %in% samp,]
+        }
+        return(l)
+      }, simplify = FALSE, USE.NAMES = TRUE)
     }
     pa <- .pseudoabsences(y,l, method, n_set, n_pa)
   }
   if(method=="mahal.dist"){
     if(class(occ)=='input_sdm'){
-      occ2 <- y$occurrences
-      col_names <- find_columns(occ2)
-      sp::coordinates(occ2) <- col_names[c(2,3)]
-      occ2 <- extract(pred$grid[[selected_vars]], occ2)
-
-      model <- dismo::mahal(x=occ2)
-      p <- predict(model, pred$grid[[selected_vars]])
-      p[p[]>0] <- NA
-      env2 <- as.data.frame(pred$grid[[selected_vars]])
-      env2 <- env2[!is.na(p[]),]
-      l <- list()
-      if(nrow(env2) > nrow(occ2)){
-        for(i in 1:n_set){l[[i]] <- env2[sample(nrow(env2), size=n_pa),]}
-      } else {
-        for(i in 1:n_set){l[[i]] <- env2[sample(nrow(env2), size=n_pa, replace = T),]}
-      }
+      l <- sapply(y$spp_names,function(sp){
+        occ2 <- df[df$cell_id%in%y$occurrences[y$occurrences$species==sp,]$cell_id,]
+        model <- dismo::mahal(x=select(as.data.frame(occ2), all_of(selected_vars)))
+        p <- predict(model, as.data.frame(df))
+        p[p[]<0] <- NA # A value of 1 means that the lower distance we are considering is 1 standard deviation from the mean in each dimention.
+        p <- data.frame(cell_id=df$cell_id,pred=p)
+        p <- p[!is.na(p$pred),]
+        l <- list()
+        for(j in 1:n_set){
+          if(n_pa[sp] < length(p$cell_id)){
+            samp <- sample(p$cell_id, n_pa[sp])
+          } else {
+            samp <- sample(p$cell_id, n_pa[sp], replace = T)
+          }
+          l[[j]] <- df[df$cell_id %in% samp,]
+        }
+        return(l)
+      }, simplify = FALSE, USE.NAMES = TRUE)
     }
     pa <- .pseudoabsences(y,l, method, n_set, n_pa)
   }

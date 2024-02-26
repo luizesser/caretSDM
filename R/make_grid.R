@@ -12,6 +12,7 @@
 #' https://luizfesser.wordpress.com
 #'
 #' @import sf
+#' @import stars
 #' @import dplyr
 #'
 #' @export

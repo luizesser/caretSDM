@@ -26,31 +26,32 @@ tsne_sdm <- function(occ, pred, selected_vars=NULL){
   if(is.null(selected_vars)){selected_vars <- names(pred$grid)} else {
     if(selected_vars=='vif'){selected_vars <- pred$variable_selection$vif$selected_variables}
   }
+  tsne_sp <- sapply(y$spp_names,function(sp){
+    pa_id <- lapply(y$pseudoabsences$data[[sp]], function(x){x$cell_id})
+    p <- y$occurrences[y$occurrences$species==sp,]$cell_id
+    env <- select(cbind(pred$grid,st_as_sf(pred$data)),-'geometry.1')
+    p <- filter(env, env$cell_id %in% p)
+    Presence <- c(rep('Presence', nrow(p)),rep('Pseudoabsence', length(pa_id[[1]])))
 
-  pa <- lapply(y$pseudoabsences$data, function(x){select(x, all_of(selected_vars))})
-  p <- i$occurrences$occurrences
-  cols <- find_columns(p)
-  coordinates(p) <- cols[2:3]
-  p <- extract(pred$grid[[selected_vars]], p)
-  df_tsne <- lapply(pa, function(x){
-    df <- rbind(p, x)
-    Presence <- c(rep(1, nrow(p)),rep(0, nrow(x)))
-    df <- cbind(Presence,df)})
+    df_tsne <- lapply(pa_id, function(id){
+      pa <- filter(env, env$cell_id %in% id)
+      df <- rbind(p, pa)
+      df <- cbind(Presence,df)})
 
-  perp = round((nrow(df_tsne[[1]]) ^ (1/2)), digits=0)
+    perp = round((nrow(df_tsne[[1]]) ^ (1/2)), digits=0)
+    plot_list <- lapply(df_tsne, function(ts){
+      ts2 <- select(as.data.frame(ts),all_of(selected_vars))
+      ts2 <- as.matrix(ts2[,selected_vars])
+      tsne_bg <- Rtsne(ts2, perplexity = perp)
+      df <- as.data.frame(tsne_bg$Y)
+      tsne_result <- ggplot(df, aes(x=V1,y=V2)) +
+        xlab("tSNE Dim 1") +
+        ylab("tSNE Dim 2") +
+        ggtitle("Presences and Pseudoabsences's t-SNE") +
+        geom_point(aes(col=Presence)) +
+        scale_color_manual(values=c("gold", "darkblue"))
+    })
+  }, simplify = FALSE, USE.NAMES = TRUE)
 
-  Groups <- c(rep("Presence", nrow(p)),rep("Pseudoabsence", nrow(pa[[1]])))
-
-  plot_list <- lapply(df_tsne, function(ts){
-    tsne_bg <- Rtsne(as.matrix(ts), perplexity = perp)
-    df <- as.data.frame(tsne_bg$Y)
-    tsne_result <- ggplot(df, aes(x=V1,y=V2)) +
-      xlab("tSNE Dim 1") +
-      ylab("tSNE Dim 2") +
-      ggtitle("Presences and Pseudoabsences's t-SNE") +
-      geom_point(aes(col=Groups)) +
-      scale_color_manual(values=c("gold", "darkblue"))
-  })
-
-  return(plot_list)
+  return(tsne_sp)
 }
