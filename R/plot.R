@@ -16,19 +16,40 @@
 #' @import viridis
 #' @importFrom gtools mixedsort
 #' @importFrom data.table rbindlist
+#' @importFrom stringdist stringdist
 #'
-#' @exportS3Method base::plot
-plot.input_data <- function(x) {
-  tmp <- plot()
-  return(tmp)
+#' @export
+plot.input_data <- function(x, what=NULL, spp_name=NULL, scenario=NULL, id=NULL, pa=TRUE, ensemble_type='mean_occ_prob') {
+  if(is.null(what)){
+    if("predictions" %in% names(x)){
+      if("ensembles" %in% names(x$predictions)){
+        #tmp <- plot(x$predictions, spp_name, scenario, id, ensemble=TRUE, ensemble_type) # plot ensembles
+        plot(x$predictions, spp_name, scenario, id, ensemble=TRUE, ensemble_type)
+      } else {
+        #tmp <- plot(x$predictions, spp_name, scenario, id, ensemble=FALSE) # plot predictions
+        plot(x$predictions, spp_name, scenario, id, ensemble=FALSE)
+      }
+    } else if("models" %in% names(x)) {
+      #tmp <- plot(x$models, spp_name, id)# plot models
+    } else if("occurrences" %in% names(x)){
+      #tmp <- plot(x$occurrences, spp_name, pa)# plot occurrences
+    }
+  } else {
+    valid_inputs <- c('predictions', 'ensembles', 'models', 'occurrences')
+    what <- stringdist::stringdist(what, valid_inputs)
+    #tmp <- plot(x[[what]])# plot what
+    plot(x[[what]])
+  }
+  #return(tmp)
 }
 
 #' @exportS3Method base::plot
-plot.occurrences <- function(x) {
+plot.occurrences <- function(x, spp_name=NULL, pa=TRUE) {
   df <- x$occurrences
-  cls <- find_columns(df)
-  coordinates(df) <- cls[2:3]
-  tmp <- plot(df)
+  valid_spp <- unique(df$species)
+  if(!is.null(spp_name)){spp_name <- valid_spp[which.min(stringdist::stringdist(spp_name, valid_spp))]} else {spp_name <- valid_spp[1]}
+  df <- filter(df,species==spp_name)
+  tmp <- plot(df['species'])
   return(tmp)
 }
 
@@ -83,37 +104,25 @@ plot.models <- function(x) {
 }
 
 #' @exportS3Method base::plot
-plot.predictions <- function(x, scenario=NULL, id=NULL, ensemble=NULL) {
-  r <- x$grid[[1]]
-  if(!is.null(scenario)){
-    if(scenario %in% names(x$predictions)){
-      if(is.null(ensemble)){
-        if(is.null(id)){
-          r[] <- ifelse(is.na(r[]),NA,x$predictions[[scenario]][[1]]$presence)
-          tmp <- plot(r)
-        } else {
-          r[] <- ifelse(is.na(r[]),NA,x$predictions[[scenario]][[id]]$presence)
-          tmp <- plot(r)
-        }
+plot.predictions <- function(x, spp_name=NULL, scenario=NULL, id=NULL, ensemble=TRUE, ensemble_type='mean_occ_prob') {
+  valid_spp <- names(x$predictions[[1]])
+  valid_scen <- names(x$predictions)
+  ens <- ifelse(ensemble, 'ensembles', 'predictions')
+  # valid_id
+  grd <- x$grid
+  if(!is.null(scenario)){scenario <- valid_scen[which.min(stringdist::stringdist(scenario, valid_scen))]} else {scenario <- valid_scen[1]}
+  if(!is.null(spp_name)){spp_name <- valid_spp[which.min(stringdist::stringdist(spp_name, valid_spp))]} else {spp_name <- valid_spp[1]}
 
-      } else {
-        r[] <- ifelse(is.na(r[]),NA,x$ensembles[ensemble,scenario])
-        tmp <- plot(r)
-      }
-    }
+  if(ensemble){
+    v <- x[[ens]][[spp_name,scenario]][,ensemble_type]
+    cell_id <- v$cell_id
+    grd <- filter(grd, grd$cell_id==cell_id)
+    grd['result'] <- v
   } else {
-    if(is.null(ensemble)){
-      if(is.null(id)){
-        r[] <- ifelse(is.na(r[]),NA,x$predictions[[1]][[1]]$presence)
-        tmp <- plot(r)
-      } else {
-        r[] <- ifelse(is.na(r[]),NA,x$predictions[[1]][[id]]$presence)
-        tmp <- plot(r)
-      }
-    } else {
-      r[] <- ifelse(is.na(r[]),NA,x$ensembles[ensemble,1])
-      tmp <- plot(r)
-    }
+    v <- x[[ens]][[scenario]][[spp_name]][[id]]$presence
+    cell_id <- v$cell_id
+    grd <- filter(grd, grd$cell_id==cell_id)
+    grd['result'] <- v
   }
-  return(tmp)
+  return(plot(st_as_stars(grd['result'])))
 }

@@ -310,7 +310,7 @@ train_sdm <- function(occ, pred=NULL, algo, ctrl=NULL, variables_selected=NULL, 
           m$method <- algo2
           m <- list(m)
         } else {
-          m <- lapply(algo, function(a){train(x,
+          m <- lapply(algo, function(a){train(x, # usar sapply para que o id seja mais organizado
                                               df,
                                               method = a,
                                               trControl = ctrl) # lapply retorna diferentes valores de tuning (padronizar com seed?)

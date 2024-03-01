@@ -4,7 +4,15 @@
 \alias{plot.input_data}
 \title{S3 Methods for plot}
 \usage{
-plot.input_data(x)
+plot.input_data(
+  x,
+  what = NULL,
+  spp_name = NULL,
+  scenario = NULL,
+  id = NULL,
+  pa = TRUE,
+  ensemble_type = "mean_occ_prob"
+)
 }
 \arguments{
 \item{x}{Object to be plotted.}

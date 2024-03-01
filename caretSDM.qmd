@@ -209,3 +209,9 @@ i <- train_sdm(i,  algo=c('svmLinear2','mda','nnet','nb', 'kknn'), variables_sel
 i <- predict_sdm(i)
 i
 ```
+
+Generate Maps:
+
+```{r generating_maps}
+plot(i)
+```
