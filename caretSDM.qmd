@@ -160,10 +160,10 @@ st_crs(study_area) <- st_crs(4326)
 i <- input_sdm(occurrences(occ_data), 
                predictors(folder_current, 
                           study_area = study_area,
-                          rescaling=list(cellsize=500000, epsg=6933)), 
+                          rescaling=list(cellsize=100000, epsg=6933)), 
                scenarios(folder_future,
                          study_area = study_area,
-                         rescaling=list(cellsize=500000, epsg=6933)))
+                         rescaling=list(cellsize=100000, epsg=6933)))
 
 i
 ```
@@ -213,5 +213,5 @@ i
 Generate Maps:
 
 ```{r generating_maps}
-plot(i)
+plot.input_sdm(i)
 ```

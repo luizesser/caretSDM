@@ -72,9 +72,10 @@ predict_sdm <- function(m, scen=NULL, th=0.9, tp='prob', file=NULL, ensembles=TR
     #colnames(x) <- c("x","y",closest_match)
     x <- apply(x,2,function(x){as.numeric(gsub(NaN,NA,x))})
     suppressWarnings(p[[i]] <- sapply(m1, function(m2){
-      p <- predict(m2, newdata=na.omit(x), type=tp)
-      cell_id <- scen$cell_id[!is.nan(scen$data[[scen$data[i]]])]
-      p <- cbind(cell_id,p)
+      p2 <- predict(m2, newdata=na.omit(x), type=tp)
+      cell_id <- scen$cell_id[!is.nan(as.data.frame(st_as_sf(scen$data[i]))[,1])]
+      p2 <- sapply(p2, function(x){cbind(cell_id, x)}, simplify = F, USE.NAMES = T)
+      return(p2)
     }, simplify=F, USE.NAMES = T))
 
     if(!ensembles){write.csv(p[[i]], paste0(names(scen$data)[i], '.csv'))}
