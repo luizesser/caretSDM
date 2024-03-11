@@ -4,7 +4,7 @@
 #'
 #' @param pred A predictors object
 #' @param th Threshold
-#' @param maxobservations Number of sets of pseudoabsence to create
+#' @param maxobservations Max observations to use to calculate the VIF
 #'
 #' @return A predictors object with VIF data
 #'

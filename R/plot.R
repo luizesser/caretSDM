@@ -18,7 +18,7 @@
 #' @importFrom data.table rbindlist
 #' @importFrom stringdist stringdist
 #'
-#' @export
+#' @exportS3Method base::plot
 plot.input_sdm <- function(x, what=NULL, spp_name=NULL, scenario=NULL, id=NULL, pa=TRUE, ensemble_type='mean_occ_prob') {
   if(is.null(what)){
     if("predictions" %in% names(x)){
@@ -42,7 +42,7 @@ plot.input_sdm <- function(x, what=NULL, spp_name=NULL, scenario=NULL, id=NULL, 
   }
 }
 
-#' @export
+#' @exportS3Method base::plot
 plot.occurrences <- function(x, spp_name=NULL, pa=TRUE) {
   df <- x$occurrences
   valid_spp <- unique(df$species)
@@ -52,16 +52,16 @@ plot.occurrences <- function(x, spp_name=NULL, pa=TRUE) {
   return(tmp)
 }
 
-#' @export
+#' @exportS3Method mapview::mapview
 mapview.occurrences <- function(x) {
   df <- x$occurrences
   cls <- find_columns(df)
   coordinates(df) <- cls[2:3]
-  tmp <- mapview(df, zcol = cls[1], layer.name = "Species")
+  tmp <- mapview::mapview(df, zcol = cls[1], layer.name = "Species")
   return(tmp)
 }
 
-#' @export
+#' @exportS3Method base::plot
 plot.predictors <- function(x) {
   st <- x$grid
   if("variable_selection" %in% names(x)){st <- st[[x$variable_selection$vif$selected_variables]]}
@@ -70,7 +70,7 @@ plot.predictors <- function(x) {
   return(tmp)
 }
 
-#' @export
+#' @exportS3Method base::plot
 plot.models <- function(x) {
   ids <- x$validation$metrics
   alg <- x$algorithms
@@ -102,7 +102,7 @@ plot.models <- function(x) {
   return(tmp)
 }
 
-#' @export
+#' @exportS3Method base::plot
 plot.predictions <- function(x, spp_name=NULL, scenario=NULL, id=NULL, ensemble=TRUE, ensemble_type='mean_occ_prob') {
   valid_spp <- names(x$predictions[[1]])
   valid_scen <- names(x$predictions)

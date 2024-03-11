@@ -328,7 +328,7 @@ train_sdm <- function(occ, pred=NULL, algo, ctrl=NULL, variables_selected=NULL, 
         indep_val[[paste0("m",i)]] <- iv
       }
 
-      l[[paste0("m",i)]] <- m
+      l[[paste0("m",i,".")]] <- m
       #  }
     }
     return(l)
@@ -341,10 +341,7 @@ train_sdm <- function(occ, pred=NULL, algo, ctrl=NULL, variables_selected=NULL, 
     n <- paste0('layer_',n)
     m <- unlist(lapply(l, function(x)x[[n]]), recursive = F)
   } else {
-    if(ncol(l)>1){m <- apply(l,2, function(x){unlist(x, recursive = F)})
-    } else {
-      m <- unlist(l, recursive = F)
-    }
+      m <- apply(l,2, function(x){unlist(x, recursive = F)})
   }
 
   metrics <- sapply(z$spp_names,function(sp){
@@ -357,6 +354,7 @@ train_sdm <- function(occ, pred=NULL, algo, ctrl=NULL, variables_selected=NULL, 
     })
     metrics <- do.call(rbind, metrics)
     metrics <- arrange(metrics, algo)
+    metrics <- mutate(metrics, TSS=Sens+Spec-1) # TSS
     return(metrics)
   }, simplify = FALSE, USE.NAMES = TRUE)
 

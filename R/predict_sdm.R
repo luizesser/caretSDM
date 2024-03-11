@@ -113,9 +113,9 @@ predict_sdm <- function(m, scen=NULL, th=0.9, tp='prob', file=NULL, ensembles=TR
                                                   final = TRUE,
                                                   statistics = "all")}))
         th2 <- lapply(th2, function(x){ x <- x %>% mutate(th=Sensitivity+Specificity)
-        th <- x[x$th==max(x$th),"prob_threshold"]
-        if(length(th)>1){th <- mean(th)}
-        return(th)})
+                                        th <- x[x$th==max(x$th),"prob_threshold"]
+                                        if(length(th)>1){th <- mean(th)}
+                                        return(th)})
         # binary
         for (i in 1:ncol(df)) {
           df[,i] <- ifelse(df[,i][]>th2[i],1,0)
@@ -123,7 +123,7 @@ predict_sdm <- function(m, scen=NULL, th=0.9, tp='prob', file=NULL, ensembles=TR
         committee_avg <- rowMeans(df)
 
         # save everything
-        df <- data.frame(mean_occ_prob, wmean_AUC, committee_avg)
+        df <- data.frame(cell_id=x[[1]]$cell_id, mean_occ_prob, wmean_AUC, committee_avg)
         return(df)
       }, simplify=FALSE, USE.NAMES=TRUE)
     }, USE.NAMES = T)

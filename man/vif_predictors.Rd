@@ -17,7 +17,7 @@ vif_predictors(
 
 \item{th}{Threshold}
 
-\item{maxobservations}{Number of sets of pseudoabsence to create}
+\item{maxobservations}{Max observations to use to calculate the VIF}
 }
 \value{
 A predictors object with VIF data

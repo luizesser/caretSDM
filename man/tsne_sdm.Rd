@@ -4,7 +4,7 @@
 \alias{tsne_sdm}
 \title{tSNE}
 \usage{
-tsne_sdm(occ, pred, selected_vars = NULL)
+tsne_sdm(occ, pred = NULL, variables_selected = NULL)
 }
 \arguments{
 \item{occ}{A occurrences object or an input_sdm object.}

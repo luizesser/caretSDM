@@ -16,15 +16,18 @@
 #' @importFrom Rtsne Rtsne
 #'
 #' @export
-tsne_sdm <- function(occ, pred, selected_vars=NULL){
+tsne_sdm <- function(occ, pred=NULL, variables_selected=NULL){
   if(class(occ)=='input_sdm'){
     y <- occ$occurrences
     pred <- occ$predictors
   } else {
     y <- occ
+    if(is.null(pred)){
+      stop(warning('pred not found'))
+    }
   }
-  if(is.null(selected_vars)){selected_vars <- names(pred$grid)} else {
-    if(selected_vars=='vif'){selected_vars <- pred$variable_selection$vif$selected_variables}
+  if(is.null(variables_selected)){variables_selected <- names(pred$grid)} else {
+    if(variables_selected=='vif'){variables_selected <- pred$variable_selection$vif$selected_variables}
   }
   tsne_sp <- sapply(y$spp_names,function(sp){
     pa_id <- lapply(y$pseudoabsences$data[[sp]], function(x){x$cell_id})
@@ -40,8 +43,8 @@ tsne_sdm <- function(occ, pred, selected_vars=NULL){
 
     perp = round((nrow(df_tsne[[1]]) ^ (1/2)), digits=0)
     plot_list <- lapply(df_tsne, function(ts){
-      ts2 <- select(as.data.frame(ts),all_of(selected_vars))
-      ts2 <- as.matrix(ts2[,selected_vars])
+      ts2 <- select(as.data.frame(ts),all_of(variables_selected))
+      ts2 <- as.matrix(ts2[,variables_selected])
       tsne_bg <- Rtsne(ts2, perplexity = perp)
       df <- as.data.frame(tsne_bg$Y)
       tsne_result <- ggplot(df, aes(x=V1,y=V2)) +

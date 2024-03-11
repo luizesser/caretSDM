@@ -4,7 +4,7 @@
 \alias{sdm_as_stars}
 \title{sdm_as_X functions to transform caretSDM data into other classes.}
 \usage{
-sdm_as_stars(x, what = NULL)
+sdm_as_stars(x, what = NULL, spp = NULL, scen = NULL, id = NULL, ens = NULL)
 }
 \arguments{
 \item{x}{caretSDM object}

@@ -38,7 +38,13 @@ scenarios.RasterStack <- function(x, study_area=NULL, predictors_names=NULL, res
   xb <- x
   x <- st_as_stars(cbind(coordinates(x),as.data.frame(x)))
   st_crs(x) <- as.character(crs(xb))
-
+  if(is.null(scenarios_names)){
+    if(length(unique(l)) == length(l)){
+      scenarios_names <- basename(l)
+    } else {
+      paste0('scenario_',1:length(l))
+    }
+  }
   names(x) <- scenarios_names
   grd <- NULL
   if(!is.null(study_area) & !is.null(rescaling)){
@@ -148,11 +154,26 @@ scenarios.data.frame <- function(x, study_area=NULL, predictors_names=NULL, resc
   return(scen)
 }
 
+#' @export
+scenarios.SpatRaster <- function(x, study_area=NULL, predictors_names=NULL, rescaling=NULL){
+  x <- st_as_stars(x)
+  names(st_dimensions(x)) <- c('x', 'y', 'band')
+  occ <- scenarios(x, study_area, predictors_names, rescaling)
+  return(occ)
+}
+
+#' @export
 scenarios.stars <- function(x, study_area=NULL, predictors_names=NULL, rescaling=NULL, scenarios_names=NULL){
   if(is.null(predictors_names)){predictors_names <- names(x)}
-  if(!is.null(study_area) & is.null(rescaling)){x <- x[study_area,]}
-  grd <- NULL
-  if(!is.null(study_area) & !is.null(rescaling)){
+  if(!is.null(study_area) & is.null(rescaling)){
+    if(!all(st_is_valid(study_area))){study_area <- st_make_valid(study_area)}
+    suppressWarnings(x <- st_crop(x,st_as_sf(st_union(study_area))))
+    resolution <- st_res(x)
+    coords <- st_coordinates(x)[,c('x','y')]
+    df <- as.data.frame(split(x,'band'))
+    cell_id <- na.omit(data.frame(cell_id=1:nrow(df), df))[,'cell_id']
+    grd <- st_make_grid(x, n=c(ncol(x),nrow(x)))
+  } else if(!is.null(study_area) & !is.null(rescaling)){
     # criar grid a partir de study_area
     cellsize <- rescaling$cellsize
     if(is.null(rescaling$epsg)){crs2 <- as.character(st_crs(x))[1]} else {crs2 <- as.character(st_crs(rescaling$epsg))[1]}
@@ -165,7 +186,6 @@ scenarios.stars <- function(x, study_area=NULL, predictors_names=NULL, rescaling
     if(is.na(st_crs(grd))){st_crs(grd)<-st_crs(x)}
     if(!st_crs(grd)==st_crs(x)){x <- st_transform(x, crs=crs2)}
     x <- aggregate(x, grd, FUN = function(y){mean(na.omit(y))})
-    #x %>% split("band") %>% as.data.frame() %>% head()
     resolution <- c(x=cellsize,y=cellsize)
     suppressWarnings(coords <- as.data.frame(st_coordinates(st_centroid(grd))))
     cell_id <- grd$cell_id
@@ -221,23 +241,6 @@ scenarios.character <- function(x, study_area=NULL, predictors_names=NULL, resca
 #' @export
 scenarios.list <- function(x, study_area=NULL, predictors_names=NULL, rescaling=NULL, scenarios_names=NULL, ...){
   s <- x
-
-  #if(class(s[[1]]) == 'RasterStack'){
-  #  s <- sapply(s, function(x){scenarios.RasterStack(x, study_area=study_area, predictors_names=predictors_names, rescaling=rescaling)}, simplify = F, USE.NAMES = TRUE)
-  #}
-  #
-  #if(class(s[[1]]) == 'stars'){
-  #  s <- sapply(s, function(x){scenarios.stars(x, study_area=study_area, predictors_names=predictors_names, rescaling=rescaling)}, simplify = F, USE.NAMES = TRUE)
-  #}
-#
-  #if(class(s[[1]]) == 'data.frame'){
-  #  s <- sapply(s, function(x){scenarios.data.frame(x, study_area=study_area, predictors_names=predictors_names, rescaling=rescaling)}, simplify = F, USE.NAMES = TRUE)
-  #}
-#
-  #if(class(s[[1]]) == 'character'){
-  #  s <- sapply(s, function(x){scenarios.character(x, study_area=study_area, predictors_names=predictors_names, rescaling=rescaling, ...)}, simplify = F, USE.NAMES = TRUE)
-  #}
-
   s <- sapply(s, function(x){scenarios(x, study_area=study_area, predictors_names=predictors_names, rescaling=rescaling, ...)}, simplify = F, USE.NAMES = TRUE)
 
   coords <- lapply(s, function(x){x$coords})

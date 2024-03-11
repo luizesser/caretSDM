@@ -25,8 +25,8 @@ predictors <- function(x, ...){
   UseMethod("predictors")
 }
 
-#' @exportS3Method
-predictors.RasterStack <- function(x, study_area=NULL, predictors_names=NULL, rescaling=NULL){
+#' @export
+predictors.RasterStack <- function(x, study_area=NULL, vars_study_area=NULL, predictors_names=NULL, rescaling=NULL){
   if(is.null(predictors_names)){predictors_names <- names(x)}
   if(!is.null(study_area) & is.null(rescaling)){x <- mask(crop(x, study_area), study_area)}
   xb <- x
@@ -80,18 +80,45 @@ predictors.RasterStack <- function(x, study_area=NULL, predictors_names=NULL, re
   return(occ)
 }
 
-#' @exportS3Method
-predictors.character <- function(x, study_area=NULL, predictors_names=NULL, rescaling=NULL){
+#' @export
+predictors.SpatRaster <- function(x, study_area=NULL, vars_study_area=NULL, predictors_names=NULL, rescaling=NULL){
+  x <- st_as_stars(x)
+  names(x) <- 'current'
+  names(st_dimensions(x)) <- c('x', 'y', 'band')
+  occ <- predictors(x, study_area, vars_study_area, predictors_names, rescaling)
+  return(occ)
+}
+
+#' @export
+predictors.character <- function(x, study_area=NULL, vars_study_area=NULL, predictors_names=NULL, rescaling=NULL){
   l <- list.files(x, full.names=T)
   x <- read_stars(l, along = 'band')
   names(x) <- 'current'
   x_dims <- st_dimensions(x)
   x_dims$band$values <- sort(paste0('bio',1:19))
   st_dimensions(x) <- x_dims
-  #sprintf("bio%02d", 1:19)
+  p <- predictors(x, study_area, vars_study_area, predictors_names, rescaling)
+  return(p)
+}
+
+#' @export
+predictors.stars <- function(x, study_area=NULL, vars_study_area=NULL, predictors_names=NULL, rescaling=NULL){
   if(is.null(predictors_names)){predictors_names <- st_dimensions(x)$band$values}
-  if(!is.null(study_area) & is.null(rescaling)){x <- mask(crop(x, study_area), study_area)}
-  if(!is.null(study_area) & !is.null(rescaling)){
+  if(!is.null(study_area) & is.null(rescaling)){
+    if(!all(st_is_valid(study_area))){study_area <- st_make_valid(study_area)}
+    if(vars_study_area==TRUE){
+      x <- x[study_area]
+      ext_x <- starsExtra::extract2(x, study_area, fun=mean, na.rm=T)
+      x <- cbind(ext_x,study_area)
+    } else {
+      suppressWarnings(x <- st_crop(x,st_as_sf(st_union(study_area))))
+    }
+    resolution <- st_res(x)
+    coords <- st_coordinates(x)[,c('x','y')]
+    df <- as.data.frame(split(x,'band'))
+    cell_id <- na.omit(data.frame(cell_id=1:nrow(df), df))[,'cell_id']
+    grd <- st_make_grid(x, n=c(ncol(x),nrow(x)))
+  } else if(!is.null(study_area) & !is.null(rescaling)){
     # criar grid a partir de study_area
     cellsize <- rescaling$cellsize
     if(is.null(rescaling$epsg)){crs2 <- as.character(crs(xb))[1]} else {crs2 <- as.character(st_crs(rescaling$epsg))[1]}
@@ -112,36 +139,28 @@ predictors.character <- function(x, study_area=NULL, predictors_names=NULL, resc
     coords <- st_coordinates(x)
     df <- as.data.frame(x)
     cell_id <- na.omit(data.frame(cell_id=1:ncell(x), df))[,'cell_id']
+    grd <- st_make_grid(x, n=c(ncol(x),nrow(x)))
   }
   bbox <- st_bbox(x)[c(1,3,2,4)] # st_bbox
   epsg <- as.character(st_crs(x))[1]
 
-  if(is.null(grd)){
-    x <- list(predictors_names=predictors_names,
-              coords=coords,
-              bbox=bbox,
-              resolution=resolution,
-              epsg=epsg,
-              cell_id=cell_id,
-              data=x)
-  } else {
-    x <- list(predictors_names=predictors_names,
-              coords=coords,
-              bbox=bbox,
-              resolution=resolution,
-              epsg=epsg,
-              cell_id=cell_id,
-              data=x,
-              grid=grd)
-  }
+  x <- list(predictors_names=predictors_names,
+            coords=coords,
+            bbox=bbox,
+            resolution=resolution,
+            epsg=epsg,
+            cell_id=cell_id,
+            data=x,
+            grid=grd)
+
   occ <- .predictors(x)
   return(occ)
 }
 
-#' @exportS3Method
+#' @export
 predictors.data.frame <- function(x, study_area, predictors_names=NULL, rescaling=NULL, epsg=NA){ # pode entrar tanto uma tabela com coord e spp quanto sem.
   x <- st_as_stars(x)
-  st_crs(x) <- st_crs(epsg)
+  if(is.null(epsg)){st_crs(x) <- st_crs(4326)} else {st_crs(x) <- st_crs(epsg)}
   grd <- NULL
   if(!is.null(study_area) & !is.null(rescaling)){
     # criar grid a partir de study_area
@@ -187,31 +206,6 @@ predictors.data.frame <- function(x, study_area, predictors_names=NULL, rescalin
   }
   occ <- .predictors(x)
   return(occ)
-
-
-  #resolution <- NULL
-  #epsg <- NULL
-  #col_names <- find_columns(x, ...) # colocar um try
-  #if(!length(col_names) == 0){
-  #  if(any(col_names %in% colnames(x))){predictors_names <- colnames(x)[!colnames(x) %in% col_names]}
-  #  coords <- x[,col_names[-1]]
-  #  bbox <- c(min(coords[,1]), max(coords[,1]),
-  #            min(coords[,2]), max(coords[,2]))
-  #  df <- x[,predictors_names]
-  #} else {
-  #  coords <- NULL
-  #  bbox <- NULL
-  #  predictors_names <- colnames(x)
-  #  df <- x
-  #}
-  #x <- list(predictors_names=predictors_names,
-  #          coords=coords,
-  #          bbox=bbox,
-  #          resolution=resolution,
-  #          epsg=epsg,
-  #          data=df)
-  #occ <- .predictors(x)
-  #return(occ)
 }
 
 #' @export
