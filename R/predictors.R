@@ -157,6 +157,14 @@ predictors.stars <- function(x, study_area=NULL, vars_study_area=NULL, predictor
   return(occ)
 }
 
+#predictors.sf <- function(x, study_area, predictors_names=NULL, rescaling=NULL, epsg=NA){ # pode entrar tanto uma tabela com coord e spp quanto sem.
+#  if(as.character(unique(st_geometry_type(study_area)))=="LINESTRING"){
+#
+#  } else {
+#    stop()
+#  }
+#}
+
 #' @export
 predictors.data.frame <- function(x, study_area, predictors_names=NULL, rescaling=NULL, epsg=NA){ # pode entrar tanto uma tabela com coord e spp quanto sem.
   x <- st_as_stars(x)
