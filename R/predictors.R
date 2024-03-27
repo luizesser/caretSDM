@@ -106,7 +106,7 @@ predictors.stars <- function(x, study_area=NULL, vars_study_area=NULL, predictor
   if(is.null(predictors_names)){predictors_names <- st_dimensions(x)$band$values}
   if(!is.null(study_area) & is.null(rescaling)){
     if(!all(st_is_valid(study_area))){study_area <- st_make_valid(study_area)}
-    if(vars_study_area==TRUE){
+    if(isTRUE(vars_study_area)){
       x <- x[study_area]
       ext_x <- starsExtra::extract2(x, study_area, fun=mean, na.rm=T)
       x <- cbind(ext_x,study_area)

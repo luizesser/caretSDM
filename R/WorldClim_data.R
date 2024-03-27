@@ -4,6 +4,7 @@
 #'
 #' @usage WorldClim_data(period = 'current', variable = 'bioc', year = '2030', gcm = 'mi', ssp = '126', resolution = 10)
 #'
+#' @param path Directory path to save downloads.
 #' @param period Can be 'current' or 'future'.
 #' @param variable Allows to specify which variables you want to retrieve Possible entries are:
 #' 'tmax','tmin','prec' and/or 'bioc'.
@@ -64,7 +65,7 @@
 #'
 #' @export
 
-WorldClim_data <- function(period = 'current', variable = 'bioc', year = '2030', gcm = 'mi', ssp = '126', resolution = 10){
+WorldClim_data <- function(path = NULL, period = 'current', variable = 'bioc', year = '2030', gcm = 'mi', ssp = '126', resolution = 10){
 
   if(!all(period %in% c('current', 'future'))){
     stop("Assertion on 'period' failed: Must be element of set {'current', 'future'}.")
@@ -93,25 +94,26 @@ WorldClim_data <- function(period = 'current', variable = 'bioc', year = '2030',
   assertCharacter(gcm)
   assertCharacter(ssp)
   assertNumeric(resolution)
+  assertCharacter(path, null.ok = TRUE, len=1)
 
   res = ifelse(resolution==30,'s','m')
   l <- list()
 
-  if(!dir.exists('input_data/')){ dir.create('input_data/') }
   if(period=='current'){
-    if(!dir.exists('input_data/WorldClim_data_current')){ dir.create('input_data/WorldClim_data_current') }
-    if(length(list.files("input_data/WorldClim_data_current",pattern='.tif$', full.names=T))==0){
+    if(is.null(path)){path <- 'input_data/WorldClim_data_curent'}
+    if(!dir.exists(path)){ dir.create(path, recursive=TRUE) }
+    if(length(list.files(path, pattern='.tif$', full.names=T))==0){
       print(paste0('current_',resolution,res))
       GET(url = paste0('https://geodata.ucdavis.edu/climate/worldclim/2_1/base/wc2.1_',
                        resolution,
                        res,'_bio.zip'),
-          write_disk(paste0('input_data/current_', resolution, res,'.zip')))
-      unzip(zipfile = paste0('input_data/current_', resolution, res,'.zip'),
-            exdir = paste0('input_data/WorldClim_data_current'))
+          write_disk(paste0('current_', resolution, res,'.zip')))
+      unzip(zipfile = paste0('current_', resolution, res,'.zip'),
+            exdir = path)
     } else {
       print(paste0('The file for current scenario is already downloaded.'))
       print(paste0('Importing current from folder...'))
-      l[['current']] <- stack(list.files("input_data/WorldClim_data_current",pattern='.tif$', full.names=T))
+      l[['current']] <- stack(list.files(path,pattern='.tif$', full.names=T))
       l[['current']] <- l[['current']][[mixedsort(names(l[['current']]))]]
       names(l[['current']]) <- paste0('bio', 1:19)
 
@@ -119,7 +121,7 @@ WorldClim_data <- function(period = 'current', variable = 'bioc', year = '2030',
   }
 
   if(period=='future'){
-    if(!dir.exists('input_data/WorldClim_data_future')){ dir.create('input_data/WorldClim_data_future') }
+    if(!dir.exists(path)){ dir.create(path, recursive = TRUE) }
     all_gcm <- c('ac', 'ae', 'bc', 'ca', 'cc', 'ce','cn', 'ch', 'cr', 'ec','ev', 'fi',
                  'gf', 'gg','gh', 'hg', 'in', 'ic', 'ip', 'me', 'mi', 'mp','ml',
                  'mr', 'uk')
@@ -139,7 +141,7 @@ WorldClim_data <- function(period = 'current', variable = 'bioc', year = '2030',
     for (g in 1:length(gcm)) {
       for (s in 1:length(ssp)) {
         for (y in 1:length(year)) {
-          if(!file.exists(paste0('input_data/WorldClim_data_future/',gcm[g], '_ssp', ssp[s],'_', resolution, '_', year[y],'.tif'))){
+          if(!file.exists(paste0(path,'/',gcm[g], '_ssp', ssp[s],'_', resolution, '_', year[y],'.tif'))){
             print(paste0(gcm[g], '_ssp', ssp[s], '_', resolution, '_', year[y]))
             if(!http_error(paste0('https://geodata.ucdavis.edu/cmip6/',resolution,
                                   res,'/',gcm3[g],'/ssp',ssp[s],'/wc2.1_',resolution,
@@ -149,17 +151,17 @@ WorldClim_data <- function(period = 'current', variable = 'bioc', year = '2030',
                              res,'/',gcm3[g],'/ssp',ssp[s],'/wc2.1_',resolution,
                              res,'_',variable,'_',gcm3[g],'_ssp',ssp[s],'_',
                              year3[y],'.tif'),
-                      write_disk(paste0('input_data/WorldClim_data_future/',gcm[g], '_ssp', ssp[s],
+                      write_disk(paste0(path, '/',gcm[g], '_ssp', ssp[s],
                                   '_', resolution, '_', year[y],'.tif'))))
             }
 
           } else {
             print(paste0('The file for future scenario (',
-                         paste0('input_data/WorldClim_data_future/',gcm[g], '_ssp', ssp[s],'_', resolution, '_', year[y],'.tif'),
+                         paste0(path ,'/',gcm[g], '_ssp', ssp[s],'_', resolution, '_', year[y],'.tif'),
                          ') is already downloaded.'))
             nome <- paste0(gcm[g], '_ssp', ssp[s],'_', resolution, '_', year[y])
             print(paste0('Importing ', nome, ' from folder...'))
-            l[[nome]] <- stack(list.files("input_data/WorldClim_data_future",pattern=paste0(nome,'.tif$'), full.names=T))
+            l[[nome]] <- stack(list.files(path,pattern=paste0(nome,'.tif$'), full.names=T))
             l[[nome]] <- l[[nome]][[mixedsort(names(l[[nome]]))]]
             names(l[[nome]]) <- paste0('bio', 1:19)
           }
