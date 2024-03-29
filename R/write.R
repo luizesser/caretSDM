@@ -5,7 +5,6 @@
 #' @param x Object to be written
 #' @param path A path with filename and the proper extension (see details) or the directory to save files in.
 #' @param extension How it should be saved?
-#' @param file File to be imported with proper path when needed.
 #'
 #' @details ...
 #'
@@ -26,18 +25,20 @@ write_ensembles <- function(x, path='results/ensembles', ext='.tif'){
   grd <- y$grid
   for(sp in spp){
     for(sc in scen){
-      cell_id <- y[['predictions']][[sc]][[sp]][[1]]$cell_id
+      #cell_id <- y[['predictions']][[sc]][[sp]][[1]]$cell_id
       v <- y[['ensembles']][[sp,sc]]
-      result <- merge(grd, cbind(cell_id, v) , by='cell_id')
+      #result <- merge(grd, cbind(cell_id, v) , by='cell_id')
+      result <- merge(grd, v , by='cell_id')
       if(!dir.exists(paste0(path,'/',sp))){dir.create(paste0(path,'/',sp), recursive = T)}
       if(ext=='.tif'|ext=='.asc'){result <- merge(st_rasterize(result))
-                                  write_stars(result, paste0(path,'/',sp,'/',sc,ext))
+      write_stars(result, paste0(path,'/',sp,'/',sc,ext))
       } else if (ext %in% ext_sf){
         st_write(result, paste0(path,'/',sp,'/',sc,ext))
       }
     }
   }
 }
+
 
 #' @export
 write_predictions <- function(x, path='results/predictions', ext='.tif'){

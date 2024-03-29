@@ -23,4 +23,5 @@ write_predictions <- function(x,l){
   if(class(x)=='predictions'){
     x <- x
   }
+
 }
