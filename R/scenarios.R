@@ -72,25 +72,16 @@ scenarios.RasterStack <- function(x, study_area=NULL, predictors_names=NULL, res
   bbox <- st_bbox(x)[c(1,3,2,4)]
   epsg <- as.character(st_crs(x))[1]
 
-  if(is.null(grd)){
-    x <- list(coords=coords,
-              bbox=bbox,
-              resolution=resolution,
-              epsg=epsg,
-              cell_id=cell_id,
-              paths=NULL,
-              data=x)
-  } else {
-    x <- list(coords=coords,
-              bbox=bbox,
-              resolution=resolution,
-              epsg=epsg,
-              cell_id=cell_id,
-              data=x,
-              paths=NULL,
-              grid=grd)
-  }
+  x <- list(coords=coords,
+            bbox=bbox,
+            resolution=resolution,
+            epsg=epsg,
+            cell_id=cell_id,
+            paths=NULL,
+            data=x)
 
+  if(!is.null(grd)){x$grid <- grd}
+  if(!is.null(rescaling)){x$rescaling <- rescaling}
   scen <- .scenarios(x)
   return(scen)
 }

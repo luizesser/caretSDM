@@ -12,8 +12,6 @@ write_ensembles(x, path = "results/ensembles", ext = ".tif")
 \item{path}{A path with filename and the proper extension (see details) or the directory to save files in.}
 
 \item{extension}{How it should be saved?}
-
-\item{file}{File to be imported with proper path when needed.}
 }
 \description{
 This function saves and loads caretSDM data.

@@ -18,7 +18,7 @@ First we will install the package from github. For that we will need to install 
 
 ```{r, eval=F}
 install.packages(setdiff("devtools", rownames(installed.packages())))
-remotes::install_github('luizesser/caretSDM')
+install_github('luizesser/caretSDM')
 options(timeout = 600)
 ```
 
@@ -63,8 +63,8 @@ folder_current <- "~/Documents/GitHub/caretSDM/input_data/WorldClim_data_current
 folder_future <- "~/Documents/GitHub/caretSDM/input_data/WorldClim_data_future"
 
 # importing the study area and informing the crs. 
-study_area <- st_read('input_data/Brasil/estadosl_2007.shp')
-st_crs(study_area) <- st_crs(4326)
+study_area <- st_read('input_data/Shape/Shape_BAP_DISSOLV.shp')
+#st_crs(study_area) <- st_crs(4326)
 
 # create the input_sdm that we will work with during the workflow.
 i <- input_sdm(occurrences(occ_data), 

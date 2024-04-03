@@ -15,6 +15,8 @@
 #'
 #' @import dismo
 #' @import sp
+#' @import dplyr
+#' @import stars
 #' @importFrom raster extract
 #'
 #' @export

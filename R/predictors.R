@@ -92,7 +92,7 @@ predictors.SpatRaster <- function(x, study_area=NULL, vars_study_area=NULL, pred
 #' @export
 predictors.character <- function(x, study_area=NULL, vars_study_area=NULL, predictors_names=NULL, rescaling=NULL){
   l <- list.files(x, full.names=T)
-  x <- read_stars(l, along = 'band')
+  x <- read_stars(l, along = 'band', normalize_path = FALSE)
   names(x) <- 'current'
   x_dims <- st_dimensions(x)
   x_dims$band$values <- sort(paste0('bio',1:19))
@@ -111,13 +111,25 @@ predictors.stars <- function(x, study_area=NULL, vars_study_area=NULL, predictor
       ext_x <- starsExtra::extract2(x, study_area, fun=mean, na.rm=T)
       x <- cbind(ext_x,study_area)
     } else {
-      suppressWarnings(x <- st_crop(x,st_as_sf(st_union(study_area))))
+      n <- names(x)
+      suppressWarnings(x <- x[study_area])
+      x2 <- merge(st_as_stars(st_as_sf(x)))
+      names(x2) <- n
+      dimnames(x2) <- c('geometry', 'band')
     }
     resolution <- st_res(x)
-    coords <- st_coordinates(x)[,c('x','y')]
-    df <- as.data.frame(split(x,'band'))
+    grd <- st_make_grid(x, n=c(ncol(x),nrow(x)), cellsize = resolution)
+    grd <- st_as_sf(data.frame(cell_id=seq(1,length(grd)),as.data.frame(grd)))
+    teste <- as.data.frame(x)
+    vals <- teste[teste$band==predictors_names[1],4]
+    grd$vals <- vals
+    grd <- select(na.omit(grd),-vals)
+    coords <- as.data.frame(st_coordinates(st_centroid(grd)))
+    df <- as.data.frame(st_as_sf(x))
     cell_id <- na.omit(data.frame(cell_id=1:nrow(df), df))[,'cell_id']
-    grd <- st_make_grid(x, n=c(ncol(x),nrow(x)))
+
+    ##### TAMANHO DA GRD É MAIOR QUE O DE X
+
   } else if(!is.null(study_area) & !is.null(rescaling)){
     # criar grid a partir de study_area
     cellsize <- rescaling$cellsize
@@ -194,24 +206,16 @@ predictors.data.frame <- function(x, study_area, predictors_names=NULL, rescalin
   bbox <- st_bbox(x)[c(1,3,2,4)] # st_bbox
   epsg <- as.character(st_crs(x))[1]
 
-  if(is.null(grd)){
-    x <- list(predictors_names=predictors_names,
-              coords=coords,
-              bbox=bbox,
-              resolution=resolution,
-              epsg=epsg,
-              cell_id=cell_id,
-              data=x)
-  } else {
-    x <- list(predictors_names=predictors_names,
-              coords=coords,
-              bbox=bbox,
-              resolution=resolution,
-              epsg=epsg,
-              cell_id=cell_id,
-              data=x,
-              grid=grd)
-  }
+  x <- list(predictors_names=predictors_names,
+            coords=coords,
+            bbox=bbox,
+            resolution=resolution,
+            epsg=epsg,
+            cell_id=cell_id,
+            data=x)
+
+  if(!is.null(grd)){x$grid <- grd}
+  if(!is.null(rescaling)){x$rescaling <- rescaling}
   occ <- .predictors(x)
   return(occ)
 }
@@ -224,6 +228,7 @@ predictors.data.frame <- function(x, study_area, predictors_names=NULL, rescalin
                         resolution=x$resolution,
                         epsg=x$epsg,
                         grid=x$grid,
+                        rescaling=x$rescaling,
                         data=x$data),
                    class = "predictors")
   return(occ)
@@ -240,5 +245,7 @@ print.predictors <- function(x) {
   if(!is.null(x$bbox)){                  cat("Extent                    :", x$bbox, "(xmin, xmax, ymin, ymax)\n")}
   if(!is.null(x$epsg)){                  cat("EPSG                      :", x$epsg, "\n")}
   if(!is.null(x$resolution)){            cat("Resolution                :", x$resolution, "(x, y)\n")}
+  if(!is.null(x$rescaling)){             cat("Rescaling                 :",
+                                             "        Cellsize          :", x$rescaling$cellsize, "\n")}
   if(!is.null(x$variable_selection$vif)){cat(cat("Selected Variables (VIF)  : "), cat(x$variable_selection$vif$selected_variables, sep=', '), "\n")}
 }

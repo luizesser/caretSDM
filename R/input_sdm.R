@@ -14,11 +14,6 @@
 #' @export
 input_sdm <- function(...){
   x <- list(...)
-
-  #occ <- UseMethod("occurrences", occ)
-  #pred <- UseMethod("predictors", pred)
-  #scen <- UseMethod("scenarios", s)
-
   inp <- .input_sdm(x)
   return(inp)
 }
@@ -58,6 +53,8 @@ print.input_sdm <- function(x) {
     if(!is.null(x$predictors$bbox)){                  cat("Extent                    :", x$predictors$bbox, "(xmin, xmax, ymin, ymax)\n")}
     if(!is.null(x$predictors$epsg)){                  cat("EPSG                      :", x$predictors$epsg, "\n")}
     if(!is.null(x$predictors$resolution)){            cat("Resolution                :", x$predictors$resolution, "(x, y)\n")}
+    if(!is.null(x$rescaling)){                        cat("Rescaling                 :\n",
+                                                          "        Cellsize          :", x$predictors$rescaling$cellsize, "\n")}
     if(!is.null(x$predictors$variable_selection$vif)){cat(cat("Area (VIF)                : "), cat(x$predictors$variable_selection$vif$area), cat("\n"),
                                                           cat("Selected Variables (VIF)  : "), cat(x$predictors$variable_selection$vif$selected_variables, sep=', '), "\n")}
   }
@@ -79,7 +76,7 @@ print.input_sdm <- function(x) {
         "        Method    :", x$models$validation$method, "\n",
         "        Number    :", x$models$validation$number, "\n",
         "        Metrics   :\n" )
-    print(x$models$validation$metrics)
+    print(mean_validation_metrics(x))
   if('independent_validation' %in% names(x$models)){
     cat("Independent Validation    :\n",
         "        ROC (mean ± sd)  : ", round(mean(unlist(x$models$independent_validation)),3),

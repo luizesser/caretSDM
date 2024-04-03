@@ -7,6 +7,8 @@
 WorldClim_data(period = 'current', variable = 'bioc', year = '2030', gcm = 'mi', ssp = '126', resolution = 10)
 }
 \arguments{
+\item{path}{Directory path to save downloads.}
+
 \item{period}{Can be 'current' or 'future'.}
 
 \item{variable}{Allows to specify which variables you want to retrieve Possible entries are:
