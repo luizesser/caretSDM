@@ -100,31 +100,35 @@ predict_sdm <- function(m, scen=NULL, th=0.9, tp='prob', file=NULL, ensembles=TR
     e <- sapply(p, function(y){
       e2 <- sapply(names(y), function(sp){
         x <- y[[sp]]
-        # Prepare data
-        suppressMessages(df <- bind_cols(x))
-        df <- select(df, contains('presence'))
-        # mean_occ_prob
-        mean_occ_prob <- rowMeans(df)
-        # wmean_AUC
-        wmean_AUC <- apply(df,1,function(x){stats::weighted.mean(x,th1[[sp]]$ROC)})
-        # Obtain Thresholds:
-        suppressWarnings(th2 <- lapply(m1[[sp]], function(x){thresholder(x,
-                                                  threshold = seq(0, 1, by = 0.01),
-                                                  final = TRUE,
-                                                  statistics = "all")}))
-        th2 <- lapply(th2, function(x){ x <- x %>% mutate(th=Sensitivity+Specificity)
-                                        th <- x[x$th==max(x$th),"prob_threshold"]
-                                        if(length(th)>1){th <- mean(th)}
-                                        return(th)})
-        # binary
-        for (i in 1:ncol(df)) {
-          df[,i] <- ifelse(df[,i][]>th2[i],1,0)
-        }
-        committee_avg <- rowMeans(df)
+        if(length(x)>0){
+          # Prepare data
+          suppressMessages(df <- bind_cols(x))
+          df <- select(df, contains('presence'))
+          # mean_occ_prob
+          mean_occ_prob <- rowMeans(df)
+          # wmean_AUC
+          wmean_AUC <- apply(df,1,function(x){stats::weighted.mean(x,th1[[sp]]$ROC)})
+          # Obtain Thresholds:
+          suppressWarnings(th2 <- lapply(m1[[sp]], function(x){thresholder(x,
+                                                    threshold = seq(0, 1, by = 0.01),
+                                                    final = TRUE,
+                                                    statistics = "all")}))
+          th2 <- lapply(th2, function(x){ x <- x %>% mutate(th=Sensitivity+Specificity)
+                                          th <- x[x$th==max(x$th),"prob_threshold"]
+                                          if(length(th)>1){th <- mean(th)}
+                                          return(th)})
+          # binary
+          for (i in 1:ncol(df)) {
+            df[,i] <- ifelse(df[,i][]>th2[i],1,0)
+          }
+          committee_avg <- rowMeans(df)
 
-        # save everything
-        df <- data.frame(cell_id=x[[1]]$cell_id, mean_occ_prob, wmean_AUC, committee_avg)
-        return(df)
+          # save everything
+          df <- data.frame(cell_id=x[[1]]$cell_id, mean_occ_prob, wmean_AUC, committee_avg)
+          return(df)
+        } else {
+          warning(print(paste0(sp, ' has no models passing the threshold.')))
+        }
       }, simplify=FALSE, USE.NAMES=TRUE)
     }, USE.NAMES = T)
   }

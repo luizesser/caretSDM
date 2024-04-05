@@ -46,10 +46,10 @@ data_clean <- function(occ, pred=NULL, species=NA, long=NA, lat=NA, terrestrial=
   if(!is.null(pred)){
     print('Predictors identified, procceding with grid filter (removing NA and duplicated data).')
     x2 <- x
-    coordinates(x2) <- 2:3
+    coordinates(x2) <- c(lon,lat)
     x2 <- st_as_sf(x2)
     st_crs(x2) <- as.character(st_crs(y$epsg))[1]
-    preds <- st_rasterize(pred$grid)
+    preds <- st_rasterize(st_as_sf(pred$grid))
     x2 <- st_transform(x2, crs=st_crs(preds))
     teste <- cbind(st_extract(preds, x2), x2$species)
     x <- na.omit(teste[!duplicated(select(as.data.frame(teste), -'geometry')),])
@@ -74,10 +74,10 @@ data_clean <- function(occ, pred=NULL, species=NA, long=NA, lat=NA, terrestrial=
     if(!is.null(pred)){
       print('Predictors identified, procceding with grid filter.')
       x2 <- x
-      coordinates(x2) <- 2:3
+      coordinates(x2) <- c(lon,lat)
       x2 <- st_as_sf(x2)
       st_crs(x2) <- as.character(st_crs(y$epsg))[1]
-      preds <- st_rasterize(pred$grid)
+      preds <- st_rasterize(st_as_sf(pred$grid))
       x2 <- st_transform(x2, crs=st_crs(preds))
       teste <- cbind(st_extract(preds, x2), x2$species)
       x <- na.omit(teste[!duplicated(teste),])

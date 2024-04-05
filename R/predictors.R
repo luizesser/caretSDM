@@ -18,6 +18,7 @@
 #' @import raster
 #' @import sf
 #' @import stars
+#' @import dplyr
 #' @importFrom gtools mixedsort
 #'
 #' @export
@@ -106,34 +107,34 @@ predictors.stars <- function(x, study_area=NULL, vars_study_area=NULL, predictor
   if(is.null(predictors_names)){predictors_names <- st_dimensions(x)$band$values}
   if(!is.null(study_area) & is.null(rescaling)){
     if(!all(st_is_valid(study_area))){study_area <- st_make_valid(study_area)}
-    if(isTRUE(vars_study_area)){
+    if(!is.null(vars_study_area)){
       x <- x[study_area]
       ext_x <- starsExtra::extract2(x, study_area, fun=mean, na.rm=T)
       x <- cbind(ext_x,study_area)
     } else {
       n <- names(x)
       suppressWarnings(x <- x[study_area])
-      x2 <- merge(st_as_stars(st_as_sf(x)))
-      names(x2) <- n
-      dimnames(x2) <- c('geometry', 'band')
+      resolution <- st_res(x)
+      x <- st_xy2sfc(x, as_points=FALSE)
+      names(x) <- n
     }
-    resolution <- st_res(x)
-    grd <- st_make_grid(x, n=c(ncol(x),nrow(x)), cellsize = resolution)
-    grd <- st_as_sf(data.frame(cell_id=seq(1,length(grd)),as.data.frame(grd)))
-    teste <- as.data.frame(x)
-    vals <- teste[teste$band==predictors_names[1],4]
-    grd$vals <- vals
-    grd <- select(na.omit(grd),-vals)
-    coords <- as.data.frame(st_coordinates(st_centroid(grd)))
-    df <- as.data.frame(st_as_sf(x))
-    cell_id <- na.omit(data.frame(cell_id=1:nrow(df), df))[,'cell_id']
 
+    grd <- st_as_sf(x, as_points=TRUE)
+    grd <- select(cbind(cell_id=seq(1,nrow(grd)), grd), c('cell_id', 'geometry'))
+    #teste <- as.data.frame(x)
+    #vals <- teste[teste$band==predictors_names[1],4]
+    #grd$vals <- vals
+    #grd <- select(na.omit(grd),-vals)
+    suppressWarnings(coords <- as.data.frame(st_coordinates(st_centroid(grd))))
+    #df <- as.data.frame(st_as_sf(x))
+    #cell_id <- na.omit(data.frame(cell_id=1:nrow(df), df))[,'cell_id']
+    cell_id <- grd$cell_id
     ##### TAMANHO DA GRD É MAIOR QUE O DE X
 
   } else if(!is.null(study_area) & !is.null(rescaling)){
     # criar grid a partir de study_area
     cellsize <- rescaling$cellsize
-    if(is.null(rescaling$epsg)){crs2 <- as.character(crs(xb))[1]} else {crs2 <- as.character(st_crs(rescaling$epsg))[1]}
+    if(is.null(rescaling$epsg)){crs2 <- as.character(crs(x))[1]} else {crs2 <- as.character(st_crs(rescaling$epsg))[1]}
     study_area <- st_transform(study_area, crs2)
     grd <- st_make_grid(study_area, cellsize = cellsize)
     grd <- st_transform(grd, crs=crs2)

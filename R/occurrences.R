@@ -15,6 +15,7 @@
 #' occ <- occurrences(df)
 #'
 #' @import tibble
+#' @import stars
 #' @importFrom here here
 #'
 #' @export

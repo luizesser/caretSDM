@@ -63,7 +63,7 @@ folder_current <- "~/Documents/GitHub/caretSDM/input_data/WorldClim_data_current
 folder_future <- "~/Documents/GitHub/caretSDM/input_data/WorldClim_data_future"
 
 # importing the study area and informing the crs. 
-study_area <- st_read('input_data/Shape/Shape_BAP_DISSOLV.shp')
+study_area <- st_read('input_data/Amazon/AmazonHydroRivers4.shp')
 #st_crs(study_area) <- st_crs(4326)
 
 # create the input_sdm that we will work with during the workflow.
