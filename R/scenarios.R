@@ -154,16 +154,33 @@ scenarios.SpatRaster <- function(x, study_area=NULL, predictors_names=NULL, resc
 }
 
 #' @export
-scenarios.stars <- function(x, study_area=NULL, predictors_names=NULL, rescaling=NULL, scenarios_names=NULL){
+scenarios.stars <- function(x, study_area=NULL, vars_study_area=NULL, predictors_names=NULL, rescaling=NULL, scenarios_names=NULL){
   if(is.null(predictors_names)){predictors_names <- names(x)}
   if(!is.null(study_area) & is.null(rescaling)){
+    #if(!all(st_is_valid(study_area))){study_area <- st_make_valid(study_area)}
+    #suppressWarnings(x <- st_crop(x,st_as_sf(st_union(study_area))))
+    #resolution <- st_res(x)
+    #coords <- st_coordinates(x)[,c('x','y')]
+    #df <- as.data.frame(split(x,'band'))
+    #cell_id <- na.omit(data.frame(cell_id=1:nrow(df), df))[,'cell_id']
+    #grd <- st_make_grid(x, n=c(ncol(x),nrow(x)))
     if(!all(st_is_valid(study_area))){study_area <- st_make_valid(study_area)}
-    suppressWarnings(x <- st_crop(x,st_as_sf(st_union(study_area))))
-    resolution <- st_res(x)
-    coords <- st_coordinates(x)[,c('x','y')]
-    df <- as.data.frame(split(x,'band'))
-    cell_id <- na.omit(data.frame(cell_id=1:nrow(df), df))[,'cell_id']
-    grd <- st_make_grid(x, n=c(ncol(x),nrow(x)))
+    if(!is.null(vars_study_area)){
+      x <- x[study_area]
+      ext_x <- starsExtra::extract2(x, study_area, fun=mean, na.rm=T)
+      x <- cbind(ext_x,study_area)
+    } else {
+      n <- names(x)
+      suppressWarnings(x <- x[study_area])
+      resolution <- st_res(x)
+      x <- st_xy2sfc(x, as_points=FALSE)
+      names(x) <- n
+    }
+    grd <- st_as_sf(x, as_points=TRUE)
+    grd <- select(cbind(cell_id=seq(1,nrow(grd)), grd), c('cell_id', 'geometry'))
+    suppressWarnings(coords <- as.data.frame(st_coordinates(st_centroid(grd))))
+    cell_id <- grd$cell_id
+
   } else if(!is.null(study_area) & !is.null(rescaling)){
     # criar grid a partir de study_area
     cellsize <- rescaling$cellsize
@@ -225,7 +242,7 @@ scenarios.character <- function(x, study_area=NULL, predictors_names=NULL, resca
     }
   }
   names(s) <- scenarios_names
-  scen <- scenarios(s, study_area, predictors_names, rescaling, scenarios_names)
+  scen <- scenarios(x=s, study_area=study_area, predictors_names=predictors_names, rescaling=rescaling, scenarios_names=scenarios_names)
   return(scen)
 }
 

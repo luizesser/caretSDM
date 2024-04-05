@@ -127,7 +127,8 @@ predict_sdm <- function(m, scen=NULL, th=0.9, tp='prob', file=NULL, ensembles=TR
           df <- data.frame(cell_id=x[[1]]$cell_id, mean_occ_prob, wmean_AUC, committee_avg)
           return(df)
         } else {
-          warning(print(paste0(sp, ' has no models passing the threshold.')))
+          warning(paste0(sp, ' has no models passing the threshold.'))
+          df <- NULL
         }
       }, simplify=FALSE, USE.NAMES=TRUE)
     }, USE.NAMES = T)

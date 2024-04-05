@@ -25,15 +25,15 @@ write_ensembles <- function(x, path='results/ensembles', ext='.tif'){
   grd <- y$grid
   for(sp in spp){
     for(sc in scen){
-      #cell_id <- y[['predictions']][[sc]][[sp]][[1]]$cell_id
       v <- y[['ensembles']][[sp,sc]]
-      #result <- merge(grd, cbind(cell_id, v) , by='cell_id')
-      result <- merge(grd, v , by='cell_id')
-      if(!dir.exists(paste0(path,'/',sp))){dir.create(paste0(path,'/',sp), recursive = T)}
-      if(ext=='.tif'|ext=='.asc'){result <- merge(st_rasterize(result))
-      write_stars(result, paste0(path,'/',sp,'/',sc,ext))
-      } else if (ext %in% ext_sf){
-        st_write(result, paste0(path,'/',sp,'/',sc,ext))
+      if(is.data.frame(v)){
+        result <- merge(grd, v , by='cell_id')
+        if(!dir.exists(paste0(path,'/',sp))){dir.create(paste0(path,'/',sp), recursive = T)}
+        if(ext=='.tif'|ext=='.asc'){result <- merge(st_rasterize(result))
+        write_stars(result, paste0(path,'/',sp,'/',sc,ext))
+        } else if (ext %in% ext_sf){
+          st_write(result, paste0(path,'/',sp,'/',sc,ext))
+        }
       }
     }
   }
