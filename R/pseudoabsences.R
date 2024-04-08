@@ -33,11 +33,11 @@ pseudoabsences <- function(occ, pred=NULL, method='random', n_set=10, n_pa=NULL,
   if(is.null(n_pa)){n_pa <- y$n_presences}
   if(is.null(variables_selected)){
     selected_vars <- pred$predictors_names
-    print(cat('Using all variables available: ', selected_vars))
+    cat('Using all variables available: ', selected_vars)
   }
   if(any(variables_selected %in% pred$predictors_names) ){
     selected_vars <- pred$predictors_names[pred$predictors_names %in% variables_selected]
-    print(cat('Using given variables: ', selected_vars))
+    cat('Using given variables: ', selected_vars)
   }
   if(length(variables_selected) == 1){
     if(length(pred$variable_selection[attributes(pred$variable_selection)$names %in% variables_selected])==0){
@@ -45,7 +45,7 @@ pseudoabsences <- function(occ, pred=NULL, method='random', n_set=10, n_pa=NULL,
       stop()
     }
     selected_vars <- unlist(pred$variable_selection[attributes(pred$variable_selection)$names %in% variables_selected], rec=F)[[paste0(variables_selected,'.selected_variables')]]
-    print(cat('Using variables selected by ',variables_selected,': ', selected_vars))
+    cat('Using variables selected by ',variables_selected,': ', selected_vars)
   }
   suppressWarnings(df <- st_centroid(st_as_sf(filter(na.omit(pred$data), band %in% selected_vars))))
   df <- select(cbind(pred$grid,df), -'geometry.1')

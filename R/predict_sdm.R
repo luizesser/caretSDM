@@ -54,8 +54,8 @@ predict_sdm <- function(m, scen=NULL, th=0.9, tp='prob', file=NULL, ensembles=TR
       closest_matches[i] <- valid_inputs[closest_index]
       valid_inputs <- valid_inputs[-closest_index]
     }
-    print(inputs)
-    print(closest_matches)
+    cat(inputs)
+    cat(closest_matches)
     return(closest_matches)
   }
   if(add.current==TRUE){
