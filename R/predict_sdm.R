@@ -54,14 +54,16 @@ predict_sdm <- function(m, scen=NULL, th=0.9, tp='prob', file=NULL, ensembles=TR
       closest_matches[i] <- valid_inputs[closest_index]
       valid_inputs <- valid_inputs[-closest_index]
     }
-    cat(inputs)
+    cat(inputs, '\n')
     cat(closest_matches)
     return(closest_matches)
   }
   if(add.current==TRUE){
-    closest_match <- find_closest_matches(st_dimensions(scen$data)$band$values, gtools::mixedsort(m$predictors$predictors_names))
-    st_dimensions(scen$data)$band$values <- closest_match
-    scen$data[['current']] <- m$predictors$data[['current']]
+    if(class(m)=='input_sdm'){
+      closest_match <- find_closest_matches(st_dimensions(scen$data)$band$values, gtools::mixedsort(m$predictors$predictors_names))
+      st_dimensions(scen$data)$band$values <- closest_match
+      scen$data[['current']] <- m$predictors$data
+    }
   }
   p <- list()
   for (i in 1:length(scen$data)) {
@@ -97,6 +99,7 @@ predict_sdm <- function(m, scen=NULL, th=0.9, tp='prob', file=NULL, ensembles=TR
 
   ### INCLUIR ENSEMBLES AQUI ###
   if(ensembles){
+    print('Ensembling...')
     e <- sapply(p, function(y){
       e2 <- sapply(names(y), function(sp){
         x <- y[[sp]]
@@ -131,7 +134,12 @@ predict_sdm <- function(m, scen=NULL, th=0.9, tp='prob', file=NULL, ensembles=TR
           df <- NULL
         }
       }, simplify=FALSE, USE.NAMES=TRUE)
-    }, USE.NAMES = T)
+    }, USE.NAMES=TRUE)
+    if(length(names(p[[1]]))==1 & !any(class(e)=='matrix')){
+      e <- t(as.matrix(e))
+      rownames(e) <- names(p[[1]])
+      colnames(e) <- gsub(paste0('.',names(p[[1]])),'',colnames(e))
+    }
   }
   p2 <- list(thresholds=list(values=th1, method=tm, criteria=th),
              predictions=p,
@@ -168,7 +176,7 @@ print.predictions <- function(x) {
   cat(".........................\n")
   cat("Class             : Predictions\n")
   cat("Ensembles         :\n",
-      "        Methods  :", colnames(x$ensembles[1,1][[1]]), "\n")
+      "        Methods  :", colnames(x$ensembles[1,1][[1]])[-1], "\n")
   cat("Thresholds        :\n",
       "        Method   :", x$thresholds$method, "\n",
       "        Criteria :", x$thresholds$criteria, "\n",

@@ -86,7 +86,7 @@ print.input_sdm <- function(x) {
   }
   if('predictions' %in% names(x)){
     cat("Ensembles         :\n",
-        "        Methods  :", rownames(x$predictions$ensembles), "\n")
+        "        Methods  :", colnames(x$predictions$ensembles[1,1][[1]])[-1], "\n")
     cat("Thresholds        :\n",
         "        Method   :", x$predictions$thresholds$method, "\n",
         "        Criteria :", x$predictions$thresholds$criteria, "\n")

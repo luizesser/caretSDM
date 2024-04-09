@@ -1,7 +1,7 @@
 Type: Package
 Package: caretSDM
 Title: caretSDM: A package for building Species Distribution Modeling in R using caret.
-Version: 1.0.1
+Version: 1.0.2
 Author: Luíz Fernando Esser, Dayani Baili, Edivando Couto, José Hilário Delconte Ferreira, Reginaldo Ré and Valéria Batista
 Maintainer: Luíz Fernando Esser <luizesser@gmail.com>
 Description: This package is intended to help modelers to

@@ -27,11 +27,11 @@ vif_predictors <- function(pred, area='all', th=0.5, maxobservations=5000, varia
   }
   if(is.null(variables_selected)){
     selected_vars <- x$predictors_names
-    print(cat('Using all variables available: '), cat(selected_vars, sep=', '))
+    cat(cat('Using all variables available: '), cat(selected_vars, sep=', '))
   }
   if(any(variables_selected %in% x$predictors_names)){
     selected_vars <- x$predictors_names[x$predictors_names %in% variables_selected]
-    print(cat('Using given variables: '), cat(selected_vars, sep=', '))
+    cat(cat('Using given variables: '), cat(selected_vars, sep=', '))
   }
   if(area=='all'){
     suppressWarnings(sf_x <- st_centroid(st_as_sf(filter(x$data, band %in% selected_vars))))
