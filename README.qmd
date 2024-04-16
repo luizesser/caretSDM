@@ -1,13 +1,11 @@
 ---
 title: "caretSDM"
 author: "Luíz Fernando Esser"
-format: html
+format: gfm
 editor: visual
 ---
 
 # caretSDM
-
-O caretSDM é um pacote em desenvolvimento aplicado em R com o objetivo de integrar poderosas ferramentas de aprendizado de máquina e geoprocessamento, facilitando a aplicação de métodos avançados por pesquisadores. Essa integração permite que o pacote esteja sempre atualizado com metodologias avançadas e de ponta, facilitando seu acesso e visando especialmente o refinamento de modelos de distribuição de espécies e projeções do impacto de mudanças climáticas.
 
 `caretSDM` is a under development R package that uses the powerful `caret` package as the main engine to obtain Species Distribution Models. As `caret` is a packaged turned to build machine learning models, `caretSDM` has a strong focus on this approach.
 
