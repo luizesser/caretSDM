@@ -1,0 +1,966 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.450">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Luíz Fernando Esser">
+
+<title>caretSDM</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="README_files/libs/clipboard/clipboard.min.js"></script>
+<script src="README_files/libs/quarto-html/quarto.js"></script>
+<script src="README_files/libs/quarto-html/popper.min.js"></script>
+<script src="README_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="README_files/libs/quarto-html/anchor.min.js"></script>
+<link href="README_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="README_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="README_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="README_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="README_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+
+
+</head>
+
+<body class="fullcontent">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">caretSDM</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Luíz Fernando Esser </p>
+          </div>
+  </div>
+    
+  
+    
+  </div>
+  
+
+</header>
+
+<section id="caretsdm" class="level1">
+<h1>caretSDM</h1>
+<p>O caretSDM é um pacote em desenvolvimento aplicado em R com o objetivo de integrar poderosas ferramentas de aprendizado de máquina e geoprocessamento, facilitando a aplicação de métodos avançados por pesquisadores. Essa integração permite que o pacote esteja sempre atualizado com metodologias avançadas e de ponta, facilitando seu acesso e visando especialmente o refinamento de modelos de distribuição de espécies e projeções do impacto de mudanças climáticas.</p>
+<p><code>caretSDM</code> is a under development R package that uses the powerful <code>caret</code> package as the main engine to obtain Species Distribution Models. As <code>caret</code> is a packaged turned to build machine learning models, <code>caretSDM</code> has a strong focus on this approach.</p>
+<section id="installing" class="level2">
+<h2 class="anchored" data-anchor-id="installing">Installing</h2>
+<p>First we will install the package from github. For that we will need to install the <code>devtools</code> package first and then install the <code>caretSDM</code> package.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="fu">setdiff</span>(<span class="st">"devtools"</span>, <span class="fu">rownames</span>(<span class="fu">installed.packages</span>())))</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">install_github</span>(<span class="st">'luizesser/caretSDM'</span>)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">options</span>(<span class="at">timeout =</span> <span class="dv">600</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(caretSDM)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: replacing previous import 'caret::progress' by 'httr::progress' when
+loading 'caretSDM'</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: replacing previous import 'dplyr::union' by 'raster::union' when
+loading 'caretSDM'</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: replacing previous import 'dplyr::intersect' by 'raster::intersect'
+when loading 'caretSDM'</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: replacing previous import 'dplyr::select' by 'raster::select' when
+loading 'caretSDM'</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: replacing previous import 'raster::select' by 'dplyr::select' when
+loading 'caretSDM'</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(stars)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Loading required package: abind</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Loading required package: sf</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Linking to GEOS 3.11.0, GDAL 3.5.3, PROJ 9.1.0; sf_use_s2() is TRUE</code></pre>
+</div>
+</div>
+</section>
+<section id="pre-processing" class="level2">
+<h2 class="anchored" data-anchor-id="pre-processing">Pre-Processing</h2>
+<section id="obtaining-example-data" class="level3">
+<h3 class="anchored" data-anchor-id="obtaining-example-data">Obtaining example data</h3>
+<p>Now we will create some example data. Starting with occurrences and then predictors data. The first one is a function to obtain species data from GBIF, while the second is a function to obtain climatic variables from WorldClim 2.1. You can read more about them by running in the console <code>?GBIF_data</code> and <code>?WorldClim_data</code>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co">#occ_data &lt;- GBIF_data("Araucaria angustifolia")</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>occ_data <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">'input_data/spp_data.csv'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>pred_data <span class="ot">&lt;-</span> <span class="fu">WorldClim_data</span>(<span class="at">period =</span> <span class="st">'current'</span>, <span class="at">resolution=</span><span class="dv">10</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="the-input_sdm-class" class="level3">
+<h3 class="anchored" data-anchor-id="the-input_sdm-class">The <code>input_sdm</code> class</h3>
+<p>In this package we will use multiple classes to perform our analysis. Every time we use those objects to perform some kind of analysis, the object will keep the information of what we did. Ideally, the workflow will have only one object throughout it. The <code>input_sdm</code> class is the key class in the workflow, where every function will orbitate. That class puts occurrences, predictors, scenarios, models and predictions together to perform analysis that are only possible when two or more of these classes are available. First, we create the object by informing the occurrences, predictors and scenarios classes.</p>
+<p>The first class we will use is the occurrences class (<em>i.e.</em> “response variable”, “target” or “label”). This class receives the occurrence data of the species. But, despite most species data available is presence-only, we consider here in this package that occurrence data is composed of two classes: presences and absences. If absences are not available in species data (which is expected), we will build multiple sets of pseudo-absences to be used in substitution. These datasets will be stored under <code>occurrences</code> in <code>input_sdm</code>.</p>
+<p>Parallel to the <code>occurrences</code> class, we will have the <code>predictors</code> class to receive the environmental/climatic data (<em>i.e.</em> “predictor variables”, “covariates”, “explanatory variables”, “features” or “control variables”). With this class we will perform analysis using only the predictors (such as geoprocessing transformations; <code>rescaling</code> argument) and together with the <code>occurrences</code> class (such as variable selection routines). It is important to say that this package has a strong geoprocessing background. In this way, it is possible to declare your study area using a shapefile, but also create a new grid over the study area by applying a rescaling method. This can also provide new EPSG to the data to avoid latidudinal convergence.</p>
+<p><code>input_sdm</code> function also receives a <code>scenarios</code> object, where the researcher can provide new data to project the models. This data can be from future or past scenarios. One can also provide a new <code>study_area</code> if the aim of the modeling is to project a model in a new area (<em>e.g.</em> as in invasiveness assessments). Lately, when projecting the models, we can include the predictors data as new data to be projected on. This is useful for projecting models in the same region where the model was built.</p>
+<p>It is possible to pass multiple classes to the <code>occurrences</code>, <code>predictors</code> and <code>scenarios</code> functions as rasterStacks (from raster package), SpatRaster (from terra package), stars (from stars package), data.frames, simple features (sf package) and others. In this way, if you want to import data to R in your own way and then work them with your favorite package your are able to pass it to <code>caretSDM</code> afterwards. We propose here the use of the directory to enter data into caretSDM. By passing the directory to the predictors and scenarios functions, they will recognize data in folder and import it as stars objects (all the processing with geographic data in <code>caretSDM</code> is done using <code>stars</code> and <code>sf</code> packages).</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># folder containing the current data downloaded from WorldClim.</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>folder_current <span class="ot">&lt;-</span> <span class="st">"~/Documents/GitHub/caretSDM/input_data/WorldClim_data_current"</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="co"># folder containing the future data downloaded from WorldClim.</span></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>folder_future <span class="ot">&lt;-</span> <span class="st">"~/Documents/GitHub/caretSDM/input_data/WorldClim_data_future"</span></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a><span class="co"># importing the study area and informing the crs. </span></span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>study_area <span class="ot">&lt;-</span> <span class="fu">st_read</span>(<span class="st">'input_data/Amazon/AmazonHydroRivers4.shp'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Reading layer `AmazonHydroRivers4' from data source 
+  `/Users/luizesser/Documents/GitHub/caretSDM/input_data/Amazon/AmazonHydroRivers4.shp' 
+  using driver `ESRI Shapefile'
+Simple feature collection with 107294 features and 14 fields
+Geometry type: LINESTRING
+Dimension:     XY
+Bounding box:  xmin: -79.37708 ymin: -20.21042 xmax: -48.44375 ymax: 5.139583
+Geodetic CRS:  WGS 84</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co">#st_crs(study_area) &lt;- st_crs(4326)</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="co"># create the input_sdm that we will work with during the workflow.</span></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>i <span class="ot">&lt;-</span> <span class="fu">input_sdm</span>(<span class="fu">occurrences</span>(occ_data), </span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>               <span class="fu">predictors</span>(folder_current, </span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>                          <span class="at">study_area =</span> study_area,</span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>                          <span class="at">rescaling=</span><span class="fu">list</span>(<span class="at">cellsize=</span><span class="dv">100000</span>, <span class="at">epsg=</span><span class="dv">6933</span>)), </span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>               <span class="fu">scenarios</span>(folder_future,</span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>                         <span class="at">study_area =</span> study_area,</span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>                         <span class="at">rescaling=</span><span class="fu">list</span>(<span class="at">cellsize=</span><span class="dv">100000</span>, <span class="at">epsg=</span><span class="dv">6933</span>)))</span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>i</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>            caretSDM           
+...............................
+Class                         : input_sdm
+--------  Occurrences  --------
+Species Names                 : Colossoma.macropomum Mylossoma.aureum 
+Number of presences           : 448 486 
+--------  Predictors  ---------
+Number of Predictors          : 19 
+Predictors Names              : bio1, bio10, bio11, bio12, bio13, bio14, bio15, bio16, bio17, bio18, bio19, bio2, bio3, bio4, bio5, bio6, bio7, bio8, bio9 
+Extent                        : -7658800 -4658800 -2526520 673480.4 (xmin, xmax, ymin, ymax)
+EPSG                          : EPSG:6933 
+Resolution                    : 1e+05 1e+05 (x, y)
+---------  Scenarios  ---------
+Scenarios Names               : mi_ssp126_10_2030.tif mi_ssp126_10_2090.tif mi_ssp585_10_2030.tif mi_ssp585_10_2090.tif 
+Number of Scenarios           : 4 
+-----------  Models  ----------
+--------  Predictions  --------</code></pre>
+</div>
+</div>
+<p><strong>TIP:</strong> pay attention on the information printed above. As we follow this tutorial, information will get richer.</p>
+</section>
+<section id="data-cleaning" class="level3">
+<h3 class="anchored" data-anchor-id="data-cleaning">Data Cleaning</h3>
+<p>As the first step in our workflow, we will clean our occurrences data by applying a group of functions from the package <code>CoordinateCleaner</code>. In this function, we also provide a way to check for environmental duplicates, by including a predictors object. This function also checks for records in the sea if the species is terrestrial, but note that this can be switched off if the studied species is not terrestrial. The way <code>caretSDM</code> works, we can always overwrite the main <code>input_sdm</code> object to update it. The function will return a new object with all the previous information and the new information obtained from the <code>data_clean</code> function, note that at the end of the Data Cleaning information there is the Duplicated Cell method. This method is only possible when we have both the <code>occurrence</code> and <code>predictors</code> data.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>i <span class="ot">&lt;-</span> <span class="fu">data_clean</span>(i)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Testing country capitals</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Removed 0 records.</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Testing country centroids</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Removed 1 records.</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Testing duplicates</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Removed 159 records.</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Testing equal lat/lon</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Removed 0 records.</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Testing biodiversity institutions</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Removed 0 records.</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Testing coordinate validity</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Removed 0 records.</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Testing sea coordinates</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Removed 0 records.</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "Predictors identified, procceding with grid filter (removing NA and duplicated data)."</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>i</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>            caretSDM           
+...............................
+Class                         : input_sdm
+--------  Occurrences  --------
+Species Names                 : Colossoma.macropomum Mylossoma.aureum 
+Number of presences           : 98 95 
+Data Cleaning                 : NAs, Capitals, Centroids, Geographically Duplicated, Identical Lat/Long, Institutions, Invalid, Non-terrestrial, Duplicated Cell 
+--------  Predictors  ---------
+Number of Predictors          : 19 
+Predictors Names              : bio1, bio10, bio11, bio12, bio13, bio14, bio15, bio16, bio17, bio18, bio19, bio2, bio3, bio4, bio5, bio6, bio7, bio8, bio9 
+Extent                        : -7658800 -4658800 -2526520 673480.4 (xmin, xmax, ymin, ymax)
+EPSG                          : EPSG:6933 
+Resolution                    : 1e+05 1e+05 (x, y)
+---------  Scenarios  ---------
+Scenarios Names               : mi_ssp126_10_2030.tif mi_ssp126_10_2090.tif mi_ssp585_10_2030.tif mi_ssp585_10_2090.tif 
+Number of Scenarios           : 4 
+-----------  Models  ----------
+--------  Predictions  --------</code></pre>
+</div>
+</div>
+<p><strong>TIP:</strong> Note that the information regarding the <code>i</code> object changed. Now it includes the information that we performed a Data Cleaning routine and explicitly informs what methods were used.</p>
+</section>
+<section id="variable-selection" class="level3">
+<h3 class="anchored" data-anchor-id="variable-selection">Variable Selection</h3>
+<p>In <code>vif_predictors</code>, we are able to perform two methods to select variables: selecting all area or using the presence records (which is debatable, but implemented).</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>i <span class="ot">&lt;-</span> <span class="fu">vif_predictors</span>(i, <span class="at">area=</span><span class="st">'all'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Using all variables available: bio1, bio10, bio11, bio12, bio13, bio14, bio15, bio16, bio17, bio18, bio19, bio2, bio3, bio4, bio5, bio6, bio7, bio8, bio9</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>i</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>            caretSDM           
+...............................
+Class                         : input_sdm
+--------  Occurrences  --------
+Species Names                 : Colossoma.macropomum Mylossoma.aureum 
+Number of presences           : 98 95 
+Data Cleaning                 : NAs, Capitals, Centroids, Geographically Duplicated, Identical Lat/Long, Institutions, Invalid, Non-terrestrial, Duplicated Cell 
+--------  Predictors  ---------
+Number of Predictors          : 19 
+Predictors Names              : bio1, bio10, bio11, bio12, bio13, bio14, bio15, bio16, bio17, bio18, bio19, bio2, bio3, bio4, bio5, bio6, bio7, bio8, bio9 
+Extent                        : -7658800 -4658800 -2526520 673480.4 (xmin, xmax, ymin, ymax)
+EPSG                          : EPSG:6933 
+Resolution                    : 1e+05 1e+05 (x, y)
+Area (VIF)                    : all
+Selected Variables (VIF)      : bio18, bio4, bio8 
+---------  Scenarios  ---------
+Scenarios Names               : mi_ssp126_10_2030.tif mi_ssp126_10_2090.tif mi_ssp585_10_2030.tif mi_ssp585_10_2090.tif 
+Number of Scenarios           : 4 
+-----------  Models  ----------
+--------  Predictions  --------</code></pre>
+</div>
+</div>
+</section>
+<section id="generate-pseudoabsences" class="level3">
+<h3 class="anchored" data-anchor-id="generate-pseudoabsences">Generate Pseudoabsences</h3>
+<p>As we mentioned before, pseudoabsence data will be stored in the <code>occurrences</code> object (inside the <code>input_sdm</code>). To generate them, you can inform some parameters. The argument <code>variables_selected</code> will inform which variables you want to use to build your pseudoabsences/models. This can either be a vector of variables names or a previously performed selection method.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>i <span class="ot">&lt;-</span> <span class="fu">pseudoabsences</span>(i, <span class="at">method=</span><span class="st">'bioclim'</span>, <span class="at">variables_selected=</span><span class="st">'vif'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Using variables selected by  vif :  bio18 bio4 bio8</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>i </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>            caretSDM           
+...............................
+Class                         : input_sdm
+--------  Occurrences  --------
+Species Names                 : Colossoma.macropomum Mylossoma.aureum 
+Number of presences           : 98 95 
+Pseudoabsence methods         :
+    Method to obtain PAs      : bioclim 
+    Number of PA sets         : 10 
+    Number of PAs in each set : 98 95 
+Data Cleaning                 : NAs, Capitals, Centroids, Geographically Duplicated, Identical Lat/Long, Institutions, Invalid, Non-terrestrial, Duplicated Cell 
+--------  Predictors  ---------
+Number of Predictors          : 19 
+Predictors Names              : bio1, bio10, bio11, bio12, bio13, bio14, bio15, bio16, bio17, bio18, bio19, bio2, bio3, bio4, bio5, bio6, bio7, bio8, bio9 
+Extent                        : -7658800 -4658800 -2526520 673480.4 (xmin, xmax, ymin, ymax)
+EPSG                          : EPSG:6933 
+Resolution                    : 1e+05 1e+05 (x, y)
+Area (VIF)                    : all
+Selected Variables (VIF)      : bio18, bio4, bio8 
+---------  Scenarios  ---------
+Scenarios Names               : mi_ssp126_10_2030.tif mi_ssp126_10_2090.tif mi_ssp585_10_2030.tif mi_ssp585_10_2090.tif 
+Number of Scenarios           : 4 
+-----------  Models  ----------
+--------  Predictions  --------</code></pre>
+</div>
+</div>
+<p><strong>TIP:</strong> Note, again, that the information regarding the <code>i</code> object has increased. Now it includes the information that we performed a Data Cleaning routine, explicitly informing what methods were used, the information regarding VIF routine and the pseudoabsences.</p>
+<p>We can test if our pseudoabsences are significantly different from the presences by ploting the t-SNE:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tsne_sdm</span>(i, <span class="at">variables_selected=</span><span class="st">'vif'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>$Colossoma.macropomum
+$Colossoma.macropomum[[1]]</code></pre>
+</div>
+<div class="cell-output-display">
+<p><img src="README_files/figure-html/tsne-1.png" class="img-fluid" width="672"></p>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+$Colossoma.macropomum[[2]]</code></pre>
+</div>
+<div class="cell-output-display">
+<p><img src="README_files/figure-html/tsne-2.png" class="img-fluid" width="672"></p>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+$Colossoma.macropomum[[3]]</code></pre>
+</div>
+<div class="cell-output-display">
+<p><img src="README_files/figure-html/tsne-3.png" class="img-fluid" width="672"></p>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+$Colossoma.macropomum[[4]]</code></pre>
+</div>
+<div class="cell-output-display">
+<p><img src="README_files/figure-html/tsne-4.png" class="img-fluid" width="672"></p>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+$Colossoma.macropomum[[5]]</code></pre>
+</div>
+<div class="cell-output-display">
+<p><img src="README_files/figure-html/tsne-5.png" class="img-fluid" width="672"></p>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+$Colossoma.macropomum[[6]]</code></pre>
+</div>
+<div class="cell-output-display">
+<p><img src="README_files/figure-html/tsne-6.png" class="img-fluid" width="672"></p>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+$Colossoma.macropomum[[7]]</code></pre>
+</div>
+<div class="cell-output-display">
+<p><img src="README_files/figure-html/tsne-7.png" class="img-fluid" width="672"></p>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+$Colossoma.macropomum[[8]]</code></pre>
+</div>
+<div class="cell-output-display">
+<p><img src="README_files/figure-html/tsne-8.png" class="img-fluid" width="672"></p>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+$Colossoma.macropomum[[9]]</code></pre>
+</div>
+<div class="cell-output-display">
+<p><img src="README_files/figure-html/tsne-9.png" class="img-fluid" width="672"></p>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+$Colossoma.macropomum[[10]]</code></pre>
+</div>
+<div class="cell-output-display">
+<p><img src="README_files/figure-html/tsne-10.png" class="img-fluid" width="672"></p>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+
+$Mylossoma.aureum
+$Mylossoma.aureum[[1]]</code></pre>
+</div>
+<div class="cell-output-display">
+<p><img src="README_files/figure-html/tsne-11.png" class="img-fluid" width="672"></p>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+$Mylossoma.aureum[[2]]</code></pre>
+</div>
+<div class="cell-output-display">
+<p><img src="README_files/figure-html/tsne-12.png" class="img-fluid" width="672"></p>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+$Mylossoma.aureum[[3]]</code></pre>
+</div>
+<div class="cell-output-display">
+<p><img src="README_files/figure-html/tsne-13.png" class="img-fluid" width="672"></p>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+$Mylossoma.aureum[[4]]</code></pre>
+</div>
+<div class="cell-output-display">
+<p><img src="README_files/figure-html/tsne-14.png" class="img-fluid" width="672"></p>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+$Mylossoma.aureum[[5]]</code></pre>
+</div>
+<div class="cell-output-display">
+<p><img src="README_files/figure-html/tsne-15.png" class="img-fluid" width="672"></p>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+$Mylossoma.aureum[[6]]</code></pre>
+</div>
+<div class="cell-output-display">
+<p><img src="README_files/figure-html/tsne-16.png" class="img-fluid" width="672"></p>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+$Mylossoma.aureum[[7]]</code></pre>
+</div>
+<div class="cell-output-display">
+<p><img src="README_files/figure-html/tsne-17.png" class="img-fluid" width="672"></p>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+$Mylossoma.aureum[[8]]</code></pre>
+</div>
+<div class="cell-output-display">
+<p><img src="README_files/figure-html/tsne-18.png" class="img-fluid" width="672"></p>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+$Mylossoma.aureum[[9]]</code></pre>
+</div>
+<div class="cell-output-display">
+<p><img src="README_files/figure-html/tsne-19.png" class="img-fluid" width="672"></p>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+$Mylossoma.aureum[[10]]</code></pre>
+</div>
+<div class="cell-output-display">
+<p><img src="README_files/figure-html/tsne-20.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+</section>
+<section id="processing" class="level2">
+<h2 class="anchored" data-anchor-id="processing">Processing</h2>
+<p>With the occurrences and predictors data put together, we can pass to the modeling. As the name suggests, this package uses the <code>caret</code> package underlying its modeling procedure. For those who are not familiar, <code>caret</code> is the easiest way to perform Machine Learning analysis in R. It works by setting a modeling wrapper to pass multiple packages and can provide a lot of automation regarding algorithms fine-tuning, data spliting, pre-processing methods and predictions. These automated functions from <code>caret</code> can be altered using the <code>ctrl</code> argument in <code>train_sdm</code> function. See <code>?caret::trainControl</code> for all options available.</p>
+<p>Note that, when you are using an algorithm for the first time, caret will ask you to install the relevant packages to properly run the algorithm.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb65"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb65-1"><a href="#cb65-1" aria-hidden="true" tabindex="-1"></a>i <span class="ot">&lt;-</span> <span class="fu">train_sdm</span>(i,  <span class="at">algo=</span><span class="fu">c</span>(<span class="st">'svmLinear2'</span>,<span class="st">'mda'</span>,<span class="st">'nnet'</span>,<span class="st">'nb'</span>, <span class="st">'kknn'</span>), <span class="at">variables_selected=</span><span class="st">'vif'</span>)</span>
+<span id="cb65-2"><a href="#cb65-2" aria-hidden="true" tabindex="-1"></a>i</span>
+<span id="cb65-3"><a href="#cb65-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Under development stacked method:</span></span>
+<span id="cb65-4"><a href="#cb65-4" aria-hidden="true" tabindex="-1"></a><span class="co">#i &lt;- train_sdm(i,  algo=list(c('svmLinear2', 'fda'),c('svmLinear2')), #variables_selected='vif')</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Check mean validation metrics:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb66"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb66-1"><a href="#cb66-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mean_validation_metrics</span>(i)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>$Colossoma.macropomum
+# A tibble: 5 × 5
+  algo         ROC Sensitivity Specificity   TSS
+  &lt;chr&gt;      &lt;dbl&gt;       &lt;dbl&gt;       &lt;dbl&gt; &lt;dbl&gt;
+1 kknn       0.954       0.960       0.921 0.881
+2 mda        0.935       0.982       0.750 0.732
+3 nb         0.985       0.964       0.953 0.917
+4 nnet       0.991       0.987       0.904 0.891
+5 svmLinear2 0.982       0.991       0.860 0.851
+
+$Mylossoma.aureum
+# A tibble: 5 × 5
+  algo         ROC Sensitivity Specificity   TSS
+  &lt;chr&gt;      &lt;dbl&gt;       &lt;dbl&gt;       &lt;dbl&gt; &lt;dbl&gt;
+1 kknn       0.934       0.957       0.905 0.863
+2 mda        0.925       0.983       0.735 0.718
+3 nb         0.985       0.948       0.950 0.898
+4 nnet       0.970       0.982       0.852 0.834
+5 svmLinear2 0.975       0.987       0.834 0.822</code></pre>
+</div>
+</div>
+<p>See Variable importance:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb68"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb68-1"><a href="#cb68-1" aria-hidden="true" tabindex="-1"></a><span class="fu">varImp_sdm</span>(i)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>$Colossoma.macropomum
+           mean        sd
+bio18  1.728426  2.121362
+bio4   8.973306 20.030683
+bio8  99.673531  2.308482
+
+$Mylossoma.aureum
+           mean        sd
+bio18  1.112481  2.120434
+bio4  17.130027 19.650698
+bio8  99.296156  4.976929</code></pre>
+</div>
+</div>
+</section>
+<section id="prediction" class="level2">
+<h2 class="anchored" data-anchor-id="prediction">Prediction</h2>
+<p>Now that we have our models, we can make predictions in new scenarios. The function <code>predict_sdm</code> incorporates also the prediction of ensembles (<code>ensembles=TRUE</code> is standard), as well as the prediction on current data (obtained from predictors data; <code>add.current=TRUE</code> is standard).</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb70"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb70-1"><a href="#cb70-1" aria-hidden="true" tabindex="-1"></a>i <span class="ot">&lt;-</span> <span class="fu">predict_sdm</span>(i)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>bio01 bio02 bio03 bio04 bio05 bio06 bio07 bio08 bio09 bio10 bio11 bio12 bio13 bio14 bio15 bio16 bio17 bio18 bio19 
+bio1 bio2 bio3 bio4 bio5 bio6 bio7 bio8 bio9 bio10 bio11 bio12 bio13 bio14 bio15 bio16 bio17 bio18 bio19[1] "Projecting: 1/5"
+[1] "Projecting: 2/5"
+[1] "Projecting: 3/5"
+[1] "Projecting: 4/5"
+[1] "Projecting: 5/5"
+[1] "Ensembling..."
+[1] "mi_ssp126_10_2030.tif"
+[1] "Colossoma.macropomum"
+[1] "Mylossoma.aureum"
+[1] "mi_ssp126_10_2090.tif"
+[1] "Colossoma.macropomum"
+[1] "Mylossoma.aureum"
+[1] "mi_ssp585_10_2030.tif"
+[1] "Colossoma.macropomum"
+[1] "Mylossoma.aureum"
+[1] "mi_ssp585_10_2090.tif"
+[1] "Colossoma.macropomum"
+[1] "Mylossoma.aureum"
+[1] "current"
+[1] "Colossoma.macropomum"
+[1] "Mylossoma.aureum"</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb72"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb72-1"><a href="#cb72-1" aria-hidden="true" tabindex="-1"></a>i</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>            caretSDM           
+...............................
+Class                         : input_sdm
+--------  Occurrences  --------
+Species Names                 : Colossoma.macropomum Mylossoma.aureum 
+Number of presences           : 98 95 
+Pseudoabsence methods         :
+    Method to obtain PAs      : bioclim 
+    Number of PA sets         : 10 
+    Number of PAs in each set : 98 95 
+Data Cleaning                 : NAs, Capitals, Centroids, Geographically Duplicated, Identical Lat/Long, Institutions, Invalid, Non-terrestrial, Duplicated Cell 
+--------  Predictors  ---------
+Number of Predictors          : 19 
+Predictors Names              : bio1, bio10, bio11, bio12, bio13, bio14, bio15, bio16, bio17, bio18, bio19, bio2, bio3, bio4, bio5, bio6, bio7, bio8, bio9 
+Extent                        : -7658800 -4658800 -2526520 673480.4 (xmin, xmax, ymin, ymax)
+EPSG                          : EPSG:6933 
+Resolution                    : 1e+05 1e+05 (x, y)
+Area (VIF)                    : all
+Selected Variables (VIF)      : bio18, bio4, bio8 
+---------  Scenarios  ---------
+Scenarios Names               : mi_ssp126_10_2030.tif mi_ssp126_10_2090.tif mi_ssp585_10_2030.tif mi_ssp585_10_2090.tif 
+Number of Scenarios           : 4 
+-----------  Models  ----------
+Algorithms Names              : svmLinear2 mda nnet nb kknn 
+Variables Names               : bio18 bio4 bio8 
+Model Validation              :
+    Method                    : repeatedcv 
+    Number                    : 4 
+    Metrics                   :
+$Colossoma.macropomum
+# A tibble: 5 × 5
+  algo         ROC Sensitivity Specificity   TSS
+  &lt;chr&gt;      &lt;dbl&gt;       &lt;dbl&gt;       &lt;dbl&gt; &lt;dbl&gt;
+1 kknn       0.954       0.960       0.921 0.881
+2 mda        0.935       0.982       0.750 0.732
+3 nb         0.985       0.964       0.953 0.917
+4 nnet       0.991       0.987       0.904 0.891
+5 svmLinear2 0.982       0.991       0.860 0.851
+
+$Mylossoma.aureum
+# A tibble: 5 × 5
+  algo         ROC Sensitivity Specificity   TSS
+  &lt;chr&gt;      &lt;dbl&gt;       &lt;dbl&gt;       &lt;dbl&gt; &lt;dbl&gt;
+1 kknn       0.934       0.957       0.905 0.863
+2 mda        0.925       0.983       0.735 0.718
+3 nb         0.985       0.948       0.950 0.898
+4 nnet       0.970       0.982       0.852 0.834
+5 svmLinear2 0.975       0.987       0.834 0.822
+
+--------  Predictions  --------
+Ensembles                     :
+    Methods                   : mean_occ_prob wmean_AUC committee_avg 
+Thresholds                    :
+    Method                    : threshold: 0.9 
+    Criteria                  : 0.9 </code></pre>
+</div>
+</div>
+</section>
+<section id="mapping" class="level2">
+<h2 class="anchored" data-anchor-id="mapping">Mapping</h2>
+<p>To generate maps in caretSDM we can simply plot the input_sdm object. The plot function will look for ensembles, predictions, models and occurrences to be ploted, in this order. In this way, if only occurrences are available, it will plot the occurrences. If ensembles are available, it will plot the ensembles. You can specify what to plot using the <code>what</code> argument.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb74"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb74-1"><a href="#cb74-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(i<span class="sc">$</span>predictions)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="README_files/figure-html/generating_maps-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Alternatively, one could retrieve caretSDM data to its favorite class to work on:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb75"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb75-1"><a href="#cb75-1" aria-hidden="true" tabindex="-1"></a>st <span class="ot">&lt;-</span> <span class="fu">sdm_as_stars</span>(i)</span>
+<span id="cb75-2"><a href="#cb75-2" aria-hidden="true" tabindex="-1"></a>st</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>stars object with 1 dimensions and 2 attributes
+attribute(s):
+                     Min.     1st Qu.      Median        Mean     3rd Qu.
+cell_id        15.0000000 344.0000000 526.0000000 515.8055130 697.0000000
+mean_occ_prob   0.3808948   0.8526531   0.9476144   0.8435936   0.9583254
+                      Max.
+cell_id        950.0000000
+mean_occ_prob    0.9658441
+dimension(s):
+         from  to                       refsys point
+geometry    1 653 WGS 84 / NSIDC EASE-Grid ... FALSE
+                                                                values
+geometry POLYGON ((-6258800 -25265...,...,POLYGON ((-5758800 573480...</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb77"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb77-1"><a href="#cb77-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(st[<span class="st">'mean_occ_prob'</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="README_files/figure-html/retrieving%20data-1.png" class="img-fluid" width="672"></p>
+</div>
+<div class="sourceCode cell-code" id="cb78"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb78-1"><a href="#cb78-1" aria-hidden="true" tabindex="-1"></a>ter <span class="ot">&lt;-</span> <span class="fu">sdm_as_terra</span>(i)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "spp not detected. Using spp=Colossoma.macropomum"
+[1] "scen not detected. Using scen=mi_ssp126_10_2030.tif"
+[1] "ens not detected. Using ens=mean_occ_prob"</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb80"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb80-1"><a href="#cb80-1" aria-hidden="true" tabindex="-1"></a>ter</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>class       : SpatRaster 
+dimensions  : 263, 247, 1  (nrow, ncol, nlyr)
+resolution  : 12171.61, 12171.61  (x, y)
+extent      : -7658800, -4652411, -2527654, 673480.4  (xmin, xmax, ymin, ymax)
+coord. ref. : WGS 84 / NSIDC EASE-Grid 2.0 Global (EPSG:6933) 
+source(s)   : memory
+name        :     layer 
+min value   : 0.3808948 
+max value   : 0.9658441 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb82"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb82-1"><a href="#cb82-1" aria-hidden="true" tabindex="-1"></a>r <span class="ot">&lt;-</span> <span class="fu">sdm_as_raster</span>(i)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "spp not detected. Using spp=Colossoma.macropomum"
+[1] "scen not detected. Using scen=mi_ssp126_10_2030.tif"
+[1] "ens not detected. Using ens=mean_occ_prob"</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb84"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb84-1"><a href="#cb84-1" aria-hidden="true" tabindex="-1"></a>r</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>class      : RasterLayer 
+dimensions : 263, 247, 64961  (nrow, ncol, ncell)
+resolution : 12171.61, 12171.61  (x, y)
+extent     : -7658800, -4652411, -2527654, 673480.4  (xmin, xmax, ymin, ymax)
+crs        : +proj=cea +lat_ts=30 +lon_0=0 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs 
+source     : memory
+names      : layer 
+values     : 0.3808948, 0.9658441  (min, max)</code></pre>
+</div>
+</div>
+</section>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>
