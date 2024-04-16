@@ -14,33 +14,13 @@
 #'
 #' @import mapview
 #' @import viridis
+#' @import ggplot2
+#' @import ggspatial
+#' @import dplyr
 #' @importFrom gtools mixedsort
 #' @importFrom data.table rbindlist
 #' @importFrom stringdist stringdist
 #'
-#' @exportS3Method base::plot
-plot.input_sdm <- function(x, what=NULL, spp_name=NULL, scenario=NULL, id=NULL, pa=TRUE, ensemble_type='mean_occ_prob') {
-  if(is.null(what)){
-    if("predictions" %in% names(x)){
-      if("ensembles" %in% names(x$predictions)){
-        #tmp <- plot(x$predictions, spp_name, scenario, id, ensemble=TRUE, ensemble_type) # plot ensembles
-        return(plot(x$predictions, spp_name, scenario, id, ensemble=TRUE, ensemble_type))
-      } else {
-        #tmp <- plot(x$predictions, spp_name, scenario, id, ensemble=FALSE) # plot predictions
-        return(plot(x$predictions, spp_name, scenario, id, ensemble=FALSE))
-      }
-    } else if("models" %in% names(x)) {
-      #tmp <- plot(x$models, spp_name, id)# plot models
-    } else if("occurrences" %in% names(x)){
-      #tmp <- plot(x$occurrences, spp_name, pa)# plot occurrences
-    }
-  } else {
-    valid_inputs <- c('predictions', 'ensembles', 'models', 'occurrences')
-    what <- stringdist::stringdist(what, valid_inputs)
-    #tmp <- plot(x[[what]])# plot what
-    return(plot(x[[what]]))
-  }
-}
 
 #' @exportS3Method base::plot
 plot.occurrences <- function(x, spp_name=NULL, pa=TRUE) {
@@ -52,22 +32,26 @@ plot.occurrences <- function(x, spp_name=NULL, pa=TRUE) {
   return(tmp)
 }
 
-#' @exportS3Method mapview::mapview
-mapview.occurrences <- function(x) {
-  df <- x$occurrences
-  cls <- find_columns(df)
-  coordinates(df) <- cls[2:3]
-  tmp <- mapview::mapview(df, zcol = cls[1], layer.name = "Species")
-  return(tmp)
+#' @export
+plot_occurrences <- function(i, spp_name=NULL, pa=TRUE){
+  return(plot(i$occurrences, spp_name, pa))
 }
 
 #' @exportS3Method base::plot
-plot.predictors <- function(x) {
-  st <- x$grid
-  if("variable_selection" %in% names(x)){st <- st[[x$variable_selection$vif$selected_variables]]}
-  nc <- length(unique(st[[1]]))
-  tmp <- plot(st, col=viridis(nc))
+plot.predictors <- function(x, variables_selected=NULL){
+  st <- x$data
+  if(variables_selected=='vif'){
+    st <- st[,,x$variable_selection$vif$selected_variables]
+  } else {
+    st <- st[[variables_selected]]
+  }
+  tmp <- plot(st, col=viridis(1000))
   return(tmp)
+}
+
+#' @export
+plot_predictors <- function(i, variables_selected=NULL){
+  return(plot(i$predictors, variables_selected))
 }
 
 #' @exportS3Method base::plot
@@ -116,10 +100,80 @@ plot.predictions <- function(x, spp_name=NULL, scenario=NULL, id=NULL, ensemble=
     v <- x[[ens]][[spp_name,scenario]][,ensemble_type]
     grd <- filter(grd, grd$cell_id==cell_id)
     grd[grd$cell_id %in% cell_id,'result'] <- v
+    if(ensemble_type=='mean_occ_prob'){et <- 'Mean Occurrence Probability'}
+    if(ensemble_type=='wmean_AUC'){et <- 'Mean Occurrence Probability Weighted by ROC/AUC'}
+    if(ensemble_type=='committee_avg'){et <- 'Committee Average'}
+    subtitle <- paste0('Ensemble type: ', et)
+  } else {
+    v <- x[[ens]][[scenario]][[spp_name]][[id]]$presence
+    grd <- filter(grd, grd$cell_id==cell_id)
+    grd[grd$cell_id %in% cell_id,'result'] <- v
+    subtitle <- NULL
+  }
+  p <- ggplot() +
+    geom_sf(data=grd, aes(fill = result)) +
+    scale_fill_viridis_c(name=paste0('Occurrence\n Probability'), limits=c(0,1)) +
+    xlab("Longitude") +
+    ylab("Latitude") +
+    ggtitle(paste0(spp_name, " distribution in the ", scenario, " scenario"), subtitle = subtitle) +
+    theme_minimal() +
+    annotation_north_arrow(height=unit(1, "cm"),
+                           width=unit(1, "cm"),
+                           style=north_arrow_fancy_orienteering,
+                           pad_x = unit(0.2, "cm"),
+                           pad_y = unit(0.7, "cm")) +
+    annotation_scale(height=unit(0.2, "cm"))
+
+  return(p)
+}
+
+#' @export
+plot_predictions <- function(i, spp_name=NULL, scenario=NULL, id=NULL, ensemble=TRUE, ensemble_type='mean_occ_prob'){
+  return(plot(i$predictions, spp_name, scenario, id, ensemble, ensemble_type))
+}
+
+
+
+#' @exportS3Method mapview::mapview
+mapview.occurrences <- function(x, spp_name, pa) {
+  df <- x$occurrences
+  if(!is.null(spp_name)){df<- filter(df, species==spp_name)}
+  if(pa==TRUE){
+
+  } else {
+
+  }
+  tmp <- mapview::mapview(df, zcol = 'species', layer.name = "Species")
+  return(tmp)
+}
+
+#' @exportS3Method mapview::mapview
+mapview.predictors <- function(x) {
+  st <- x$grid
+  if("variable_selection" %in% names(x)){st <- st[[x$variable_selection$vif$selected_variables]]}
+  tmp <- mapview(st_as_sf(x$data), burst=T, legend=F, hide=T)
+  return(tmp)
+}
+
+#' @exportS3Method mapview::mapview
+mapview.predictions <- function(x, spp_name=NULL, scenario=NULL, id=NULL, ensemble=TRUE, ensemble_type='mean_occ_prob') {
+  valid_spp <- names(x$predictions[[1]])
+  valid_scen <- names(x$predictions)
+  ens <- ifelse(ensemble, 'ensembles', 'predictions')
+  # valid_id
+  grd <- x$grid
+  if(!is.null(scenario)){scenario <- valid_scen[which.min(stringdist::stringdist(scenario, valid_scen))]} else {scenario <- valid_scen[1]}
+  if(!is.null(spp_name)){spp_name <- valid_spp[which.min(stringdist::stringdist(spp_name, valid_spp))]} else {spp_name <- valid_spp[1]}
+  cell_id <- x[['predictions']][[scenario]][[spp_name]][[1]]$cell_id
+  if(ensemble){
+    v <- x[[ens]][[spp_name,scenario]][,ensemble_type]
+    grd <- filter(grd, grd$cell_id==cell_id)
+    grd[grd$cell_id %in% cell_id,'result'] <- v
   } else {
     v <- x[[ens]][[scenario]][[spp_name]][[id]]$presence
     grd <- filter(grd, grd$cell_id==cell_id)
     grd[grd$cell_id %in% cell_id,'result'] <- v
   }
-  return(plot(grd['result']))
+  tmp <- mapview::mapview(grd, zcol = 'result', layer.name = paste0(spp_name))
+  return(tmp)
 }

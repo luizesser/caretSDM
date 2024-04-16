@@ -100,8 +100,11 @@ predict_sdm <- function(m, scen=NULL, th=0.9, tp='prob', file=NULL, ensembles=TR
   ### INCLUIR ENSEMBLES AQUI ###
   if(ensembles){
     print('Ensembling...')
-    e <- sapply(p, function(y){
+    e <- sapply(names(p), function(y){
+      print(y)
+      y <- p[[y]]
       e2 <- sapply(names(y), function(sp){
+        print(sp)
         x <- y[[sp]]
         if(length(x)>0){
           # Prepare data
