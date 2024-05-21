@@ -19,12 +19,12 @@
 #' @importFrom stats na.omit
 #' @export
 
-GBIF_data <- function(s, file="", ...){
-  if(!file.exists(file)){
+GBIF_data <- function(s, file = "", ...) {
+  if (!file.exists(file)) {
     data <- lapply(s, function(x) {
-      y <- occ_data(scientificName=x, limit=100000, hasCoordinate=T, ...)
-      if('decimalLatitude' %in% names(y$data)){
-        y <- y$data[,c("species", "decimalLongitude","decimalLatitude")]
+      y <- occ_data(scientificName = x, limit = 100000, hasCoordinate = T, ...)
+      if ("decimalLatitude" %in% names(y$data)) {
+        y <- y$data[, c("species", "decimalLongitude", "decimalLatitude")]
         return(y)
       } else {
         print(paste0("Species with zero records found: ", s[ids %in% x]))
@@ -33,11 +33,11 @@ GBIF_data <- function(s, file="", ...){
       }
     })
 
-    data <- lapply(data, function(x){
-      if(!is.null(x)){
+    data <- lapply(data, function(x) {
+      if (!is.null(x)) {
         x <- as.data.frame(x)
         s1 <- unique(x$species)
-        x$species <- rep(gsub(' ', '_', s1),nrow(x))
+        x$species <- rep(gsub(" ", "_", s1), nrow(x))
         return(x)
       }
     })
@@ -45,14 +45,15 @@ GBIF_data <- function(s, file="", ...){
     data <- bind_rows(data)
     data <- na.omit(data)
 
-    if(!file==""){
-      if(grepl("/", file)){dir.create(paste(head(unlist(strsplit(file, "/")), -1), collapse = '/'), recursive = T)}
-      write.csv(data, file, row.names=FALSE)
+    if (!file == "") {
+      if (grepl("/", file)) {
+        dir.create(paste(head(unlist(strsplit(file, "/")), -1), collapse = "/"), recursive = T)
+      }
+      write.csv(data, file, row.names = FALSE)
     }
   } else {
-    print(paste0('File already exists. Importing from: ',file))
+    print(paste0("File already exists. Importing from: ", file))
     data <- read.csv(file)
   }
   return(data)
 }
-

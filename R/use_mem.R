@@ -14,15 +14,15 @@
 #' https://luizfesser.wordpress.com
 #'
 #' @export
-use_mem <- function(x, add=TRUE, name="MEM"){
-  if(is_input_sdm(x)){
+use_mem <- function(x, add = TRUE, name = "MEM") {
+  if (is_input_sdm(x)) {
     y <- x$occurrences
-  } else  if(is_occurrences(x)){
+  } else if (is_occurrences(x)) {
     y <- x
   } else {
-    stop('x must be of class input_sdm or occurrences')
+    stop("x must be of class input_sdm or occurrences")
   }
-  if(!add){
+  if (!add) {
     y$occurrences$species <- rep(name, length(y$occurrences$species))
     y$spp_names <- name
     y$n_presences <- table(y$occurrences$species)
@@ -30,14 +30,14 @@ use_mem <- function(x, add=TRUE, name="MEM"){
     df <- y$occurrences
     df2 <- df
     df2$species <- rep(name, length(df2$species))
-    y$occurrences <- rbind(df,df2)
+    y$occurrences <- rbind(df, df2)
     y$spp_names <- c(y$spp_names, name)
     y$n_presences <- table(y$occurrences$species)
   }
 
-  if(is_input_sdm(x)){
+  if (is_input_sdm(x)) {
     x$occurrences <- y
-  } else  if(is_occurrences(x)){
+  } else if (is_occurrences(x)) {
     x <- y
   }
   return(x)

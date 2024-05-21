@@ -16,12 +16,11 @@
 #' @importFrom dplyr mutate
 #'
 #' @export
-write_predictions <- function(x,l){
-  if(class(x)=='input_data'){
+write_predictions <- function(x, l) {
+  if (class(x) == "input_data") {
     x <- x$predictions
   }
-  if(class(x)=='predictions'){
+  if (class(x) == "predictions") {
     x <- x
   }
-
 }

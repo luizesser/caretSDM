@@ -16,20 +16,20 @@
 #' @importFrom usdm vifcor
 #'
 #' @export
-pca_predictors <- function(pred, variables_selected=NULL){
-  if(class(pred)=='input_sdm'){
+pca_predictors <- function(pred, variables_selected = NULL) {
+  if (class(pred) == "input_sdm") {
     x <- pred$predictors
     occ <- pred$occurrences$occurrences
   } else {
     x <- pred
   }
-  if(is.null(variables_selected)){
+  if (is.null(variables_selected)) {
     selected_vars <- x$predictors_names
-    print(cat('Using all variables available: '), cat(selected_vars, sep=', '))
+    print(cat("Using all variables available: "), cat(selected_vars, sep = ", "))
   }
-  if(any(variables_selected %in% x$predictors_names)){
+  if (any(variables_selected %in% x$predictors_names)) {
     selected_vars <- x$predictors_names[x$predictors_names %in% variables_selected]
-    print(cat('Using given variables: '), cat(selected_vars, sep=', '))
+    print(cat("Using given variables: "), cat(selected_vars, sep = ", "))
   }
 
 
@@ -37,7 +37,7 @@ pca_predictors <- function(pred, variables_selected=NULL){
 
   x$variable_selection$pca$model <- pc_model
   x$variable_selection$pca$data <- pc_data
-  if(class(pred)=='input_sdm'){
+  if (class(pred) == "input_sdm") {
     pred$predictors <- x
     x <- pred
   }

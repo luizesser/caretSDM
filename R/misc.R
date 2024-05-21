@@ -12,8 +12,8 @@
 #' https://luizfesser.wordpress.com
 #'
 #' @export
-n_records <- function(x){
-  if(class(x)=='input_sdm'){
+n_records <- function(x) {
+  if (class(x) == "input_sdm") {
     y <- x$occurrences
   } else {
     y <- x
@@ -22,8 +22,8 @@ n_records <- function(x){
 }
 
 #' @export
-n_pseudoabsences <- function(x){
-  if(class(x)=='input_sdm'){
+n_pseudoabsences <- function(x) {
+  if (class(x) == "input_sdm") {
     y <- x$occurrences
   } else {
     y <- x
@@ -32,8 +32,8 @@ n_pseudoabsences <- function(x){
 }
 
 #' @export
-pseudoabsence_method <- function(x){
-  if(class(x)=='input_sdm'){
+pseudoabsence_method <- function(x) {
+  if (class(x) == "input_sdm") {
     y <- x$occurrences
   } else {
     y <- x
@@ -42,8 +42,8 @@ pseudoabsence_method <- function(x){
 }
 
 #' @export
-pseudoabsence_data <- function(x){
-  if(class(x)=='input_sdm'){
+pseudoabsence_data <- function(x) {
+  if (class(x) == "input_sdm") {
     y <- x$occurrences
   } else {
     y <- x
@@ -52,8 +52,8 @@ pseudoabsence_data <- function(x){
 }
 
 #' @export
-species_names <- function(x){
-  if(class(x)=='input_sdm'){
+species_names <- function(x) {
+  if (class(x) == "input_sdm") {
     y <- x$occurrences
   } else {
     y <- x
@@ -62,13 +62,13 @@ species_names <- function(x){
 }
 
 #' @export
-predictors_names <- function(x){
-  if(class(x)=='input_sdm'){
+predictors_names <- function(x) {
+  if (class(x) == "input_sdm") {
     y <- x$predictors
   } else {
     y <- x
   }
-  if('vif' %in% names(y$variable_selection)){
+  if ("vif" %in% names(y$variable_selection)) {
     res <- y$variable_selection$vif$selected_variables
   } else {
     res <- y$predictors_names
@@ -77,8 +77,8 @@ predictors_names <- function(x){
 }
 
 #' @export
-get_coords <- function(x){
-  if(class(x)=='input_sdm'){
+get_coords <- function(x) {
+  if (class(x) == "input_sdm") {
     y <- x$predictors
   } else {
     y <- x
@@ -87,20 +87,20 @@ get_coords <- function(x){
 }
 
 #' @export
-get_predictors <- function(x){
-  if(class(x)=='input_sdm'){
+get_predictors <- function(x) {
+  if (class(x) == "input_sdm") {
     y <- x$predictors
   } else {
     y <- x
   }
-  res <- cbind(y$grid,y$data$current)
-  names(res) <- c('cell_id', y$predictors_names, 'geometry')
+  res <- cbind(y$grid, y$data$current)
+  names(res) <- c("cell_id", y$predictors_names, "geometry")
   return(res)
 }
 
 #' @export
-scenarios_names <- function(x){
-  if(class(x)=='input_sdm'){
+scenarios_names <- function(x) {
+  if (class(x) == "input_sdm") {
     y <- x$scenarios
   } else {
     y <- x
@@ -110,8 +110,8 @@ scenarios_names <- function(x){
 }
 
 #' @export
-get_scenarios_data <- function(x){
-  if(class(x)=='input_sdm'){
+get_scenarios_data <- function(x) {
+  if (class(x) == "input_sdm") {
     y <- x$scenarios
   } else {
     y <- x
@@ -120,8 +120,8 @@ get_scenarios_data <- function(x){
 }
 
 #' @export
-get_tune_length <- function(x){
-  if(class(x)=='input_sdm'){
+get_tune_length <- function(x) {
+  if (class(x) == "input_sdm") {
     y <- x$models
   } else {
     y <- x
@@ -130,8 +130,8 @@ get_tune_length <- function(x){
 }
 
 #' @export
-algorithms_used <- function(x){
-  if(class(x)=='input_sdm'){
+algorithms_used <- function(x) {
+  if (class(x) == "input_sdm") {
     y <- x$models
   } else {
     y <- x
@@ -140,8 +140,8 @@ algorithms_used <- function(x){
 }
 
 #' @export
-get_models <- function(x){
-  if(class(x)=='input_sdm'){
+get_models <- function(x) {
+  if (class(x) == "input_sdm") {
     y <- x$models
   } else {
     y <- x
@@ -150,8 +150,8 @@ get_models <- function(x){
 }
 
 #' @export
-get_validation_metrics <- function(x){
-  if(class(x)=='input_sdm'){
+get_validation_metrics <- function(x) {
+  if (class(x) == "input_sdm") {
     y <- x$models
   } else {
     y <- x
@@ -160,23 +160,23 @@ get_validation_metrics <- function(x){
 }
 
 #' @export
-mean_validation_metrics <- function(x){
-  if(class(x)=='input_sdm'){
+mean_validation_metrics <- function(x) {
+  if (class(x) == "input_sdm") {
     y <- x$models
   } else {
     y <- x
   }
   algo <- y$algorithms
-  res <-  sapply(y$validation$metrics, function(met){
-    v <- summarise(group_by(met, algo), ROC = mean(ROC), Sensitivity = mean(Sens), Specificity = mean(Spec), TSS = mean(TSS) )
+  res <- sapply(y$validation$metrics, function(met) {
+    v <- summarise(group_by(met, algo), ROC = mean(ROC), Sensitivity = mean(Sens), Specificity = mean(Spec), TSS = mean(TSS))
     return(v)
   }, simplify = FALSE, USE.NAMES = TRUE)
   return(res)
 }
 
 #' @export
-get_predictions <- function(x){
-  if(class(x)=='input_sdm'){
+get_predictions <- function(x) {
+  if (class(x) == "input_sdm") {
     y <- x$predictions
   } else {
     y <- x
@@ -185,8 +185,8 @@ get_predictions <- function(x){
 }
 
 #' @export
-get_ensembles <- function(x){
-  if(class(x)=='input_sdm'){
+get_ensembles <- function(x) {
+  if (class(x) == "input_sdm") {
     y <- x$predictions
   } else {
     y <- x

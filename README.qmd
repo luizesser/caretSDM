@@ -15,7 +15,7 @@ First we will install the package from github. For that we will need to install 
 
 ```{r, eval=F}
 install.packages(setdiff("devtools", rownames(installed.packages())))
-install_github('luizesser/caretSDM')
+install_github("luizesser/caretSDM")
 options(timeout = 600)
 ```
 
@@ -31,12 +31,12 @@ library(stars)
 Now we will create some example data. Starting with occurrences and then predictors data. The first one is a function to obtain species data from GBIF, while the second is a function to obtain climatic variables from WorldClim 2.1. You can read more about them by running in the console `?GBIF_data` and `?WorldClim_data`.
 
 ```{r get_gbif_data}
-#occ_data <- GBIF_data("Araucaria angustifolia")
-occ_data <- read.csv('input_data/spp_data.csv')
+# occ_data <- GBIF_data("Araucaria angustifolia")
+occ_data <- read.csv("input_data/spp_data.csv")
 ```
 
 ```{r get_wc_data, eval=F}
-pred_data <- WorldClim_data(period = 'current', resolution=10)
+pred_data <- WorldClim_data(period = "current", resolution = 10)
 ```
 
 ### The `input_sdm` class
@@ -58,18 +58,22 @@ folder_current <- "~/Documents/GitHub/caretSDM/input_data/WorldClim_data_current
 # folder containing the future data downloaded from WorldClim.
 folder_future <- "~/Documents/GitHub/caretSDM/input_data/WorldClim_data_future"
 
-# importing the study area and informing the crs. 
-study_area <- st_read('input_data/Amazon/AmazonHydroRivers4.shp')
-#st_crs(study_area) <- st_crs(4326)
+# importing the study area and informing the crs.
+study_area <- st_read("input_data/Amazon/AmazonHydroRivers4.shp")
+# st_crs(study_area) <- st_crs(4326)
 
 # create the input_sdm that we will work with during the workflow.
-i <- input_sdm(occurrences(occ_data), 
-               predictors(folder_current, 
-                          study_area = study_area,
-                          rescaling=list(cellsize=100000, epsg=6933)), 
-               scenarios(folder_future,
-                         study_area = study_area,
-                         rescaling=list(cellsize=100000, epsg=6933)))
+i <- input_sdm(
+  occurrences(occ_data),
+  predictors(folder_current,
+    study_area = study_area,
+    rescaling = list(cellsize = 100000, epsg = 6933)
+  ),
+  scenarios(folder_future,
+    study_area = study_area,
+    rescaling = list(cellsize = 100000, epsg = 6933)
+  )
+)
 i
 ```
 
@@ -91,7 +95,7 @@ i
 In `vif_predictors`, we are able to perform two methods to select variables: selecting all area or using the presence records (which is debatable, but implemented).
 
 ```{r input_sdm_vif_predictors}
-i <- vif_predictors(i, area='all')
+i <- vif_predictors(i, area = "all")
 i
 ```
 
@@ -100,8 +104,8 @@ i
 As we mentioned before, pseudoabsence data will be stored in the `occurrences` object (inside the `input_sdm`). To generate them, you can inform some parameters. The argument `variables_selected` will inform which variables you want to use to build your pseudoabsences/models. This can either be a vector of variables names or a previously performed selection method.
 
 ```{r pseudoabsences}
-i <- pseudoabsences(i, method='bioclim', variables_selected='vif')
-i 
+i <- pseudoabsences(i, method = "bioclim", variables_selected = "vif")
+i
 ```
 
 **TIP:** Note, again, that the information regarding the `i` object has increased. Now it includes the information that we performed a Data Cleaning routine, explicitly informing what methods were used, the information regarding VIF routine and the pseudoabsences.
@@ -109,7 +113,7 @@ i
 We can test if our pseudoabsences are significantly different from the presences by ploting the t-SNE:
 
 ```{r tsne}
-tsne_sdm(i, variables_selected='vif')
+tsne_sdm(i, variables_selected = "vif")
 ```
 
 ## Processing
@@ -119,17 +123,17 @@ With the occurrences and predictors data put together, we can pass to the modeli
 Note that, when you are using an algorithm for the first time, caret will ask you to install the relevant packages to properly run the algorithm.
 
 ```{r input_sdm_train2, include=F, eval=T}
-i <- train_sdm(i,  algo=c('svmLinear2','mda','nnet','nb', 'kknn'), variables_selected='vif')
+i <- train_sdm(i, algo = c("svmLinear2", "mda", "nnet", "nb", "kknn"), variables_selected = "vif")
 i
 # Under development stacked method:
-#i <- train_sdm(i,  algo=list(c('svmLinear2', 'fda'),c('svmLinear2')), #variables_selected='vif')
+# i <- train_sdm(i,  algo=list(c('svmLinear2', 'fda'),c('svmLinear2')), #variables_selected='vif')
 ```
 
 ```{r input_sdm_train, eval=FALSE}
-i <- train_sdm(i,  algo=c('svmLinear2','mda','nnet','nb', 'kknn'), variables_selected='vif')
+i <- train_sdm(i, algo = c("svmLinear2", "mda", "nnet", "nb", "kknn"), variables_selected = "vif")
 i
 # Under development stacked method:
-#i <- train_sdm(i,  algo=list(c('svmLinear2', 'fda'),c('svmLinear2')), #variables_selected='vif')
+# i <- train_sdm(i,  algo=list(c('svmLinear2', 'fda'),c('svmLinear2')), #variables_selected='vif')
 ```
 
 Check mean validation metrics:
@@ -166,7 +170,7 @@ Alternatively, one could retrieve caretSDM data to its favorite class to work on
 ```{r retrieving data}
 st <- sdm_as_stars(i)
 st
-plot(st['mean_occ_prob'])
+plot(st["mean_occ_prob"])
 ter <- sdm_as_terra(i)
 ter
 r <- sdm_as_raster(i)
