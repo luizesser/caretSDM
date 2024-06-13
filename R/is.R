@@ -1,10 +1,10 @@
-#' is_sdm functions to check caretSDM data classes.
+#' is_class functions to check caretSDM data classes.
 #'
 #' This functions returns a boolean to check caretSDM object classes.
 #'
-#' @param x caretSDM object
+#' @param x caretSDM object.
 #'
-#' @returns The output is a boolean
+#' @returns Boolean.
 #'
 #'
 #' @author Luíz Fernando Esser (luizesser@gmail.com)
@@ -13,6 +13,11 @@
 #' @export
 is_input_sdm <- function(x) {
   return(class(x) == "input_sdm")
+}
+
+#' @export
+is_sdm_area <- function(x) {
+  return(class(x) == "sdm_area")
 }
 
 #' @export

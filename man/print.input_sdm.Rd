@@ -4,7 +4,7 @@
 \alias{print.input_sdm}
 \title{Print method for predictors}
 \usage{
-print.input_sdm(x)
+\method{print}{input_sdm}(x)
 }
 \description{
 Print method for predictors

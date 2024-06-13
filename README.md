@@ -16,7 +16,7 @@ package.
 
 ``` r
 install.packages(setdiff("devtools", rownames(installed.packages())))
-install_github('luizesser/caretSDM')
+install_github("luizesser/caretSDM")
 options(timeout = 600)
 ```
 
@@ -49,6 +49,11 @@ library(stars)
 
     Linking to GEOS 3.11.0, GDAL 3.5.3, PROJ 9.1.0; sf_use_s2() is TRUE
 
+``` r
+# keep track of time:
+x1 <- Sys.time()
+```
+
 ## Pre-Processing
 
 ### Obtaining example data
@@ -60,12 +65,12 @@ WorldClim 2.1. You can read more about them by running in the console
 `?GBIF_data` and `?WorldClim_data`.
 
 ``` r
-#occ_data <- GBIF_data("Araucaria angustifolia")
-occ_data <- read.csv('input_data/spp_data.csv')
+# occ_data <- GBIF_data("Araucaria angustifolia")
+occ_data <- read.csv("input_data/spp_data.csv")
 ```
 
 ``` r
-pred_data <- WorldClim_data(period = 'current', resolution=10)
+pred_data <- WorldClim_data(period = "current", resolution = 10)
 ```
 
 ### The `input_sdm` class
@@ -129,8 +134,8 @@ folder_current <- "~/Documents/GitHub/caretSDM/input_data/WorldClim_data_current
 # folder containing the future data downloaded from WorldClim.
 folder_future <- "~/Documents/GitHub/caretSDM/input_data/WorldClim_data_future"
 
-# importing the study area and informing the crs. 
-study_area <- st_read('input_data/Amazon/AmazonHydroRivers4.shp')
+# importing the study area and informing the crs.
+study_area <- st_read("input_data/Amazon/AmazonHydroRivers4.shp")
 ```
 
     Reading layer `AmazonHydroRivers4' from data source 
@@ -143,16 +148,18 @@ study_area <- st_read('input_data/Amazon/AmazonHydroRivers4.shp')
     Geodetic CRS:  WGS 84
 
 ``` r
-#st_crs(study_area) <- st_crs(4326)
-
 # create the input_sdm that we will work with during the workflow.
-i <- input_sdm(occurrences(occ_data), 
-               predictors(folder_current, 
-                          study_area = study_area,
-                          rescaling=list(cellsize=100000, epsg=6933)), 
-               scenarios(folder_future,
-                         study_area = study_area,
-                         rescaling=list(cellsize=100000, epsg=6933)))
+i <- input_sdm(
+  occurrences(occ_data),
+  predictors(folder_current,
+    study_area = study_area,
+    rescaling = list(cellsize = 100000, epsg = 6933)
+  ),
+  scenarios(folder_future,
+    study_area = study_area,
+    rescaling = list(cellsize = 100000, epsg = 6933)
+  )
+)
 i
 ```
 
@@ -171,8 +178,6 @@ i
     ---------  Scenarios  ---------
     Scenarios Names               : mi_ssp126_10_2030.tif mi_ssp126_10_2090.tif mi_ssp585_10_2030.tif mi_ssp585_10_2090.tif 
     Number of Scenarios           : 4 
-    -----------  Models  ----------
-    --------  Predictions  --------
 
 **TIP:** pay attention on the information printed above. As we follow
 this tutorial, information will get richer.
@@ -222,9 +227,19 @@ i <- data_clean(i)
 
     Testing sea coordinates
 
+    Reading layer `ne_110m_land' from data source 
+      `/private/var/folders/j_/4jszkpkd3bl5y4ccl0qht1qh0000gn/T/Rtmpkg8oW9/ne_110m_land.shp' 
+      using driver `ESRI Shapefile'
+    Simple feature collection with 127 features and 3 fields
+    Geometry type: POLYGON
+    Dimension:     XY
+    Bounding box:  xmin: -180 ymin: -90 xmax: 180 ymax: 83.64513
+    Geodetic CRS:  WGS 84
+
     Removed 0 records.
 
     [1] "Predictors identified, procceding with grid filter (removing NA and duplicated data)."
+    [1] "CRS from predictors is different from occurrences' CRS. Ocurrences' CRS will be transformed to predictors' CRS."
 
 ``` r
 i
@@ -236,7 +251,7 @@ i
     --------  Occurrences  --------
     Species Names                 : Colossoma.macropomum Mylossoma.aureum 
     Number of presences           : 98 95 
-    Data Cleaning                 : NAs, Capitals, Centroids, Geographically Duplicated, Identical Lat/Long, Institutions, Invalid, Non-terrestrial, Duplicated Cell 
+    Data Cleaning                 : NAs, Capitals, Centroids, Geographically Duplicated, Identical Lat/Long, Institutions, Invalid, Non-terrestrial, Duplicated Cell (grid) 
     --------  Predictors  ---------
     Number of Predictors          : 19 
     Predictors Names              : bio1, bio10, bio11, bio12, bio13, bio14, bio15, bio16, bio17, bio18, bio19, bio2, bio3, bio4, bio5, bio6, bio7, bio8, bio9 
@@ -246,8 +261,6 @@ i
     ---------  Scenarios  ---------
     Scenarios Names               : mi_ssp126_10_2030.tif mi_ssp126_10_2090.tif mi_ssp585_10_2030.tif mi_ssp585_10_2090.tif 
     Number of Scenarios           : 4 
-    -----------  Models  ----------
-    --------  Predictions  --------
 
 **TIP:** Note that the information regarding the `i` object changed. Now
 it includes the information that we performed a Data Cleaning routine
@@ -260,7 +273,7 @@ variables: selecting all area or using the presence records (which is
 debatable, but implemented).
 
 ``` r
-i <- vif_predictors(i, area='all')
+i <- vif_predictors(i, area = "all")
 ```
 
     Using all variables available: bio1, bio10, bio11, bio12, bio13, bio14, bio15, bio16, bio17, bio18, bio19, bio2, bio3, bio4, bio5, bio6, bio7, bio8, bio9
@@ -275,7 +288,7 @@ i
     --------  Occurrences  --------
     Species Names                 : Colossoma.macropomum Mylossoma.aureum 
     Number of presences           : 98 95 
-    Data Cleaning                 : NAs, Capitals, Centroids, Geographically Duplicated, Identical Lat/Long, Institutions, Invalid, Non-terrestrial, Duplicated Cell 
+    Data Cleaning                 : NAs, Capitals, Centroids, Geographically Duplicated, Identical Lat/Long, Institutions, Invalid, Non-terrestrial, Duplicated Cell (grid) 
     --------  Predictors  ---------
     Number of Predictors          : 19 
     Predictors Names              : bio1, bio10, bio11, bio12, bio13, bio14, bio15, bio16, bio17, bio18, bio19, bio2, bio3, bio4, bio5, bio6, bio7, bio8, bio9 
@@ -287,8 +300,6 @@ i
     ---------  Scenarios  ---------
     Scenarios Names               : mi_ssp126_10_2030.tif mi_ssp126_10_2090.tif mi_ssp585_10_2030.tif mi_ssp585_10_2090.tif 
     Number of Scenarios           : 4 
-    -----------  Models  ----------
-    --------  Predictions  --------
 
 ### Generate Pseudoabsences
 
@@ -300,13 +311,13 @@ This can either be a vector of variables names or a previously performed
 selection method.
 
 ``` r
-i <- pseudoabsences(i, method='bioclim', variables_selected='vif')
+i <- pseudoabsences(i, method = "bioclim", variables_selected = "vif")
 ```
 
     Using variables selected by  vif :  bio18 bio4 bio8
 
 ``` r
-i 
+i
 ```
 
                 caretSDM           
@@ -319,7 +330,7 @@ i
         Method to obtain PAs      : bioclim 
         Number of PA sets         : 10 
         Number of PAs in each set : 98 95 
-    Data Cleaning                 : NAs, Capitals, Centroids, Geographically Duplicated, Identical Lat/Long, Institutions, Invalid, Non-terrestrial, Duplicated Cell 
+    Data Cleaning                 : NAs, Capitals, Centroids, Geographically Duplicated, Identical Lat/Long, Institutions, Invalid, Non-terrestrial, Duplicated Cell (grid) 
     --------  Predictors  ---------
     Number of Predictors          : 19 
     Predictors Names              : bio1, bio10, bio11, bio12, bio13, bio14, bio15, bio16, bio17, bio18, bio19, bio2, bio3, bio4, bio5, bio6, bio7, bio8, bio9 
@@ -331,8 +342,6 @@ i
     ---------  Scenarios  ---------
     Scenarios Names               : mi_ssp126_10_2030.tif mi_ssp126_10_2090.tif mi_ssp585_10_2030.tif mi_ssp585_10_2090.tif 
     Number of Scenarios           : 4 
-    -----------  Models  ----------
-    --------  Predictions  --------
 
 **TIP:** Note, again, that the information regarding the `i` object has
 increased. Now it includes the information that we performed a Data
@@ -343,7 +352,7 @@ We can test if our pseudoabsences are significantly different from the
 presences by ploting the t-SNE:
 
 ``` r
-tsne_sdm(i, variables_selected='vif')
+tsne_sdm(i, variables_selected = "vif")
 ```
 
     $Colossoma.macropomum
@@ -466,10 +475,10 @@ will ask you to install the relevant packages to properly run the
 algorithm.
 
 ``` r
-i <- train_sdm(i,  algo=c('svmLinear2','mda','nnet','nb', 'kknn'), variables_selected='vif')
+i <- train_sdm(i, algo = c("svmLinear2", "mda", "nnet", "nb", "kknn"), variables_selected = "vif")
 i
 # Under development stacked method:
-#i <- train_sdm(i,  algo=list(c('svmLinear2', 'fda'),c('svmLinear2')), #variables_selected='vif')
+# i <- train_sdm(i,  algo=list(c('svmLinear2', 'fda'),c('svmLinear2')), #variables_selected='vif')
 ```
 
 Check mean validation metrics:
@@ -482,21 +491,21 @@ mean_validation_metrics(i)
     # A tibble: 5 × 5
       algo         ROC Sensitivity Specificity   TSS
       <chr>      <dbl>       <dbl>       <dbl> <dbl>
-    1 kknn       0.952       0.958       0.922 0.880
-    2 mda        0.933       0.978       0.748 0.726
-    3 nb         0.986       0.961       0.952 0.913
-    4 nnet       0.987       0.986       0.898 0.884
-    5 svmLinear2 0.983       0.991       0.870 0.861
+    1 kknn       0.951       0.968       0.912 0.881
+    2 mda        0.925       0.974       0.731 0.705
+    3 nb         0.984       0.970       0.949 0.919
+    4 nnet       0.985       0.983       0.895 0.878
+    5 svmLinear2 0.980       0.991       0.859 0.850
 
     $Mylossoma.aureum
     # A tibble: 5 × 5
       algo         ROC Sensitivity Specificity   TSS
       <chr>      <dbl>       <dbl>       <dbl> <dbl>
-    1 kknn       0.938       0.959       0.893 0.852
-    2 mda        0.922       0.980       0.739 0.719
-    3 nb         0.987       0.954       0.955 0.908
-    4 nnet       0.955       0.982       0.834 0.817
-    5 svmLinear2 0.975       0.987       0.832 0.819
+    1 kknn       0.939       0.963       0.905 0.868
+    2 mda        0.930       0.984       0.738 0.722
+    3 nb         0.988       0.949       0.959 0.908
+    4 nnet       0.961       0.978       0.871 0.849
+    5 svmLinear2 0.977       0.987       0.825 0.813
 
 See Variable importance:
 
@@ -505,16 +514,16 @@ varImp_sdm(i)
 ```
 
     $Colossoma.macropomum
-                mean       sd
-    bio18   1.380176  2.37185
-    bio4    9.619246 17.61793
-    bio8  100.000000  0.00000
+                 mean        sd
+    bio18   0.6194174  1.259301
+    bio4    6.1040612 11.524897
+    bio8  100.0000000  0.000000
 
     $Mylossoma.aureum
-              mean         sd
-    bio18  0.15000  0.5138391
-    bio4  18.65786 19.8093932
-    bio8  99.96201  0.2686572
+               mean     sd
+    bio18   0.00000  0.000
+    bio4   20.85387 15.458
+    bio8  100.00000  0.000
 
 ## Prediction
 
@@ -564,7 +573,7 @@ i
         Method to obtain PAs      : bioclim 
         Number of PA sets         : 10 
         Number of PAs in each set : 98 95 
-    Data Cleaning                 : NAs, Capitals, Centroids, Geographically Duplicated, Identical Lat/Long, Institutions, Invalid, Non-terrestrial, Duplicated Cell 
+    Data Cleaning                 : NAs, Capitals, Centroids, Geographically Duplicated, Identical Lat/Long, Institutions, Invalid, Non-terrestrial, Duplicated Cell (grid) 
     --------  Predictors  ---------
     Number of Predictors          : 19 
     Predictors Names              : bio1, bio10, bio11, bio12, bio13, bio14, bio15, bio16, bio17, bio18, bio19, bio2, bio3, bio4, bio5, bio6, bio7, bio8, bio9 
@@ -587,21 +596,21 @@ i
     # A tibble: 5 × 5
       algo         ROC Sensitivity Specificity   TSS
       <chr>      <dbl>       <dbl>       <dbl> <dbl>
-    1 kknn       0.952       0.958       0.922 0.880
-    2 mda        0.933       0.978       0.748 0.726
-    3 nb         0.986       0.961       0.952 0.913
-    4 nnet       0.987       0.986       0.898 0.884
-    5 svmLinear2 0.983       0.991       0.870 0.861
+    1 kknn       0.951       0.968       0.912 0.881
+    2 mda        0.925       0.974       0.731 0.705
+    3 nb         0.984       0.970       0.949 0.919
+    4 nnet       0.985       0.983       0.895 0.878
+    5 svmLinear2 0.980       0.991       0.859 0.850
 
     $Mylossoma.aureum
     # A tibble: 5 × 5
       algo         ROC Sensitivity Specificity   TSS
       <chr>      <dbl>       <dbl>       <dbl> <dbl>
-    1 kknn       0.938       0.959       0.893 0.852
-    2 mda        0.922       0.980       0.739 0.719
-    3 nb         0.987       0.954       0.955 0.908
-    4 nnet       0.955       0.982       0.834 0.817
-    5 svmLinear2 0.975       0.987       0.832 0.819
+    1 kknn       0.939       0.963       0.905 0.868
+    2 mda        0.930       0.984       0.738 0.722
+    3 nb         0.988       0.949       0.959 0.908
+    4 nnet       0.961       0.978       0.871 0.849
+    5 svmLinear2 0.977       0.987       0.825 0.813
 
     --------  Predictions  --------
     Ensembles                     :
@@ -609,6 +618,13 @@ i
     Thresholds                    :
         Method                    : threshold: 0.9 
         Criteria                  : 0.9 
+
+``` r
+x2 <- Sys.time()
+x1-x2
+```
+
+    Time difference of -4.888336 mins
 
 ## Mapping
 
@@ -635,12 +651,12 @@ st
 
     stars object with 1 dimensions and 2 attributes
     attribute(s):
-                         Min.     1st Qu.      Median        Mean     3rd Qu.
-    cell_id        15.0000000 344.0000000 526.0000000 515.8055130 697.0000000
-    mean_occ_prob   0.3855683   0.8724467   0.9663922   0.8605494   0.9734454
+                         Min.     1st Qu.      Median       Mean     3rd Qu.
+    cell_id        15.0000000 344.0000000 526.0000000 515.805513 697.0000000
+    mean_occ_prob   0.3604229   0.8318479   0.9279315   0.823077   0.9399644
                           Max.
     cell_id        950.0000000
-    mean_occ_prob    0.9839972
+    mean_occ_prob    0.9478292
     dimension(s):
              from  to                       refsys point
     geometry    1 653 WGS 84 / NSIDC EASE-Grid ... FALSE
@@ -648,7 +664,7 @@ st
     geometry POLYGON ((-6258800 -25265...,...,POLYGON ((-5758800 573480...
 
 ``` r
-plot(st['mean_occ_prob'])
+plot(st["mean_occ_prob"])
 ```
 
 ![](README_files/figure-commonmark/retrieving%20data-1.png)
@@ -672,8 +688,8 @@ ter
     coord. ref. : WGS 84 / NSIDC EASE-Grid 2.0 Global (EPSG:6933) 
     source(s)   : memory
     name        :     layer 
-    min value   : 0.3855683 
-    max value   : 0.9839972 
+    min value   : 0.3604229 
+    max value   : 0.9478292 
 
 ``` r
 r <- sdm_as_raster(i)
@@ -694,4 +710,67 @@ r
     crs        : +proj=cea +lat_ts=30 +lon_0=0 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs 
     source     : memory
     names      : layer 
-    values     : 0.3855683, 0.9839972  (min, max)
+    values     : 0.3604229, 0.9478292  (min, max)
+
+## An alternative approach
+
+We implemented a different approach to users that want to use shape
+variables. This is implemented mostly thinking in HydroSHEDS database,
+which is particularly important for continental aquatic environments
+modeling.
+
+``` r
+library(stars) 
+library(tibble) 
+library(dplyr) 
+library(caretSDM) 
+x3 <- Sys.time()
+## Import occurrence data
+occ_data <- read.csv('input_data/spp_data.csv')
+
+## Amazon shapefile
+amazon <- read_sf('input_data/Amazon/AmazonHydroRivers4.shp') 
+amazon <- select(amazon, c(LENGTH_KM, CATCH_SKM, DIST_UP_KM, UPLAND_SKM))
+## Enter bioclimatic variables
+bioc <- read_stars(list.files('~/Documents/Mapas/Rasters/WorldClim 2.1/current_5m', full.names = T), along = "band", normalize_path = F)
+
+# Change bioclimatic names
+bioc <- set_band_names(bioc, sort(paste0('bio', 1:19))) 
+
+# Create sdm_area object
+sa <- sdm_area(amazon, cell_size = 100000, epsg = 6933) 
+
+# Add the predictors
+sa <- add_predictors(sa, bioc, variables_selected=c('bio1', 'bio12'))
+
+# Import scenarios
+scen <- read_stars(list.files("~/Documents/GitHub/caretSDM/input_data/WorldClim_data_future", full.names = T)) 
+
+# Change names from variable of scenarios to match predictors
+scen <- set_band_names(scen, paste0('bio', 1:19))
+
+# Add scenarios
+sa <- add_scenarios(sa, scen, variables_selected=c('bio1', 'bio12'))
+
+# Follow with the same SDM workflow:
+i_sa <- input_sdm(occurrences(occ_data), sa) |>
+          data_clean() |>
+          vif_predictors() |>
+          pseudoabsences(method = "bioclim", variables_selected=c("bio1", "bio12", "LENGTH_KM")) |>
+          train_sdm(algo = c("svmLinear2", "mda", "nnet", "nb", "kknn"), variables_selected=c("bio1", "bio12", "LENGTH_KM")) |>
+          predict_sdm(th=0.9) 
+
+x4 <- Sys.time()
+```
+
+``` r
+x4-x3
+```
+
+    Time difference of 4.326232 mins
+
+``` r
+plot(i_sa$predictions, scenario='current')
+```
+
+![](README_files/figure-commonmark/last_plot-1.png)

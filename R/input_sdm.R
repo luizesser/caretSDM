@@ -25,12 +25,21 @@ input_sdm <- function(...) {
   if ("occurrences" %in% classes) {
     l$occurrences <- x[classes %in% "occurrences"][[1]]
   }
-  if ("predictors" %in% classes) {
+  if("sdm_area" %in% classes) {
+    sa <- x[classes %in% "sdm_area"][[1]]
+    if("scenarios" %in% names(sa)){
+      l$predictors <- .sdm_area(sa[names(sa) != "scenarios"])
+      l$scenarios <- sa$scenarios
+    } else {
+      l$predictors <- x[classes %in% "sdm_area"][[1]]
+    }
+  } else if ("predictors" %in% classes) {
     l$predictors <- x[classes %in% "predictors"][[1]]
   }
   if ("scenarios" %in% classes) {
     l$scenarios <- x[classes %in% "scenarios"][[1]]
   }
+
   inp <- structure(l,
     class = "input_sdm"
   )
@@ -43,8 +52,8 @@ print.input_sdm <- function(x) {
   cat("            caretSDM           \n")
   cat("...............................\n")
   cat("Class                         : input_sdm\n")
-  cat("--------  Occurrences  --------\n")
   if ("occurrences" %in% names(x)) {
+    cat("--------  Occurrences  --------\n")
     cat("Species Names                 :", x$occurrences$spp_names, "\n")
     cat("Number of presences           :", x$occurrences$n_presences, "\n")
     if (!is.null(x$occurrences$pseudoabsences)) {
@@ -65,39 +74,60 @@ print.input_sdm <- function(x) {
       cat(cat("Data Cleaning                 : "), cat(x$occurrences$data_cleaning, sep = ", "), "\n")
     }
   }
-  cat("--------  Predictors  ---------\n")
   if ("predictors" %in% names(x)) {
-    cat("Number of Predictors          :", length(x$predictors$predictors_names), "\n")
-    cat(cat("Predictors Names              : "), cat(x$predictors$predictors_names, sep = ", "), "\n")
-    if (!is.null(x$predictors$bbox)) {
-      cat("Extent                        :", x$predictors$bbox, "(xmin, xmax, ymin, ymax)\n")
-    }
-    if (!is.null(x$predictors$epsg)) {
-      cat("EPSG                          :", x$predictors$epsg, "\n")
-    }
-    if (!is.null(x$predictors$resolution)) {
-      cat("Resolution                    :", x$predictors$resolution, "(x, y)\n")
-    }
-    if (!is.null(x$rescaling)) {
-      cat(
-        "Rescaling                     :\n",
-        "   Cellsize                   :", x$predictors$rescaling$cellsize, "\n"
-      )
-    }
-    if (!is.null(x$predictors$variable_selection$vif)) {
-      cat(
-        cat("Area (VIF)                    : "), cat(x$predictors$variable_selection$vif$area), cat("\n"),
-        cat("Selected Variables (VIF)      : "), cat(x$predictors$variable_selection$vif$selected_variables, sep = ", "), "\n"
-      )
+    if(is_predictors(x$predictors)){
+      cat("--------  Predictors  ---------\n")
+      cat("Number of Predictors          :", length(x$predictors$predictors), "\n")
+      cat(cat("Predictors Names              : "), cat(x$predictors$predictors, sep = ", "), "\n")
+      if (!is.null(x$predictors$bbox)) {
+        cat("Extent                        :", x$predictors$bbox, "(xmin, xmax, ymin, ymax)\n")
+      }
+      if (!is.null(x$predictors$epsg)) {
+        cat("EPSG                          :", x$predictors$epsg, "\n")
+      }
+      if (!is.null(x$predictors$resolution)) {
+        cat("Resolution                    :", x$predictors$resolution, "(x, y)\n")
+      }
+      if (!is.null(x$rescaling)) {
+        cat(
+          "Rescaling                     :\n",
+          "   Cellsize                   :", x$predictors$rescaling$cellsize, "\n"
+        )
+      }
+      if (!is.null(x$predictors$variable_selection$vif)) {
+        cat(
+          cat("Area (VIF)                    : "), cat(x$predictors$variable_selection$vif$area), cat("\n"),
+          cat("Selected Variables (VIF)      : "), cat(x$predictors$variable_selection$vif$selected_variables, sep = ", "), "\n"
+        )
+      }
+    } else if(is_sdm_area(x$predictors)){
+      cat("--------  Predictors  ---------\n")
+      cat("Number of Predictors          :", length(x$predictors$predictors), "\n")
+      cat(cat("Predictors Names              : "), cat(x$predictors$predictors, sep = ", "), "\n")
+      if (!is.null(x$predictors$bbox)) {
+        cat("Extent                        :", x$predictors$bbox, "(xmin, xmax, ymin, ymax)\n")
+      }
+      if (!is.null(x$predictors$epsg)) {
+        cat("EPSG                          :", x$predictors$epsg, "\n")
+      }
+      if (!is.null(x$predictors$resolution)) {
+        cat("Resolution                    :", x$predictors$cell_size, "(x, y)\n")
+      }
+      if (!is.null(x$predictors$variable_selection$vif)) {
+        cat(
+          cat("Area (VIF)                    : "), cat(x$predictors$variable_selection$vif$area), cat("\n"),
+          cat("Selected Variables (VIF)      : "), cat(x$predictors$variable_selection$vif$selected_variables, sep = ", "), "\n"
+        )
+      }
     }
   }
-  cat("---------  Scenarios  ---------\n")
   if ("scenarios" %in% names(x)) {
+    cat("---------  Scenarios  ---------\n")
     cat("Scenarios Names               :", names(x$scenarios$data), "\n")
     cat("Number of Scenarios           :", length(x$scenarios$data), "\n")
   }
-  cat("-----------  Models  ----------\n")
   if ("models" %in% names(x)) {
+    cat("-----------  Models  ----------\n")
     if (class(x$models$algorithms) == "list") {
       cat("Algorithms Names              : Stacked Ensemble\n")
       for (j in 1:length(x$models$algorithms)) {
@@ -123,8 +153,8 @@ print.input_sdm <- function(x) {
       )
     }
   }
-  cat("--------  Predictions  --------\n")
   if ("predictions" %in% names(x)) {
+    cat("--------  Predictions  --------\n")
     cat(
       "Ensembles                     :\n",
       "   Methods                   :", colnames(x$predictions$ensembles[1, 1][[1]])[-1], "\n"

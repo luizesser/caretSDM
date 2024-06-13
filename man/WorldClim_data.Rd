@@ -58,12 +58,14 @@ This function allows to download data from WorldClim v.2.1 (https://www.worldcli
 This function will create a folder entitled 'WorldClim_data'. All the data downloaded will be stored in this folder. Note that, despite being possible to retrieve a lot of data at once, it is not recommended to do so, since the data is very heavy.
 }
 \examples{
-\dontrun{# download data from multiple periods:
+\dontrun{
+# download data from multiple periods:
 year <- c(2050, 2090)
-WorldClim_data('bioc',year, 'mi', 126, 10)
+WorldClim_data("bioc", year, "mi", 126, 10)
 
 # download data from one specific period
-WorldClim_data('bioc',2070,'mi',585,10)}
+WorldClim_data("bioc", 2070, "mi", 585, 10)
+}
 
 }
 \references{

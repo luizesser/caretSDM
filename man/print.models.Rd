@@ -4,7 +4,7 @@
 \alias{print.models}
 \title{Print method for predictors}
 \usage{
-print.models(x)
+\method{print}{models}(x)
 }
 \description{
 Print method for predictors

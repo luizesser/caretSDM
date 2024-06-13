@@ -2,15 +2,15 @@
 % Please edit documentation in R/is.R
 \name{is_input_sdm}
 \alias{is_input_sdm}
-\title{is_sdm functions to check caretSDM data classes.}
+\title{is_class functions to check caretSDM data classes.}
 \usage{
 is_input_sdm(x)
 }
 \arguments{
-\item{x}{caretSDM object}
+\item{x}{caretSDM object.}
 }
 \value{
-The output is a boolean
+Boolean.
 }
 \description{
 This functions returns a boolean to check caretSDM object classes.

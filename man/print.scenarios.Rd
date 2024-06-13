@@ -4,7 +4,7 @@
 \alias{print.scenarios}
 \title{Print method for scenarios}
 \usage{
-print.scenarios(x)
+\method{print}{scenarios}(x)
 }
 \description{
 Print method for scenarios

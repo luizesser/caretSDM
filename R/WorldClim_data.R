@@ -104,7 +104,7 @@ WorldClim_data <- function(path = NULL, period = "current", variable = "bioc", y
 
   if (period == "current") {
     if (is.null(path)) {
-      path <- "input_data/WorldClim_data_curent"
+      path <- "input_data/WorldClim_data_current"
     }
     if (!dir.exists(path)) {
       dir.create(path, recursive = TRUE)

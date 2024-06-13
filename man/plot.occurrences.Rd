@@ -4,7 +4,7 @@
 \alias{plot.occurrences}
 \title{S3 Methods for plot}
 \usage{
-plot.occurrences(x, spp_name = NULL, pa = TRUE)
+\method{plot}{occurrences}(x, spp_name = NULL, pa = TRUE)
 }
 \arguments{
 \item{x}{Object to be plotted.}

@@ -20,7 +20,7 @@
 #' @importFrom raster extract
 #'
 #' @export
-pseudoabsences <- function(occ, pred = NULL, method = "random", n_set = 10, n_pa = NULL, variables_selected = NULL) {
+pseudoabsences <- function(occ, pred = NULL, method = "random", n_set = 10, n_pa = NULL, variables_selected = NULL, th=0) {
   if (class(occ) == "input_sdm") {
     y <- occ$occurrences
     pred <- occ$predictors
@@ -33,14 +33,26 @@ pseudoabsences <- function(occ, pred = NULL, method = "random", n_set = 10, n_pa
   if (is.null(n_pa)) {
     n_pa <- y$n_presences
   }
-  if (is.null(variables_selected)) {
-    selected_vars <- pred$predictors_names
-    cat("Using all variables available: ", selected_vars)
+  if(is_predictors(pred)){
+    if (is.null(variables_selected)) {
+      selected_vars <- pred$predictors_names
+      cat("Using all variables available: ", selected_vars)
+    }
+    if (any(variables_selected %in% pred$predictors_names)) {
+      selected_vars <- pred$predictors_names[pred$predictors_names %in% variables_selected]
+      cat("Using given variables: ", selected_vars)
+    }
+  } else if (is_sdm_area(pred)){
+    if (is.null(variables_selected)) {
+      selected_vars <- pred$predictors
+      cat("Using all variables available: ", selected_vars)
+    }
+    if (any(variables_selected %in% pred$predictors)) {
+      selected_vars <- pred$predictors[pred$predictors %in% variables_selected]
+      cat("Using given variables: ", selected_vars)
+    }
   }
-  if (any(variables_selected %in% pred$predictors_names)) {
-    selected_vars <- pred$predictors_names[pred$predictors_names %in% variables_selected]
-    cat("Using given variables: ", selected_vars)
-  }
+
   if (length(variables_selected) == 1) {
     if (length(pred$variable_selection[attributes(pred$variable_selection)$names %in% variables_selected]) == 0) {
       print(paste0("Variable selection method not detected."))
@@ -49,8 +61,13 @@ pseudoabsences <- function(occ, pred = NULL, method = "random", n_set = 10, n_pa
     selected_vars <- unlist(pred$variable_selection[attributes(pred$variable_selection)$names %in% variables_selected], rec = F)[[paste0(variables_selected, ".selected_variables")]]
     cat("Using variables selected by ", variables_selected, ": ", selected_vars)
   }
-  suppressWarnings(df <- st_centroid(st_as_sf(filter(na.omit(pred$data), band %in% selected_vars))))
-  df <- select(cbind(pred$grid, df), -"geometry.1")
+  if(is_predictors(pred)){
+    suppressWarnings(df <- st_centroid(st_as_sf(filter(na.omit(pred$data), band %in% selected_vars))))
+    df <- select(cbind(pred$grid, df), -"geometry.1")
+  } else if (is_sdm_area(pred)){
+    df <- pred$grid |>
+      select(all_of(c("cell_id",selected_vars)))
+  }
 
   if (method == "random") {
     l <- sapply(y$spp_names, function(sp) {
@@ -73,18 +90,24 @@ pseudoabsences <- function(occ, pred = NULL, method = "random", n_set = 10, n_pa
         occ2 <- df[df$cell_id %in% y$occurrences[y$occurrences$species == sp, ]$cell_id, ]
         model <- dismo::bioclim(x = select(as.data.frame(occ2), all_of(selected_vars)))
         p <- predict(model, as.data.frame(df))
-        p[p[] > 0] <- NA
+        p[p[] > th] <- NA
         p <- data.frame(cell_id = df$cell_id, pred = p)
         p <- p[!is.na(p$pred), ]
         l <- list()
-        for (j in 1:n_set) {
-          if (n_pa[sp] < length(p$cell_id)) {
-            samp <- sample(p$cell_id, n_pa[sp])
-          } else {
-            samp <- sample(p$cell_id, n_pa[sp], replace = T)
+        if(nrow(p)==0){
+          print(paste0("bioclim envelope for ",sp," covered all the study area. Change th argument or change the method."))
+          stop()
+        } else {
+          for (j in 1:n_set) {
+            if (n_pa[sp] < length(p$cell_id)) {
+              samp <- sample(p$cell_id, n_pa[sp])
+            } else {
+              samp <- sample(p$cell_id, n_pa[sp], replace = T)
+            }
+            l[[j]] <- df[df$cell_id %in% samp, ]
           }
-          l[[j]] <- df[df$cell_id %in% samp, ]
         }
+
         return(l)
       }, simplify = FALSE, USE.NAMES = TRUE)
     }
@@ -96,17 +119,22 @@ pseudoabsences <- function(occ, pred = NULL, method = "random", n_set = 10, n_pa
         occ2 <- df[df$cell_id %in% y$occurrences[y$occurrences$species == sp, ]$cell_id, ]
         model <- dismo::mahal(x = select(as.data.frame(occ2), all_of(selected_vars)))
         p <- predict(model, as.data.frame(df))
-        p[p[] < 0] <- NA # A value of 1 means that the lower distance we are considering is 1 standard deviation from the mean in each dimention.
+        p[p[] < th] <- NA # A value of 1 means that the lower distance we are considering is 1 standard deviation from the mean in each dimention.
         p <- data.frame(cell_id = df$cell_id, pred = p)
         p <- p[!is.na(p$pred), ]
         l <- list()
-        for (j in 1:n_set) {
-          if (n_pa[sp] < length(p$cell_id)) {
-            samp <- sample(p$cell_id, n_pa[sp])
-          } else {
-            samp <- sample(p$cell_id, n_pa[sp], replace = T)
+        if(nrow(p)==0){
+          print(paste0("bioclim envelope for ",sp," covered all the study area. Change th argument or change the method."))
+          stop()
+        } else {
+          for (j in 1:n_set) {
+            if (n_pa[sp] < length(p$cell_id)) {
+              samp <- sample(p$cell_id, n_pa[sp])
+            } else {
+              samp <- sample(p$cell_id, n_pa[sp], replace = T)
+            }
+            l[[j]] <- df[df$cell_id %in% samp, ]
           }
-          l[[j]] <- df[df$cell_id %in% samp, ]
         }
         return(l)
       }, simplify = FALSE, USE.NAMES = TRUE)
@@ -124,6 +152,7 @@ pseudoabsences <- function(occ, pred = NULL, method = "random", n_set = 10, n_pa
   return(pa)
 }
 
+#' @export
 .pseudoabsences <- function(occ, l, method, n_set, n_pa) {
   occ$pseudoabsences$data <- l
   occ$pseudoabsences$method <- method

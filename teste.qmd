@@ -1,0 +1,78 @@
+---
+title: "Teste"
+author: "Luíz Fernando Esser"
+format: html
+editor: visual
+---
+
+## Quarto
+
+Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see <https://quarto.org>.
+
+## Running Code
+
+When you click the **Render** button a document will be generated that includes both content and the output of embedded code. You can embed code like this:
+
+```{r}
+library(stars)
+library(tibble)
+library(dplyr)
+library(caretSDM)
+### sdm_area test
+occ_data2 <- GBIF_data(c('Araucaria angustifolia', 'Ilex paraguariensis'))
+parana <- read_sf('tests/testthat/parana.gpkg')
+bioc <- read_stars('tests/testthat/parana.tiff', along = "band", normalize_path = F)
+sa <- sdm_area(parana, cell_size = 100000, epsg = 6933)
+sa <- add_predictors(sa, bioc)
+sa <- add_scenarios(sa)
+i_sa <- input_sdm(
+    occurrences(occ_data2),
+    sa
+)
+
+rm(list=setdiff(ls(), "i_sa"))
+
+i_sa <- data_clean(i_sa)
+i_sa <- vif_predictors(i_sa)
+i_sa <- pseudoabsences(i_sa, method = "bioclim", variables_selected = c("wc2.1_10m_bio_1", "wc2.1_10m_bio_12"), th=0.5)
+i_sa <- train_sdm(i_sa, algo = c("svmLinear2", "mda", "nnet", "nb", "kknn"), variables_selected = c("wc2.1_10m_bio_1", "wc2.1_10m_bio_12"))
+i_sa <- predict_sdm(i_sa, th=0.6)
+plot(i_sa$predictions)
+
+```
+
+You can add options to executable code like this
+
+```{r}
+library(stars)
+library(tibble)
+library(dplyr)
+library(caretSDM)
+### sdm_area test
+occ_data2 <- GBIF_data(c('Araucaria angustifolia', 'Ilex paraguariensis'))
+parana <- read_sf('tests/testthat/parana.gpkg')
+bioc <- read_stars('tests/testthat/parana.tiff', along = "band", normalize_path = F)
+sa <- sdm_area(parana, cell_size = 20000, epsg = 6933)
+sa <- add_predictors(sa, bioc)
+scen <- read_stars(list.files("~/Documents/GitHub/caretSDM/input_data/WorldClim_data_future", full.names = T))
+vars <- get_band_names(scen)
+vars <- gsub("bio01", "wc2.1_10m_bio_1", vars)
+vars <- gsub("bio12", "wc2.1_10m_bio_12", vars)
+scen <- set_band_names(scen, vars)
+sa <- add_scenarios(sa, scen)
+
+i_sa <- input_sdm(
+    occurrences(occ_data2),
+    sa
+)
+
+rm(list=setdiff(ls(), "i_sa"))
+
+i_sa <- data_clean(i_sa)
+i_sa <- vif_predictors(i_sa)
+i_sa <- pseudoabsences(i_sa, method = "bioclim", variables_selected = c("wc2.1_10m_bio_1", "wc2.1_10m_bio_12"), th=0.5)
+i_sa <- train_sdm(i_sa, algo = c("svmLinear2", "mda", "nnet", "nb", "kknn"), variables_selected = c("wc2.1_10m_bio_1", "wc2.1_10m_bio_12"))
+i_sa <- predict_sdm(i_sa, th=0.7)
+plot(i_sa$predictions)
+
+```

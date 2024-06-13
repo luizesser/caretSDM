@@ -4,7 +4,7 @@
 \alias{print.occurrences}
 \title{Print method for occurrences}
 \usage{
-print.occurrences(x)
+\method{print}{occurrences}(x)
 }
 \description{
 Print method for occurrences

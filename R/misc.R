@@ -193,3 +193,22 @@ get_ensembles <- function(x) {
   }
   return(y$ensembles)
 }
+
+#' @export
+set_band_names <- function(x, new_names) {
+  if (class(x) == "stars") {
+    st_dimensions(x)$band$values <- new_names
+  } else {
+    stop('x must be a stars object')
+  }
+  return(x)
+}
+
+#' @export
+get_band_names <- function(x) {
+  if (class(x) == "stars") {
+    return(st_dimensions(x)$band$values)
+  } else {
+    stop('x must be a stars object')
+  }
+}

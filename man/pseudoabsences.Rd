@@ -10,7 +10,8 @@ pseudoabsences(
   method = "random",
   n_set = 10,
   n_pa = NULL,
-  variables_selected = NULL
+  variables_selected = NULL,
+  th = 0
 )
 }
 \arguments{

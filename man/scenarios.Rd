@@ -24,7 +24,7 @@ A list of stacks, with each element of the list corresponding to a GCM from give
 This function creates a new scenarios object, which are used to project models in space and time.
 }
 \examples{
-s <- import_gcms(path='input_data/WorldClim_data_future', extension=".tif", recursive=TRUE, gcm_names=NULL)
+s <- import_gcms(path = "input_data/WorldClim_data_future", extension = ".tif", recursive = TRUE, gcm_names = NULL)
 study_area <- extent(c(-57, -22, -48, -33))
 var_names <- c("bio_1", "bio_12")
 t <- transform_gcms(s, var_names, study_area)

@@ -18,7 +18,7 @@ A occurrences object.
 This function creates a occurrences object
 }
 \examples{
-df <- data.frame(spp_names = rep('Aa', 100), longitude = runif(100), decimalLatitude=runif(100))
+df <- data.frame(spp_names = rep("Aa", 100), longitude = runif(100), decimalLatitude = runif(100))
 occ <- occurrences(df)
 
 }
