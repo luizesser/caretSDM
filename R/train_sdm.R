@@ -30,7 +30,7 @@ train_sdm <- function(occ, pred = NULL, algo, ctrl = NULL, variables_selected = 
     z <- occ
   }
 
-  if(is_predictors(pred)){
+  if (is_predictors(pred)) {
     if (is.null(variables_selected)) {
       selected_vars <- pred$predictors_names
       cat("Using all variables available: ", selected_vars)
@@ -39,7 +39,7 @@ train_sdm <- function(occ, pred = NULL, algo, ctrl = NULL, variables_selected = 
       selected_vars <- pred$predictors_names[pred$predictors_names %in% variables_selected]
       cat("Using given variables: ", selected_vars)
     }
-  } else if (is_sdm_area(pred)){
+  } else if (is_sdm_area(pred)) {
     if (is.null(variables_selected)) {
       selected_vars <- pred$predictors
       cat("Using all variables available: ", selected_vars)
@@ -347,14 +347,14 @@ train_sdm <- function(occ, pred = NULL, algo, ctrl = NULL, variables_selected = 
   # } else {
 
   l <- sapply(z$spp_names, function(sp) {
-    if(is_predictors(pred)){
+    if (is_predictors(pred)) {
       occ2 <- z$occurrences[z$occurrences$species == sp, ]$cell_id
       suppressWarnings(env <- select(cbind(st_centroid(st_as_sf(pred$data)), pred$grid), -"geometry.1"))
       occ2 <- filter(env, env$cell_id %in% occ2)
       occ2 <- select(occ2, all_of(selected_vars))
-    } else if (is_sdm_area(pred)){
+    } else if (is_sdm_area(pred)) {
       occ2 <- z$occurrences |>
-        filter(species==sp) |>
+        filter(species == sp) |>
         select(all_of(selected_vars))
     }
 

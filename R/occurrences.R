@@ -2,7 +2,7 @@
 #'
 #' This function creates a \code{occurrences} object.
 #'
-#' @usage occurrences(x, independent_test = NULL, p=0.1, ...)
+#' @usage occurrences(x, independent_test = NULL, p = 0.1, epsg = NULL...)
 #'
 #' @param x A data.frame
 #' @param independent_test Boolean. If \code{independet_test} is \code{TRUE}, a fraction is kept.
@@ -20,39 +20,39 @@
 #' https://luizfesser.wordpress.com
 #'
 #' @examples
-#' occ <- occurrences(occ, epsg=6933)
+#' occ <- occurrences(occ, epsg = 6933)
 #'
 #' @import tibble
 #' @import stars
 #' @importFrom here here
 #'
 #' @export
-occurrences <- function(x, independent_test = NULL, p=0.1, epsg = NULL, ...) {
+occurrences <- function(x, independent_test = NULL, p = 0.1, epsg = NULL, ...) {
   UseMethod("occurrences")
 }
 
 #' @export
-occurrences.data.frame <- function(x, independent_test = NULL, p=0.1, epsg = NULL, ...) {
+occurrences.data.frame <- function(x, independent_test = NULL, p = 0.1, epsg = NULL, ...) {
   occ <- .occurrences(x, independent_test, p, epsg, ...)
   return(occ)
 }
 
 #' @export
-occurrences.tibble <- function(x, independent_test = NULL, p=0.1, epsg = NULL, ...) {
+occurrences.tibble <- function(x, independent_test = NULL, p = 0.1, epsg = NULL, ...) {
   x <- as.data.frame(x)
   occ <- .occurrences(x, independent_test, p, epsg, ...)
   return(occ)
 }
 
 #' @export
-occurrences.sf <- function(x, independent_test = NULL, p=0.1, epsg = NULL, ...) {
+occurrences.sf <- function(x, independent_test = NULL, p = 0.1, epsg = NULL, ...) {
   x <- cbind(select(as.data.frame(x), -"geometry"), st_coordinates(x))
   occ <- .occurrences(x, independent_test, p, epsg, ...)
   return(occ)
 }
 
 #' @export
-.occurrences <- function(x, independent_test = NULL, p=0.1, epsg = NULL, ...) {
+.occurrences <- function(x, independent_test = NULL, p = 0.1, epsg = NULL, ...) {
   col_names <- find_columns(x, ...)
   x <- x[, col_names]
   if (length(col_names) == 2) {

@@ -1,7 +1,7 @@
 ## Test read
 test_that("sdm_area - leitura stars", {
   bioc <- read_stars(test_path("parana.tiff"))
-  expect_equal(round(bioc$parana.tiff[1,1,1], 4), 22.9386)
+  expect_equal(round(bioc$parana.tiff[1, 1, 1], 4), 22.9386)
 })
 
 test_that("sdm_area - leitura sf", {
@@ -19,7 +19,7 @@ test_that("sdm_area - sf/predictors", {
 test_that("sdm_area - sf/grid-bbox", {
   pr <- st_read(test_path("parana.gpkg"))
   sa <- sdm_area(pr, cell_size = 1)
-  expect_equal(round(as.numeric(sa$bbox), 4), c(-54.6183, -26.7168 ,-47.6183, -21.7168 ))
+  expect_equal(round(as.numeric(sa$bbox), 4), c(-54.6183, -26.7168, -47.6183, -21.7168))
 })
 
 test_that("sdm_area - sf/epsg", {
@@ -54,7 +54,7 @@ test_that("sdm_area - sf/no-epsg", {
 
 test_that("sdm_area - stars/epsg", {
   pr <- st_read(test_path("parana.gpkg"))
-  sa <- sdm_area(pr, cell_size = 100000, epsg=6933)
+  sa <- sdm_area(pr, cell_size = 100000, epsg = 6933)
   expect_equal(sa$epsg, "EPSG:6933")
 })
 
@@ -68,7 +68,7 @@ test_that("sdm_area - stars/predictors", {
 test_that("sdm_area - stars/grid-bbox", {
   pr <- read_stars(test_path("parana.tiff"))
   sa <- sdm_area(pr, cell_size = 1)
-  expect_equal(round(as.numeric(sa$bbox), 4), c(-54.6667, -26.6667 ,-47.6667, -21.6667 ))
+  expect_equal(round(as.numeric(sa$bbox), 4), c(-54.6667, -26.6667, -47.6667, -21.6667))
 })
 
 test_that("sdm_area - stars/epsg", {
@@ -97,13 +97,13 @@ test_that("sdm_area - stars/grid", {
 
 test_that("sdm_area - stars/multiple-attributes", {
   pr <- read_stars(test_path("parana.tiff"))
-  pr <- c(pr,pr)
+  pr <- c(pr, pr)
   expect_error(sdm_area(pr, cell_size = 1))
 })
 
 test_that("sdm_area - stars/epsg", {
   pr <- read_stars(test_path("parana.tiff"))
-  sa <- sdm_area(pr, cell_size = 100000, epsg=6933)
+  sa <- sdm_area(pr, cell_size = 100000, epsg = 6933)
   expect_equal(sa$epsg, "EPSG:6933")
 })
 

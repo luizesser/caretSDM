@@ -27,7 +27,7 @@ vif_predictors <- function(pred, area = "all", th = 0.5, maxobservations = 5000,
     x <- pred
   }
 
-  if(is_predictors(x)){
+  if (is_predictors(x)) {
     if (is.null(variables_selected)) {
       selected_vars <- x$predictors_names
       cat(cat("Using all variables available: "), cat(selected_vars, sep = ", "))
@@ -50,7 +50,7 @@ vif_predictors <- function(pred, area = "all", th = 0.5, maxobservations = 5000,
     }
     v <- vifcor(p, th = th, size = maxobservations)
   } else if (is_sdm_area(x)) {
-    if(is.null(variables_selected)) {
+    if (is.null(variables_selected)) {
       selected_variables <- x$predictors
     }
     facnum <- function(x) {
@@ -59,9 +59,9 @@ vif_predictors <- function(pred, area = "all", th = 0.5, maxobservations = 5000,
     if (area == "all") {
       v <- x$grid |>
         as.data.frame() |>
-        select(-c('geometry', 'cell_id')) |>
+        select(-c("geometry", "cell_id")) |>
         select(all_of(selected_variables)) |>
-        mutate_if(is.character,facnum) |>
+        mutate_if(is.character, facnum) |>
         vifcor(th = th, size = maxobservations)
     }
   }

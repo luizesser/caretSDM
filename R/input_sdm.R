@@ -27,7 +27,7 @@
 #' # Include predictors
 #' sa <- add_predictors(sa, bioc)
 #'
-#' i <- input_sdm(occurrences(occ),sa)
+#' i <- input_sdm(occurrences(occ), sa)
 #'
 #' @export
 input_sdm <- function(...) {
@@ -43,9 +43,9 @@ input_sdm <- function(...) {
   if ("occurrences" %in% classes) {
     l$occurrences <- x[classes %in% "occurrences"][[1]]
   }
-  if("sdm_area" %in% classes) {
+  if ("sdm_area" %in% classes) {
     sa <- x[classes %in% "sdm_area"][[1]]
-    if("scenarios" %in% names(sa)){
+    if ("scenarios" %in% names(sa)) {
       l$predictors <- .sdm_area(sa[names(sa) != "scenarios"])
       l$scenarios <- sa$scenarios
     } else {
@@ -93,7 +93,7 @@ print.input_sdm <- function(x) {
     }
   }
   if ("predictors" %in% names(x)) {
-    if(is_predictors(x$predictors)){
+    if (is_predictors(x$predictors)) {
       cat("--------  Predictors  ---------\n")
       cat("Number of Predictors          :", length(x$predictors$predictors), "\n")
       cat(cat("Predictors Names              : "), cat(x$predictors$predictors, sep = ", "), "\n")
@@ -118,7 +118,7 @@ print.input_sdm <- function(x) {
           cat("Selected Variables (VIF)      : "), cat(x$predictors$variable_selection$vif$selected_variables, sep = ", "), "\n"
         )
       }
-    } else if(is_sdm_area(x$predictors)){
+    } else if (is_sdm_area(x$predictors)) {
       cat("--------  Predictors  ---------\n")
       cat("Number of Predictors          :", length(x$predictors$predictors), "\n")
       cat(cat("Predictors Names              : "), cat(x$predictors$predictors, sep = ", "), "\n")

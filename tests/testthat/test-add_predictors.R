@@ -10,34 +10,34 @@ test_that("add_predictors - stars", {
   sa <- sdm_area(test_path("parana.gpkg"))
   pred <- read_stars(test_path("parana.tiff"))
   suppressWarnings(sa_pred <- add_predictors(sa, pred))
-  expect_equal(sa_pred$predictors, c("wc2.1_10m_bio_1", "wc2.1_10m_bio_12", "GID0", "CODIGOIB1", "NOMEUF2", "SIGLAUF3" ))
+  expect_equal(sa_pred$predictors, c("wc2.1_10m_bio_1", "wc2.1_10m_bio_12", "GID0", "CODIGOIB1", "NOMEUF2", "SIGLAUF3"))
 })
 
 test_that("add_predictors - rasterStack", {
   sa <- sdm_area(test_path("parana.gpkg"))
   pred <- raster::stack(test_path("parana.tiff"))
   suppressWarnings(sa_pred <- add_predictors(sa, pred))
-  expect_equal(sa_pred$predictors, c("wc2.1_10m_bio_1", "wc2.1_10m_bio_12", "GID0", "CODIGOIB1", "NOMEUF2", "SIGLAUF3" ))
+  expect_equal(sa_pred$predictors, c("wc2.1_10m_bio_1", "wc2.1_10m_bio_12", "GID0", "CODIGOIB1", "NOMEUF2", "SIGLAUF3"))
 })
 
 test_that("add_predictors - terra", {
   sa <- sdm_area(test_path("parana.gpkg"))
   pred <- terra::rast(test_path("parana.tiff"))
   suppressWarnings(sa_pred <- add_predictors(sa, pred))
-  expect_equal(sa_pred$predictors, c("wc2.1_10m_bio_1", "wc2.1_10m_bio_12", "GID0", "CODIGOIB1", "NOMEUF2", "SIGLAUF3" ))
+  expect_equal(sa_pred$predictors, c("wc2.1_10m_bio_1", "wc2.1_10m_bio_12", "GID0", "CODIGOIB1", "NOMEUF2", "SIGLAUF3"))
 })
 
 ## Test for errors
 test_that("add_predictors - stars/multiple-attributes", {
   sa <- sdm_area(test_path("parana.gpkg"))
   pred <- read_stars(test_path("parana.tiff"))
-  pred <- c(pred,pred)
-  expect_error(add_predictors(sa,pred))
+  pred <- c(pred, pred)
+  expect_error(add_predictors(sa, pred))
 })
 
 test_that("add_predictors - sdm_area is a stars", {
   pred <- read_stars(test_path("parana.tiff"))
-  expect_error(add_predictors(pred,pred))
+  expect_error(add_predictors(pred, pred))
 })
 
 ## Test the grid

@@ -20,7 +20,7 @@
 #' @importFrom raster extract
 #'
 #' @export
-pseudoabsences <- function(occ, pred = NULL, method = "random", n_set = 10, n_pa = NULL, variables_selected = NULL, th=0) {
+pseudoabsences <- function(occ, pred = NULL, method = "random", n_set = 10, n_pa = NULL, variables_selected = NULL, th = 0) {
   if (class(occ) == "input_sdm") {
     y <- occ$occurrences
     pred <- occ$predictors
@@ -33,7 +33,7 @@ pseudoabsences <- function(occ, pred = NULL, method = "random", n_set = 10, n_pa
   if (is.null(n_pa)) {
     n_pa <- y$n_presences
   }
-  if(is_predictors(pred)){
+  if (is_predictors(pred)) {
     if (is.null(variables_selected)) {
       selected_vars <- pred$predictors_names
       cat("Using all variables available: ", selected_vars)
@@ -42,7 +42,7 @@ pseudoabsences <- function(occ, pred = NULL, method = "random", n_set = 10, n_pa
       selected_vars <- pred$predictors_names[pred$predictors_names %in% variables_selected]
       cat("Using given variables: ", selected_vars)
     }
-  } else if (is_sdm_area(pred)){
+  } else if (is_sdm_area(pred)) {
     if (is.null(variables_selected)) {
       selected_vars <- pred$predictors
       cat("Using all variables available: ", selected_vars)
@@ -61,12 +61,12 @@ pseudoabsences <- function(occ, pred = NULL, method = "random", n_set = 10, n_pa
     selected_vars <- unlist(pred$variable_selection[attributes(pred$variable_selection)$names %in% variables_selected], rec = F)[[paste0(variables_selected, ".selected_variables")]]
     cat("Using variables selected by ", variables_selected, ": ", selected_vars)
   }
-  if(is_predictors(pred)){
+  if (is_predictors(pred)) {
     suppressWarnings(df <- st_centroid(st_as_sf(filter(na.omit(pred$data), band %in% selected_vars))))
     df <- select(cbind(pred$grid, df), -"geometry.1")
-  } else if (is_sdm_area(pred)){
+  } else if (is_sdm_area(pred)) {
     df <- pred$grid |>
-      select(all_of(c("cell_id",selected_vars)))
+      select(all_of(c("cell_id", selected_vars)))
   }
 
   if (method == "random") {
@@ -94,8 +94,8 @@ pseudoabsences <- function(occ, pred = NULL, method = "random", n_set = 10, n_pa
         p <- data.frame(cell_id = df$cell_id, pred = p)
         p <- p[!is.na(p$pred), ]
         l <- list()
-        if(nrow(p)==0){
-          print(paste0("bioclim envelope for ",sp," covered all the study area. Change th argument or change the method."))
+        if (nrow(p) == 0) {
+          print(paste0("bioclim envelope for ", sp, " covered all the study area. Change th argument or change the method."))
           stop()
         } else {
           for (j in 1:n_set) {
@@ -123,8 +123,8 @@ pseudoabsences <- function(occ, pred = NULL, method = "random", n_set = 10, n_pa
         p <- data.frame(cell_id = df$cell_id, pred = p)
         p <- p[!is.na(p$pred), ]
         l <- list()
-        if(nrow(p)==0){
-          print(paste0("bioclim envelope for ",sp," covered all the study area. Change th argument or change the method."))
+        if (nrow(p) == 0) {
+          print(paste0("bioclim envelope for ", sp, " covered all the study area. Change th argument or change the method."))
           stop()
         } else {
           for (j in 1:n_set) {

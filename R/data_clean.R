@@ -29,7 +29,7 @@
 #'
 #' @examples
 #' # Create sdm_area object:
-#' sa <- sdm_area(parana, cell_size=25000, epsg=6933)
+#' sa <- sdm_area(parana, cell_size = 25000, epsg = 6933)
 #'
 #' # Include predictors:
 #' sa <- add_predictors(sa, bioc)
@@ -59,20 +59,19 @@ data_clean <- function(occ, pred = NULL, species = NA, long = NA, lat = NA, terr
     species <- species
   } else {
     cn <- colnames(y$occurrences)
-    species <- cn[which.min(stringdist(cn, 'species'))]
-
+    species <- cn[which.min(stringdist(cn, "species"))]
   }
   if (!is.na(long)) {
     lon <- long
   } else {
     colnames(y$occurrences)
-    lon <- cn[which.min(stringdist(cn, 'longitude'))]
+    lon <- cn[which.min(stringdist(cn, "longitude"))]
   }
   if (!is.na(lat)) {
     lat <- lat
   } else {
     colnames(y$occurrences)
-    lat <- cn[which.min(stringdist(cn, 'latitude'))]
+    lat <- cn[which.min(stringdist(cn, "latitude"))]
   }
   x <- y$occurrences
   x <- subset(x, !is.na(lon) | !is.na(lat))
@@ -88,33 +87,34 @@ data_clean <- function(occ, pred = NULL, species = NA, long = NA, lat = NA, terr
   if (!is.null(pred)) {
     print("Predictors identified, procceding with grid filter (removing NA and duplicated data).")
     x2 <- st_as_sf(x,
-             coords = c(lon, lat),
-             crs = st_crs(occ$occurrences$epsg))
-    if(!st_crs(x2) == st_crs(pred$grid)){
+      coords = c(lon, lat),
+      crs = st_crs(occ$occurrences$epsg)
+    )
+    if (!st_crs(x2) == st_crs(pred$grid)) {
       print("CRS from predictors is different from occurrences' CRS. Ocurrences' CRS will be transformed to predictors' CRS.")
       x2 <- st_transform(x2, crs = st_crs(pred$grid))
       y$epsg <- pred$epsg
     }
 
-    if(class(pred)=="predictors"){
+    if (class(pred) == "predictors") {
       preds <- st_rasterize(st_as_sf(pred$grid))
       x2 <- st_transform(x2, crs = st_crs(preds))
       teste <- cbind(st_extract(preds, x2), x2$species)
       x <- na.omit(teste[!duplicated(select(as.data.frame(teste), -"geometry")), ])
       colnames(x) <- c("cell_id", "species", "geometry")
-    } else if(class(pred)=="sdm_area") {
+    } else if (class(pred) == "sdm_area") {
       teste <- pred$grid |>
         st_rasterize() |>
         st_extract(x2) |>
-        mutate(species=x2$species) |>
+        mutate(species = x2$species) |>
         na.omit()
       dup_rows <- teste |>
         as.data.frame() |>
         select(-"geometry") |>
         duplicated()
-      x <- teste[!dup_rows,c("species", "geometry")]
+      x <- teste[!dup_rows, c("species", "geometry")]
       x <- st_join(pred$grid, x)
-      x <- x[,c('cell_id', 'species', predictors_names(pred), 'geometry')]
+      x <- x[, c("cell_id", "species", predictors_names(pred), "geometry")]
     }
   }
   y$occurrences <- x

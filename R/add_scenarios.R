@@ -99,7 +99,7 @@ add_scenarios.stars <- function(sdm_area, scen, scenarios_names = NULL, pred_as_
   sa_data <- sdm_area
   sa <- sdm_area
   if (!is.null(variables_selected)) {
-    scen <- scen[,,,variables_selected]
+    scen <- scen[, , , variables_selected]
   }
   fut_names <- scen[1] |>
     split("band") |>

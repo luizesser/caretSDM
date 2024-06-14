@@ -160,7 +160,7 @@ i
 
 ```{r run-time1}
 x2 <- Sys.time()
-x1-x2
+x1 - x2
 ```
 
 ## Mapping
@@ -188,97 +188,97 @@ r
 We implemented a different approach to users that want to use shape variables. This is implemented mostly thinking in HydroSHEDS database, which is particularly important for continental aquatic environments modeling.
 
 ```{r sdm_area1, eval=T, include=F}
-library(stars) 
-library(tibble) 
-library(dplyr) 
-library(caretSDM) 
+library(stars)
+library(tibble)
+library(dplyr)
+library(caretSDM)
 x3 <- Sys.time()
 ## Import occurrence data
-occ_data <- read.csv('input_data/spp_data.csv')
+occ_data <- read.csv("input_data/spp_data.csv")
 
 ## Amazon shapefile
-amazon <- read_sf('input_data/Amazon/AmazonHydroRivers4.shp') 
+amazon <- read_sf("input_data/Amazon/AmazonHydroRivers4.shp")
 amazon <- select(amazon, c(LENGTH_KM, CATCH_SKM, DIST_UP_KM, UPLAND_SKM))
 ## Enter bioclimatic variables
-bioc <- read_stars(list.files('~/Documents/Mapas/Rasters/WorldClim 2.1/current_5m', full.names = T), along = "band", normalize_path = F)
+bioc <- read_stars(list.files("~/Documents/Mapas/Rasters/WorldClim 2.1/current_5m", full.names = T), along = "band", normalize_path = F)
 
 # Change bioclimatic names
-bioc <- set_band_names(bioc, sort(paste0('bio', 1:19))) 
+bioc <- set_band_names(bioc, sort(paste0("bio", 1:19)))
 
 # Create sdm_area object
-sa <- sdm_area(amazon, cell_size = 100000, epsg = 6933) 
+sa <- sdm_area(amazon, cell_size = 100000, epsg = 6933)
 
 # Add the predictors
-sa <- add_predictors(sa, bioc, variables_selected=c('bio1', 'bio12'))
+sa <- add_predictors(sa, bioc, variables_selected = c("bio1", "bio12"))
 
 # Import scenarios
-scen <- read_stars(list.files("~/Documents/GitHub/caretSDM/input_data/WorldClim_data_future", full.names = T)) 
+scen <- read_stars(list.files("~/Documents/GitHub/caretSDM/input_data/WorldClim_data_future", full.names = T))
 
 # Change names from variable of scenarios to match predictors
-scen <- set_band_names(scen, paste0('bio', 1:19))
+scen <- set_band_names(scen, paste0("bio", 1:19))
 
 # Add scenarios
-sa <- add_scenarios(sa, scen, variables_selected=c('bio1', 'bio12'))
+sa <- add_scenarios(sa, scen, variables_selected = c("bio1", "bio12"))
 
 # Follow with the same SDM workflow:
 i_sa <- input_sdm(occurrences(occ_data), sa) |>
-          data_clean() |>
-          vif_predictors() |>
-          pseudoabsences(method = "bioclim", variables_selected=c("bio1", "bio12", "LENGTH_KM")) |>
-          train_sdm(algo = c("svmLinear2", "mda", "nnet", "nb", "kknn"), variables_selected=c("bio1", "bio12", "LENGTH_KM")) |>
-          predict_sdm(th=0.9) 
+  data_clean() |>
+  vif_predictors() |>
+  pseudoabsences(method = "bioclim", variables_selected = c("bio1", "bio12", "LENGTH_KM")) |>
+  train_sdm(algo = c("svmLinear2", "mda", "nnet", "nb", "kknn"), variables_selected = c("bio1", "bio12", "LENGTH_KM")) |>
+  predict_sdm(th = 0.9)
 
 x4 <- Sys.time()
 ```
 
 ```{r sdm_area2, eval=F, include=T}
-library(stars) 
-library(tibble) 
-library(dplyr) 
-library(caretSDM) 
+library(stars)
+library(tibble)
+library(dplyr)
+library(caretSDM)
 x3 <- Sys.time()
 ## Import occurrence data
-occ_data <- read.csv('input_data/spp_data.csv')
+occ_data <- read.csv("input_data/spp_data.csv")
 
 ## Amazon shapefile
-amazon <- read_sf('input_data/Amazon/AmazonHydroRivers4.shp') 
+amazon <- read_sf("input_data/Amazon/AmazonHydroRivers4.shp")
 amazon <- select(amazon, c(LENGTH_KM, CATCH_SKM, DIST_UP_KM, UPLAND_SKM))
 ## Enter bioclimatic variables
-bioc <- read_stars(list.files('~/Documents/Mapas/Rasters/WorldClim 2.1/current_5m', full.names = T), along = "band", normalize_path = F)
+bioc <- read_stars(list.files("~/Documents/Mapas/Rasters/WorldClim 2.1/current_5m", full.names = T), along = "band", normalize_path = F)
 
 # Change bioclimatic names
-bioc <- set_band_names(bioc, sort(paste0('bio', 1:19))) 
+bioc <- set_band_names(bioc, sort(paste0("bio", 1:19)))
 
 # Create sdm_area object
-sa <- sdm_area(amazon, cell_size = 100000, epsg = 6933) 
+sa <- sdm_area(amazon, cell_size = 100000, epsg = 6933)
 
 # Add the predictors
-sa <- add_predictors(sa, bioc, variables_selected=c('bio1', 'bio12'))
+sa <- add_predictors(sa, bioc, variables_selected = c("bio1", "bio12"))
 
 # Import scenarios
-scen <- read_stars(list.files("~/Documents/GitHub/caretSDM/input_data/WorldClim_data_future", full.names = T)) 
+scen <- read_stars(list.files("~/Documents/GitHub/caretSDM/input_data/WorldClim_data_future", full.names = T))
 
 # Change names from variable of scenarios to match predictors
-scen <- set_band_names(scen, paste0('bio', 1:19))
+scen <- set_band_names(scen, paste0("bio", 1:19))
 
 # Add scenarios
-sa <- add_scenarios(sa, scen, variables_selected=c('bio1', 'bio12'))
+sa <- add_scenarios(sa, scen, variables_selected = c("bio1", "bio12"))
 
 # Follow with the same SDM workflow:
 i_sa <- input_sdm(occurrences(occ_data), sa) |>
-          data_clean() |>
-          vif_predictors() |>
-          pseudoabsences(method = "bioclim", variables_selected=c("bio1", "bio12", "LENGTH_KM")) |>
-          train_sdm(algo = c("svmLinear2", "mda", "nnet", "nb", "kknn"), variables_selected=c("bio1", "bio12", "LENGTH_KM")) |>
-          predict_sdm(th=0.9) 
+  data_clean() |>
+  vif_predictors() |>
+  pseudoabsences(method = "bioclim", variables_selected = c("bio1", "bio12", "LENGTH_KM")) |>
+  train_sdm(algo = c("svmLinear2", "mda", "nnet", "nb", "kknn"), variables_selected = c("bio1", "bio12", "LENGTH_KM")) |>
+  predict_sdm(th = 0.9)
 
 x4 <- Sys.time()
 ```
 
 ```{r run-time2}
-x4-x3
+x4 - x3
 ```
 
 ```{r last_plot}
-plot(i_sa$predictions, scenario='current')
+plot(i_sa$predictions, scenario = "current")
 ```

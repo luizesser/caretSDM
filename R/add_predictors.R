@@ -31,7 +31,7 @@
 #'
 #' @export
 add_predictors <- function(sdm_area, pred, variables_selected = NULL) {
-  if(!is_sdm_area(sdm_area)){
+  if (!is_sdm_area(sdm_area)) {
     cli_abort("first argument is not of class sdm_area")
   }
   UseMethod("add_predictors", pred)
@@ -60,11 +60,11 @@ add_predictors.stars <- function(sdm_area, pred, variables_selected = NULL) {
       "i" = "There {?is/are} {len} element{?s}."
     ))
   }
-  if (!is.null(variables_selected)){
-    pred <- pred[,,,variables_selected]
+  if (!is.null(variables_selected)) {
+    pred <- pred[, , , variables_selected]
   }
   grd <- sdm_area$grid
-  grd <- st_transform(grd, crs=st_crs(pred))
+  grd <- st_transform(grd, crs = st_crs(pred))
   grd2 <- pred |>
     st_crop(grd) |>
     st_as_sf() |>
@@ -72,7 +72,7 @@ add_predictors.stars <- function(sdm_area, pred, variables_selected = NULL) {
     aggregate(grd, mean) |>
     cbind(grd) |>
     select(-c("geometry.1"))
-  grd2 <- st_transform(grd2, crs=st_crs(sdm_area$grid))
+  grd2 <- st_transform(grd2, crs = st_crs(sdm_area$grid))
   bbox2 <- st_bbox(grd2)
   var_names <- grd2 %>%
     as_tibble() %>%
@@ -83,7 +83,7 @@ add_predictors.stars <- function(sdm_area, pred, variables_selected = NULL) {
     bbox = bbox2,
     cell_size = sdm_area$cell_size,
     epsg = sdm_area$epsg,
-    predictors=var_names
+    predictors = var_names
   )
   sa <- .sdm_area(l)
   return(sa)

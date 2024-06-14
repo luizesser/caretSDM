@@ -200,22 +200,22 @@ predictors.stars <- function(x, study_area = NULL, vars_study_area = NULL, predi
 }
 
 #' @export
-predictors.sdm_area <- function(sdm_area){ # pode entrar tanto uma tabela com coord e spp quanto sem.
+predictors.sdm_area <- function(sdm_area) { # pode entrar tanto uma tabela com coord e spp quanto sem.
   facnum <- function(x) {
     return(as.numeric(as.factor(x)))
   }
 
   x <- sdm_area$grid |>
-    mutate_if(is.character,facnum) |>
+    mutate_if(is.character, facnum) |>
     select(-cell_id) |>
     st_rasterize() |>
-    st_xy2sfc(as_points=FALSE) |>
+    st_xy2sfc(as_points = FALSE) |>
     merge(name = "band")
 
   coords <- sdm_area$grid |>
     st_coordinates() |>
     as.data.frame() |>
-    select(X,Y)
+    select(X, Y)
 
   x <- list(
     predictors_names = predictors_names(sdm_area),
@@ -230,7 +230,6 @@ predictors.sdm_area <- function(sdm_area){ # pode entrar tanto uma tabela com co
 
   occ <- .predictors(x)
   return(occ)
-
 }
 
 #' @export

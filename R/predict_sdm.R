@@ -27,7 +27,7 @@ predict_sdm <- function(m, scen = NULL, th = 0.9, tp = "prob", file = NULL, ense
 }
 
 #' @export
-predict_sdm.sdm_area <- function(m, scen=NULL, th = 0.9, tp = "prob", file = NULL, ensembles = TRUE) {
+predict_sdm.sdm_area <- function(m, scen = NULL, th = 0.9, tp = "prob", file = NULL, ensembles = TRUE) {
   if (class(m) == "input_sdm") {
     y <- m$models
     scen <- m$scenarios
@@ -92,12 +92,12 @@ predict_sdm.sdm_area <- function(m, scen=NULL, th = 0.9, tp = "prob", file = NUL
           df <- select(df, contains("presence"))
           # mean_occ_prob
           mean_occ_prob <- df |>
-            as.data.frame()|>
-            apply(2,function(x) {
+            as.data.frame() |>
+            apply(2, function(x) {
               as.numeric(gsub(NaN, NA, x))
             }) |>
             rowMeans()
-          #mean_occ_prob <- rowMeans(df)
+          # mean_occ_prob <- rowMeans(df)
           # wmean_AUC
           wmean_AUC <- apply(df, 1, function(x) {
             stats::weighted.mean(x, th1[[sp]]$ROC)
@@ -105,9 +105,9 @@ predict_sdm.sdm_area <- function(m, scen=NULL, th = 0.9, tp = "prob", file = NUL
           # Obtain Thresholds:
           suppressWarnings(th2 <- lapply(m1[[sp]], function(x) {
             thresholder(x,
-                        threshold = seq(0, 1, by = 0.01),
-                        final = TRUE,
-                        statistics = "all"
+              threshold = seq(0, 1, by = 0.01),
+              final = TRUE,
+              statistics = "all"
             )
           }))
           th2 <- lapply(th2, function(x) {
@@ -198,26 +198,25 @@ predict_sdm.scenarios <- function(m, scen, th = 0.9, tp = "prob", file = NULL, e
   }
   if (add.current == TRUE) {
     if (class(m) == "input_sdm") {
-      if(!is.null(scen)){
-        if(is_predictors(m$predictors)){
+      if (!is.null(scen)) {
+        if (is_predictors(m$predictors)) {
           closest_match <- find_closest_matches(st_dimensions(scen$data)$band$values, gtools::mixedsort(m$predictors$predictors_names))
           st_dimensions(scen$data)$band$values <- closest_match
           scen$data[["current"]] <- m$predictors$data
-        } else if(is_sdm_area(m$predictors)){
+        } else if (is_sdm_area(m$predictors)) {
           closest_match <- find_closest_matches(st_dimensions(scen$data)$band$values, gtools::mixedsort(m$predictors$predictors))
           st_dimensions(scen$data)$band$values <- closest_match
           scen$data[["current"]] <- m$predictors$data
         }
       } else {
-        if(is_predictors(m$predictors)){
+        if (is_predictors(m$predictors)) {
           # scenarios()
           scen$data[["current"]] <- m$predictors$data
-        } else if(is_sdm_area(m$predictors)){
+        } else if (is_sdm_area(m$predictors)) {
           #
           scen$data[["current"]] <- m$predictors$data
         }
       }
-
     }
   }
   p <- list()
