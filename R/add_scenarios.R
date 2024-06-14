@@ -1,16 +1,32 @@
 #' Include scenarios in the SDM workflow.
 #'
-#' This function includes scenarios in the sdm_area object.
+#' This function includes scenarios in the \code{sdm_area} object.
 #'
-#' @param sdm_area A sdm_area object.
-#' @param scen Scenarios to be added: RasterStack, stars, SpatRaster or a directory. If NULL adds predictors as a scenario.
+#' @usage add_scenarios(sdm_area, scen = NULL, variables_selected = NULL)
 #'
-#' @return A sdm_area object.
+#' @param sdm_area A \code{sdm_area} object.
+#' @param scen \code{RasterStack}, \code{SpatRaster}, \code{stars} object or a directory with
+#' scenarios data. If \code{NULL} adds predictors as a scenario.
+#' @param variables_selected Character vector with variables names in \code{scen} to be used as
+#' predictors. If \code{NULL} adds all variables.
 #'
-#' @seealso \code{\link{WorldClim_data}}
+#' @return The input \code{sdm_area} object with a new slot called scenarios with \code{scen} data
+#' as a \code{list}, where each slot of the \code{list} is a scenario.
+#'
+#' @seealso \code{\link{sdm_area}}
 #'
 #' @author Luíz Fernando Esser (luizesser@gmail.com)
-#' https://luizfesser.wordpress.com
+#' \link{https://luizfesser.wordpress.com}
+#'
+#' @examples
+#' # Create sdm_area object
+#' sa <- sdm_area(parana, cell_size = 25000, epsg = 6933)
+#'
+#' # Include predictors
+#' sa <- add_predictors(sa, bioc)
+#'
+#' # Include scenarios
+#' sa <- add_scenarios(sa, scen)
 #'
 #' @import checkmate
 #' @import cli
@@ -32,7 +48,8 @@ add_scenarios.NULL <- function(sdm_area, scen = NULL, variables_selected = NULL,
 }
 
 #' @export
-add_scenarios.character <- function(sdm_area, scen, scenarios_names = NULL, variables_selected = NULL, ...) {
+add_scenarios.character <- function(sdm_area, scen, scenarios_names = NULL,
+                                    variables_selected = NULL, ...) {
   sa_teste <- sdm_area
   if (length(scen) > 1) {
     s <- read_stars(scen)
@@ -60,14 +77,16 @@ add_scenarios.character <- function(sdm_area, scen, scenarios_names = NULL, vari
 }
 
 #' @export
-add_scenarios.RasterStack <- function(sdm_area, scen, scenarios_names = NULL, variables_selected = NULL, ...) {
+add_scenarios.RasterStack <- function(sdm_area, scen, scenarios_names = NULL,
+                                      variables_selected = NULL, ...) {
   scen <- st_as_stars(scen)
   sa <- sdm_area(sdm_area, scen, scenarios_names, variables_selected)
   return(sa)
 }
 
 #' @export
-add_scenarios.SpatRaster <- function(sdm_area, scen, scenarios_names = NULL, variables_selected = NULL, ...) {
+add_scenarios.SpatRaster <- function(sdm_area, scen, scenarios_names = NULL,
+                                     variables_selected = NULL, ...) {
   scen <- st_as_stars(scen)
   names(st_dimensions(scen)) <- c("x", "y", "band")
   sa <- sdm_area(sdm_area, scen, scenarios_names, variables_selected)
@@ -75,7 +94,8 @@ add_scenarios.SpatRaster <- function(sdm_area, scen, scenarios_names = NULL, var
 }
 
 #' @export
-add_scenarios.stars <- function(sdm_area, scen, scenarios_names = NULL, pred_as_scen = TRUE, variables_selected = NULL, ...) {
+add_scenarios.stars <- function(sdm_area, scen, scenarios_names = NULL, pred_as_scen = TRUE,
+                                variables_selected = NULL, ...) {
   sa_data <- sdm_area
   sa <- sdm_area
   if (!is.null(variables_selected)) {
@@ -141,9 +161,4 @@ print.sdm_area <- function(x) {
     cat("Number of Predictors      :", length(x$predictors), "\n")
     cat(cat("Predictors Names          : "), cat(x$predictors, sep = ", "), "\n")
   }
-  # cat("Number of Predictors      :", length(x$predictors_names), "\n")
-  # cat(cat("Predictors Names          : "), cat(x$predictors_names, sep = ", "), "\n")
-  # if (!is.null(x$variable_selection$vif)) {
-  #  cat(cat("Selected Variables (VIF)  : "), cat(x$variable_selection$vif$selected_variables, sep = ", "), "\n")
-  # }
 }

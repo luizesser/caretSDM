@@ -4,7 +4,7 @@
 \alias{sdm_area}
 \title{Create a sdm_area object}
 \usage{
-sdm_area(x, cell_size, epsg, ...)
+sdm_area(x, cell_size, epsg)
 }
 \arguments{
 \item{x}{A shapefile or a raster.}
@@ -17,7 +17,12 @@ sdm_area(x, cell_size, epsg, ...)
 A sdm_area object.
 }
 \description{
-This function creates a new sdm_area object
+This function creates a new sdm_area object.
+}
+\examples{
+# Create sdm_area object
+sa <- sdm_area(parana, cell_size = 25000, epsg = 6933)
+
 }
 \seealso{
 \code{\link{WorldClim_data}}

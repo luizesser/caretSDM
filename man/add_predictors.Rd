@@ -2,27 +2,36 @@
 % Please edit documentation in R/add_predictors.R
 \name{add_predictors}
 \alias{add_predictors}
-\title{Add predictors to sdm_area}
+\title{Add predictors to \code{sdm_area}}
 \usage{
-add_predictors(sdm_area, pred)
+add_predictors(sdm_area, pred, variables_selected = NULL)
 }
 \arguments{
-\item{x}{A shapefile or a raster.}
+\item{sdm_area}{A \code{sdm_area} object.}
 
-\item{cell_size}{Numeric. The cell size to be used in models.}
+\item{pred}{RasterStack, SpatRaster or stars object with predictors data.}
 
-\item{epsg}{Numeric. If epsg from x is missing,}
+\item{variables_selected}{Character vector with variables names in pred to be used as predictors.
+If \code{NULL} adds all variables.}
 }
 \value{
-A sdm_area object.
+The input \code{sdm_area} object with a new grid including the \code{pred} data.
 }
 \description{
-This function adds a new predictor to the sdm_area object
+This function adds predictors to the \code{sdm_area} object.
+}
+\examples{
+# Create sdm_area object
+sa <- sdm_area(parana, cell_size = 25000, epsg = 6933)
+
+# Include predictors
+sa <- add_predictors(sa, bioc)
+
 }
 \seealso{
-\code{\link{WorldClim_data}}
+\code{\link{sdm_area}}
 }
 \author{
 Luíz Fernando Esser (luizesser@gmail.com)
-https://luizfesser.wordpress.com
+\link{https://luizfesser.wordpress.com}
 }

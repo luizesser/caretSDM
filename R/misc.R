@@ -1,12 +1,28 @@
-#' Miscelaneous functions
+#' Miscelaneous functions for \code{input_sdm} objects
 #'
-#' Set of functions to obtain
+#' Set of functions to retrieve information and data from \code{input_sdm} objects.
 #'
 #' @usage n_records(x)
-#' @usage predictors_names(x)
-#' @usage scenarios_names(x)
+#' n_pseudoabsences(x)
+#' pseudoabsence_method(x)
+#' pseudoabsence_data(x)
+#' species_names(x)
+#' predictors_names(x)
+#' get_coords(x)
+#' get_predictors(x)
+#' scenarios_names(x)
+#' get_scenarios_data(x)
+#' get_tune_length(x)
+#' algorithms_used(x)
+#' get_models(x)
+#' get_validation_metrics(x)
+#' mean_validation_metrics(x)
+#' get_predictions(x)
+#' get_ensembles(x)
 #'
 #' @param x A input_sdm object.
+#'
+#' @seealso \code{\link{input_sdm}}
 #'
 #' @author Luíz Fernando Esser (luizesser@gmail.com)
 #' https://luizfesser.wordpress.com

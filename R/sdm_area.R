@@ -1,6 +1,6 @@
 #' Create a sdm_area object
 #'
-#' This function creates a new sdm_area object
+#' This function creates a new sdm_area object.
 #'
 #' @param x A shapefile or a raster.
 #' @param cell_size Numeric. The cell size to be used in models.
@@ -13,6 +13,10 @@
 #' @author Luíz Fernando Esser (luizesser@gmail.com)
 #' https://luizfesser.wordpress.com
 #'
+#' @examples
+#' # Create sdm_area object
+#' sa <- sdm_area(parana, cell_size = 25000, epsg = 6933)
+#'
 #' @import checkmate
 #' @import cli
 #' @import stars
@@ -20,7 +24,7 @@
 #' @import dplyr
 #'
 #' @export
-sdm_area <- function(x, cell_size, epsg, ...) {
+sdm_area <- function(x, cell_size, epsg) {
   UseMethod("sdm_area")
 }
 
@@ -168,9 +172,4 @@ print.sdm_area <- function(x) {
     cat("Number of Predictors      :", length(x$predictors), "\n")
     cat(cat("Predictors Names          : "), cat(x$predictors, sep = ", "), "\n")
   }
-  # cat("Number of Predictors      :", length(x$predictors_names), "\n")
-  # cat(cat("Predictors Names          : "), cat(x$predictors_names, sep = ", "), "\n")
-  # if (!is.null(x$variable_selection$vif)) {
-  #  cat(cat("Selected Variables (VIF)  : "), cat(x$variable_selection$vif$selected_variables, sep = ", "), "\n")
-  # }
 }

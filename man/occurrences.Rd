@@ -2,25 +2,35 @@
 % Please edit documentation in R/occurrences.R
 \name{occurrences}
 \alias{occurrences}
-\title{Create a occurrences object}
+\title{Occurrences}
 \usage{
-occurrences(x, ...)
+occurrences(x, independent_test = NULL, p=0.1, ...)
 }
 \arguments{
 \item{x}{A data.frame}
 
-\item{...}{A vector with column names addressing the columns with species names, longitude and latitude.}
+\item{independent_test}{Boolean. If \code{independet_test} is \code{TRUE}, a fraction is kept.
+Otherwise, the whole dataset \code{x} is used.}
+
+\item{p}{Numeric. Fraction of data to be used as independent test. Standard is 0.1.}
+
+\item{epsg}{Numeric. EPSG of \code{x}.}
+
+\item{...}{A vector with column names addressing the columns with species names, longitude and
+latitude, respectively, in \code{x}.}
 }
 \value{
-A occurrences object.
+A \code{occurrences} object.
 }
 \description{
-This function creates a occurrences object
+This function creates a \code{occurrences} object.
 }
 \examples{
-df <- data.frame(spp_names = rep("Aa", 100), longitude = runif(100), decimalLatitude = runif(100))
-occ <- occurrences(df)
+occ <- occurrences(occ, epsg=6933)
 
+}
+\seealso{
+\code{\link{input_sdm}}
 }
 \author{
 Luíz Fernando Esser (luizesser@gmail.com)

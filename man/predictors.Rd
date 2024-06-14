@@ -20,7 +20,7 @@ If study_area is given, the function masks raster values to given study area.}
 A predictors object.
 }
 \description{
-This function creates a new predictors object
+This function creates a new predictors object.
 }
 \seealso{
 \code{\link{WorldClim_data}}

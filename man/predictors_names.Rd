@@ -7,17 +7,17 @@
 predictors_names(sdm_area)
 }
 \arguments{
-\item{x}{A shapefile or a raster.}
+\item{x}{A \code{sf}, \code{RasterStack}, \code{SpatRaster} or \code{stars}.}
 
 \item{cell_size}{Numeric. The cell size to be used in models.}
 
-\item{epsg}{Numeric. If epsg from x is missing,}
+\item{epsg}{Numeric. If epsg from \code{x} is missing,}
 }
 \value{
-A sdm_area object.
+A \code{sdm_area} object.
 }
 \description{
-This function adds a new predictor to the sdm_area object
+This function adds a new predictor to the sdm_area object.
 }
 \seealso{
 \code{\link{WorldClim_data}}

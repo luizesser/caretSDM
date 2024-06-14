@@ -1,12 +1,12 @@
 #' Add predictors to sdm_area
 #'
-#' This function adds a new predictor to the sdm_area object
+#' This function adds a new predictor to the sdm_area object.
 #'
-#' @param x A shapefile or a raster.
+#' @param x A \code{sf}, \code{RasterStack}, \code{SpatRaster} or \code{stars}.
 #' @param cell_size Numeric. The cell size to be used in models.
-#' @param epsg Numeric. If epsg from x is missing,
+#' @param epsg Numeric. If epsg from \code{x} is missing,
 #'
-#' @return A sdm_area object.
+#' @return A \code{sdm_area} object.
 #'
 #' @seealso \code{\link{WorldClim_data}}
 #'

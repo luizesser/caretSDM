@@ -1,50 +1,58 @@
-#' Create a occurrences object
+#' Occurrences
 #'
-#' This function creates a occurrences object
+#' This function creates a \code{occurrences} object.
+#'
+#' @usage occurrences(x, independent_test = NULL, p=0.1, ...)
 #'
 #' @param x A data.frame
-#' @param ... A vector with column names addressing the columns with species names, longitude and latitude.
+#' @param independent_test Boolean. If \code{independet_test} is \code{TRUE}, a fraction is kept.
+#' Otherwise, the whole dataset \code{x} is used.
+#' @param p Numeric. Fraction of data to be used as independent test. Standard is 0.1.
+#' @param epsg Numeric. EPSG of \code{x}.
+#' @param ... A vector with column names addressing the columns with species names, longitude and
+#' latitude, respectively, in \code{x}.
 #'
-#' @return A occurrences object.
+#' @return A \code{occurrences} object.
+#'
+#' @seealso \code{\link{input_sdm}}
 #'
 #' @author Luíz Fernando Esser (luizesser@gmail.com)
 #' https://luizfesser.wordpress.com
 #'
 #' @examples
-#' df <- data.frame(spp_names = rep("Aa", 100), longitude = runif(100), decimalLatitude = runif(100))
-#' occ <- occurrences(df)
+#' occ <- occurrences(occ, epsg=6933)
 #'
 #' @import tibble
 #' @import stars
 #' @importFrom here here
 #'
 #' @export
-occurrences <- function(x, ...) {
+occurrences <- function(x, independent_test = NULL, p=0.1, epsg = NULL, ...) {
   UseMethod("occurrences")
 }
 
 #' @export
-occurrences.data.frame <- function(x, independent_test = NULL, ...) {
-  occ <- .occurrences(x, independent_test, ...)
+occurrences.data.frame <- function(x, independent_test = NULL, p=0.1, epsg = NULL, ...) {
+  occ <- .occurrences(x, independent_test, p, epsg, ...)
   return(occ)
 }
 
 #' @export
-occurrences.tibble <- function(x, ...) {
+occurrences.tibble <- function(x, independent_test = NULL, p=0.1, epsg = NULL, ...) {
   x <- as.data.frame(x)
-  occ <- .occurrences(x, ...)
+  occ <- .occurrences(x, independent_test, p, epsg, ...)
   return(occ)
 }
 
 #' @export
-occurrences.sf <- function(x, independent_test = NULL, ...) {
+occurrences.sf <- function(x, independent_test = NULL, p=0.1, epsg = NULL, ...) {
   x <- cbind(select(as.data.frame(x), -"geometry"), st_coordinates(x))
-  occ <- .occurrences(x, independent_test, ...)
+  occ <- .occurrences(x, independent_test, p, epsg, ...)
   return(occ)
 }
 
 #' @export
-.occurrences <- function(x, independent_test = NULL, epsg = NULL, ...) {
+.occurrences <- function(x, independent_test = NULL, p=0.1, epsg = NULL, ...) {
   col_names <- find_columns(x, ...)
   x <- x[, col_names]
   if (length(col_names) == 2) {
@@ -57,7 +65,7 @@ occurrences.sf <- function(x, independent_test = NULL, ...) {
   if (!is.null(independent_test)) {
     if (isTRUE(independent_test)) {
       occ_data <- st_as_sf(x, coords = col_names[c(2, 3)])
-      n <- as.vector(caret::createDataPartition(x[, col_names[1]], list = F, p = 0.1))
+      n <- as.vector(caret::createDataPartition(x[, col_names[1]], list = F, p = p))
       x <- occ_data[-n, ]
       indep_test_data <- occ_data[n, ]
       occ <- structure(list(

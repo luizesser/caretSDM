@@ -1,6 +1,6 @@
 #' Create a predictors object
 #'
-#' This function creates a new predictors object
+#' This function creates a new predictors object.
 #'
 #' @param x A string with the path to GCM files or a RasterStack.
 #' @param study_area A string with the path to study area shapefile (.shp or .gpkg) or a sf polygon.

@@ -2,33 +2,55 @@
 % Please edit documentation in R/data_clean.R
 \name{data_clean}
 \alias{data_clean}
-\title{Presence data cleaning wrapper}
+\title{Presence data cleaning routine}
 \usage{
-data.clean(x, r = NULL)
+data_clean(x, pred = NULL, species = NA, long = NA, lat = NA, terrestrial = TRUE, independent_test = TRUE)
 }
 \arguments{
-\item{occ}{A occurrences object}
+\item{occ}{A \code{occurrences} object or \code{input_sdm}.}
 
-\item{pred}{A predictors object}
+\item{pred}{A \code{predictors} object. If \code{occ} is a \code{input_sdm} object with
+predictors data, than \code{pred} is obtained from it.}
 
-\item{terrestrial}{If the species is terrestrial (TRUE), than the function deletes non-terrestrial coordinates.}
+\item{species}{A character stating the name of the column with species names in \code{occ} (see details).}
+
+\item{long}{A character stating the name of the column with longitude in \code{occ} (see details).}
+
+\item{lat}{A character stating the name of the column with latitude in \code{occ} (see details).}
+
+\item{terrestrial}{If the species is terrestrial (TRUE), than the function deletes
+non-terrestrial coordinates.}
+
+\item{independent_test}{TRUE. If \code{occ} has independent test data, the data cleaning routine
+is also applied on it.}
 }
 \description{
-Data cleaning procedure using CoordinateCleaner and a raster.
+Data cleaning wrapper using CoordinateCleaner.
 }
 \details{
-Function to clean presence data avoiding autocorrelation.
+If the user does not used \code{GBIF_data} function to obtain species records, the function may
+have problems to find which column from the presences table has species, longitude and latitude
+information. In this regard, we implemented the parameters \code{species}, \code{long} and
+\code{lat} so the use can explicitly inform which columns should be used. If they remain as NA
+(standard) the function will try to guess which columns are the correct one.
 }
 \examples{
-# Select species names:
-s <- c("Araucaria angustifolia", "Paubrasilia echinata", "Eugenia uniflora")
+# Create sdm_area object:
+sa <- sdm_area(parana, cell_size=25000, epsg=6933)
 
-# Run function:
-data <- GBIF_data(s)
+# Include predictors:
+sa <- add_predictors(sa, bioc)
+
+# Create input_sdm:
+i <- input_sdm(occurrences(occ), sa)
 
 # Clean coordinates:
-data2 <- data.clean(data)
+i <- data_clean(i)
+i
 
+}
+\seealso{
+\code{\link{GBIF_data}}
 }
 \author{
 Luíz Fernando Esser (luizesser@gmail.com)

@@ -2,18 +2,43 @@
 % Please edit documentation in R/is.R
 \name{is_input_sdm}
 \alias{is_input_sdm}
-\title{is_class functions to check caretSDM data classes.}
+\alias{is_sdm_area}
+\alias{is_occurrences}
+\alias{is_predictors}
+\alias{is_scenarios}
+\alias{is_models}
+\alias{is_predictions}
+\title{\code{is_class} functions to check caretSDM data classes.}
 \usage{
 is_input_sdm(x)
+
+is_sdm_area(x)
+
+is_occurrences(x)
+
+is_predictors(x)
+
+is_scenarios(x)
+
+is_models(x)
+
+is_predictions(x)
 }
 \arguments{
-\item{x}{caretSDM object.}
+\item{x}{Object to be tested.}
 }
 \value{
 Boolean.
 }
 \description{
 This functions returns a boolean to check caretSDM object classes.
+}
+\examples{
+# Create sdm_area object:
+sa <- sdm_area(parana, cell_size=25000, epsg=6933)
+is_sdm_area(sa)
+is_input_sdm(sa)
+
 }
 \author{
 Luíz Fernando Esser (luizesser@gmail.com)

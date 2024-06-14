@@ -2,19 +2,34 @@
 % Please edit documentation in R/misc.R
 \name{n_records}
 \alias{n_records}
-\title{Miscelaneous functions}
+\title{Miscelaneous functions for \code{input_sdm} objects}
 \usage{
 n_records(x)
-
+n_pseudoabsences(x)
+pseudoabsence_method(x)
+pseudoabsence_data(x)
+species_names(x)
 predictors_names(x)
-
+get_coords(x)
+get_predictors(x)
 scenarios_names(x)
+get_scenarios_data(x)
+get_tune_length(x)
+algorithms_used(x)
+get_models(x)
+get_validation_metrics(x)
+mean_validation_metrics(x)
+get_predictions(x)
+get_ensembles(x)
 }
 \arguments{
 \item{x}{A input_sdm object.}
 }
 \description{
-Set of functions to obtain
+Set of functions to retrieve information and data from \code{input_sdm} objects.
+}
+\seealso{
+\code{\link{input_sdm}}
 }
 \author{
 Luíz Fernando Esser (luizesser@gmail.com)

@@ -1,24 +1,33 @@
 #' Retrieve Species data from GBIF
 #'
-#' @description Calculate the area of a species weighting it by species occurrence or environmental suitability.
+#' This function is a wrapper to get records from GBIF using \code{rgbif} and return a
+#' \code{data.frame} ready to be used in caretSDM.
+#'
 #' @usage GBIF_data(s)
-#' @param s vector of species names.
+#'
+#' @param s Vector of species names.
+#' @param file File to save the output.
+#' @param ... Arguments to pass on \code{rgbif::occ_data}.
+#'
 #' @details Function to retrieve species data from GBIF.
-#' @references
-#' https://www.gbif.org
+#'
+#' @references https://www.gbif.org
+#'
 #' @author Luíz Fernando Esser (luizesser@gmail.com)
 #' https://luizfesser.wordpress.com
+#'
 #' @examples
 #' # Select species names:
 #' s <- c("Araucaria angustifolia", "Paubrasilia echinata", "Eugenia uniflora")
 #'
 #' # Run function:
 #' data <- GBIF_data(s)
+#'
 #' @import rgbif
 #' @importFrom dplyr bind_rows
 #' @importFrom stats na.omit
+#'
 #' @export
-
 GBIF_data <- function(s, file = "", ...) {
   if (!file.exists(file)) {
     data <- lapply(s, function(x) {

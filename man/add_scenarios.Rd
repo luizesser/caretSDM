@@ -4,23 +4,39 @@
 \alias{add_scenarios}
 \title{Include scenarios in the SDM workflow.}
 \usage{
-add_scenarios(sdm_area, scen = NULL, ...)
+add_scenarios(sdm_area, scen = NULL, variables_selected = NULL)
 }
 \arguments{
-\item{sdm_area}{A sdm_area object.}
+\item{sdm_area}{A \code{sdm_area} object.}
 
-\item{scen}{Scenarios to be added: RasterStack, stars, SpatRaster or a directory. If NULL adds predictors as a scenario.}
+\item{scen}{\code{RasterStack}, \code{SpatRaster}, \code{stars} object or a directory with
+scenarios data. If \code{NULL} adds predictors as a scenario.}
+
+\item{variables_selected}{Character vector with variables names in \code{scen} to be used as
+predictors. If \code{NULL} adds all variables.}
 }
 \value{
-A sdm_area object.
+The input \code{sdm_area} object with a new slot called scenarios with \code{scen} data
+as a \code{list}, where each slot of the \code{list} is a scenario.
 }
 \description{
-This function includes scenarios in the sdm_area object.
+This function includes scenarios in the \code{sdm_area} object.
+}
+\examples{
+# Create sdm_area object
+sa <- sdm_area(parana, cell_size = 25000, epsg = 6933)
+
+# Include predictors
+sa <- add_predictors(sa, bioc)
+
+# Include scenarios
+sa <- add_scenarios(sa, scen)
+
 }
 \seealso{
-\code{\link{WorldClim_data}}
+\code{\link{sdm_area}}
 }
 \author{
 Luíz Fernando Esser (luizesser@gmail.com)
-https://luizfesser.wordpress.com
+\link{https://luizfesser.wordpress.com}
 }

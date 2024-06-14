@@ -2,11 +2,18 @@
 #'
 #' Build a grid out of given shape and variables.
 #'
-#' @param pred A predictors object
-#' @param th Threshold
-#' @param maxobservations Number of sets of pseudoabsence to create
+#' @usage make_grid(shp, cell_width = 0, cell_height = 0, var_names = NULL, centroid = FALSE, epsg = NULL)
 #'
-#' @return A predictors object with VIF data
+#' @param shp Shapefile of class \code{sf} to be used.
+#' @param cell_width Cell width according to the epsg (is in meters or degrees?).
+#' @param cell_height Cell height according to the epsg (is in meters or degrees?).
+#' @param var_names Character vector with variables names in \code{scen} to be used as
+#' predictors. If \code{NULL} adds all variables.
+#' @param centroid Boolean. Include cells centroids in the grid?
+#' @param epsg Numeric. EPSG to be used in the grid. If \code{NULL} the epsg from \code{shp} will
+#' be used.
+#'
+#' @return A \code{sf} grid (polygon) object.
 #'
 #' @author Luíz Fernando Esser (luizesser@gmail.com)
 #' https://luizfesser.wordpress.com
@@ -16,7 +23,8 @@
 #' @import dplyr
 #'
 #' @export
-make_grid <- function(shp, cell_width = 0, cell_height = 0, var_names = NULL, centroid = F, epsg = NULL) {
+make_grid <- function(shp, cell_width = 0, cell_height = 0, var_names = NULL, centroid = FALSE,
+                      epsg = NULL) {
   sfc_as_cols <- function(x, geometry, names = c("x", "y")) {
     if (missing(geometry)) {
       geometry <- sf::st_geometry(x)

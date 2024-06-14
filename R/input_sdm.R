@@ -1,15 +1,33 @@
 #' Create a input_sdm object
 #'
-#' This function creates a new predictors object
+#' This function creates a new predictors object.
 #'
-#' @param ... Data to be used in SDMs. Can be a occurrences, a predictors and/or a scenarios object.
+#' @param ... Data to be used in SDMs. Can be a \code{occurrences}, a \code{predictors}, a
+#' \code{scenarios}, and/or a \code{sdm_area} object. Ideally, \code{occurrences} and
+#' \code{sdm_area} are used.
 #'
-#' @return A input_sdm object.
+#' @return A \code{input_sdm} object.
 #'
-#' @seealso \code{\link{occurrences}\link{predictors}\link{scenarios}}
+#' @details
+#' If \code{sdm_area} is used, it can include predictors and scenarios. In this case,
+#' \code{input_sdm} will detect and include as \code{scenarios} and \code{predictors} in the
+#' \code{input_sdm} output. Objects can be included in any order, since the function will work by
+#' detecting their classes.
+#' The returned object is used throughout the whole workflow to apply functions.
+#'
+#' @seealso \code{\link{occurrences}\link{predictors}\link{scenarios}\link{sdm_area}}
 #'
 #' @author Luíz Fernando Esser (luizesser@gmail.com)
 #' https://luizfesser.wordpress.com
+#'
+#' @examples
+#' # Create sdm_area object
+#' sa <- sdm_area(parana, cell_size = 25000, epsg = 6933)
+#'
+#' # Include predictors
+#' sa <- add_predictors(sa, bioc)
+#'
+#' i <- input_sdm(occurrences(occ),sa)
 #'
 #' @export
 input_sdm <- function(...) {

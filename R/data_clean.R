@@ -1,25 +1,49 @@
-#' Presence data cleaning wrapper
+#' Presence data cleaning routine
 #'
-#' @description Data cleaning procedure using CoordinateCleaner and a raster.
-#' @usage data.clean(x, r = NULL)
-#' @param occ A occurrences object
-#' @param pred A predictors object
-#' @param terrestrial If the species is terrestrial (TRUE), than the function deletes non-terrestrial coordinates.
-#' @details Function to clean presence data avoiding autocorrelation.
+#' Data cleaning wrapper using CoordinateCleaner.
+#'
+#' @usage data_clean(x, pred = NULL, species = NA, long = NA, lat = NA, terrestrial = TRUE, independent_test = TRUE)
+#'
+#' @param occ A \code{occurrences} object or \code{input_sdm}.
+#' @param pred A \code{predictors} object. If \code{occ} is a \code{input_sdm} object with
+#' predictors data, than \code{pred} is obtained from it.
+#' @param species A character stating the name of the column with species names in \code{occ} (see details).
+#' @param long A character stating the name of the column with longitude in \code{occ} (see details).
+#' @param lat A character stating the name of the column with latitude in \code{occ} (see details).
+#' @param terrestrial If the species is terrestrial (TRUE), than the function deletes
+#' non-terrestrial coordinates.
+#' @param independent_test TRUE. If \code{occ} has independent test data, the data cleaning routine
+#' is also applied on it.
+#'
+#' @details
+#' If the user does not used \code{GBIF_data} function to obtain species records, the function may
+#' have problems to find which column from the presences table has species, longitude and latitude
+#' information. In this regard, we implemented the parameters \code{species}, \code{long} and
+#' \code{lat} so the use can explicitly inform which columns should be used. If they remain as NA
+#' (standard) the function will try to guess which columns are the correct one.
+#'
+#' @seealso \code{\link{GBIF_data}}
+#'
 #' @author Luíz Fernando Esser (luizesser@gmail.com)
 #' https://luizfesser.wordpress.com
-#' @examples
-#' # Select species names:
-#' s <- c("Araucaria angustifolia", "Paubrasilia echinata", "Eugenia uniflora")
 #'
-#' # Run function:
-#' data <- GBIF_data(s)
+#' @examples
+#' # Create sdm_area object:
+#' sa <- sdm_area(parana, cell_size=25000, epsg=6933)
+#'
+#' # Include predictors:
+#' sa <- add_predictors(sa, bioc)
+#'
+#' # Create input_sdm:
+#' i <- input_sdm(occurrences(occ), sa)
 #'
 #' # Clean coordinates:
-#' data2 <- data.clean(data)
+#' i <- data_clean(i)
+#' i
 #'
 #' @import CoordinateCleaner
 #' @import raster
+#' @import stringdist
 #'
 #' @export
 data_clean <- function(occ, pred = NULL, species = NA, long = NA, lat = NA, terrestrial = TRUE, independent_test = TRUE) {
@@ -34,17 +58,21 @@ data_clean <- function(occ, pred = NULL, species = NA, long = NA, lat = NA, terr
   if (!is.na(species)) {
     species <- species
   } else {
-    species <- colnames(y$occurrences)[1]
+    cn <- colnames(y$occurrences)
+    species <- cn[which.min(stringdist(cn, 'species'))]
+
   }
   if (!is.na(long)) {
     lon <- long
   } else {
-    lon <- colnames(y$occurrences)[2]
+    colnames(y$occurrences)
+    lon <- cn[which.min(stringdist(cn, 'longitude'))]
   }
   if (!is.na(lat)) {
     lat <- lat
   } else {
-    lat <- colnames(y$occurrences)[3]
+    colnames(y$occurrences)
+    lat <- cn[which.min(stringdist(cn, 'latitude'))]
   }
   x <- y$occurrences
   x <- subset(x, !is.na(lon) | !is.na(lat))

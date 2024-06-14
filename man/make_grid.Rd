@@ -4,24 +4,25 @@
 \alias{make_grid}
 \title{Make grid}
 \usage{
-make_grid(
-  shp,
-  cell_width = 0,
-  cell_height = 0,
-  var_names = NULL,
-  centroid = F,
-  epsg = NULL
-)
+make_grid(shp, cell_width = 0, cell_height = 0, var_names = NULL, centroid = FALSE, epsg = NULL)
 }
 \arguments{
-\item{pred}{A predictors object}
+\item{shp}{Shapefile of class \code{sf} to be used.}
 
-\item{th}{Threshold}
+\item{cell_width}{Cell width according to the epsg (is in meters or degrees?).}
 
-\item{maxobservations}{Number of sets of pseudoabsence to create}
+\item{cell_height}{Cell height according to the epsg (is in meters or degrees?).}
+
+\item{var_names}{Character vector with variables names in \code{scen} to be used as
+predictors. If \code{NULL} adds all variables.}
+
+\item{centroid}{Boolean. Include cells centroids in the grid?}
+
+\item{epsg}{Numeric. EPSG to be used in the grid. If \code{NULL} the epsg from \code{shp} will
+be used.}
 }
 \value{
-A predictors object with VIF data
+A \code{sf} grid (polygon) object.
 }
 \description{
 Build a grid out of given shape and variables.
