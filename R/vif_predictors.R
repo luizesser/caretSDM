@@ -1,15 +1,38 @@
 #' Calculate VIF
 #'
-#' Apply VIF calculation in a predictors object.
+#' Apply Variance Inflation Factor (VIF) calculation.
 #'
-#' @param pred A predictors object
-#' @param th Threshold
-#' @param maxobservations Max observations to use to calculate the VIF
+#' @usage vif_predictors(pred, th = 0.5, maxobservations = 5000, variables_selected = NULL)
 #'
-#' @return A predictors object with VIF data
+#' @param pred A \code{input_sdm} or \code{predictors} object.
+#' @param th Threshold to be applied in VIF routine.
+#' @param maxobservations Max observations to use to calculate the VIF.
+#' @param variables_selected If there is a subset of predictors that should be used in this
+#' function, it can be informed using this parameter.
+#'
+#' @return A \code{input_sdm} or \code{predictors} object with VIF data.
+#'
+#' @seealso \code{\link{usdm::vifcor}\link{predictors_names}}
 #'
 #' @author Luíz Fernando Esser (luizesser@gmail.com)
 #' https://luizfesser.wordpress.com
+#'
+#' @examples
+#' # Create sdm_area object:
+#' sa <- sdm_area(parana, cell_size = 25000, epsg = 6933)
+#'
+#' # Include predictors:
+#' sa <- add_predictors(sa, bioc)
+#'
+#' # Create input_sdm:
+#' i <- input_sdm(occurrences(occ), sa)
+#'
+#' # Clean coordinates:
+#' i <- data_clean(i)
+#'
+#' # VIF calculation:
+#' i <- vif_predictors(i)
+#' i
 #'
 #' @import cubelyr
 #' @import tibble
@@ -65,7 +88,6 @@ vif_predictors <- function(pred, area = "all", th = 0.5, maxobservations = 5000,
         vifcor(th = th, size = maxobservations)
     }
   }
-
 
   x$variable_selection$vif$area <- area
   x$variable_selection$vif$selected_variables <- v@variables[!v@variables %in% v@excluded]

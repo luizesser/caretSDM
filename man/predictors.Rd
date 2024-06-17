@@ -2,28 +2,69 @@
 % Please edit documentation in R/predictors.R
 \name{predictors}
 \alias{predictors}
-\title{Create a predictors object}
+\alias{predictors_names}
+\alias{get_predictors}
+\alias{set_predictors_names}
+\title{Predictors Managing}
 \usage{
-predictors(x, ...)
+predictors(x,
+           study_area = NULL,
+           vars_study_area = NULL,
+           predictors_names = NULL,
+           rescaling = NULL)
+
+predictors_names(i)
+
+get_predictors(i)
+
+set_predictors_names(i, new_names)
 }
 \arguments{
-\item{x}{A string with the path to GCM files or a RasterStack.}
+\item{x}{A string with the path to predictors files, a \code{stars}, a \code{RasterStack} or
+\code{SpatRaster}.}
 
-\item{study_area}{A string with the path to study area shapefile (.shp or .gpkg) or a sf polygon.
-If study_area is given, the function masks raster values to given study area.}
+\item{i}{\code{input_sdm} object.}
+
+\item{study_area}{A string with the path to study area shapefile (.shp or .gpkg) or a \code{sf}
+polygon. If \code{study_area} is not \code{NULL}, the function masks predictors values to given
+study area.}
 
 \item{predictors_names}{A vector with names to be addressed to each predictor.}
 
-\item{rescaling}{A list of parameters to pass on rescaling function (optional).}
+\item{rescaling}{A list of parameters to pass on rescaling function (optional, see details).}
 }
 \value{
-A predictors object.
+A \code{predictors} object.
 }
 \description{
-This function creates a new predictors object.
+This function creates and manage \code{predictors} objects.
+}
+\details{
+If using \code{sdm_area} object in the workflow, add predictors through \code{add_predictors}
+function.
+
+Rescaling is particularly usefull for aquatic environments, once creates a grid around riverlines
+allowing modelers to account for the surrounding environment. Rescaling needs a \code{list} with
+\code{cell_size} and \code{epsg}.
+
+\code{predictors_names} returns the predictors names in \code{input_sdm} object.
+
+\code{set_predictors_names} change the predictors names in \code{input_sdm} object. Useful to
+make sure the predictors names are equal the names in scenarios.
+
+\code{get_predictors} retrieve predictors data in \code{sf} format.
+}
+\examples{
+i <- input_sdm(
+     occurrences(occ_data),
+     caretSDM::predictors(bioc, study_area = parana)
+     )
+i
+
 }
 \seealso{
-\code{\link{WorldClim_data}}
+\code{\link{WorldClim_data} \link{input_sdm} \link{sdm_area} \link{add_predictors}
+ \link{bioc}}
 }
 \author{
 Luíz Fernando Esser (luizesser@gmail.com)

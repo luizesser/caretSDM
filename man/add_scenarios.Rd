@@ -2,7 +2,7 @@
 % Please edit documentation in R/add_scenarios.R
 \name{add_scenarios}
 \alias{add_scenarios}
-\title{Include scenarios in the SDM workflow.}
+\title{Add scenarios to \code{sdm_area}}
 \usage{
 add_scenarios(sdm_area, scen = NULL, variables_selected = NULL)
 }
@@ -17,7 +17,8 @@ predictors. If \code{NULL} adds all variables.}
 }
 \value{
 The input \code{sdm_area} object with a new slot called scenarios with \code{scen} data
-as a \code{list}, where each slot of the \code{list} is a scenario.
+as a \code{list}, where each slot of the \code{list} is a scenario and each scenario is a
+\code{sf}.
 }
 \description{
 This function includes scenarios in the \code{sdm_area} object.
@@ -34,9 +35,9 @@ sa <- add_scenarios(sa, scen)
 
 }
 \seealso{
-\code{\link{sdm_area}}
+\code{\link{sdm_area} \link{scenarios}}
 }
 \author{
 Luíz Fernando Esser (luizesser@gmail.com)
-\link{https://luizfesser.wordpress.com}
+https://luizfesser.wordpress.com
 }

@@ -5,11 +5,9 @@
 #'
 #' @usage GBIF_data(s)
 #'
-#' @param s Vector of species names.
+#' @param s \code{character} vector of species names.
 #' @param file File to save the output.
-#' @param ... Arguments to pass on \code{rgbif::occ_data}.
-#'
-#' @details Function to retrieve species data from GBIF.
+#' @param ... Arguments to pass on \code{rgbif::occ_data()}.
 #'
 #' @references https://www.gbif.org
 #'

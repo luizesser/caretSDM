@@ -1,17 +1,18 @@
 #' Add predictors to \code{sdm_area}
 #'
-#' This function adds predictors to the \code{sdm_area} object.
+#' This function includes predictors to the \code{sdm_area} object.
 #'
 #' @usage add_predictors(sdm_area, pred, variables_selected = NULL)
 #'
 #' @param sdm_area A \code{sdm_area} object.
-#' @param pred RasterStack, SpatRaster or stars object with predictors data.
-#' @param variables_selected Character vector with variables names in pred to be used as predictors.
-#'  If \code{NULL} adds all variables.
+#' @param pred \code{RasterStack}, \code{SpatRaster} or \code{stars} object with predictors data.
+#' @param variables_selected \code{character} vector with variables names in \code{pred} to be used
+#' as predictors. If \code{NULL} adds all variables.
 #'
-#' @return The input \code{sdm_area} object with a new grid including the \code{pred} data.
+#' @returns The input \code{sdm_area} object with a new grid including the \code{pred} data as a
+#' \code{sf} object.
 #'
-#' @seealso \code{\link{sdm_area}}
+#' @seealso \code{\link{sdm_area} \link{predictors} \link{bioc}}
 #'
 #' @author Luíz Fernando Esser (luizesser@gmail.com)
 #' \link{https://luizfesser.wordpress.com}

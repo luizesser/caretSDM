@@ -2,34 +2,96 @@
 % Please edit documentation in R/train_sdm.R
 \name{train_sdm}
 \alias{train_sdm}
+\alias{get_tune_length}
+\alias{algorithms_used}
+\alias{get_models}
+\alias{get_validation_metrics}
+\alias{mean_validation_metrics}
 \title{Train SDM models}
 \usage{
-train_sdm(
-  occ,
-  pred = NULL,
-  algo,
-  ctrl = NULL,
-  variables_selected = NULL,
-  parallel = FALSE,
-  ...
-)
+train_sdm(occ,
+          pred = NULL,
+          algo,
+          ctrl = NULL,
+          variables_selected = NULL)
+
+get_tune_length(i)
+
+algorithms_used(i)
+
+get_models(i)
+
+get_validation_metrics(i)
+
+mean_validation_metrics(i)
 }
 \arguments{
-\item{occ}{A occurrences object or a input_sdm.}
+\item{occ}{A \code{occurrences} or a \code{input_sdm} object.}
 
-\item{pred}{A predictors object. If a input_sdm object is used, then pred is obtained from it.}
+\item{pred}{A \code{predictors object}. If \code{occ} is a \code{input_sdm} object, then
+\code{pred} is obtained from it.}
 
-\item{algo}{Algorithms to be used. For a complete list see (https://topepo.github.io/caret/available-models.html). 'maxent', 'mahal.dist' and 'bioclim' are also implemented, but they are only available to run alone, with no other algorithm together.}
+\item{algo}{A \code{character} vector. Algorithms to be used. For a complete list see
+(https://topepo.github.io/caret/available-models.html). 'maxent', 'mahal.dist' and 'bioclim' are
+also implemented, but they are only available to run alone, with no other algorithm together.}
 
-\item{ctrl}{A trainControl object to be used to build models. See ?trainControl.}
+\item{ctrl}{A \code{trainControl} object to be used to build models. See \code{\link{trainControl}}.}
 
-\item{variables_selected}{A vector of variables to be used as predictors. If NULL, predictors_names from pred will be used. Can also be a selection method (e.g. 'vif').}
+\item{variables_selected}{A \code{vector} of variables to be used as predictors. If \code{NULL},
+predictors names from \code{pred} will be used. Can also be a selection method (e.g. 'vif').}
+
+\item{i}{A \code{models} or a \code{input_sdm} object.}
 }
 \value{
-A models object
+A \code{models} or a \code{input_sdm} object.
 }
 \description{
-This function fit SDM models
+This function is a wrapper to fit models in caret using caretSDM data.
+}
+\details{
+The object \code{\link{algorithms}} has a table comparing algorithms available. If the function
+detects that the necessary packages are not available it will ask for installation. This will
+happen just in the first time you use the algorithm.
+
+\code{get_tune_length} return the length used in grid-search for tunning.
+
+\code{algorithms_used} return the names of the algorithms used in the modeling process.
+
+\code{get_models} returns a \code{list} with trained models (class \code{train}) to each species.
+
+\code{get_validation_metrics} return a \code{list} with a \code{data.frame} to each species
+with complete values for ROC, Sensitivity, Specificity, with their respectives Standard
+Deviations (SD) and TSS to each of the algorithms and pseudoabsence datasets used.
+
+\code{mean_validation_metrics} return a \code{list} with a \code{tibble} to each species
+summarizing values for ROC, Sensitivity, Specificity and TSS to each of the algorithms used.
+}
+\examples{
+# Create sdm_area object:
+sa <- sdm_area(parana, cell_size = 25000, epsg = 6933)
+
+# Include predictors:
+sa <- add_predictors(sa, bioc)
+
+# Create input_sdm:
+i <- input_sdm(occurrences(occ), sa)
+
+# Clean coordinates:
+i <- data_clean(i)
+
+# VIF calculation:
+i <- vif_predictors(i)
+
+# Pseudoabsence generation:
+i <- pseudoabsence(i, method="bioclim", variables_selected = "vif")
+
+# Train models:
+i <- train_sdm(i, algo = c("nnet", "kknn"), variables_selected = "vif")
+i
+
+}
+\seealso{
+\code{\link{input_sdm} \link{sdm_area} \link{algorithms}}
 }
 \author{
 Luíz Fernando Esser (luizesser@gmail.com)

@@ -1,4 +1,4 @@
-#' Include scenarios in the SDM workflow.
+#' Add scenarios to \code{sdm_area}
 #'
 #' This function includes scenarios in the \code{sdm_area} object.
 #'
@@ -11,12 +11,13 @@
 #' predictors. If \code{NULL} adds all variables.
 #'
 #' @return The input \code{sdm_area} object with a new slot called scenarios with \code{scen} data
-#' as a \code{list}, where each slot of the \code{list} is a scenario.
+#' as a \code{list}, where each slot of the \code{list} is a scenario and each scenario is a
+#' \code{sf}.
 #'
-#' @seealso \code{\link{sdm_area}}
+#' @seealso \code{\link{sdm_area} \link{scenarios}}
 #'
 #' @author Luíz Fernando Esser (luizesser@gmail.com)
-#' \link{https://luizfesser.wordpress.com}
+#' https://luizfesser.wordpress.com
 #'
 #' @examples
 #' # Create sdm_area object

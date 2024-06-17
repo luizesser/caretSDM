@@ -1,19 +1,52 @@
-#' Create a predictors object
+#' Predictors Managing
 #'
-#' This function creates a new predictors object.
+#' This function creates and manage \code{predictors} objects.
 #'
-#' @param x A string with the path to GCM files or a RasterStack.
-#' @param study_area A string with the path to study area shapefile (.shp or .gpkg) or a sf polygon.
-#' If study_area is given, the function masks raster values to given study area.
+#' @usage
+#' predictors(x,
+#'            study_area = NULL,
+#'            vars_study_area = NULL,
+#'            predictors_names = NULL,
+#'            rescaling = NULL)
+#'
+#' @param x A string with the path to predictors files, a \code{stars}, a \code{RasterStack} or
+#' \code{SpatRaster}.
+#' @param study_area A string with the path to study area shapefile (.shp or .gpkg) or a \code{sf}
+#' polygon. If \code{study_area} is not \code{NULL}, the function masks predictors values to given
+#' study area.
 #' @param predictors_names A vector with names to be addressed to each predictor.
-#' @param rescaling A list of parameters to pass on rescaling function (optional).
+#' @param rescaling A list of parameters to pass on rescaling function (optional, see details).
+#' @param i \code{input_sdm} object.
 #'
-#' @return A predictors object.
+#' @details
+#' If using \code{sdm_area} object in the workflow, add predictors through \code{add_predictors}
+#' function.
 #'
-#' @seealso \code{\link{WorldClim_data}}
+#' Rescaling is particularly usefull for aquatic environments, once creates a grid around riverlines
+#' allowing modelers to account for the surrounding environment. Rescaling needs a \code{list} with
+#' \code{cell_size} and \code{epsg}.
+#'
+#' \code{predictors_names} returns the predictors names in \code{input_sdm} object.
+#'
+#' \code{set_predictors_names} change the predictors names in \code{input_sdm} object. Useful to
+#' make sure the predictors names are equal the names in scenarios.
+#'
+#' \code{get_predictors} retrieve predictors data in \code{sf} format.
+#'
+#' @return A \code{predictors} object.
+#'
+#' @seealso \code{\link{WorldClim_data} \link{input_sdm} \link{sdm_area} \link{add_predictors}
+#'  \link{bioc}}
 #'
 #' @author Luíz Fernando Esser (luizesser@gmail.com)
 #' https://luizfesser.wordpress.com
+#'
+#' @examples
+#' i <- input_sdm(
+#'      occurrences(occ_data),
+#'      caretSDM::predictors(bioc, study_area = parana)
+#'      )
+#' i
 #'
 #' @import raster
 #' @import sf
@@ -309,6 +342,63 @@ predictors.data.frame <- function(x, study_area, predictors_names = NULL, rescal
     class = "predictors"
   )
   return(occ)
+}
+
+#' @rdname predictors
+#' @export
+predictors_names <- function(i) {
+  x=i
+  if (is_sdm_area(x) ) {
+    return(x$predictors)
+  } else if (is_input_sdm(x)) {
+    y <- x$predictors
+  } else if (class(x) == 'predictors') {
+    y <- x
+  }
+  if("variable_selection" %in% names(y)){
+    if ("vif" %in% names(y$variable_selection)) {
+      res <- y$variable_selection$vif$selected_variables
+    }
+  } else {
+    res <- y$predictors_names
+  }
+  return(res)
+}
+
+#' @rdname predictors
+#' @export
+get_predictors <- function(i) {
+  x=i
+  if (is_input_sdm(x)) {
+    y <- x$predictors
+    if (is_sdm_area(y)){
+      res <- y$grid
+    } else {
+      res <- cbind(y$grid, y$data$current)
+      names(res) <- c("cell_id", y$predictors_names, "geometry")
+    }
+  } else if (is_predictors(x)){
+    y <- x
+    res <- cbind(y$grid, y$data$current)
+    names(res) <- c("cell_id", y$predictors_names, "geometry")
+  } else if (is_sdm_area(x)){
+    res <- x$grid
+  }
+  return(res)
+}
+
+#' @rdname predictors
+#' @export
+set_predictors_names <- function(i, new_names) {
+  x=i
+  if(is_sdm_area(x)){
+    grd <- get_predictors(x)
+    grd <- grd[,c("cell_id",names(grd)[!names(grd)=='cell_id'])]
+    colnames(grd) <- c("cell_id", new_names, "geometry")
+    x$predictors$predictors <- new_names
+    x$predictors$grid <- grd
+    return(x)
+  }
 }
 
 #' Print method for predictors

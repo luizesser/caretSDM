@@ -1,13 +1,14 @@
-#' Write/read caretSDM data into R.
+#' Write caretSDM data
 #'
-#' This function saves and loads caretSDM data.
+#' This function exports caretSDM data.
 #'
-#' @param x Object to be written
-#' @param path A path with filename and the proper extension (see details) or the directory to save files in.
+#' @usage write_ensembles(x, path = "results/ensembles", ext = ".tif")
+#'
+#' @param x Object to be written. Can be of class \code{input_sdm}, \code{predictions} or
+#' \code{models}.
+#' @param path A path with filename and the proper extension (see details) or the directory to save
+#' files in.
 #' @param extension How it should be saved?
-#'
-#' @details ...
-#'
 #'
 #' @author Luíz Fernando Esser (luizesser@gmail.com)
 #' https://luizfesser.wordpress.com
@@ -42,7 +43,7 @@ write_ensembles <- function(x, path = "results/ensembles", ext = ".tif") {
   }
 }
 
-
+#' @rdname write_ensembles
 #' @export
 write_predictions <- function(x, path = "results/predictions", ext = ".tif") {
   if (class(x) == "input_sdm") {
@@ -74,6 +75,7 @@ write_predictions <- function(x, path = "results/predictions", ext = ".tif") {
   }
 }
 
+#' @rdname write_ensembles
 #' @export
 write_models <- function(x, path = "results/models") {
   if (class(x) == "input_sdm") {

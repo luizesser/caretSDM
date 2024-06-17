@@ -2,34 +2,91 @@
 % Please edit documentation in R/pseudoabsences.R
 \name{pseudoabsences}
 \alias{pseudoabsences}
-\title{Indlude pseudoabsence data in a occurrences object}
+\alias{n_pseudoabsences}
+\alias{pseudoabsence_method}
+\alias{pseudoabsence_data}
+\title{Obtain Pseudoabsences}
 \usage{
-pseudoabsences(
-  occ,
-  pred = NULL,
-  method = "random",
-  n_set = 10,
-  n_pa = NULL,
-  variables_selected = NULL,
-  th = 0
-)
+pseudoabsences(occ,
+               pred = NULL,
+               method = "random",
+               n_set = 10,
+               n_pa = NULL,
+               variables_selected = NULL,
+               th = 0)
+
+n_pseudoabsences(i)
+
+pseudoabsence_method(i)
+
+pseudoabsence_data(i)
 }
 \arguments{
-\item{occ}{A occurrences object}
+\item{occ}{A \code{occurrences} or \code{input_sdm} object.}
 
-\item{pred}{A predictors object}
+\item{pred}{A \code{predictors} object. If \code{NULL} and \code{occ} is a \code{input_sdm},
+\code{pred} will be retrieved from \code{occ}.}
 
-\item{method}{Method to create pseudoabsences}
+\item{method}{Method to create pseudoabsences. One of: "random", "bioclim" or "mahal.dist".}
 
-\item{n_set}{Number of sets of pseudoabsence to create}
+\item{n_set}{\code{numeric}. Number of datasets of pseudoabsence to create.}
 
-\item{n_pa}{Number of pseudoabsences to be generated in each dataset (vector of size number of species, with species names)}
+\item{n_pa}{\code{numeric}. Number of pseudoabsences to be generated in each dataset created.
+If \code{NULL} then the function prevents imbalance by using the same number of presence records.}
+
+\item{variables_selected}{A vector with variables names to be used while building pseudoabsences.
+Only used when method is not "random".}
+
+\item{th}{\code{numeric} Threshold to be applied in bioclim/mahal.dist projections. See details.}
+
+\item{i}{A \code{input_sdm} object.}
 }
 \value{
-A occurrences object with pseudoabsence data
+A \code{occurrences} or \code{input_sdm} object with pseudoabsence data.
 }
 \description{
-This function includes pseudoabsences in a given occurrences object given a set of predictors
+This function obtains pseudoabsences given a set of predictors.
+}
+\details{
+\code{pseudoabsences} is used in the SDM workflow to obtain pseudoabsences, a step necessary for
+most of the algorithms to run. We implemented three methods so far: \code{"random"}, which is
+self-explanatory, \code{"bioclim"} and \code{"mahal.dist"}. The two last are built with the idea
+that pseudoabsences should be environmentally different from presences. Thus, we implemented
+two presence-only methods to infer the distribution of the species. \code{"bioclim"} uses an
+envelope approach (bioclimatic envelope), while \code{"mahal.dist"} uses a distance approach
+(mahalanobis distance). \code{th} parameter enters here as a threshold to binarize those results.
+Pseudoabsences are retrieved outside the projected distribution of the species.
+
+\code{n_pseudoabsences} returns the number of pseudoabsences obtained per species.
+
+\code{pseudoabsence_method} returns the method used to obtain pseudoabsences.
+
+\code{pseudoabsence_data} returns a \code{list} of species names. Each species name will have a
+\code{list}s with pseudoabsences data from class \code{sf}.
+}
+\examples{
+# Create sdm_area object:
+sa <- sdm_area(parana, cell_size = 25000, epsg = 6933)
+
+# Include predictors:
+sa <- add_predictors(sa, bioc)
+
+# Create input_sdm:
+i <- input_sdm(occurrences(occ), sa)
+
+# Clean coordinates:
+i <- data_clean(i)
+
+# VIF calculation:
+i <- vif_predictors(i)
+
+# Pseudoabsence generation:
+i <- pseudoabsence(i, method="bioclim", variables_selected = "vif")
+i
+
+}
+\seealso{
+\code{link{input_sdm} \link{sdm_area} \link{occurrences} \link{predictors}}
 }
 \author{
 Luíz Fernando Esser (luizesser@gmail.com)

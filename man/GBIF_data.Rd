@@ -7,18 +7,15 @@
 GBIF_data(s)
 }
 \arguments{
-\item{s}{Vector of species names.}
+\item{s}{\code{character} vector of species names.}
 
 \item{file}{File to save the output.}
 
-\item{...}{Arguments to pass on \code{rgbif::occ_data}.}
+\item{...}{Arguments to pass on \code{rgbif::occ_data()}.}
 }
 \description{
 This function is a wrapper to get records from GBIF using \code{rgbif} and return a
 \code{data.frame} ready to be used in caretSDM.
-}
-\details{
-Function to retrieve species data from GBIF.
 }
 \examples{
 # Select species names:

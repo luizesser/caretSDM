@@ -4,7 +4,12 @@
 \alias{WorldClim_data}
 \title{Download WorldClim v.2.1 bioclimatic data}
 \usage{
-WorldClim_data(period = 'current', variable = 'bioc', year = '2030', gcm = 'mi', ssp = '126', resolution = 10)
+WorldClim_data(period = 'current',
+               variable = 'bioc',
+               year = '2030',
+               gcm = 'mi',
+               ssp = '126',
+               resolution = 10)
 }
 \arguments{
 \item{path}{Directory path to save downloads.}
@@ -17,7 +22,8 @@ WorldClim_data(period = 'current', variable = 'bioc', year = '2030', gcm = 'mi',
 \item{year}{Specify the year you want to retrieve data. Possible entries are:
 '2030', '2050', '2070' and/or '2090'. You can  use a vector to provide more than one entry.}
 
-\item{gcm}{GCMs to be considered in future scenarios. You can use a vector to provide more than one entry.\tabular{ll}{
+\item{gcm}{GCMs to be considered in future scenarios. You can use a vector to provide more than
+one entry.\tabular{ll}{
    \strong{CODE} \tab \strong{GCM} \cr
    ac \tab ACCESS-CM2 \cr
    ae \tab ACCESS-ESM1-5 \cr
@@ -52,10 +58,14 @@ You can use a vector to provide more than one entry.}
 \item{resolution}{You can select one resolution from the following alternatives: 10, 5, 2.5 OR 30.}
 }
 \description{
-This function allows to download data from WorldClim v.2.1 (https://www.worldclim.org/data/index.html) considering multiple GCMs, time periods and SSPs.
+This function allows to download data from WorldClim v.2.1
+(https://www.worldclim.org/data/index.html) considering multiple GCMs, time periods and SSPs.
 }
 \details{
-This function will create a folder entitled 'WorldClim_data'. All the data downloaded will be stored in this folder. Note that, despite being possible to retrieve a lot of data at once, it is not recommended to do so, since the data is very heavy.
+This function will create a folder entitled 'input_data/WorldClim_data_current' or
+'input_data/WorldClim_data_future'. All the data downloaded will be stored in this folder.
+Note that, despite being possible to retrieve a lot of data at once, it is not recommended to do
+so, since the data is very heavy.
 }
 \examples{
 \dontrun{

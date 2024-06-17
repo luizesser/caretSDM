@@ -1,14 +1,16 @@
 #' MacroEcological Models (MEM) in caretSDM
 #'
-#' This functions sums all species records into one. Should be used before the data cleaning routine.
+#' This functions sums all species records into one.
+#' Should be used before the data cleaning routine.
 #'
-#' @param x a occurrences object or input_sdm containing occurrences.
-#' @param add Logical. Should the new MEM records be added to the pool (TRUE) os species or the output should have only the summed records (FALSE)? Standard is TRUE.
+#' @usage use_mem(x, add = TRUE, name = "MEM")
+#'
+#' @param x A \code{occurrences} or \code{input_sdm} object containing occurrences.
+#' @param add Logical. Should the new MEM records be added to the pool (\code{TRUE}) of species or
+#' the output should have only the summed records (\code{FALSE})? Standard is \code{TRUE}.
 #' @param name How should the new records be named? Standard is "MEM".
 #'
-#'
-#' @returns A input_sdm or occurrences object with a sum o
-#'
+#' @returns A \code{input_sdm} or \code{occurrences} object with MEM data.
 #'
 #' @author Luíz Fernando Esser (luizesser@gmail.com)
 #' https://luizfesser.wordpress.com

@@ -2,15 +2,28 @@
 % Please edit documentation in R/occurrences.R
 \name{occurrences}
 \alias{occurrences}
-\title{Occurrences}
+\alias{n_records}
+\alias{species_names}
+\alias{get_coords}
+\title{Occurrences Managing}
 \usage{
-occurrences(x, independent_test = NULL, p=0.1, ...)
+occurrences(x,
+            independent_test = NULL,
+            p = 0.1,
+            epsg = NULL,
+            ...)
+
+n_records(i)
+
+species_names(i)
+
+get_coords(i)
 }
 \arguments{
-\item{x}{A data.frame}
+\item{x}{A \code{data.frame} with species records.}
 
-\item{independent_test}{Boolean. If \code{independet_test} is \code{TRUE}, a fraction is kept.
-Otherwise, the whole dataset \code{x} is used.}
+\item{independent_test}{Boolean. If \code{independet_test} is \code{TRUE}, a fraction of the data
+is kept for independent testing. Otherwise, the whole dataset \code{x} is used.}
 
 \item{p}{Numeric. Fraction of data to be used as independent test. Standard is 0.1.}
 
@@ -18,19 +31,30 @@ Otherwise, the whole dataset \code{x} is used.}
 
 \item{...}{A vector with column names addressing the columns with species names, longitude and
 latitude, respectively, in \code{x}.}
+
+\item{i}{\code{input_sdm} object.}
 }
 \value{
 A \code{occurrences} object.
 }
 \description{
-This function creates a \code{occurrences} object.
+This function creates and manage \code{occurrences} objects.
+}
+\details{
+\code{x} must have three columns: species, decimalLongitude and decimalLatitude.
+
+\code{n_records} return the number of presence records to each species.
+
+\code{species_names} return the species names.
+
+\code{get_coords} return a \code{data.frame} with coordinates of species records.
 }
 \examples{
-occ <- occurrences(occ, epsg=6933)
+occ <- occurrences(occ, epsg = 6933)
 
 }
 \seealso{
-\code{\link{input_sdm}}
+\code{\link{input_sdm} \link{GBIF_data} \link{occ}}
 }
 \author{
 Luíz Fernando Esser (luizesser@gmail.com)

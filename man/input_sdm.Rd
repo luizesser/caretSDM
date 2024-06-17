@@ -2,7 +2,7 @@
 % Please edit documentation in R/input_sdm.R
 \name{input_sdm}
 \alias{input_sdm}
-\title{Create a input_sdm object}
+\title{\code{input_sdm}}
 \usage{
 input_sdm(...)
 }
@@ -15,7 +15,7 @@ input_sdm(...)
 A \code{input_sdm} object.
 }
 \description{
-This function creates a new predictors object.
+This function creates a new \code{input_sdm} object.
 }
 \details{
 If \code{sdm_area} is used, it can include predictors and scenarios. In this case,
@@ -31,11 +31,11 @@ sa <- sdm_area(parana, cell_size = 25000, epsg = 6933)
 # Include predictors
 sa <- add_predictors(sa, bioc)
 
-i <- input_sdm(occurrences(occ),sa)
+i <- input_sdm(occurrences(occ), sa)
 
 }
 \seealso{
-\code{\link{occurrences}\link{predictors}\link{scenarios}\link{sdm_area}}
+\code{\link{occurrences} \link{predictors} \link{scenarios} \link{sdm_area}}
 }
 \author{
 Luíz Fernando Esser (luizesser@gmail.com)

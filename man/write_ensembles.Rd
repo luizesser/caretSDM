@@ -2,22 +2,27 @@
 % Please edit documentation in R/write.R
 \name{write_ensembles}
 \alias{write_ensembles}
-\title{Write/read caretSDM data into R.}
+\alias{write_predictions}
+\alias{write_models}
+\title{Write caretSDM data}
 \usage{
 write_ensembles(x, path = "results/ensembles", ext = ".tif")
+
+write_predictions(x, path = "results/predictions", ext = ".tif")
+
+write_models(x, path = "results/models")
 }
 \arguments{
-\item{x}{Object to be written}
+\item{x}{Object to be written. Can be of class \code{input_sdm}, \code{predictions} or
+\code{models}.}
 
-\item{path}{A path with filename and the proper extension (see details) or the directory to save files in.}
+\item{path}{A path with filename and the proper extension (see details) or the directory to save
+files in.}
 
 \item{extension}{How it should be saved?}
 }
 \description{
-This function saves and loads caretSDM data.
-}
-\details{
-...
+This function exports caretSDM data.
 }
 \author{
 Luíz Fernando Esser (luizesser@gmail.com)

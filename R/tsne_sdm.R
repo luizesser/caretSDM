@@ -2,11 +2,14 @@
 #'
 #' This function calculates tSNE with presences and pseudoabsences data and returns a list of plots.
 #'
-#' @param occ A occurrences object or an input_sdm object.
-#' @param pred A predictors object. If occ is an input_sdm object, then pred is retrieved from it.
+#' @usage tsne_sdm(occ, pred = NULL, variables_selected = NULL)
+#'
+#' @param occ A \code{occurrences} or \code{input_sdm} object.
+#' @param pred A \code{predictors} object. If \code{occ} is of class \code{input_sdm}, then
+#' \code{pred} is retrieved from it.
 #' @param selected_vars Variable to be used in t-SNE. It can also be 'vif', if previously calculated.
 #'
-#' @return A plot to each pseudoabsence dataset in form of a list.
+#' @return A plot to each pseudoabsence dataset in the form of a list.
 #'
 #' @author Luíz Fernando Esser (luizesser@gmail.com)
 #' https://luizfesser.wordpress.com

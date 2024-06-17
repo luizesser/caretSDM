@@ -1,6 +1,6 @@
-#' Create a input_sdm object
+#' \code{input_sdm}
 #'
-#' This function creates a new predictors object.
+#' This function creates a new \code{input_sdm} object.
 #'
 #' @param ... Data to be used in SDMs. Can be a \code{occurrences}, a \code{predictors}, a
 #' \code{scenarios}, and/or a \code{sdm_area} object. Ideally, \code{occurrences} and
@@ -15,7 +15,7 @@
 #' detecting their classes.
 #' The returned object is used throughout the whole workflow to apply functions.
 #'
-#' @seealso \code{\link{occurrences}\link{predictors}\link{scenarios}\link{sdm_area}}
+#' @seealso \code{\link{occurrences} \link{predictors} \link{scenarios} \link{sdm_area}}
 #'
 #' @author Luíz Fernando Esser (luizesser@gmail.com)
 #' https://luizfesser.wordpress.com

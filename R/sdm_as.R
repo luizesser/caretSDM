@@ -1,12 +1,24 @@
-#' sdm_as_X functions to transform caretSDM data into other classes.
+#' \code{sdm_as_X} functions to transform \code{caretSDM} data into other classes.
 #'
-#' This functions transform data in a caretSDM object to be used in other packages.
+#' This functions transform data from a \code{caretSDM} object to be used in other packages.
 #'
-#' @param x caretSDM object
-#' @param what Sometimes multiple objects inside x could be transformed. This parameter allows users to specify what needs to be converted.
+#' @usage
+#' sdm_as_stars(x,
+#'              what = NULL,
+#'              spp = NULL,
+#'              scen = NULL,
+#'              id = NULL,
+#'              ens = NULL)
 #'
-#' @returns The output is the desired class
+#' @param x A \code{caretSDM} object.
+#' @param what Sometimes multiple data inside \code{x} could be transformed. This parameter allows
+#' users to specify what needs to be converted.
+#' @param spp \code{character}. Which species should be converted?
+#' @param scen \code{character}. Which scenario should be converted?
+#' @param id \code{character}. Which id should be converted?
+#' @param ens \code{character}. Which ensemble should be converted?
 #'
+#' @returns The output is the desired class.
 #'
 #' @author Luíz Fernando Esser (luizesser@gmail.com)
 #' https://luizfesser.wordpress.com
@@ -68,6 +80,7 @@ sdm_as_stars <- function(x, what = NULL, spp = NULL, scen = NULL, id = NULL, ens
   }
 }
 
+#' @rdname sdm_as_stars
 #' @export
 sdm_as_raster <- function(x, what = NULL, spp = NULL, scen = NULL, id = NULL, ens = NULL) {
   if (is.null(what)) {
@@ -135,6 +148,7 @@ sdm_as_raster <- function(x, what = NULL, spp = NULL, scen = NULL, id = NULL, en
   }
 }
 
+#' @rdname sdm_as_stars
 #' @export
 sdm_as_terra <- function(x, what = NULL, spp = NULL, scen = NULL, id = NULL, ens = NULL) {
   if (is.null(what)) {

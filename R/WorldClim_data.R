@@ -1,8 +1,15 @@
 #' Download WorldClim v.2.1 bioclimatic data
 #'
-#' This function allows to download data from WorldClim v.2.1 (https://www.worldclim.org/data/index.html) considering multiple GCMs, time periods and SSPs.
+#' This function allows to download data from WorldClim v.2.1
+#' (https://www.worldclim.org/data/index.html) considering multiple GCMs, time periods and SSPs.
 #'
-#' @usage WorldClim_data(period = 'current', variable = 'bioc', year = '2030', gcm = 'mi', ssp = '126', resolution = 10)
+#' @usage
+#' WorldClim_data(period = 'current',
+#'                variable = 'bioc',
+#'                year = '2030',
+#'                gcm = 'mi',
+#'                ssp = '126',
+#'                resolution = 10)
 #'
 #' @param path Directory path to save downloads.
 #' @param period Can be 'current' or 'future'.
@@ -10,7 +17,8 @@
 #' 'tmax','tmin','prec' and/or 'bioc'.
 #' @param year Specify the year you want to retrieve data. Possible entries are:
 #' '2030', '2050', '2070' and/or '2090'. You can  use a vector to provide more than one entry.
-#' @param gcm GCMs to be considered in future scenarios. You can use a vector to provide more than one entry.
+#' @param gcm GCMs to be considered in future scenarios. You can use a vector to provide more than
+#' one entry.
 #'  | **CODE** | **GCM** |
 #'  | ---- | ---------------- |
 #'  | ac  | ACCESS-CM2 |
@@ -43,7 +51,10 @@
 #' You can use a vector to provide more than one entry.
 #' @param resolution You can select one resolution from the following alternatives: 10, 5, 2.5 OR 30.
 #'
-#' @details This function will create a folder entitled 'WorldClim_data'. All the data downloaded will be stored in this folder. Note that, despite being possible to retrieve a lot of data at once, it is not recommended to do so, since the data is very heavy.
+#' @details This function will create a folder entitled 'input_data/WorldClim_data_current' or
+#' 'input_data/WorldClim_data_future'. All the data downloaded will be stored in this folder.
+#' Note that, despite being possible to retrieve a lot of data at once, it is not recommended to do
+#' so, since the data is very heavy.
 #'
 #' @references https://www.worldclim.org/data/index.html
 #'

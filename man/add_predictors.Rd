@@ -9,16 +9,17 @@ add_predictors(sdm_area, pred, variables_selected = NULL)
 \arguments{
 \item{sdm_area}{A \code{sdm_area} object.}
 
-\item{pred}{RasterStack, SpatRaster or stars object with predictors data.}
+\item{pred}{\code{RasterStack}, \code{SpatRaster} or \code{stars} object with predictors data.}
 
-\item{variables_selected}{Character vector with variables names in pred to be used as predictors.
-If \code{NULL} adds all variables.}
+\item{variables_selected}{\code{character} vector with variables names in \code{pred} to be used
+as predictors. If \code{NULL} adds all variables.}
 }
 \value{
-The input \code{sdm_area} object with a new grid including the \code{pred} data.
+The input \code{sdm_area} object with a new grid including the \code{pred} data as a
+\code{sf} object.
 }
 \description{
-This function adds predictors to the \code{sdm_area} object.
+This function includes predictors to the \code{sdm_area} object.
 }
 \examples{
 # Create sdm_area object
@@ -29,7 +30,7 @@ sa <- add_predictors(sa, bioc)
 
 }
 \seealso{
-\code{\link{sdm_area}}
+\code{\link{sdm_area} \link{predictors} \link{bioc}}
 }
 \author{
 Luíz Fernando Esser (luizesser@gmail.com)

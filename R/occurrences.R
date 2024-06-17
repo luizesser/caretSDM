@@ -1,20 +1,35 @@
-#' Occurrences
+#' Occurrences Managing
 #'
-#' This function creates a \code{occurrences} object.
+#' This function creates and manage \code{occurrences} objects.
 #'
-#' @usage occurrences(x, independent_test = NULL, p = 0.1, epsg = NULL...)
+#' @usage
+#' occurrences(x,
+#'             independent_test = NULL,
+#'             p = 0.1,
+#'             epsg = NULL,
+#'             ...)
 #'
-#' @param x A data.frame
-#' @param independent_test Boolean. If \code{independet_test} is \code{TRUE}, a fraction is kept.
-#' Otherwise, the whole dataset \code{x} is used.
+#' @param x A \code{data.frame} with species records.
+#' @param independent_test Boolean. If \code{independet_test} is \code{TRUE}, a fraction of the data
+#' is kept for independent testing. Otherwise, the whole dataset \code{x} is used.
 #' @param p Numeric. Fraction of data to be used as independent test. Standard is 0.1.
 #' @param epsg Numeric. EPSG of \code{x}.
 #' @param ... A vector with column names addressing the columns with species names, longitude and
 #' latitude, respectively, in \code{x}.
+#' @param i \code{input_sdm} object.
 #'
 #' @return A \code{occurrences} object.
 #'
-#' @seealso \code{\link{input_sdm}}
+#' @details
+#' \code{x} must have three columns: species, decimalLongitude and decimalLatitude.
+#'
+#' \code{n_records} return the number of presence records to each species.
+#'
+#' \code{species_names} return the species names.
+#'
+#' \code{get_coords} return a \code{data.frame} with coordinates of species records.
+#'
+#' @seealso \code{\link{input_sdm} \link{GBIF_data} \link{occ}}
 #'
 #' @author Luíz Fernando Esser (luizesser@gmail.com)
 #' https://luizfesser.wordpress.com
@@ -49,6 +64,46 @@ occurrences.sf <- function(x, independent_test = NULL, p = 0.1, epsg = NULL, ...
   x <- cbind(select(as.data.frame(x), -"geometry"), st_coordinates(x))
   occ <- .occurrences(x, independent_test, p, epsg, ...)
   return(occ)
+}
+
+#' @rdname occurrences
+#' @export
+n_records <- function(i) {
+  x=i
+  if (class(x) == "input_sdm") {
+    y <- x$occurrences
+  } else {
+    y <- x
+  }
+  return(y$n_presences)
+}
+
+#' @rdname occurrences
+#' @export
+species_names <- function(i) {
+  x=i
+  if (class(x) == "input_sdm") {
+    y <- x$occurrences
+  } else {
+    y <- x
+  }
+  return(y$spp_names)
+}
+
+#' @rdname occurrences
+#' @export
+get_coords <- function(i) {
+  x=i
+  if (class(x) == "input_sdm") {
+    y <- x$occurrences
+  } else {
+    y <- x
+  }
+  res <- y$occurrences |>
+    st_coordinates() |>
+    as.data.frame() |>
+    select(X, Y)
+  return(res)
 }
 
 #' @export

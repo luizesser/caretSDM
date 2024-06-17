@@ -4,26 +4,44 @@
 \alias{vif_predictors}
 \title{Calculate VIF}
 \usage{
-vif_predictors(
-  pred,
-  area = "all",
-  th = 0.5,
-  maxobservations = 5000,
-  variables_selected = NULL
-)
+vif_predictors(pred, th = 0.5, maxobservations = 5000, variables_selected = NULL)
 }
 \arguments{
-\item{pred}{A predictors object}
+\item{pred}{A \code{input_sdm} or \code{predictors} object.}
 
-\item{th}{Threshold}
+\item{th}{Threshold to be applied in VIF routine.}
 
-\item{maxobservations}{Max observations to use to calculate the VIF}
+\item{maxobservations}{Max observations to use to calculate the VIF.}
+
+\item{variables_selected}{If there is a subset of predictors that should be used in this
+function, it can be informed using this parameter.}
 }
 \value{
-A predictors object with VIF data
+A \code{input_sdm} or \code{predictors} object with VIF data.
 }
 \description{
-Apply VIF calculation in a predictors object.
+Apply Variance Inflation Factor (VIF) calculation.
+}
+\examples{
+# Create sdm_area object:
+sa <- sdm_area(parana, cell_size = 25000, epsg = 6933)
+
+# Include predictors:
+sa <- add_predictors(sa, bioc)
+
+# Create input_sdm:
+i <- input_sdm(occurrences(occ), sa)
+
+# Clean coordinates:
+i <- data_clean(i)
+
+# VIF calculation:
+i <- vif_predictors(i)
+i
+
+}
+\seealso{
+\code{\link{usdm::vifcor}\link{predictors_names}}
 }
 \author{
 Luíz Fernando Esser (luizesser@gmail.com)

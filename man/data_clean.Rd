@@ -4,7 +4,13 @@
 \alias{data_clean}
 \title{Presence data cleaning routine}
 \usage{
-data_clean(x, pred = NULL, species = NA, long = NA, lat = NA, terrestrial = TRUE, independent_test = TRUE)
+data_clean(x,
+           pred = NULL,
+           species = NA,
+           long = NA,
+           lat = NA,
+           terrestrial = TRUE,
+           independent_test = TRUE)
 }
 \arguments{
 \item{occ}{A \code{occurrences} object or \code{input_sdm}.}
@@ -12,17 +18,20 @@ data_clean(x, pred = NULL, species = NA, long = NA, lat = NA, terrestrial = TRUE
 \item{pred}{A \code{predictors} object. If \code{occ} is a \code{input_sdm} object with
 predictors data, than \code{pred} is obtained from it.}
 
-\item{species}{A character stating the name of the column with species names in \code{occ} (see details).}
+\item{species}{A \code{character} stating the name of the column with species names in \code{occ} (see details).}
 
-\item{long}{A character stating the name of the column with longitude in \code{occ} (see details).}
+\item{long}{A \code{character} stating the name of the column with longitude in \code{occ} (see details).}
 
-\item{lat}{A character stating the name of the column with latitude in \code{occ} (see details).}
+\item{lat}{A \code{character} stating the name of the column with latitude in \code{occ} (see details).}
 
 \item{terrestrial}{If the species is terrestrial (TRUE), than the function deletes
 non-terrestrial coordinates.}
 
 \item{independent_test}{TRUE. If \code{occ} has independent test data, the data cleaning routine
 is also applied on it.}
+}
+\value{
+A \code{occurrences} object or \code{input_sdm} with new presence data.
 }
 \description{
 Data cleaning wrapper using CoordinateCleaner.
@@ -36,7 +45,7 @@ information. In this regard, we implemented the parameters \code{species}, \code
 }
 \examples{
 # Create sdm_area object:
-sa <- sdm_area(parana, cell_size=25000, epsg=6933)
+sa <- sdm_area(parana, cell_size = 25000, epsg = 6933)
 
 # Include predictors:
 sa <- add_predictors(sa, bioc)
@@ -50,7 +59,8 @@ i
 
 }
 \seealso{
-\code{\link{GBIF_data}}
+\code{\link{GBIF_data} \link{occurrences} \link{sdm_area} \link{input_sdm}
+\link{predictors}}
 }
 \author{
 Luíz Fernando Esser (luizesser@gmail.com)

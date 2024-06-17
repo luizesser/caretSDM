@@ -2,11 +2,13 @@
 #'
 #' This function retrieves variable importance as a function of ROC curves to each predictor.
 #'
-#' @param m A models object
-#' @param id model ids to filter varImp calculation
-#' @param ... Parameters passing to caret::varImp()
+#' @usage varImp_sdm(m, id = NULL, ...)
 #'
-#' @return A occurrences object with pseudoabsence data
+#' @param m A \code{models} or \code{input_sdm} object.
+#' @param id Vector of model ids to filter varImp calculation.
+#' @param ... Parameters passing to caret::varImp().
+#'
+#' @returns A \code{data.frame} with variable importance data.
 #'
 #' @author Luíz Fernando Esser (luizesser@gmail.com)
 #' https://luizfesser.wordpress.com

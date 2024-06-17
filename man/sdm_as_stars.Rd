@@ -2,20 +2,40 @@
 % Please edit documentation in R/sdm_as.R
 \name{sdm_as_stars}
 \alias{sdm_as_stars}
-\title{sdm_as_X functions to transform caretSDM data into other classes.}
+\alias{sdm_as_raster}
+\alias{sdm_as_terra}
+\title{\code{sdm_as_X} functions to transform \code{caretSDM} data into other classes.}
 \usage{
-sdm_as_stars(x, what = NULL, spp = NULL, scen = NULL, id = NULL, ens = NULL)
+sdm_as_stars(x,
+             what = NULL,
+             spp = NULL,
+             scen = NULL,
+             id = NULL,
+             ens = NULL)
+
+sdm_as_raster(x, what = NULL, spp = NULL, scen = NULL, id = NULL, ens = NULL)
+
+sdm_as_terra(x, what = NULL, spp = NULL, scen = NULL, id = NULL, ens = NULL)
 }
 \arguments{
-\item{x}{caretSDM object}
+\item{x}{A \code{caretSDM} object.}
 
-\item{what}{Sometimes multiple objects inside x could be transformed. This parameter allows users to specify what needs to be converted.}
+\item{what}{Sometimes multiple data inside \code{x} could be transformed. This parameter allows
+users to specify what needs to be converted.}
+
+\item{spp}{\code{character}. Which species should be converted?}
+
+\item{scen}{\code{character}. Which scenario should be converted?}
+
+\item{id}{\code{character}. Which id should be converted?}
+
+\item{ens}{\code{character}. Which ensemble should be converted?}
 }
 \value{
-The output is the desired class
+The output is the desired class.
 }
 \description{
-This functions transform data in a caretSDM object to be used in other packages.
+This functions transform data from a \code{caretSDM} object to be used in other packages.
 }
 \author{
 Luíz Fernando Esser (luizesser@gmail.com)

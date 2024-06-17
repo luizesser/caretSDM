@@ -2,30 +2,87 @@
 % Please edit documentation in R/predict_sdm.R
 \name{predict_sdm}
 \alias{predict_sdm}
+\alias{get_predictions}
+\alias{get_ensembles}
 \title{Predict SDM models in new data}
 \usage{
-predict_sdm(
-  m,
-  scen = NULL,
-  th = 0.9,
-  tp = "prob",
-  file = NULL,
-  ensembles = TRUE,
-  add.current = TRUE
-)
+predict_sdm(m,
+            scen = NULL,
+            th = 0.9,
+            tp = "prob",
+            ensembles = TRUE)
+
+get_predictions(x)
+
+get_ensembles(x)
 }
 \arguments{
-\item{m}{A models object}
+\item{m}{A \code{input_sdm} or a \code{models} object.}
 
-\item{scen}{A scenarios object}
+\item{scen}{A \code{scenarios} object or \code{NULL}. If \code{NULL} and \code{m} is a
+\code{input_sdm} with a scenarios slot, it will be used.}
 
-\item{th}{Thresholds for metrics to be used}
+\item{th}{Thresholds for metrics.}
+
+\item{tp}{Type of output to be retrieved. See details.}
+
+\item{ensembles}{Boolean. Should ensembles be calculated? If \code{TRUE} a series of ensembles
+are obtained. See details.}
+
+\item{i}{A \code{input_sdm} or a \code{predictions} object.}
 }
 \value{
-A predictions object
+A \code{input_sdm} or a \code{predictions} object.
 }
 \description{
 This function projects SDM models to new scenarios
+}
+\details{
+\code{tp} is a parameter to be passed on caret to retrieve either the probabilities of classes
+(tp="prob") or the raw output (tp="raw"), which could vary depending on the algorithm used, but
+usually would be on of the classes (factor vector with presences and pseudoabsences).
+
+When \code{ensembles} is set to \code{TRUE}, three ensembles are currently implemented.
+mean_occ_prob is the mean occurrence probability, which is a simple mean of predictions,
+wmean_AUC is the same mean_occ_prob, but weighted by AUC, and committee_avg is the committee
+average, as known as majority rule, where predictions are binarized and then a mean is obtained.
+
+\code{get_predictions} returns the \code{list} of all predictions to all scenarios, all species,
+all algorithms and all repetitions. Useful for those who wish to implement their own ensemble
+methods.
+
+\code{get_ensembles} returns a \code{matrix} of \code{data.frame}s, where each column is a
+scenario and each row is a species.
+}
+\examples{
+# Create sdm_area object:
+sa <- sdm_area(parana, cell_size = 25000, epsg = 6933)
+
+# Include predictors:
+sa <- add_predictors(sa, bioc)
+
+# Create input_sdm:
+i <- input_sdm(occurrences(occ), sa)
+
+# Clean coordinates:
+i <- data_clean(i)
+
+# VIF calculation:
+i <- vif_predictors(i)
+
+# Pseudoabsence generation:
+i <- pseudoabsence(i, method="bioclim", variables_selected = "vif")
+
+# Train models:
+i <- train_sdm(i, algo = c("nnet", "kknn"), variables_selected = "vif")
+
+# Predict models:
+i  <- predict_sdm(i)
+i
+
+}
+\seealso{
+\code{\link{sdm_area} \link{input_sdm}}
 }
 \author{
 Luíz Fernando Esser (luizesser@gmail.com)

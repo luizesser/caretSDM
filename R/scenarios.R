@@ -1,25 +1,52 @@
-#' Create a scenarios object
+#' Scenarios Managing
 #'
-#' This function creates a new scenarios object, which are used to project models in space and time.
+#' This function creates and manage \code{scenarios} objects.
 #'
-#' @param x A string with the path to GCM files.
-#' @param extension Extension of stack files. Standard is ".tif", which is the extension from WorldClim 2.1.
-#' @param recursive Logical. Should the function import stacks recursively (i.e. search files from folders within folders)? Standard is TRUE.
-#' @param scenarios_names A vector with names to be addressed to each scenario.
-#' @param variables_names A vector with names to be addressed to each variable. Alternatively, a vector from names on training data/predictors.
+#' @usage
+#' scenarios(x,
+#'           study_area = NULL,
+#'           vars_study_area = NULL,
+#'           predictors_names = NULL,
+#'           rescaling = NULL,
+#'           scenarios_names = NULL)
 #'
-#' @return A list of stacks, with each element of the list corresponding to a GCM from given path.
+#' @param x A \code{character} vector with the path to stack files, a \code{stars}, a
+#' \code{RasterStack}, a \code{SpatRaster} or a \code{list}.
+#' @param study_area A \code{sf} object with the study area to mask scenarios. If \code{NULL}, the
+#' whole area is used.
+#' @param vars_study_area Logical. Should the function use the table within the \code{study_area} as
+#' predictors? Standard is \code{NULL}.
+#' @param scenarios_names A \code{character} vector with names to be addressed to each scenario.
+#' @param predictors_names A \code{character} vector with names to be addressed to each predictor.
+#' @param rescaling A list of parameters to pass on rescaling function (optional, see details).
+#' @param i \code{input_sdm} object.
 #'
-#' @seealso \code{\link{WorldClim_data}}
+#' @details
+#' If using a \code{sdm_area} object as predictors, add scenarios through \code{add_scenarios}
+#' function.
+#'
+#' Rescaling is particularly usefull for aquatic environments, once creates a grid around riverlines
+#' allowing modelers to account for the surrounding environment. Rescaling needs a \code{list} with
+#' \code{cell_size} and \code{epsg}.
+#'
+#' \code{scenarios_names} returns the scenarios names in \code{input_sdm} object.
+#'
+#' \code{get_scenarios_data} retrieve scenarios data as a \code{list} of \code{sf}s to each scenario.
+#'
+#' @returns A \code{scenarios} object.
+#'
+#' @seealso \code{\link{input_sdm} \link{sdm_area} \link{add_scenarios} \link{scen}}
 #'
 #' @author Luíz Fernando Esser (luizesser@gmail.com)
 #' https://luizfesser.wordpress.com
 #'
 #' @examples
-#' s <- import_gcms(path = "input_data/WorldClim_data_future", extension = ".tif", recursive = TRUE, gcm_names = NULL)
-#' study_area <- extent(c(-57, -22, -48, -33))
-#' var_names <- c("bio_1", "bio_12")
-#' t <- transform_gcms(s, var_names, study_area)
+#' i <- input_sdm(
+#'      occurrences(occ_data),
+#'      caretSDM::predictors(bioc, study_area = parana),
+#'      scenarios(scen, study_area = parana)
+#'      )
+#' i
 #'
 #' @import stars
 #' @import raster
@@ -27,12 +54,13 @@
 #' @importFrom gtools mixedsort
 #'
 #' @export
-scenarios <- function(x, ...) {
+scenarios <- function(x, study_area = NULL, vars_study_area = NULL, predictors_names = NULL, rescaling = NULL, scenarios_names = NULL) {
   UseMethod("scenarios")
 }
 
 #' @export
-scenarios.RasterStack <- function(x, study_area = NULL, predictors_names = NULL, rescaling = NULL, scenarios_names = NULL) {
+scenarios.RasterStack <- function(x, study_area = NULL, predictors_names = NULL, rescaling = NULL,
+                                  scenarios_names = NULL) {
   if (is.null(predictors_names)) {
     predictors_names <- names(x)
   }
@@ -105,7 +133,8 @@ scenarios.RasterStack <- function(x, study_area = NULL, predictors_names = NULL,
 }
 
 #' @export
-scenarios.data.frame <- function(x, study_area = NULL, predictors_names = NULL, rescaling = NULL, scenarios_names = NULL, epsg = NULL) { # pode entrar tanto uma tabela com coord e spp quanto sem.
+scenarios.data.frame <- function(x, study_area = NULL, predictors_names = NULL, rescaling = NULL,
+                                 scenarios_names = NULL, epsg = NULL) { # pode entrar tanto uma tabela com coord e spp quanto sem.
   x <- st_as_stars(x)
   if (is.null(scenarios_names)) {
     if (length(unique(x)) == length(x)) {
@@ -184,7 +213,8 @@ scenarios.SpatRaster <- function(x, study_area = NULL, predictors_names = NULL, 
 }
 
 #' @export
-scenarios.stars <- function(x, study_area = NULL, vars_study_area = NULL, predictors_names = NULL, rescaling = NULL, scenarios_names = NULL) {
+scenarios.stars <- function(x, study_area = NULL, vars_study_area = NULL, predictors_names = NULL,
+                            rescaling = NULL, scenarios_names = NULL) {
   if (is.null(predictors_names)) {
     predictors_names <- names(x)
   }
@@ -277,7 +307,8 @@ scenarios.stars <- function(x, study_area = NULL, vars_study_area = NULL, predic
 }
 
 #' @export
-scenarios.character <- function(x, study_area = NULL, predictors_names = NULL, rescaling = NULL, scenarios_names = NULL, ...) {
+scenarios.character <- function(x, study_area = NULL, predictors_names = NULL, rescaling = NULL,
+                                scenarios_names = NULL, ...) {
   l <- list.files(x, full.names = T, ...)
   # s <- lapply(l, function(x){s <- read_stars(x)})
   s <- read_stars(l)
@@ -294,7 +325,8 @@ scenarios.character <- function(x, study_area = NULL, predictors_names = NULL, r
 }
 
 #' @export
-scenarios.list <- function(x, study_area = NULL, predictors_names = NULL, rescaling = NULL, scenarios_names = NULL, ...) {
+scenarios.list <- function(x, study_area = NULL, predictors_names = NULL, rescaling = NULL,
+                           scenarios_names = NULL, ...) {
   s <- x
   s <- sapply(s, function(x) {
     scenarios(x, study_area = study_area, predictors_names = predictors_names, rescaling = rescaling, ...)
@@ -386,6 +418,32 @@ scenarios.list <- function(x, study_area = NULL, predictors_names = NULL, rescal
   )
   scen <- .scenarios(x)
   return(scen)
+}
+
+
+#' @rdname scenarios
+#' @export
+scenarios_names <- function(i) {
+  x=i
+  if (class(x) == "input_sdm") {
+    y <- x$scenarios
+  } else {
+    y <- x
+  }
+  res <- names(y$data)
+  return(res)
+}
+
+#' @rdname scenarios
+#' @export
+get_scenarios_data <- function(i) {
+  x=i
+  if (class(x) == "input_sdm") {
+    y <- x$scenarios
+  } else {
+    y <- x
+  }
+  return(y$data)
 }
 
 #' @export

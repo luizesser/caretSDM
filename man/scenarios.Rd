@@ -2,36 +2,68 @@
 % Please edit documentation in R/scenarios.R
 \name{scenarios}
 \alias{scenarios}
-\title{Create a scenarios object}
+\alias{scenarios_names}
+\alias{get_scenarios_data}
+\title{Scenarios Managing}
 \usage{
-scenarios(x, ...)
+scenarios(x,
+          study_area = NULL,
+          vars_study_area = NULL,
+          predictors_names = NULL,
+          rescaling = NULL,
+          scenarios_names = NULL)
+
+scenarios_names(i)
+
+get_scenarios_data(i)
 }
 \arguments{
-\item{x}{A string with the path to GCM files.}
+\item{x}{A \code{character} vector with the path to stack files, a \code{stars}, a
+\code{RasterStack}, a \code{SpatRaster} or a \code{list}.}
 
-\item{extension}{Extension of stack files. Standard is ".tif", which is the extension from WorldClim 2.1.}
+\item{study_area}{A \code{sf} object with the study area to mask scenarios. If \code{NULL}, the
+whole area is used.}
 
-\item{recursive}{Logical. Should the function import stacks recursively (i.e. search files from folders within folders)? Standard is TRUE.}
+\item{vars_study_area}{Logical. Should the function use the table within the \code{study_area} as
+predictors? Standard is \code{NULL}.}
 
-\item{scenarios_names}{A vector with names to be addressed to each scenario.}
+\item{predictors_names}{A \code{character} vector with names to be addressed to each predictor.}
 
-\item{variables_names}{A vector with names to be addressed to each variable. Alternatively, a vector from names on training data/predictors.}
+\item{rescaling}{A list of parameters to pass on rescaling function (optional, see details).}
+
+\item{scenarios_names}{A \code{character} vector with names to be addressed to each scenario.}
+
+\item{i}{\code{input_sdm} object.}
 }
 \value{
-A list of stacks, with each element of the list corresponding to a GCM from given path.
+A \code{scenarios} object.
 }
 \description{
-This function creates a new scenarios object, which are used to project models in space and time.
+This function creates and manage \code{scenarios} objects.
+}
+\details{
+If using a \code{sdm_area} object as predictors, add scenarios through \code{add_scenarios}
+function.
+
+Rescaling is particularly usefull for aquatic environments, once creates a grid around riverlines
+allowing modelers to account for the surrounding environment. Rescaling needs a \code{list} with
+\code{cell_size} and \code{epsg}.
+
+\code{scenarios_names} returns the scenarios names in \code{input_sdm} object.
+
+\code{get_scenarios_data} retrieve scenarios data as a \code{list} of \code{sf}s to each scenario.
 }
 \examples{
-s <- import_gcms(path = "input_data/WorldClim_data_future", extension = ".tif", recursive = TRUE, gcm_names = NULL)
-study_area <- extent(c(-57, -22, -48, -33))
-var_names <- c("bio_1", "bio_12")
-t <- transform_gcms(s, var_names, study_area)
+i <- input_sdm(
+     occurrences(occ_data),
+     caretSDM::predictors(bioc, study_area = parana),
+     scenarios(scen, study_area = parana)
+     )
+i
 
 }
 \seealso{
-\code{\link{WorldClim_data}}
+\code{\link{input_sdm} \link{sdm_area} \link{add_scenarios} \link{scen}}
 }
 \author{
 Luíz Fernando Esser (luizesser@gmail.com)

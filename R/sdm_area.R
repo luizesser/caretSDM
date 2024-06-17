@@ -1,14 +1,19 @@
-#' Create a sdm_area object
+#' Create a \code{sdm_area} object
 #'
-#' This function creates a new sdm_area object.
+#' This function creates a new \code{sdm_area} object.
 #'
-#' @param x A shapefile or a raster.
-#' @param cell_size Numeric. The cell size to be used in models.
-#' @param epsg Numeric. If epsg from x is missing,
+#' @param x A shapefile or a raster. Usually a shapefile from \code{sf} class, but rasters from
+#' \code{stars}, \code{rasterStack} or \code{SpatRaster} class are also allowed.
+#' @param cell_size \code{numeric}. The cell size to be used in models.
+#' @param epsg \code{numeric}. Indicates which EPSG should the output grid be in. If \code{NULL},
+#' epsg from \code{x} is used.
 #'
-#' @return A sdm_area object.
+#' @details
+#' The function returns a \code{sdm_area} object with a grid built upon the \code{x} parameter.
 #'
-#' @seealso \code{\link{WorldClim_data}}
+#' @returns A \code{sdm_area} object.
+#'
+#' @seealso \code{\link{WorldClim_data} \link{parana} \link{input_sdm}}
 #'
 #' @author Luíz Fernando Esser (luizesser@gmail.com)
 #' https://luizfesser.wordpress.com

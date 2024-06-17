@@ -1,17 +1,72 @@
 #' Train SDM models
 #'
-#' This function fit SDM models
+#' This function is a wrapper to fit models in caret using caretSDM data.
 #'
-#' @param occ A occurrences object or a input_sdm.
-#' @param pred A predictors object. If a input_sdm object is used, then pred is obtained from it.
-#' @param algo Algorithms to be used. For a complete list see (https://topepo.github.io/caret/available-models.html). 'maxent', 'mahal.dist' and 'bioclim' are also implemented, but they are only available to run alone, with no other algorithm together.
-#' @param ctrl A trainControl object to be used to build models. See ?trainControl.
-#' @param variables_selected A vector of variables to be used as predictors. If NULL, predictors_names from pred will be used. Can also be a selection method (e.g. 'vif').
+#' @usage
+#' train_sdm(occ,
+#'           pred = NULL,
+#'           algo,
+#'           ctrl = NULL,
+#'           variables_selected = NULL)
 #'
-#' @return A models object
+#' @param occ A \code{occurrences} or a \code{input_sdm} object.
+#' @param pred A \code{predictors object}. If \code{occ} is a \code{input_sdm} object, then
+#' \code{pred} is obtained from it.
+#' @param algo A \code{character} vector. Algorithms to be used. For a complete list see
+#' (https://topepo.github.io/caret/available-models.html). 'maxent', 'mahal.dist' and 'bioclim' are
+#' also implemented, but they are only available to run alone, with no other algorithm together.
+#' @param ctrl A \code{trainControl} object to be used to build models. See \code{\link{trainControl}}.
+#' @param variables_selected A \code{vector} of variables to be used as predictors. If \code{NULL},
+#' predictors names from \code{pred} will be used. Can also be a selection method (e.g. 'vif').
+#' @param i A \code{models} or a \code{input_sdm} object.
+#'
+#' @return A \code{models} or a \code{input_sdm} object.
+#'
+#' @details
+#' The object \code{\link{algorithms}} has a table comparing algorithms available. If the function
+#' detects that the necessary packages are not available it will ask for installation. This will
+#' happen just in the first time you use the algorithm.
+#'
+#' \code{get_tune_length} return the length used in grid-search for tunning.
+#'
+#' \code{algorithms_used} return the names of the algorithms used in the modeling process.
+#'
+#' \code{get_models} returns a \code{list} with trained models (class \code{train}) to each species.
+#'
+#' \code{get_validation_metrics} return a \code{list} with a \code{data.frame} to each species
+#' with complete values for ROC, Sensitivity, Specificity, with their respectives Standard
+#' Deviations (SD) and TSS to each of the algorithms and pseudoabsence datasets used.
+#'
+#' \code{mean_validation_metrics} return a \code{list} with a \code{tibble} to each species
+#' summarizing values for ROC, Sensitivity, Specificity and TSS to each of the algorithms used.
+#'
+#' @seealso \code{\link{input_sdm} \link{sdm_area} \link{algorithms}}
 #'
 #' @author Luíz Fernando Esser (luizesser@gmail.com)
 #' https://luizfesser.wordpress.com
+#'
+#' @examples
+#' # Create sdm_area object:
+#' sa <- sdm_area(parana, cell_size = 25000, epsg = 6933)
+#'
+#' # Include predictors:
+#' sa <- add_predictors(sa, bioc)
+#'
+#' # Create input_sdm:
+#' i <- input_sdm(occurrences(occ), sa)
+#'
+#' # Clean coordinates:
+#' i <- data_clean(i)
+#'
+#' # VIF calculation:
+#' i <- vif_predictors(i)
+#'
+#' # Pseudoabsence generation:
+#' i <- pseudoabsence(i, method="bioclim", variables_selected = "vif")
+#'
+#' # Train models:
+#' i <- train_sdm(i, algo = c("nnet", "kknn"), variables_selected = "vif")
+#' i
 #'
 #' @import caret
 #' @import sp
@@ -451,7 +506,7 @@ train_sdm <- function(occ, pred = NULL, algo, ctrl = NULL, variables_selected = 
     })
     metrics <- do.call(rbind, metrics)
     metrics <- arrange(metrics, algo)
-    metrics <- mutate(metrics, TSS = Sens + Spec - 1) # TSS
+    try(metrics <- mutate(metrics, TSS = Sens + Spec - 1)) # TSS
     return(metrics)
   }, simplify = FALSE, USE.NAMES = TRUE)
 
@@ -476,6 +531,71 @@ train_sdm <- function(occ, pred = NULL, algo, ctrl = NULL, variables_selected = 
   return(models)
 }
 
+
+#' @rdname train_sdm
+#' @export
+get_tune_length <- function(i) {
+  x=i
+  if (class(x) == "input_sdm") {
+    y <- x$models
+  } else {
+    y <- x
+  }
+  return(y$tuning)
+}
+
+#' @rdname train_sdm
+#' @export
+algorithms_used <- function(i) {
+  x=i
+  if (class(x) == "input_sdm") {
+    y <- x$models
+  } else {
+    y <- x
+  }
+  return(y$algorithms)
+}
+
+#' @rdname train_sdm
+#' @export
+get_models <- function(i) {
+  x=i
+  if (class(x) == "input_sdm") {
+    y <- x$models
+  } else {
+    y <- x
+  }
+  return(y$models)
+}
+
+#' @rdname train_sdm
+#' @export
+get_validation_metrics <- function(i) {
+  x=i
+  if (class(x) == "input_sdm") {
+    y <- x$models
+  } else {
+    y <- x
+  }
+  return(y$validation$metrics)
+}
+
+#' @rdname train_sdm
+#' @export
+mean_validation_metrics <- function(i) {
+  x=i
+  if (class(x) == "input_sdm") {
+    y <- x$models
+  } else {
+    y <- x
+  }
+  algo <- y$algorithms
+  res <- sapply(y$validation$metrics, function(met) {
+    v <- summarise(group_by(met, algo), ROC = mean(ROC), Sensitivity = mean(Sens), Specificity = mean(Spec), TSS = mean(TSS))
+    return(v)
+  }, simplify = FALSE, USE.NAMES = TRUE)
+  return(res)
+}
 
 #' @export
 .models <- function(x) {
