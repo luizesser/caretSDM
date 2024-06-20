@@ -66,13 +66,13 @@ add_predictors.stars <- function(sdm_area, pred, variables_selected = NULL) {
   }
   grd <- sdm_area$grid
   grd <- st_transform(grd, crs = st_crs(pred))
-  grd2 <- pred |>
+  suppressWarnings(grd2 <- pred |>
     st_crop(grd) |>
     st_as_sf() |>
     st_centroid() |>
     aggregate(grd, mean) |>
     cbind(grd) |>
-    select(-c("geometry.1"))
+    select(-c("geometry.1")))
   grd2 <- st_transform(grd2, crs = st_crs(sdm_area$grid))
   bbox2 <- st_bbox(grd2)
   var_names <- grd2 %>%

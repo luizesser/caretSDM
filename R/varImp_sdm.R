@@ -13,7 +13,7 @@
 #' @author Luíz Fernando Esser (luizesser@gmail.com)
 #' https://luizfesser.wordpress.com
 #'
-#' @import caret
+#' @importFrom caret varImp
 #'
 #' @export
 varImp_sdm <- function(m, id = NULL, ...) {

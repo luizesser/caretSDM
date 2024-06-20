@@ -65,12 +65,12 @@ study_area <- st_read("input_data/Amazon/AmazonHydroRivers4.shp")
 
 # create the input_sdm that we will work with during the workflow.
 i <- input_sdm(
-  occurrences(occ_data),
-  caretSDM::predictors(folder_current,
+  occurrences_sdm(occ_data),
+  predictors_sdm(folder_current,
     study_area = study_area,
     rescaling = list(cellsize = 100000, epsg = 6933)
   ),
-  scenarios(folder_future,
+  scenarios_sdm(folder_future,
     study_area = study_area,
     rescaling = list(cellsize = 100000, epsg = 6933)
   )

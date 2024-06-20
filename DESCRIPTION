@@ -1,13 +1,26 @@
 Type: Package
 Package: caretSDM
-Title: caretSDM: A package for building Species Distribution Modeling in R using caret.
+Title: A package for building Species Distribution Modeling in R using caret.
 Version: 1.0.3
-Author: Luíz Fernando Esser, Dayani Baili, Edivando Couto, José Hilário Delconte Ferreira, Reginaldo Ré and Valéria Batista
+Authors@R: c(
+    person("Dayani", "Baili", role = "aut",
+           comment = c(ORCID = "0000")),
+    person("Edivando", "Couto", role = "aut",
+           comment = c(ORCID = "0000")),
+    person("José", "Hilário Delconte Ferreira", role = "aut",
+           comment = c(ORCID = "0000")),
+    person("Reginaldo", "Ré", role = "aut",
+           comment = c(ORCID = "0000")),
+   person("Valéria", "Batista", role = "aut",
+           comment = c(ORCID = "0000")),
+    person("Luíz", "Esser", , "luizesser@gmail.com", role = c("aut", "cre"),
+           comment = c(ORCID = "0000")))
 Maintainer: Luíz Fernando Esser <luizesser@gmail.com>
 Description: This package is intended to help modelers to
     build Species Distribution Modeling (SDMs) using a machine learning approach. 
     The package uses caret as a underlying package to build and project models.
 License: MIT
+BugReports: https://github.com/luizesser/caretSDM/issues
 Imports:
     caret,
     checkmate,

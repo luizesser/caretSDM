@@ -68,13 +68,13 @@
 #' i <- train_sdm(i, algo = c("nnet", "kknn"), variables_selected = "vif")
 #' i
 #'
-#' @import caret
 #' @import sp
 #' @import maxnet
 #' @import dismo
 #' @importFrom dplyr arrange
 #' @importFrom raster extract
 #' @importFrom pROC roc
+#' @importFrom caret train trainControl twoClassSummary
 #'
 #' @export
 train_sdm <- function(occ, pred = NULL, algo, ctrl = NULL, variables_selected = NULL, parallel = FALSE, ...) {
@@ -114,7 +114,7 @@ train_sdm <- function(occ, pred = NULL, algo, ctrl = NULL, variables_selected = 
     print(cat("Using variables selected by ", variables_selected, ": ", selected_vars))
   }
   if (is.null(ctrl)) {
-    ctrl <- trainControl(
+    ctrl <- caret::trainControl(
       method = "repeatedcv", number = 4, repeats = 1, classProbs = TRUE, returnResamp = "all", # retornar folds
       summaryFunction = twoClassSummary, savePredictions = "all", allowParallel = FALSE
     )
@@ -413,7 +413,6 @@ train_sdm <- function(occ, pred = NULL, algo, ctrl = NULL, variables_selected = 
         select(all_of(selected_vars))
     }
 
-
     for (i in 1:length(z$pseudoabsences$data[[sp]])) {
       pa <- z$pseudoabsences$data[[sp]][[i]]
       pa <- pa[, match(colnames(occ2), colnames(pa))]
@@ -459,7 +458,7 @@ train_sdm <- function(occ, pred = NULL, algo, ctrl = NULL, variables_selected = 
           m <- list(m)
         } else {
           m <- lapply(algo, function(a) {
-            train(x, # usar sapply para que o id seja mais organizado
+            caret::train(x, # usar sapply para que o id seja mais organizado
               df,
               method = a,
               trControl = ctrl

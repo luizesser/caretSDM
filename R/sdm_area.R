@@ -84,11 +84,11 @@ sdm_area.stars <- function(x, cell_size = NULL, epsg = NULL) {
   } else if (st_crs(epsg) != st_crs(x)) {
     x <- st_transform(x, st_crs(epsg))
   }
-  grd <- x %>%
+  suppressWarnings(grd <- x %>%
     st_make_grid(cellsize = cell_size) %>%
     st_as_sf() %>%
     cbind(., cell_id = seq(1, nrow(.))) %>%
-    st_join(st_as_sf(x), left = FALSE)
+    st_join(st_as_sf(x), left = FALSE))
   st_geometry(grd) <- "geometry"
   epsg <- st_crs(grd)[1]$input
   bbox <- st_bbox(grd)
@@ -120,14 +120,14 @@ sdm_area.sf <- function(x, cell_size = NULL, epsg = NULL, lines_as_area = FALSE)
   } else if (st_crs(epsg) != st_crs(x)) {
     x <- st_transform(x, st_crs(epsg))
   }
-  grd <- x |>
+  suppressWarnings(grd <- x |>
     st_make_grid(cellsize = cell_size) |>
     st_as_sf() |>
     mutate(cell_id = row_number()) |>
     st_join(st_make_valid(x), left = FALSE) |>
     rename(geometry = x) |>
     group_by(cell_id) |>
-    summarise_all(mean)
+    summarise_all(mean))
 
   if (all(st_is(x, "LINESTRING")) & lines_as_area) {
     grd <- st_intersection(x, grd)

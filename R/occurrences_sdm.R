@@ -3,11 +3,11 @@
 #' This function creates and manage \code{occurrences} objects.
 #'
 #' @usage
-#' occurrences(x,
-#'             independent_test = NULL,
-#'             p = 0.1,
-#'             epsg = NULL,
-#'             ...)
+#' occurrences_sdm(x,
+#'                 independent_test = NULL,
+#'                 p = 0.1,
+#'                 epsg = NULL,
+#'                 ...)
 #'
 #' @param x A \code{data.frame} with species records.
 #' @param independent_test Boolean. If \code{independet_test} is \code{TRUE}, a fraction of the data
@@ -35,38 +35,38 @@
 #' https://luizfesser.wordpress.com
 #'
 #' @examples
-#' occ <- occurrences(occ, epsg = 6933)
+#' occ <- occurrences_sdm(occ, epsg = 6933)
 #'
 #' @import tibble
 #' @import stars
 #' @importFrom here here
 #'
 #' @export
-occurrences <- function(x, independent_test = NULL, p = 0.1, epsg = NULL, ...) {
-  UseMethod("occurrences")
+occurrences_sdm <- function(x, independent_test = NULL, p = 0.1, epsg = NULL, ...) {
+  UseMethod("occurrences_sdm")
 }
 
 #' @export
-occurrences.data.frame <- function(x, independent_test = NULL, p = 0.1, epsg = NULL, ...) {
+occurrences_sdm.data.frame <- function(x, independent_test = NULL, p = 0.1, epsg = NULL, ...) {
   occ <- .occurrences(x, independent_test, p, epsg, ...)
   return(occ)
 }
 
 #' @export
-occurrences.tibble <- function(x, independent_test = NULL, p = 0.1, epsg = NULL, ...) {
+occurrences_sdm.tibble <- function(x, independent_test = NULL, p = 0.1, epsg = NULL, ...) {
   x <- as.data.frame(x)
   occ <- .occurrences(x, independent_test, p, epsg, ...)
   return(occ)
 }
 
 #' @export
-occurrences.sf <- function(x, independent_test = NULL, p = 0.1, epsg = NULL, ...) {
+occurrences_sdm.sf <- function(x, independent_test = NULL, p = 0.1, epsg = NULL, ...) {
   x <- cbind(select(as.data.frame(x), -"geometry"), st_coordinates(x))
   occ <- .occurrences(x, independent_test, p, epsg, ...)
   return(occ)
 }
 
-#' @rdname occurrences
+#' @rdname occurrences_sdm
 #' @export
 n_records <- function(i) {
   x=i
@@ -78,7 +78,7 @@ n_records <- function(i) {
   return(y$n_presences)
 }
 
-#' @rdname occurrences
+#' @rdname occurrences_sdm
 #' @export
 species_names <- function(i) {
   x=i
@@ -90,7 +90,7 @@ species_names <- function(i) {
   return(y$spp_names)
 }
 
-#' @rdname occurrences
+#' @rdname occurrences_sdm
 #' @export
 get_coords <- function(i) {
   x=i

@@ -68,7 +68,6 @@
 #' i  <- predict_sdm(i)
 #' i
 #'
-#' @import caret
 #' @importFrom dplyr bind_cols
 #' @importFrom dplyr select
 #' @importFrom dplyr mutate
@@ -84,7 +83,7 @@ predict_sdm <- function(m, scen = NULL, th = 0.9, tp = "prob", file = NULL, ense
 }
 
 #' @export
-predict_sdm.sdm_area <- function(m, scen = NULL, th = 0.9, tp = "prob", file = NULL, ensembles = TRUE) {
+predict_sdm.sdm_area <- function(m, scen, th = 0.9, tp = "prob", file = NULL, ensembles = TRUE) {
   if (class(m) == "input_sdm") {
     y <- m$models
     scen <- m$scenarios

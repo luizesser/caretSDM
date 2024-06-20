@@ -3,11 +3,11 @@
 #' This function creates and manage \code{predictors} objects.
 #'
 #' @usage
-#' predictors(x,
-#'            study_area = NULL,
-#'            vars_study_area = NULL,
-#'            predictors_names = NULL,
-#'            rescaling = NULL)
+#' predictors_sdm(x,
+#'                study_area = NULL,
+#'                vars_study_area = NULL,
+#'                predictors_names = NULL,
+#'                rescaling = NULL)
 #'
 #' @param x A string with the path to predictors files, a \code{stars}, a \code{RasterStack} or
 #' \code{SpatRaster}.
@@ -43,8 +43,8 @@
 #'
 #' @examples
 #' i <- input_sdm(
-#'      occurrences(occ_data),
-#'      caretSDM::predictors(bioc, study_area = parana)
+#'      occurrences_sdm(occ_data),
+#'      predictors_sdm(bioc, study_area = parana)
 #'      )
 #' i
 #'
@@ -55,12 +55,12 @@
 #' @importFrom gtools mixedsort
 #'
 #' @export
-predictors <- function(x, ...) {
-  UseMethod("predictors")
+predictors_sdm <- function(x, ...) {
+  UseMethod("predictors_sdm")
 }
 
 #' @export
-predictors.RasterStack <- function(x, study_area = NULL, vars_study_area = NULL, predictors_names = NULL, rescaling = NULL) {
+predictors_sdm.RasterStack <- function(x, study_area = NULL, vars_study_area = NULL, predictors_names = NULL, rescaling = NULL) {
   if (is.null(predictors_names)) {
     predictors_names <- names(x)
   }
@@ -131,28 +131,28 @@ predictors.RasterStack <- function(x, study_area = NULL, vars_study_area = NULL,
 }
 
 #' @export
-predictors.SpatRaster <- function(x, study_area = NULL, vars_study_area = NULL, predictors_names = NULL, rescaling = NULL) {
+predictors_sdm.SpatRaster <- function(x, study_area = NULL, vars_study_area = NULL, predictors_names = NULL, rescaling = NULL) {
   x <- st_as_stars(x)
   names(x) <- "current"
   names(st_dimensions(x)) <- c("x", "y", "band")
-  occ <- predictors(x, study_area, vars_study_area, predictors_names, rescaling)
+  occ <- predictors_sdm(x, study_area, vars_study_area, predictors_names, rescaling)
   return(occ)
 }
 
 #' @export
-predictors.character <- function(x, study_area = NULL, vars_study_area = NULL, predictors_names = NULL, rescaling = NULL) {
+predictors_sdm.character <- function(x, study_area = NULL, vars_study_area = NULL, predictors_names = NULL, rescaling = NULL) {
   l <- list.files(x, full.names = T)
   x <- read_stars(l, along = "band", normalize_path = FALSE)
   names(x) <- "current"
   x_dims <- st_dimensions(x)
   x_dims$band$values <- sort(paste0("bio", 1:19))
   st_dimensions(x) <- x_dims
-  p <- predictors(x, study_area, vars_study_area, predictors_names, rescaling)
+  p <- predictors_sdm(x, study_area, vars_study_area, predictors_names, rescaling)
   return(p)
 }
 
 #' @export
-predictors.stars <- function(x, study_area = NULL, vars_study_area = NULL, predictors_names = NULL, rescaling = NULL) {
+predictors_sdm.stars <- function(x, study_area = NULL, vars_study_area = NULL, predictors_names = NULL, rescaling = NULL) {
   if (is.null(predictors_names)) {
     predictors_names <- st_dimensions(x)$band$values
   }
@@ -233,7 +233,7 @@ predictors.stars <- function(x, study_area = NULL, vars_study_area = NULL, predi
 }
 
 #' @export
-predictors.sdm_area <- function(sdm_area) { # pode entrar tanto uma tabela com coord e spp quanto sem.
+predictors_sdm.sdm_area <- function(sdm_area) { # pode entrar tanto uma tabela com coord e spp quanto sem.
   facnum <- function(x) {
     return(as.numeric(as.factor(x)))
   }
@@ -266,7 +266,7 @@ predictors.sdm_area <- function(sdm_area) { # pode entrar tanto uma tabela com c
 }
 
 #' @export
-predictors.data.frame <- function(x, study_area, predictors_names = NULL, rescaling = NULL, epsg = NA) { # pode entrar tanto uma tabela com coord e spp quanto sem.
+predictors_sdm.data.frame <- function(x, study_area, predictors_names = NULL, rescaling = NULL, epsg = NA) { # pode entrar tanto uma tabela com coord e spp quanto sem.
   x <- st_as_stars(x)
   if (is.null(epsg)) {
     st_crs(x) <- st_crs(4326)
@@ -344,7 +344,7 @@ predictors.data.frame <- function(x, study_area, predictors_names = NULL, rescal
   return(occ)
 }
 
-#' @rdname predictors
+#' @rdname predictors_sdm
 #' @export
 predictors_names <- function(i) {
   x=i
@@ -365,7 +365,7 @@ predictors_names <- function(i) {
   return(res)
 }
 
-#' @rdname predictors
+#' @rdname predictors_sdm
 #' @export
 get_predictors <- function(i) {
   x=i
@@ -387,7 +387,7 @@ get_predictors <- function(i) {
   return(res)
 }
 
-#' @rdname predictors
+#' @rdname predictors_sdm
 #' @export
 set_predictors_names <- function(i, new_names) {
   x=i

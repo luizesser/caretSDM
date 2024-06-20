@@ -3,12 +3,12 @@
 #' This function creates and manage \code{scenarios} objects.
 #'
 #' @usage
-#' scenarios(x,
-#'           study_area = NULL,
-#'           vars_study_area = NULL,
-#'           predictors_names = NULL,
-#'           rescaling = NULL,
-#'           scenarios_names = NULL)
+#' scenarios_sdm(x,
+#'               study_area = NULL,
+#'               vars_study_area = NULL,
+#'               predictors_names = NULL,
+#'               rescaling = NULL,
+#'               scenarios_names = NULL)
 #'
 #' @param x A \code{character} vector with the path to stack files, a \code{stars}, a
 #' \code{RasterStack}, a \code{SpatRaster} or a \code{list}.
@@ -42,9 +42,9 @@
 #'
 #' @examples
 #' i <- input_sdm(
-#'      occurrences(occ_data),
-#'      caretSDM::predictors(bioc, study_area = parana),
-#'      scenarios(scen, study_area = parana)
+#'      occurrences_sdm(occ_data),
+#'      predictors_sdm(bioc, study_area = parana),
+#'      scenarios_sdm(scen, study_area = parana)
 #'      )
 #' i
 #'
@@ -54,12 +54,12 @@
 #' @importFrom gtools mixedsort
 #'
 #' @export
-scenarios <- function(x, study_area = NULL, vars_study_area = NULL, predictors_names = NULL, rescaling = NULL, scenarios_names = NULL) {
-  UseMethod("scenarios")
+scenarios_sdm <- function(x, study_area = NULL, vars_study_area = NULL, predictors_names = NULL, rescaling = NULL, scenarios_names = NULL) {
+  UseMethod("scenarios_sdm")
 }
 
 #' @export
-scenarios.RasterStack <- function(x, study_area = NULL, predictors_names = NULL, rescaling = NULL,
+scenarios_sdm.RasterStack <- function(x, study_area = NULL, predictors_names = NULL, rescaling = NULL,
                                   scenarios_names = NULL) {
   if (is.null(predictors_names)) {
     predictors_names <- names(x)
@@ -133,7 +133,7 @@ scenarios.RasterStack <- function(x, study_area = NULL, predictors_names = NULL,
 }
 
 #' @export
-scenarios.data.frame <- function(x, study_area = NULL, predictors_names = NULL, rescaling = NULL,
+scenarios_sdm.data.frame <- function(x, study_area = NULL, predictors_names = NULL, rescaling = NULL,
                                  scenarios_names = NULL, epsg = NULL) { # pode entrar tanto uma tabela com coord e spp quanto sem.
   x <- st_as_stars(x)
   if (is.null(scenarios_names)) {
@@ -205,15 +205,15 @@ scenarios.data.frame <- function(x, study_area = NULL, predictors_names = NULL, 
 }
 
 #' @export
-scenarios.SpatRaster <- function(x, study_area = NULL, predictors_names = NULL, rescaling = NULL) {
+scenarios_sdm.SpatRaster <- function(x, study_area = NULL, predictors_names = NULL, rescaling = NULL) {
   x <- st_as_stars(x)
   names(st_dimensions(x)) <- c("x", "y", "band")
-  occ <- scenarios(x, study_area, predictors_names, rescaling)
+  occ <- scenarios_sdm(x, study_area, predictors_names, rescaling)
   return(occ)
 }
 
 #' @export
-scenarios.stars <- function(x, study_area = NULL, vars_study_area = NULL, predictors_names = NULL,
+scenarios_sdm.stars <- function(x, study_area = NULL, vars_study_area = NULL, predictors_names = NULL,
                             rescaling = NULL, scenarios_names = NULL) {
   if (is.null(predictors_names)) {
     predictors_names <- names(x)
@@ -307,7 +307,7 @@ scenarios.stars <- function(x, study_area = NULL, vars_study_area = NULL, predic
 }
 
 #' @export
-scenarios.character <- function(x, study_area = NULL, predictors_names = NULL, rescaling = NULL,
+scenarios_sdm.character <- function(x, study_area = NULL, predictors_names = NULL, rescaling = NULL,
                                 scenarios_names = NULL, ...) {
   l <- list.files(x, full.names = T, ...)
   # s <- lapply(l, function(x){s <- read_stars(x)})
@@ -320,16 +320,16 @@ scenarios.character <- function(x, study_area = NULL, predictors_names = NULL, r
     }
   }
   names(s) <- scenarios_names
-  scen <- scenarios(x = s, study_area = study_area, predictors_names = predictors_names, rescaling = rescaling, scenarios_names = scenarios_names)
+  scen <- scenarios_sdm(x = s, study_area = study_area, predictors_names = predictors_names, rescaling = rescaling, scenarios_names = scenarios_names)
   return(scen)
 }
 
 #' @export
-scenarios.list <- function(x, study_area = NULL, predictors_names = NULL, rescaling = NULL,
+scenarios_sdm.list <- function(x, study_area = NULL, predictors_names = NULL, rescaling = NULL,
                            scenarios_names = NULL, ...) {
   s <- x
   s <- sapply(s, function(x) {
-    scenarios(x, study_area = study_area, predictors_names = predictors_names, rescaling = rescaling, ...)
+    scenarios_sdm(x, study_area = study_area, predictors_names = predictors_names, rescaling = rescaling, ...)
   }, simplify = F, USE.NAMES = TRUE)
 
   coords <- lapply(s, function(x) {
@@ -421,7 +421,7 @@ scenarios.list <- function(x, study_area = NULL, predictors_names = NULL, rescal
 }
 
 
-#' @rdname scenarios
+#' @rdname scenarios_sdm
 #' @export
 scenarios_names <- function(i) {
   x=i
@@ -434,7 +434,7 @@ scenarios_names <- function(i) {
   return(res)
 }
 
-#' @rdname scenarios
+#' @rdname scenarios_sdm
 #' @export
 get_scenarios_data <- function(i) {
   x=i

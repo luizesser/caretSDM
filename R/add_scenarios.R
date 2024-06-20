@@ -115,7 +115,7 @@ add_scenarios.stars <- function(sdm_area, scen, scenarios_names = NULL, pred_as_
   }
 
   grid_t <- st_transform(sa$grid, st_crs(scen))
-  scen <- st_crop(scen, grid_t)
+  suppressWarnings(scen <- st_crop(scen, grid_t))
 
   l <- list()
   for (i in 1:length(scen)) {

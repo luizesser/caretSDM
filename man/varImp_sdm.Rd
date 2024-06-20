@@ -7,14 +7,14 @@
 varImp_sdm(m, id = NULL, ...)
 }
 \arguments{
-\item{m}{A models object}
+\item{m}{A \code{models} or \code{input_sdm} object.}
 
-\item{id}{model ids to filter varImp calculation}
+\item{id}{Vector of model ids to filter varImp calculation.}
 
-\item{...}{Parameters passing to caret::varImp()}
+\item{...}{Parameters passing to caret::varImp().}
 }
 \value{
-A occurrences object with pseudoabsence data
+A \code{data.frame} with variable importance data.
 }
 \description{
 This function retrieves variable importance as a function of ROC curves to each predictor.
