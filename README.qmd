@@ -168,7 +168,7 @@ x1 - x2
 To generate maps in caretSDM we can simply plot the input_sdm object. The plot function will look for ensembles, predictions, models and occurrences to be ploted, in this order. In this way, if only occurrences are available, it will plot the occurrences. If ensembles are available, it will plot the ensembles. You can specify what to plot using the `what` argument.
 
 ```{r generating_maps}
-plot(i$predictions)
+plot_predictions(i)
 ```
 
 Alternatively, one could retrieve caretSDM data to its favorite class to work on:
@@ -221,7 +221,7 @@ scen <- set_band_names(scen, paste0("bio", 1:19))
 sa <- add_scenarios(sa, scen, variables_selected = c("bio1", "bio12"))
 
 # Follow with the same SDM workflow:
-i_sa <- input_sdm(occurrences(occ_data), sa) |>
+i_sa <- input_sdm(occurrences_sdm(occ_data), sa) |>
   data_clean() |>
   vif_predictors() |>
   pseudoabsences(method = "bioclim", variables_selected = c("bio1", "bio12", "LENGTH_KM")) |>
@@ -265,7 +265,7 @@ scen <- set_band_names(scen, paste0("bio", 1:19))
 sa <- add_scenarios(sa, scen, variables_selected = c("bio1", "bio12"))
 
 # Follow with the same SDM workflow:
-i_sa <- input_sdm(occurrences(occ_data), sa) |>
+i_sa <- input_sdm(occurrences_sdm(occ_data), sa) |>
   data_clean() |>
   vif_predictors() |>
   pseudoabsences(method = "bioclim", variables_selected = c("bio1", "bio12", "LENGTH_KM")) |>

@@ -2,9 +2,10 @@
 #'
 #' This function creates different plots depending on the input.
 #'
-#' @usage fun(arg1, arg2 = default, ...)
+#' @usage
+#' plot_occurrences(i, spp_name = NULL, pa = TRUE)
 #'
-#' @param x Object to be plotted.
+#' @param i Object to be plotted.
 #'
 #' @return A predictors object.
 #'
@@ -23,6 +24,10 @@
 #' @importFrom data.table rbindlist
 #' @importFrom stringdist stringdist
 #'
+#' @export
+plot_occurrences <- function(i, spp_name = NULL, pa = TRUE) {
+  return(plot(i$occurrences, spp_name, pa))
+}
 
 #' @exportS3Method base::plot
 plot.occurrences <- function(x, spp_name = NULL, pa = TRUE) {
@@ -38,12 +43,6 @@ plot.occurrences <- function(x, spp_name = NULL, pa = TRUE) {
   return(tmp)
 }
 
-#' @rdname plot
-#' @export
-plot_occurrences <- function(i, spp_name = NULL, pa = TRUE) {
-  return(plot(i$occurrences, spp_name, pa))
-}
-
 #' @exportS3Method base::plot
 plot.predictors <- function(x, variables_selected = NULL) {
   st <- x$data
@@ -56,7 +55,7 @@ plot.predictors <- function(x, variables_selected = NULL) {
   return(tmp)
 }
 
-#' @rdname plot
+#' @rdname plot_occurrences
 #' @export
 plot_predictors <- function(i, variables_selected = NULL) {
   return(plot(i$predictors, variables_selected))
@@ -138,7 +137,7 @@ plot.predictions <- function(x, spp_name = NULL, scenario = NULL, id = NULL, ens
     grd[grd$cell_id %in% cell_id, "result"] <- v
     subtitle <- NULL
   }
-  p2 <- ggplot() +
+  p <- ggplot() +
     geom_sf(data = grd, aes(fill = result)) +
     scale_fill_viridis_c(name = paste0("Occurrence\n Probability"), limits = c(0, 1)) +
     xlab("Longitude") +
@@ -157,7 +156,7 @@ plot.predictions <- function(x, spp_name = NULL, scenario = NULL, id = NULL, ens
   return(p)
 }
 
-#' @rdname plot
+#' @rdname plot_occurrences
 #' @export
 plot_predictions <- function(i, spp_name = NULL, scenario = NULL, id = NULL, ensemble = TRUE, ensemble_type = "mean_occ_prob") {
   return(plot(i$predictions, spp_name, scenario, id, ensemble, ensemble_type))
