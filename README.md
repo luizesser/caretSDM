@@ -24,9 +24,6 @@ options(timeout = 600)
 library(caretSDM)
 ```
 
-    Warning: replacing previous import 'caret::progress' by 'httr::progress' when
-    loading 'caretSDM'
-
     Warning: replacing previous import 'dplyr::union' by 'raster::union' when
     loading 'caretSDM'
 
@@ -36,8 +33,14 @@ library(caretSDM)
     Warning: replacing previous import 'dplyr::select' by 'raster::select' when
     loading 'caretSDM'
 
+    Warning: replacing previous import 'raster::extract' by 'stringdist::extract'
+    when loading 'caretSDM'
+
     Warning: replacing previous import 'raster::select' by 'dplyr::select' when
     loading 'caretSDM'
+
+    Warning: replacing previous import 'stringdist::extract' by 'raster::extract'
+    when loading 'caretSDM'
 
 ``` r
 library(stars)
@@ -150,12 +153,12 @@ study_area <- st_read("input_data/Amazon/AmazonHydroRivers4.shp")
 ``` r
 # create the input_sdm that we will work with during the workflow.
 i <- input_sdm(
-  occurrences(occ_data),
-  predictors(folder_current,
+  occurrences_sdm(occ_data),
+  predictors_sdm(folder_current,
     study_area = study_area,
     rescaling = list(cellsize = 100000, epsg = 6933)
   ),
-  scenarios(folder_future,
+  scenarios_sdm(folder_future,
     study_area = study_area,
     rescaling = list(cellsize = 100000, epsg = 6933)
   )
@@ -228,7 +231,7 @@ i <- data_clean(i)
     Testing sea coordinates
 
     Reading layer `ne_110m_land' from data source 
-      `/private/var/folders/j_/4jszkpkd3bl5y4ccl0qht1qh0000gn/T/Rtmpkg8oW9/ne_110m_land.shp' 
+      `/private/var/folders/j_/4jszkpkd3bl5y4ccl0qht1qh0000gn/T/RtmpkmFxwe/ne_110m_land.shp' 
       using driver `ESRI Shapefile'
     Simple feature collection with 127 features and 3 fields
     Geometry type: POLYGON
@@ -491,21 +494,21 @@ mean_validation_metrics(i)
     # A tibble: 5 × 5
       algo         ROC Sensitivity Specificity   TSS
       <chr>      <dbl>       <dbl>       <dbl> <dbl>
-    1 kknn       0.951       0.968       0.912 0.881
-    2 mda        0.925       0.974       0.731 0.705
-    3 nb         0.984       0.970       0.949 0.919
-    4 nnet       0.985       0.983       0.895 0.878
-    5 svmLinear2 0.980       0.991       0.859 0.850
+    1 kknn       0.956       0.967       0.906 0.873
+    2 mda        0.931       0.977       0.744 0.721
+    3 nb         0.987       0.960       0.951 0.911
+    4 nnet       0.990       0.987       0.889 0.876
+    5 svmLinear2 0.981       0.990       0.858 0.848
 
     $Mylossoma.aureum
     # A tibble: 5 × 5
       algo         ROC Sensitivity Specificity   TSS
       <chr>      <dbl>       <dbl>       <dbl> <dbl>
-    1 kknn       0.939       0.963       0.905 0.868
-    2 mda        0.930       0.984       0.738 0.722
-    3 nb         0.988       0.949       0.959 0.908
-    4 nnet       0.961       0.978       0.871 0.849
-    5 svmLinear2 0.977       0.987       0.825 0.813
+    1 kknn       0.928       0.949       0.887 0.835
+    2 mda        0.932       0.982       0.745 0.727
+    3 nb         0.990       0.952       0.961 0.913
+    4 nnet       0.964       0.983       0.863 0.846
+    5 svmLinear2 0.973       0.982       0.833 0.815
 
 See Variable importance:
 
@@ -514,16 +517,16 @@ varImp_sdm(i)
 ```
 
     $Colossoma.macropomum
-                 mean        sd
-    bio18   0.6194174  1.259301
-    bio4    6.1040612 11.524897
-    bio8  100.0000000  0.000000
+              mean         sd
+    bio18  2.28021  3.2691798
+    bio4  10.08088 21.2661920
+    bio8  99.90810  0.6498513
 
     $Mylossoma.aureum
-               mean     sd
-    bio18   0.00000  0.000
-    bio4   20.85387 15.458
-    bio8  100.00000  0.000
+                 mean        sd
+    bio18   0.3352601  1.148465
+    bio4   18.3459768 18.669955
+    bio8  100.0000000  0.000000
 
 ## Prediction
 
@@ -596,21 +599,21 @@ i
     # A tibble: 5 × 5
       algo         ROC Sensitivity Specificity   TSS
       <chr>      <dbl>       <dbl>       <dbl> <dbl>
-    1 kknn       0.951       0.968       0.912 0.881
-    2 mda        0.925       0.974       0.731 0.705
-    3 nb         0.984       0.970       0.949 0.919
-    4 nnet       0.985       0.983       0.895 0.878
-    5 svmLinear2 0.980       0.991       0.859 0.850
+    1 kknn       0.956       0.967       0.906 0.873
+    2 mda        0.931       0.977       0.744 0.721
+    3 nb         0.987       0.960       0.951 0.911
+    4 nnet       0.990       0.987       0.889 0.876
+    5 svmLinear2 0.981       0.990       0.858 0.848
 
     $Mylossoma.aureum
     # A tibble: 5 × 5
       algo         ROC Sensitivity Specificity   TSS
       <chr>      <dbl>       <dbl>       <dbl> <dbl>
-    1 kknn       0.939       0.963       0.905 0.868
-    2 mda        0.930       0.984       0.738 0.722
-    3 nb         0.988       0.949       0.959 0.908
-    4 nnet       0.961       0.978       0.871 0.849
-    5 svmLinear2 0.977       0.987       0.825 0.813
+    1 kknn       0.928       0.949       0.887 0.835
+    2 mda        0.932       0.982       0.745 0.727
+    3 nb         0.990       0.952       0.961 0.913
+    4 nnet       0.964       0.983       0.863 0.846
+    5 svmLinear2 0.973       0.982       0.833 0.815
 
     --------  Predictions  --------
     Ensembles                     :
@@ -621,10 +624,10 @@ i
 
 ``` r
 x2 <- Sys.time()
-x1-x2
+x1 - x2
 ```
 
-    Time difference of -4.888336 mins
+    Time difference of -4.774125 mins
 
 ## Mapping
 
@@ -636,7 +639,7 @@ are available, it will plot the ensembles. You can specify what to plot
 using the `what` argument.
 
 ``` r
-plot(i$predictions)
+plot_predictions(i)
 ```
 
 ![](README_files/figure-commonmark/generating_maps-1.png)
@@ -651,12 +654,12 @@ st
 
     stars object with 1 dimensions and 2 attributes
     attribute(s):
-                         Min.     1st Qu.      Median       Mean     3rd Qu.
-    cell_id        15.0000000 344.0000000 526.0000000 515.805513 697.0000000
-    mean_occ_prob   0.3604229   0.8318479   0.9279315   0.823077   0.9399644
+                         Min.     1st Qu.      Median        Mean     3rd Qu.
+    cell_id        15.0000000 344.0000000 526.0000000 515.8055130 697.0000000
+    mean_occ_prob   0.3698078   0.8501898   0.9447371   0.8384623   0.9524303
                           Max.
     cell_id        950.0000000
-    mean_occ_prob    0.9478292
+    mean_occ_prob    0.9631601
     dimension(s):
              from  to                       refsys point
     geometry    1 653 WGS 84 / NSIDC EASE-Grid ... FALSE
@@ -688,8 +691,8 @@ ter
     coord. ref. : WGS 84 / NSIDC EASE-Grid 2.0 Global (EPSG:6933) 
     source(s)   : memory
     name        :     layer 
-    min value   : 0.3604229 
-    max value   : 0.9478292 
+    min value   : 0.3698078 
+    max value   : 0.9631600 
 
 ``` r
 r <- sdm_as_raster(i)
@@ -710,7 +713,7 @@ r
     crs        : +proj=cea +lat_ts=30 +lon_0=0 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs 
     source     : memory
     names      : layer 
-    values     : 0.3604229, 0.9478292  (min, max)
+    values     : 0.3698078, 0.96316  (min, max)
 
 ## An alternative approach
 
@@ -720,57 +723,57 @@ which is particularly important for continental aquatic environments
 modeling.
 
 ``` r
-library(stars) 
-library(tibble) 
-library(dplyr) 
-library(caretSDM) 
+library(stars)
+library(tibble)
+library(dplyr)
+library(caretSDM)
 x3 <- Sys.time()
 ## Import occurrence data
-occ_data <- read.csv('input_data/spp_data.csv')
+occ_data <- read.csv("input_data/spp_data.csv")
 
 ## Amazon shapefile
-amazon <- read_sf('input_data/Amazon/AmazonHydroRivers4.shp') 
+amazon <- read_sf("input_data/Amazon/AmazonHydroRivers4.shp")
 amazon <- select(amazon, c(LENGTH_KM, CATCH_SKM, DIST_UP_KM, UPLAND_SKM))
 ## Enter bioclimatic variables
-bioc <- read_stars(list.files('~/Documents/Mapas/Rasters/WorldClim 2.1/current_5m', full.names = T), along = "band", normalize_path = F)
+bioc <- read_stars(list.files("~/Documents/Mapas/Rasters/WorldClim 2.1/current_5m", full.names = T), along = "band", normalize_path = F)
 
 # Change bioclimatic names
-bioc <- set_band_names(bioc, sort(paste0('bio', 1:19))) 
+bioc <- set_band_names(bioc, sort(paste0("bio", 1:19)))
 
 # Create sdm_area object
-sa <- sdm_area(amazon, cell_size = 100000, epsg = 6933) 
+sa <- sdm_area(amazon, cell_size = 100000, epsg = 6933)
 
 # Add the predictors
-sa <- add_predictors(sa, bioc, variables_selected=c('bio1', 'bio12'))
+sa <- add_predictors(sa, bioc, variables_selected = c("bio1", "bio12"))
 
 # Import scenarios
-scen <- read_stars(list.files("~/Documents/GitHub/caretSDM/input_data/WorldClim_data_future", full.names = T)) 
+scen <- read_stars(list.files("~/Documents/GitHub/caretSDM/input_data/WorldClim_data_future", full.names = T))
 
 # Change names from variable of scenarios to match predictors
-scen <- set_band_names(scen, paste0('bio', 1:19))
+scen <- set_band_names(scen, paste0("bio", 1:19))
 
 # Add scenarios
-sa <- add_scenarios(sa, scen, variables_selected=c('bio1', 'bio12'))
+sa <- add_scenarios(sa, scen, variables_selected = c("bio1", "bio12"))
 
 # Follow with the same SDM workflow:
-i_sa <- input_sdm(occurrences(occ_data), sa) |>
-          data_clean() |>
-          vif_predictors() |>
-          pseudoabsences(method = "bioclim", variables_selected=c("bio1", "bio12", "LENGTH_KM")) |>
-          train_sdm(algo = c("svmLinear2", "mda", "nnet", "nb", "kknn"), variables_selected=c("bio1", "bio12", "LENGTH_KM")) |>
-          predict_sdm(th=0.9) 
+i_sa <- input_sdm(occurrences_sdm(occ_data), sa) |>
+  data_clean() |>
+  vif_predictors() |>
+  pseudoabsences(method = "bioclim", variables_selected = c("bio1", "bio12", "LENGTH_KM")) |>
+  train_sdm(algo = c("svmLinear2", "mda", "nnet", "nb", "kknn"), variables_selected = c("bio1", "bio12", "LENGTH_KM")) |>
+  predict_sdm(th = 0.9)
 
 x4 <- Sys.time()
 ```
 
 ``` r
-x4-x3
+x4 - x3
 ```
 
-    Time difference of 4.326232 mins
+    Time difference of 4.359351 mins
 
 ``` r
-plot(i_sa$predictions, scenario='current')
+plot(i_sa$predictions, scenario = "current")
 ```
 
 ![](README_files/figure-commonmark/last_plot-1.png)
