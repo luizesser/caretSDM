@@ -282,3 +282,66 @@ x4 - x3
 ```{r last_plot}
 plot(i_sa$predictions, scenario = "current")
 ```
+
+```{r}
+# Implementinf my own metrics:
+my_classification_summary <- function (data, lev = NULL, model = NULL) {
+  if (length(lev) > 2) {
+    stop(paste("Your outcome has", length(lev), "levels. The summary function isn't appropriate."))
+  }
+  if (!all(levels(data[, "pred"]) == lev)) {
+    stop("levels of observed and predicted data do not match")
+  }
+  rocObject <- try(pROC::roc(data$obs, 
+                             as.ordered(data[, lev[1]]), 
+                             quiet = TRUE), 
+                   silent = TRUE)
+  rocAUC <- if (inherits(rocObject, "try-error")) 
+    NA
+  else rocObject$auc
+  
+  sens = sensitivity(data[, "pred"], data[, "obs"], lev[1])
+  spec = specificity(data[, "pred"], data[, "obs"], lev[2])
+  
+  out <- c(rocAUC, 
+           sens, 
+           spec,
+           sens+spec-1
+           )
+  names(out) <- c("ROC", "Sens", "Spec", "TSS")
+  out
+}
+
+ctrl <- ctrl <- caret::trainControl(
+  method = "repeatedcv", number = 4, repeats = 1, classProbs = TRUE, returnResamp = "all", summaryFunction = my_classification_summary, savePredictions = "all", allowParallel = FALSE
+)
+teste <- train_sdm(i_sa, algo = c("svmLinear2", "mda", "nnet", "nb", "kknn"), variables_selected = c("bio1", "bio12", "LENGTH_KM"), ctrl = ctrl)
+teste
+```
+
+```{r}
+# Testing all algorithms:
+x5 <- Sys.time()
+i_algo <- sdm_area(amazon, cell_size = 250000, epsg = 6933)
+i_algo <- add_predictors(i_algo, bioc, variables_selected = c("bio1", "bio12"))
+i_algo <- add_scenarios(i_algo)
+i_algo <- input_sdm(occurrences_sdm(occ_data), i_algo) |>
+  data_clean() |>
+  vif_predictors() |>
+  pseudoabsences(method = "bioclim", variables_selected = c("bio1", "bio12", "LENGTH_KM"))
+  
+algo <- algorithms[algorithms$Classification==1,]
+algo <- gsub("[\\(\\)]", "", regmatches(algo$X, gregexpr("\\(.*?\\)", algo$X)))
+algo[169] <- 'svmLinear3'
+algo <- algo[!algo %in% c('adaboost', 'amdai', 'chaid', 'deepboost', 'elm', 'extraTrees')] # deleted because package is no longer available
+algo <- algo[!algo %in% c('awnb', 'awtan', 'bag')] # deleted because returned NAs. Check Later.
+#algo <- algo[-c(1:5)]
+ctrl <- trainControl(method = "repeatedcv",
+                     repeats = 1,
+                     number = 3)
+
+i_algo <- train_sdm(i_algo, algo = algo[-(1:26)], variables_selected = c("bio1", "bio12", "LENGTH_KM"), ctrl=ctrl)
+  
+x6 <- Sys.time()
+x6-x5
+```

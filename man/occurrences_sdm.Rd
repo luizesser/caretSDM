@@ -11,6 +11,7 @@ occurrences_sdm(x,
                 independent_test = NULL,
                 p = 0.1,
                 epsg = NULL,
+                independent_test_epsg = NULL,
                 ...)
 
 n_records(i)
@@ -20,14 +21,19 @@ species_names(i)
 get_coords(i)
 }
 \arguments{
-\item{x}{A \code{data.frame} with species records.}
+\item{x}{A \code{data.frame}, \code{tibble} or \code{sf} with species records.}
 
 \item{independent_test}{Boolean. If \code{independet_test} is \code{TRUE}, a fraction of the data
-is kept for independent testing. Otherwise, the whole dataset \code{x} is used.}
+is kept for independent testing. Otherwise, the whole dataset \code{x} is used. It can also be a
+\code{data.frame} or a \code{sf}, with species records to be used as independent test. Structure
+and names should be identical to those in \code{x}.}
 
 \item{p}{Numeric. Fraction of data to be used as independent test. Standard is 0.1.}
 
 \item{epsg}{Numeric. EPSG of \code{x}.}
+
+\item{independent_test_epsg}{Numeric. EPSG of \code{independent_test} if it is a
+\code{data.frame}.}
 
 \item{...}{A vector with column names addressing the columns with species names, longitude and
 latitude, respectively, in \code{x}.}
@@ -41,7 +47,8 @@ A \code{occurrences} object.
 This function creates and manage \code{occurrences} objects.
 }
 \details{
-\code{x} must have three columns: species, decimalLongitude and decimalLatitude.
+\code{x} must have three columns: species, decimalLongitude and decimalLatitude. When \code{sf}
+it is only necessary a species column.
 
 \code{n_records} return the number of presence records to each species.
 

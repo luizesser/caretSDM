@@ -6,7 +6,7 @@
 \title{Araucaria angustifolia occurrence data}
 \format{
 ## `occ`
-A \code{data.frame} with 420 rows and 3 columns:
+A \code{data.frame} with 420 rows and 3 columns (EPSG:6933):
 \describe{
   \item{species}{Species name}
   \item{decimalLongitude}{Longitude in meters}

@@ -19,6 +19,10 @@ find_columns <- function(df, col_names = NULL, spp = TRUE) {
     lon_col <- colnames(df)[grep(paste(lon_keywords, collapse = "|"), tolower(colnames(df)))]
     lat_col <- colnames(df)[grep(paste(lat_keywords, collapse = "|"), tolower(colnames(df)))]
 
+    if(length(c(lat_col,lon_col))<2){
+      stop("A latitude or longitude column is missing on df.")
+    }
+
     if (spp) {
       spp_keywords <- c("sp", "names")
       spp_col <- colnames(df)[grep(paste(spp_keywords, collapse = "|"), tolower(colnames(df)))]

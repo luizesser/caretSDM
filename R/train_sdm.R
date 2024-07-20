@@ -505,7 +505,6 @@ train_sdm <- function(occ, pred = NULL, algo, ctrl = NULL, variables_selected = 
     })
     metrics <- do.call(rbind, metrics)
     metrics <- arrange(metrics, algo)
-    try(metrics <- mutate(metrics, TSS = Sens + Spec - 1)) # TSS
     return(metrics)
   }, simplify = FALSE, USE.NAMES = TRUE)
 
@@ -590,7 +589,7 @@ mean_validation_metrics <- function(i) {
   }
   algo <- y$algorithms
   res <- sapply(y$validation$metrics, function(met) {
-    v <- summarise(group_by(met, algo), ROC = mean(ROC), Sensitivity = mean(Sens), Specificity = mean(Spec), TSS = mean(TSS))
+    v <- summarise(group_by(met, algo), across(everything(), mean))
     return(v)
   }, simplify = FALSE, USE.NAMES = TRUE)
   return(res)
