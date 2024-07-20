@@ -269,7 +269,7 @@ get_coords <- function(i) {
 print.occurrences <- function(x) {
   cat("        caretSDM       \n")
   cat(".......................\n")
-  cat("Class                 : Occurrences\n")
+  cat("Class                 : occurrences\n")
   cat("Species Names         :", x$spp_names, "\n")
   cat("Number of presences   :", x$n_presences, "\n")
   if (!is.null(x$independent_test)) {

@@ -221,7 +221,7 @@ scen <- set_band_names(scen, paste0("bio", 1:19))
 sa <- add_scenarios(sa, scen, variables_selected = c("bio1", "bio12"))
 
 # Follow with the same SDM workflow:
-i_sa <- input_sdm(occurrences_sdm(occ_data), sa) |>
+i_sa <- input_sdm(occurrences_sdm(occ_data, epsg = 4326), sa) |>
   data_clean() |>
   vif_predictors() |>
   pseudoabsences(method = "bioclim", variables_selected = c("bio1", "bio12", "LENGTH_KM")) |>

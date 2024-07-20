@@ -1,6 +1,8 @@
 #' @keywords internal
 #' Find species, longitude and latitudecolumns in a data.frame.
-#' @param data data.frame to search for.
+#' @param df data.frame to search for.
+#' @param col_names Names of the columns so it doesn't need to look for.
+#' @param spp Boolean. Search for species column?
 #' @return Vector of column names that correspond to the species, longitude and latitude columns.
 #' @export
 find_columns <- function(df, col_names = NULL, spp = TRUE) {

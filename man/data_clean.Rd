@@ -7,7 +7,7 @@
 data_clean(x,
            pred = NULL,
            species = NA,
-           long = NA,
+           lon = NA,
            lat = NA,
            terrestrial = TRUE,
            independent_test = TRUE)
@@ -20,7 +20,7 @@ predictors data, than \code{pred} is obtained from it.}
 
 \item{species}{A \code{character} stating the name of the column with species names in \code{occ} (see details).}
 
-\item{long}{A \code{character} stating the name of the column with longitude in \code{occ} (see details).}
+\item{lon}{A \code{character} stating the name of the column with longitude in \code{occ} (see details).}
 
 \item{lat}{A \code{character} stating the name of the column with latitude in \code{occ} (see details).}
 
@@ -39,7 +39,7 @@ Data cleaning wrapper using CoordinateCleaner.
 \details{
 If the user does not used \code{GBIF_data} function to obtain species records, the function may
 have problems to find which column from the presences table has species, longitude and latitude
-information. In this regard, we implemented the parameters \code{species}, \code{long} and
+information. In this regard, we implemented the parameters \code{species}, \code{lon} and
 \code{lat} so the use can explicitly inform which columns should be used. If they remain as NA
 (standard) the function will try to guess which columns are the correct one.
 }
