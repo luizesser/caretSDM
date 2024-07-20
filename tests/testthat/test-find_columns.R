@@ -27,3 +27,13 @@ test_that("find 2 columns with no species", {
   df <- data.frame(spp_names = rep("Aa", 100), longitude = runif(100), decimalLatitude = runif(100))
   expect_length(find_columns(df, spp = F), 2)
 })
+
+test_that("missing coordinate column", {
+  df <- data.frame(spp_names = rep("Aa", 100), decimalLatitude = runif(100))
+  expect_error(find_columns(df))
+})
+
+test_that("columns with dubious names", {
+  df <- data.frame(a = rep("Aa", 100), b = runif(100), c = runif(100))
+  expect_error(find_columns(df))
+})
