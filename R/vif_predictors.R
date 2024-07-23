@@ -34,15 +34,14 @@
 #' i <- vif_predictors(i)
 #' i
 #'
-#' @import cubelyr
-#' @import tibble
-#' @importFrom raster extract
-#' @importFrom sp coordinates
 #' @importFrom usdm vifcor
+#' @importFrom dplyr filter select mutate_if all_of
+#' @importFrom sf st_centroid st_as_sf
+#' @importFrom stars st_extract
 #'
 #' @export
 vif_predictors <- function(pred, area = "all", th = 0.5, maxobservations = 5000, variables_selected = NULL) {
-  if (class(pred) == "input_sdm") {
+  if (is_input_sdm(pred)) {
     x <- pred$predictors
     occ <- pred$occurrences$occurrences
     epsg <- pred$occurrences$epsg
@@ -59,19 +58,19 @@ vif_predictors <- function(pred, area = "all", th = 0.5, maxobservations = 5000,
       cat(cat("Using given variables: "), cat(selected_vars, sep = ", "))
     }
     if (area == "all") {
-      suppressWarnings(sf_x <- st_centroid(st_as_sf(filter(x$data, band %in% selected_vars))))
+      suppressWarnings(sf_x <- sf::st_centroid(sf::st_as_sf(dplyr::filter(x$data, band %in% selected_vars))))
       p <- select(as.data.frame(sf_x), -"geometry")
     }
     if (area == "occurrences") {
-      if (!class(pred) == "input_sdm") {
+      if (!is_input_sdm(pred)) {
         stop("Method only available with input_sdm class.")
       }
-      cols <- find_columns(occ$occurrences)
-      coordinates(occ$occurrences) <- cols[2:3]
-      st_crs(occ) <- as.character(st_crs(epsg))[1]
-      p <- st_extract(as.data.frame(x$data[selected_vars, ])[, selected_vars], st_as_sf(occ))
+      #cols <- find_columns(occ$occurrences)
+      #coordinates(occ$occurrences) <- cols[2:3]
+      #st_crs(occ) <- as.character(st_crs(epsg))[1]
+      p <- sf::st_extract(as.data.frame(x$data[selected_vars, ])[, selected_vars], sf::st_as_sf(occ))
     }
-    v <- vifcor(p, th = th, size = maxobservations)
+    v <- usdm::vifcor(p, th = th, size = maxobservations)
   } else if (is_sdm_area(x)) {
     if (is.null(variables_selected)) {
       selected_variables <- x$predictors
@@ -82,10 +81,10 @@ vif_predictors <- function(pred, area = "all", th = 0.5, maxobservations = 5000,
     if (area == "all") {
       v <- x$grid |>
         as.data.frame() |>
-        select(-c("geometry", "cell_id")) |>
-        select(all_of(selected_variables)) |>
-        mutate_if(is.character, facnum) |>
-        vifcor(th = th, size = maxobservations)
+        dplyr::select(-c("geometry", "cell_id")) |>
+        dplyr::select(dplyr::all_of(selected_variables)) |>
+        dplyr::mutate_if(is.character, facnum) |>
+        usdm::vifcor(th = th, size = maxobservations)
     }
   }
 
@@ -93,7 +92,7 @@ vif_predictors <- function(pred, area = "all", th = 0.5, maxobservations = 5000,
   x$variable_selection$vif$selected_variables <- v@variables[!v@variables %in% v@excluded]
   x$variable_selection$vif$threshold <- th
   x$variable_selection$vif$vifcor <- v
-  if (class(pred) == "input_sdm") {
+  if (is_input_sdm(pred)) {
     pred$predictors <- x
     x <- pred
   }

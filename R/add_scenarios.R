@@ -29,11 +29,9 @@
 #' # Include scenarios
 #' sa <- add_scenarios(sa, scen)
 #'
-#' @import checkmate
-#' @import cli
-#' @import stars
-#' @import tibble
-#' @import dplyr
+#' @importFrom stars read_stars st_as_stars st_dimensions
+#' @importFrom sf st_transform st_crs st_as_sf st_crop
+#' @importFrom dplyr select
 #'
 #' @export
 add_scenarios <- function(sdm_area, scen = NULL, variables_selected = NULL, ...) {
@@ -53,7 +51,7 @@ add_scenarios.character <- function(sdm_area, scen, scenarios_names = NULL,
                                     variables_selected = NULL, ...) {
   sa_teste <- sdm_area
   if (length(scen) > 1) {
-    s <- read_stars(scen)
+    s <- stars::read_stars(scen)
     if (is.null(scenarios_names)) {
       if (length(unique(scen)) == length(scen)) {
         scenarios_names <- basename(scen)
@@ -63,7 +61,7 @@ add_scenarios.character <- function(sdm_area, scen, scenarios_names = NULL,
     }
   } else {
     l <- list.files(x, full.names = T, ...)
-    s <- read_stars(l)
+    s <- stars::read_stars(l)
     if (is.null(scenarios_names)) {
       if (length(unique(l)) == length(l)) {
         scenarios_names <- basename(l)
@@ -80,7 +78,7 @@ add_scenarios.character <- function(sdm_area, scen, scenarios_names = NULL,
 #' @export
 add_scenarios.RasterStack <- function(sdm_area, scen, scenarios_names = NULL,
                                       variables_selected = NULL, ...) {
-  scen <- st_as_stars(scen)
+  scen <- stars::st_as_stars(scen)
   sa <- sdm_area(sdm_area, scen, scenarios_names, variables_selected)
   return(sa)
 }
@@ -88,8 +86,8 @@ add_scenarios.RasterStack <- function(sdm_area, scen, scenarios_names = NULL,
 #' @export
 add_scenarios.SpatRaster <- function(sdm_area, scen, scenarios_names = NULL,
                                      variables_selected = NULL, ...) {
-  scen <- st_as_stars(scen)
-  names(st_dimensions(scen)) <- c("x", "y", "band")
+  scen <- stars::st_as_stars(scen)
+  names(stars::st_dimensions(scen)) <- c("x", "y", "band")
   sa <- sdm_area(sdm_area, scen, scenarios_names, variables_selected)
   return(sa)
 }
@@ -114,17 +112,17 @@ add_scenarios.stars <- function(sdm_area, scen, scenarios_names = NULL, pred_as_
     scenarios_names <- names(scen)
   }
 
-  grid_t <- st_transform(sa$grid, st_crs(scen))
-  suppressWarnings(scen <- st_crop(scen, grid_t))
+  grid_t <- sf::st_transform(sa$grid, sf::st_crs(scen))
+  suppressWarnings(scen <- sf::st_crop(scen, grid_t))
 
   l <- list()
   for (i in 1:length(scen)) {
     l[[scenarios_names[i]]] <- scen[i] |>
       aggregate(grid_t, mean) |>
-      st_as_sf() |>
-      st_transform(st_crs(sdm_area$grid)) |>
+      sf::st_as_sf() |>
+      sf::st_transform(sf::st_crs(sdm_area$grid)) |>
       cbind(sdm_area$grid) |>
-      select(c(cell_id, sdm_area$predictors))
+      dplyr::select(c(cell_id, sdm_area$predictors))
   }
   if (pred_as_scen) {
     l[["current"]] <- sdm_area$grid

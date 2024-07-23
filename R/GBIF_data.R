@@ -21,15 +21,14 @@
 #' # Run function:
 #' data <- GBIF_data(s)
 #'
-#' @import rgbif
+#' @importFrom rgbif occ_data
 #' @importFrom dplyr bind_rows
-#' @importFrom stats na.omit
 #'
 #' @export
 GBIF_data <- function(s, file = "", ...) {
   if (!file.exists(file)) {
     data <- lapply(s, function(x) {
-      y <- occ_data(scientificName = x, limit = 100000, hasCoordinate = T, ...)
+      y <- rgbif::occ_data(scientificName = x, limit = 100000, hasCoordinate = T, ...)
       if ("decimalLatitude" %in% names(y$data)) {
         y <- y$data[, c("species", "decimalLongitude", "decimalLatitude")]
         return(y)
@@ -49,7 +48,7 @@ GBIF_data <- function(s, file = "", ...) {
       }
     })
 
-    data <- bind_rows(data)
+    data <- dplyr::bind_rows(data)
     data <- na.omit(data)
 
     if (!file == "") {

@@ -18,9 +18,10 @@
 #' @author Luíz Fernando Esser (luizesser@gmail.com)
 #' https://luizfesser.wordpress.com
 #'
-#' @import sf
-#' @import stars
-#' @import dplyr
+#' @importFrom sf st_geometry st_coordinates st_transform st_crs st_bbox st_make_grid
+#' @importFrom rlang eval_tidy
+#' @importFrom dplyr enquo bind_cols rename
+#' @importFrom tibble as_tibble
 #'
 #' @export
 make_grid <- function(shp, cell_width = 0, cell_height = 0, var_names = NULL, centroid = FALSE,
@@ -29,7 +30,7 @@ make_grid <- function(shp, cell_width = 0, cell_height = 0, var_names = NULL, ce
     if (missing(geometry)) {
       geometry <- sf::st_geometry(x)
     } else {
-      geometry <- rlang::eval_tidy(enquo(geometry), x)
+      geometry <- rlang::eval_tidy(dplyr::enquo(geometry), x)
     }
     stopifnot(inherits(x, "sf") && inherits(geometry, "sfc_POINT"))
     ret <- sf::st_coordinates(geometry)
@@ -55,7 +56,7 @@ make_grid <- function(shp, cell_width = 0, cell_height = 0, var_names = NULL, ce
   #  }
 
   if (!is.null(epsg)) {
-    shp <- st_transform(shp, st_crs(paste0("+init=epsg:", epsg)))
+    shp <- sf::st_transform(shp, sf::st_crs(paste0("+init=epsg:", epsg)))
   }
 
   bbox <- shp %>%

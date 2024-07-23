@@ -47,8 +47,8 @@ test_that("data_clean - normal path with occurences", {
   oc <- occurrences_sdm(occ, epsg= 6933)
   i <- data_clean(oc)
   expect_true(st_crs(i$occurrences) == st_crs(oc$occurrences))
-  expect_true(st_geometry_type(oc$occurrences, by_geometry = FALSE) ==
-                st_geometry_type(i$occurrences, by_geometry = FALSE))
+  expect_true(sf::st_geometry_type(oc$occurrences, by_geometry = FALSE) ==
+                sf::st_geometry_type(i$occurrences, by_geometry = FALSE))
   expect_equal(class(i$occurrences)[1], "sf")
   expect_true("species" %in% colnames(i$occurrences))
   expect_true("geometry" %in% colnames(i$occurrences))

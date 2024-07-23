@@ -24,6 +24,9 @@
 #' https://luizfesser.wordpress.com
 #'
 #' @importFrom terra rast
+#' @importFrom dplyr select
+#' @importFrom stars st_as_stars st_rasterize
+#' @importFrom sf st_as_sf
 #'
 #' @export
 sdm_as_stars <- function(x, what = NULL, spp = NULL, scen = NULL, id = NULL, ens = NULL) {
@@ -40,7 +43,7 @@ sdm_as_stars <- function(x, what = NULL, spp = NULL, scen = NULL, id = NULL, ens
       what <- "scenarios"
     }
   }
-  if (class(x) == "input_sdm") {
+  if (is_input_sdm(x)) {
     if (what == "scenarios") {
       return(x$scenarios$data)
     }
@@ -58,8 +61,8 @@ sdm_as_stars <- function(x, what = NULL, spp = NULL, scen = NULL, id = NULL, ens
         id <- names(x$predictions$predictions[[1]][[1]])[1]
       }
       grd <- x$predictors$grid
-      v <- select(x$predictions$predictions[[scen]][[spp]][[id]], -"pseudoabsence")
-      result <- st_as_stars(merge(grd, v, by = "cell_id"))
+      v <- dplyr::select(x$predictions$predictions[[scen]][[spp]][[id]], -"pseudoabsence")
+      result <- stars::st_as_stars(merge(grd, v, by = "cell_id"))
       return(result)
     }
     if (what == "ensembles") {
@@ -74,7 +77,7 @@ sdm_as_stars <- function(x, what = NULL, spp = NULL, scen = NULL, id = NULL, ens
       }
       grd <- x$predictors$grid
       v <- x$predictions$ensembles[[spp, scen]][, c("cell_id", ens)]
-      result <- st_as_stars(merge(grd, v, by = "cell_id"))
+      result <- stars::st_as_stars(merge(grd, v, by = "cell_id"))
       return(result)
     }
   }
@@ -96,17 +99,17 @@ sdm_as_raster <- function(x, what = NULL, spp = NULL, scen = NULL, id = NULL, en
       what <- "scenarios"
     }
   }
-  if (class(x) == "input_sdm") {
+  if (is_input_sdm(x)) {
     if (what == "scenarios") {
       if (is.null(scen)) {
         scen <- names(x$scenarios$data)[1]
         print(paste0("scen not detected. Using scen=", scen))
       }
-      result <- as(st_rasterize(st_as_sf(x$scenarios$data[scen])), "Raster")
+      result <- as(stars::st_rasterize(sf::st_as_sf(x$scenarios$data[scen])), "Raster")
       return(result)
     }
     if (what == "predictors") {
-      result <- as(st_rasterize(st_as_sf(x$predictors$data[scen])), "Raster")
+      result <- as(stars::st_rasterize(sf::st_as_sf(x$predictors$data[scen])), "Raster")
       return()
     }
     if (what == "predictions") {
@@ -123,8 +126,8 @@ sdm_as_raster <- function(x, what = NULL, spp = NULL, scen = NULL, id = NULL, en
         print(paste0("id not detected. Using id=", id))
       }
       grd <- x$predictors$grid
-      v <- select(x$predictions$predictions[[scen]][[spp]][[id]], -"pseudoabsence")
-      result <- as(st_rasterize(st_as_sf(select(st_as_stars(merge(grd, v, by = "cell_id")), -"cell_id"))), "Raster")
+      v <- dplyr::select(x$predictions$predictions[[scen]][[spp]][[id]], -"pseudoabsence")
+      result <- as(stars::st_rasterize(sf::st_as_sf(dplyr::select(stars::st_as_stars(merge(grd, v, by = "cell_id")), -"cell_id"))), "Raster")
       return(result)
     }
     if (what == "ensembles") {
@@ -142,7 +145,7 @@ sdm_as_raster <- function(x, what = NULL, spp = NULL, scen = NULL, id = NULL, en
       }
       grd <- x$predictors$grid
       v <- x$predictions$ensembles[[spp, scen]][, c("cell_id", ens)]
-      result <- as(st_rasterize(st_as_sf(select(st_as_stars(merge(grd, v, by = "cell_id")), -"cell_id"))), "Raster")
+      result <- as(stars::st_rasterize(sf::st_as_sf(dplyr::select(sf::st_as_stars(merge(grd, v, by = "cell_id")), -"cell_id"))), "Raster")
       return(result)
     }
   }
@@ -170,11 +173,11 @@ sdm_as_terra <- function(x, what = NULL, spp = NULL, scen = NULL, id = NULL, ens
         scen <- names(x$scenarios$data)[1]
         print(paste0("scen not detected. Using scen=", scen))
       }
-      result <- terra::rast(as(st_rasterize(st_as_sf(x$scenarios$data[scen])), "Raster"))
+      result <- terra::rast(as(stars::st_rasterize(sf::st_as_sf(x$scenarios$data[scen])), "Raster"))
       return(result)
     }
     if (what == "predictors") {
-      result <- terra::rast(as(st_rasterize(st_as_sf(x$predictors$data[scen])), "Raster"))
+      result <- terra::rast(as(stars::st_rasterize(sf::st_as_sf(x$predictors$data[scen])), "Raster"))
       return()
     }
     if (what == "predictions") {
@@ -191,8 +194,8 @@ sdm_as_terra <- function(x, what = NULL, spp = NULL, scen = NULL, id = NULL, ens
         print(paste0("id not detected. Using id=", id))
       }
       grd <- x$predictors$grid
-      v <- select(x$predictions$predictions[[scen]][[spp]][[id]], -"pseudoabsence")
-      result <- terra::rast(as(st_rasterize(st_as_sf(select(st_as_stars(merge(grd, v, by = "cell_id")), -"cell_id"))), "Raster"))
+      v <- dplyr::select(x$predictions$predictions[[scen]][[spp]][[id]], -"pseudoabsence")
+      result <- terra::rast(as(stars::st_rasterize(sf::st_as_sf(dplyr::select(stars::st_as_stars(merge(grd, v, by = "cell_id")), -"cell_id"))), "Raster"))
       return(result)
     }
     if (what == "ensembles") {
@@ -210,7 +213,7 @@ sdm_as_terra <- function(x, what = NULL, spp = NULL, scen = NULL, id = NULL, ens
       }
       grd <- x$predictors$grid
       v <- x$predictions$ensembles[[spp, scen]][, c("cell_id", ens)]
-      result <- terra::rast(as(st_rasterize(st_as_sf(select(st_as_stars(merge(grd, v, by = "cell_id")), -"cell_id"))), "Raster"))
+      result <- terra::rast(as(stars::st_rasterize(sf::st_as_sf(dplyr::select(sf::st_as_stars(merge(grd, v, by = "cell_id")), -"cell_id"))), "Raster"))
       return(result)
     }
   }

@@ -20,11 +20,13 @@
 #' scen2 <- set_band_names(scen, paste0("bioclimatics_", 1:19))
 #' get_band_names(scen2)
 #'
+#' @importFrom stars st_dimensions
+#'
 #' @rdname band_names
 #' @export
 set_band_names <- function(x, new_names) {
   if (class(x) == "stars") {
-    st_dimensions(x)$band$values <- new_names
+    stars::st_dimensions(x)$band$values <- new_names
   } else {
     stop("x must be a stars object")
   }
@@ -35,7 +37,7 @@ set_band_names <- function(x, new_names) {
 #' @export
 get_band_names <- function(x) {
   if (class(x) == "stars") {
-    return(st_dimensions(x)$band$values)
+    return(stars::st_dimensions(x)$band$values)
   } else {
     stop("x must be a stars object")
   }

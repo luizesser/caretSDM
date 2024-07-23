@@ -14,13 +14,15 @@
 #' @author Luíz Fernando Esser (luizesser@gmail.com)
 #' https://luizfesser.wordpress.com
 #'
-#' @import ggplot2
+#' @importFrom ggplot2 ggplot aes xlab ylab ggtitle geom_point scale_color_manual
 #' @importFrom raster extract
 #' @importFrom Rtsne Rtsne
+#' @importFrom dplyr select filter all_of
+#' @importFrom sf st_as_sf
 #'
 #' @export
 tsne_sdm <- function(occ, pred = NULL, variables_selected = NULL) {
-  if (class(occ) == "input_sdm") {
+  if (is_input_sdm(occ)) {
     y <- occ$occurrences
     pred <- occ$predictors
   } else {
@@ -41,28 +43,28 @@ tsne_sdm <- function(occ, pred = NULL, variables_selected = NULL) {
       x$cell_id
     })
     p <- y$occurrences[y$occurrences$species == sp, ]$cell_id
-    env <- select(cbind(pred$grid, st_as_sf(pred$data)), -"geometry.1")
-    p <- filter(env, env$cell_id %in% p)
+    env <- dplyr::select(cbind(pred$grid, sf::st_as_sf(pred$data)), -"geometry.1")
+    p <- dplyr::filter(env, env$cell_id %in% p)
     Presence <- c(rep("Presence", nrow(p)), rep("Pseudoabsence", length(pa_id[[1]])))
 
     df_tsne <- lapply(pa_id, function(id) {
-      pa <- filter(env, env$cell_id %in% id)
+      pa <- dplyr::filter(env, env$cell_id %in% id)
       df <- rbind(p, pa)
       df <- cbind(Presence, df)
     })
 
     perp <- round((nrow(df_tsne[[1]])^(1 / 2)), digits = 0)
     plot_list <- lapply(df_tsne, function(ts) {
-      ts2 <- select(as.data.frame(ts), all_of(variables_selected))
+      ts2 <- dplyr::select(as.data.frame(ts), dplyr::all_of(variables_selected))
       ts2 <- as.matrix(ts2[, variables_selected])
-      tsne_bg <- Rtsne(ts2, perplexity = perp)
+      tsne_bg <- Rtsne::Rtsne(ts2, perplexity = perp)
       df <- as.data.frame(tsne_bg$Y)
-      tsne_result <- ggplot(df, aes(x = V1, y = V2)) +
-        xlab("tSNE Dim 1") +
-        ylab("tSNE Dim 2") +
-        ggtitle("Presences and Pseudoabsences's t-SNE") +
-        geom_point(aes(col = Presence)) +
-        scale_color_manual(values = c("gold", "darkblue"))
+      tsne_result <- ggplot2::ggplot(df, ggplot2::aes(x = V1, y = V2)) +
+        ggplot2::xlab("tSNE Dim 1") +
+        ggplot2::ylab("tSNE Dim 2") +
+        ggplot2::ggtitle("Presences and Pseudoabsences's t-SNE") +
+        ggplot2::geom_point(ggplot2::aes(col = Presence)) +
+        ggplot2::scale_color_manual(values = c("gold", "darkblue"))
     })
   }, simplify = FALSE, USE.NAMES = TRUE)
 

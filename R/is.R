@@ -17,6 +17,8 @@
 #' @author Luíz Fernando Esser (luizesser@gmail.com)
 #' https://luizfesser.wordpress.com
 #'
+#' @importFrom checkmate test_class
+#'
 #' @export
 is_input_sdm <- function(x) {
   return(checkmate::test_class(x, classes = "input_sdm", null.ok = FALSE))

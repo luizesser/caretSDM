@@ -68,15 +68,16 @@
 #' i  <- predict_sdm(i)
 #' i
 #'
-#' @importFrom dplyr bind_cols
-#' @importFrom dplyr select
-#' @importFrom dplyr mutate
+#' @importFrom dplyr bind_cols select mutate all_of
 #' @importFrom stringdist stringdist
 #' @importFrom gtools mixedsort
+#' @importFrom caret thresholder
+#' @importFrom stars st_dimensions
+#' @importFrom sf st_centroid st_as_sf st_coordinates
 #'
 #' @export
 predict_sdm <- function(m, scen = NULL, th = 0.9, tp = "prob", file = NULL, ensembles = TRUE, add.current = TRUE) {
-  if (class(m) == "input_sdm") {
+  if (is_input_sdm(m)) {
     scen <- m$scenarios
   }
   UseMethod("predict_sdm", scen)
@@ -84,7 +85,7 @@ predict_sdm <- function(m, scen = NULL, th = 0.9, tp = "prob", file = NULL, ense
 
 #' @export
 predict_sdm.sdm_area <- function(m, scen, th = 0.9, tp = "prob", file = NULL, ensembles = TRUE) {
-  if (class(m) == "input_sdm") {
+  if (is_input_sdm(m)) {
     y <- m$models
     scen <- m$scenarios
   }
@@ -118,7 +119,7 @@ predict_sdm.sdm_area <- function(m, scen, th = 0.9, tp = "prob", file = NULL, en
     x <- scen$data[[i]] |>
       as.data.frame() |>
       na.omit() |>
-      select(all_of(m$models$predictors))
+      dplyr::select(dplyr::all_of(m$models$predictors))
     p[[i]] <- sapply(m1, function(m2) {
       p2 <- predict(m2, newdata = x, type = tp) # maybe newdata=na.omit(x), but this could cause trouble in cell_id
       cell_id <- scen$data[[i]] |>
@@ -144,8 +145,8 @@ predict_sdm.sdm_area <- function(m, scen, th = 0.9, tp = "prob", file = NULL, en
         x <- y[[sp]]
         if (length(x) > 0) {
           # Prepare data
-          suppressMessages(df <- bind_cols(x))
-          df <- select(df, contains("presence"))
+          suppressMessages(df <- dplyr::bind_cols(x))
+          df <- dplyr::select(df, contains("presence"))
           # mean_occ_prob
           mean_occ_prob <- df |>
             as.data.frame() |>
@@ -156,18 +157,18 @@ predict_sdm.sdm_area <- function(m, scen, th = 0.9, tp = "prob", file = NULL, en
           # mean_occ_prob <- rowMeans(df)
           # wmean_AUC
           wmean_AUC <- apply(df, 1, function(x) {
-            stats::weighted.mean(x, th1[[sp]]$ROC)
+            weighted.mean(x, th1[[sp]]$ROC)
           })
           # Obtain Thresholds:
           suppressWarnings(th2 <- lapply(m1[[sp]], function(x) {
-            thresholder(x,
+            caret::thresholder(x,
               threshold = seq(0, 1, by = 0.01),
               final = TRUE,
               statistics = "all"
             )
           }))
           th2 <- lapply(th2, function(x) {
-            x <- x %>% mutate(th = Sensitivity + Specificity)
+            x <- x %>% dplyr::mutate(th = Sensitivity + Specificity)
             th <- x[x$th == max(x$th), "prob_threshold"]
             if (length(th) > 1) {
               th <- mean(th)
@@ -204,7 +205,7 @@ predict_sdm.sdm_area <- function(m, scen, th = 0.9, tp = "prob", file = NULL, en
     grid = scen$grid
   )
   predic <- .predictions(p2)
-  if (class(m) == "input_sdm") {
+  if (is_input_sdm(m)) {
     m$predictions <- predic
     predic <- m
   }
@@ -213,7 +214,7 @@ predict_sdm.sdm_area <- function(m, scen, th = 0.9, tp = "prob", file = NULL, en
 
 #' @export
 predict_sdm.scenarios <- function(m, scen, th = 0.9, tp = "prob", file = NULL, ensembles = TRUE, add.current = TRUE) {
-  if (class(m) == "input_sdm") {
+  if (is_input_sdm(m)) {
     y <- m$models
     scen <- m$scenarios
   }
@@ -253,15 +254,15 @@ predict_sdm.scenarios <- function(m, scen, th = 0.9, tp = "prob", file = NULL, e
     return(closest_matches)
   }
   if (add.current == TRUE) {
-    if (class(m) == "input_sdm") {
+    if (is_input_sdm(m)) {
       if (!is.null(scen)) {
         if (is_predictors(m$predictors)) {
-          closest_match <- find_closest_matches(st_dimensions(scen$data)$band$values, gtools::mixedsort(m$predictors$predictors_names))
-          st_dimensions(scen$data)$band$values <- closest_match
+          closest_match <- find_closest_matches(stars::st_dimensions(scen$data)$band$values, gtools::mixedsort(m$predictors$predictors_names))
+          stars::st_dimensions(scen$data)$band$values <- closest_match
           scen$data[["current"]] <- m$predictors$data
         } else if (is_sdm_area(m$predictors)) {
-          closest_match <- find_closest_matches(st_dimensions(scen$data)$band$values, gtools::mixedsort(m$predictors$predictors))
-          st_dimensions(scen$data)$band$values <- closest_match
+          closest_match <- find_closest_matches(stars::st_dimensions(scen$data)$band$values, gtools::mixedsort(m$predictors$predictors))
+          stars::st_dimensions(scen$data)$band$values <- closest_match
           scen$data[["current"]] <- m$predictors$data
         }
       } else {
@@ -278,7 +279,7 @@ predict_sdm.scenarios <- function(m, scen, th = 0.9, tp = "prob", file = NULL, e
   p <- list()
   for (i in 1:length(scen$data)) {
     print(paste0("Projecting: ", i, "/", length(scen$data)))
-    suppressWarnings(x <- cbind(st_coordinates(st_centroid(st_as_sf(scen$data[i]))), select(as.data.frame(st_as_sf(scen$data[i])), -"geometry")))
+    suppressWarnings(x <- cbind(sf::st_coordinates(sf::st_centroid(sf::st_as_sf(scen$data[i]))), dplyr::select(as.data.frame(sf::st_as_sf(scen$data[i])), -"geometry")))
     # x <- na.omit(x[,y$predictors])
     # closest_match <- find_closest_matches(st_dimensions(scen$data)$band$values, gtools::mixedsort(m$predictors$predictors_names))
     # colnames(x) <- c("x","y",closest_match)
@@ -287,7 +288,7 @@ predict_sdm.scenarios <- function(m, scen, th = 0.9, tp = "prob", file = NULL, e
     })
     suppressWarnings(p[[i]] <- sapply(m1, function(m2) {
       p2 <- predict(m2, newdata = na.omit(x), type = tp)
-      cell_id <- scen$cell_id[!is.nan(as.data.frame(st_as_sf(scen$data[i]))[, 1])]
+      cell_id <- scen$cell_id[!is.nan(as.data.frame(sf::st_as_sf(scen$data[i]))[, 1])]
       p2 <- sapply(p2, function(x) {
         cbind(cell_id, x)
       }, simplify = F, USE.NAMES = T)
@@ -324,8 +325,8 @@ predict_sdm.scenarios <- function(m, scen, th = 0.9, tp = "prob", file = NULL, e
         x <- y[[sp]]
         if (length(x) > 0) {
           # Prepare data
-          suppressMessages(df <- bind_cols(x))
-          df <- select(df, contains("presence"))
+          suppressMessages(df <- dplyr::bind_cols(x))
+          df <- dplyr::select(df, contains("presence"))
           # mean_occ_prob
           mean_occ_prob <- rowMeans(df)
           # wmean_AUC
@@ -334,14 +335,14 @@ predict_sdm.scenarios <- function(m, scen, th = 0.9, tp = "prob", file = NULL, e
           })
           # Obtain Thresholds:
           suppressWarnings(th2 <- lapply(m1[[sp]], function(x) {
-            thresholder(x,
+            caret::thresholder(x,
               threshold = seq(0, 1, by = 0.01),
               final = TRUE,
               statistics = "all"
             )
           }))
           th2 <- lapply(th2, function(x) {
-            x <- x %>% mutate(th = Sensitivity + Specificity)
+            x <- x %>% dplyr::mutate(th = Sensitivity + Specificity)
             th <- x[x$th == max(x$th), "prob_threshold"]
             if (length(th) > 1) {
               th <- mean(th)
@@ -378,7 +379,7 @@ predict_sdm.scenarios <- function(m, scen, th = 0.9, tp = "prob", file = NULL, e
     grid = scen$grid
   )
   predic <- .predictions(p2)
-  if (class(m) == "input_sdm") {
+  if (is_input_sdm(m)) {
     m$predictions <- predic
     predic <- m
   }
@@ -389,7 +390,7 @@ predict_sdm.scenarios <- function(m, scen, th = 0.9, tp = "prob", file = NULL, e
 #' @export
 get_predictions <- function(x) {
   x=i
-  if (class(x) == "input_sdm") {
+  if (is_input_sdm(x)) {
     y <- x$predictions
   } else {
     y <- x
@@ -401,7 +402,7 @@ get_predictions <- function(x) {
 #' @export
 get_ensembles <- function(x) {
   x=i
-  if (class(x) == "input_sdm") {
+  if (is_input_sdm(x)) {
     y <- x$predictions
   } else {
     y <- x

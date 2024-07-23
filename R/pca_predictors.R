@@ -10,14 +10,9 @@
 #' @author Luíz Fernando Esser (luizesser@gmail.com)
 #' https://luizfesser.wordpress.com
 #'
-#' @import cubelyr
-#' @importFrom raster extract
-#' @importFrom sp coordinates
-#' @importFrom usdm vifcor
-#'
 #' @export
 pca_predictors <- function(pred, variables_selected = NULL) {
-  if (class(pred) == "input_sdm") {
+  if (is_input_sdm(pred)) {
     x <- pred$predictors
     occ <- pred$occurrences$occurrences
   } else {
@@ -32,12 +27,9 @@ pca_predictors <- function(pred, variables_selected = NULL) {
     print(cat("Using given variables: "), cat(selected_vars, sep = ", "))
   }
 
-
-
-
   x$variable_selection$pca$model <- pc_model
   x$variable_selection$pca$data <- pc_data
-  if (class(pred) == "input_sdm") {
+  if (is_input_sdm(pred)) {
     pred$predictors <- x
     x <- pred
   }

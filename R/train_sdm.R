@@ -68,17 +68,18 @@
 #' i <- train_sdm(i, algo = c("nnet", "kknn"), variables_selected = "vif")
 #' i
 #'
-#' @import sp
-#' @import maxnet
-#' @import dismo
-#' @importFrom dplyr arrange
+#' @importFrom sf st_centroid st_as_sf
+#' @importFrom maxnet maxnet.default.regularization maxnet.formula maxnet
+#' @importFrom dismo bioclim mahal
+#' @importFrom dplyr arrange select filter all_of bind_cols summarise group_by across everything
 #' @importFrom raster extract
 #' @importFrom pROC roc
 #' @importFrom caret train trainControl twoClassSummary
+#' @importFrom stars st_extract
 #'
 #' @export
 train_sdm <- function(occ, pred = NULL, algo, ctrl = NULL, variables_selected = NULL, parallel = FALSE, ...) {
-  if (class(occ) == "input_sdm") {
+  if (is_input_sdm(occ)) {
     z <- occ$occurrences
     pred <- occ$predictors
   } else {
@@ -144,9 +145,9 @@ train_sdm <- function(occ, pred = NULL, algo, ctrl = NULL, variables_selected = 
         fit = function(x, y, wts, param, lev, last, classProbs, ...) {
           model <- maxnet::maxnet(
             p = ifelse(as.numeric(y) == 1, 1, 0), data = x,
-            f = maxnet.formula(p = ifelse(as.numeric(y) == 1, 1, 0), data = x),
+            f = maxnet::maxnet.formula(p = ifelse(as.numeric(y) == 1, 1, 0), data = x),
             regmult = param$regmult,
-            regfun = maxnet.default.regularization, addsamplestobackground = T, ...
+            regfun = maxnet::maxnet.default.regularization, addsamplestobackground = T, ...
           )
           return(model)
         },
@@ -269,7 +270,7 @@ train_sdm <- function(occ, pred = NULL, algo, ctrl = NULL, variables_selected = 
           return(result)
         },
         predict = function(modelFit, newdata, preProc = NULL, submodels = NULL) {
-          pred <- predict(modelFit$model, newdata)
+          pred <- predict(modelFit$model, newdata) ## should be dismo::predict?
           pred <- data.frame(presence = pred, pseudoabsence = 1 - pred)
           if (modelFit$abs) {
             pred <- as.factor(ifelse(pred$presence > 0, "presence", "pseudoabsence"))
@@ -342,9 +343,7 @@ train_sdm <- function(occ, pred = NULL, algo, ctrl = NULL, variables_selected = 
   if ("independent_test" %in% names(z)) {
     indep_val <- list()
     it <- z$independent_test
-    col_names <- find_columns(it)
-    sp::coordinates(it) <- col_names[c(2, 3)]
-    it <- extract(pred$grid[[selected_vars]], it)
+    it <- stars::st_extract(pred$grid[[selected_vars]], it)
   }
 
   # occ2 <- z$occurrences
@@ -404,20 +403,20 @@ train_sdm <- function(occ, pred = NULL, algo, ctrl = NULL, variables_selected = 
   l <- sapply(z$spp_names, function(sp) {
     if (is_predictors(pred)) {
       occ2 <- z$occurrences[z$occurrences$species == sp, ]$cell_id
-      suppressWarnings(env <- select(cbind(st_centroid(st_as_sf(pred$data)), pred$grid), -"geometry.1"))
-      occ2 <- filter(env, env$cell_id %in% occ2)
-      occ2 <- select(occ2, all_of(selected_vars))
+      suppressWarnings(env <- dplyr::select(cbind(sf::st_centroid(sf::st_as_sf(pred$data)), pred$grid), -"geometry.1"))
+      occ2 <- dplyr::filter(env, env$cell_id %in% occ2)
+      occ2 <- dplyr::select(occ2, dplyr::all_of(selected_vars))
     } else if (is_sdm_area(pred)) {
       occ2 <- z$occurrences |>
-        filter(species == sp) |>
-        select(all_of(selected_vars))
+        dplyr::filter(species == sp) |>
+        dplyr::select(dplyr::all_of(selected_vars))
     }
 
     for (i in 1:length(z$pseudoabsences$data[[sp]])) {
       pa <- z$pseudoabsences$data[[sp]][[i]]
       pa <- pa[, match(colnames(occ2), colnames(pa))]
       x <- rbind(occ2, pa)
-      x <- select(as.data.frame(x), selected_vars)
+      x <- dplyr::select(as.data.frame(x), selected_vars)
       df <- as.factor(c(rep("presence", nrow(occ2)), rep("pseudoabsence", nrow(pa))))
 
       if (class(algo) == "list" & !"fit" %in% names(algo)) {
@@ -429,7 +428,7 @@ train_sdm <- function(occ, pred = NULL, algo, ctrl = NULL, variables_selected = 
           }
           print(paste0("Layer ", j))
           layer1 <- lapply(algo[[j]], function(a) {
-            train(x2,
+            caret::train(x2,
               df,
               method = a,
               trControl = ctrl,
@@ -504,7 +503,7 @@ train_sdm <- function(occ, pred = NULL, algo, ctrl = NULL, variables_selected = 
       return(r)
     })
     metrics <- do.call(rbind, metrics)
-    metrics <- arrange(metrics, algo)
+    metrics <- dplyr::arrange(metrics, algo)
     return(metrics)
   }, simplify = FALSE, USE.NAMES = TRUE)
 
@@ -522,7 +521,7 @@ train_sdm <- function(occ, pred = NULL, algo, ctrl = NULL, variables_selected = 
 
   models <- .models(m2)
 
-  if (class(occ) == "input_sdm") {
+  if (is_input_sdm(occ)) {
     occ$models <- models
     models <- occ
   }
@@ -534,7 +533,7 @@ train_sdm <- function(occ, pred = NULL, algo, ctrl = NULL, variables_selected = 
 #' @export
 get_tune_length <- function(i) {
   x=i
-  if (class(x) == "input_sdm") {
+  if (is_input_sdm(x)) {
     y <- x$models
   } else {
     y <- x
@@ -546,7 +545,7 @@ get_tune_length <- function(i) {
 #' @export
 algorithms_used <- function(i) {
   x=i
-  if (class(x) == "input_sdm") {
+  if (is_input_sdm(x)) {
     y <- x$models
   } else {
     y <- x
@@ -558,7 +557,7 @@ algorithms_used <- function(i) {
 #' @export
 get_models <- function(i) {
   x=i
-  if (class(x) == "input_sdm") {
+  if (is_input_sdm(x)) {
     y <- x$models
   } else {
     y <- x
@@ -570,7 +569,7 @@ get_models <- function(i) {
 #' @export
 get_validation_metrics <- function(i) {
   x=i
-  if (class(x) == "input_sdm") {
+  if (is_input_sdm(x)) {
     y <- x$models
   } else {
     y <- x
@@ -582,14 +581,14 @@ get_validation_metrics <- function(i) {
 #' @export
 mean_validation_metrics <- function(i) {
   x=i
-  if (class(x) == "input_sdm") {
+  if (is_input_sdm(x)) {
     y <- x$models
   } else {
     y <- x
   }
   algo <- y$algorithms
   res <- sapply(y$validation$metrics, function(met) {
-    v <- summarise(group_by(met, algo), across(everything(), mean))
+    v <- dplyr::summarise(dplyr::group_by(met, algo), dplyr::across(dplyr::everything(), mean))
     return(v)
   }, simplify = FALSE, USE.NAMES = TRUE)
   return(res)

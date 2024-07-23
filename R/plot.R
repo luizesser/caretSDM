@@ -15,14 +15,14 @@
 #' https://luizfesser.wordpress.com
 #'
 #'
-#' @import mapview
-#' @import viridis
-#' @import ggplot2
-#' @import ggspatial
-#' @import dplyr
+#' @importFrom mapview mapview
+#' @importFrom ggplot2 ggplot geom_sf aes scale_fill_viridis_c xlab ylab ggtitle theme_minimal
+#' @importFrom ggspatial annotation_scale north_arrow_fancy_orienteering annotation_north_arrow
+#' @importFrom dplyr filter
 #' @importFrom gtools mixedsort
 #' @importFrom data.table rbindlist
 #' @importFrom stringdist stringdist
+#' @importFrom sf st_as_sf
 #'
 #' @export
 plot_occurrences <- function(i, spp_name = NULL, pa = TRUE) {
@@ -38,7 +38,7 @@ plot.occurrences <- function(x, spp_name = NULL, pa = TRUE) {
   } else {
     spp_name <- valid_spp[1]
   }
-  df <- filter(df, species == spp_name)
+  df <- dplyr::filter(df, species == spp_name)
   tmp <- plot(df["species"])
   return(tmp)
 }
@@ -82,7 +82,7 @@ plot.models <- function(x) {
     }, USE.NAMES = T)
   }, USE.NAMES = T)
   df <- lapply(sa, function(x) {
-    as.data.frame(rbindlist(apply(x, 2, as.data.frame)))
+    as.data.frame(data.table::rbindlist(apply(x, 2, as.data.frame)))
   })
   tmp <- lapply(df, function(x) {
     if (ncol(x) > 2) {
@@ -133,25 +133,25 @@ plot.predictions <- function(x, spp_name = NULL, scenario = NULL, id = NULL, ens
     subtitle <- paste0("Ensemble type: ", et)
   } else {
     v <- x[[ens]][[scenario]][[spp_name]][[id]]$presence
-    grd <- filter(grd, grd$cell_id == cell_id)
+    grd <- dplyr::filter(grd, grd$cell_id == cell_id)
     grd[grd$cell_id %in% cell_id, "result"] <- v
     subtitle <- NULL
   }
-  p <- ggplot() +
-    geom_sf(data = grd, aes(fill = result)) +
-    scale_fill_viridis_c(name = paste0("Occurrence\n Probability"), limits = c(0, 1)) +
-    xlab("Longitude") +
-    ylab("Latitude") +
-    ggtitle(paste0(spp_name, " distribution in the ", scenario, " scenario"), subtitle = subtitle) +
-    theme_minimal() +
-    annotation_north_arrow(
+  p <- ggplot2::ggplot() +
+    ggplot2::geom_sf(data = grd, ggplot2::aes(fill = result)) +
+    ggplot2::scale_fill_viridis_c(name = paste0("Occurrence\n Probability"), limits = c(0, 1)) +
+    ggplot2::xlab("Longitude") +
+    ggplot2::ylab("Latitude") +
+    ggplot2::ggtitle(paste0(spp_name, " distribution in the ", scenario, " scenario"), subtitle = subtitle) +
+    ggplot2::theme_minimal() +
+    ggspatial::annotation_north_arrow(
       height = unit(1, "cm"),
       width = unit(1, "cm"),
-      style = north_arrow_fancy_orienteering,
+      style = ggspatial::north_arrow_fancy_orienteering,
       pad_x = unit(0.2, "cm"),
       pad_y = unit(0.7, "cm")
     ) +
-    annotation_scale(height = unit(0.2, "cm"))
+    ggspatial::annotation_scale(height = unit(0.2, "cm"))
 
   return(p)
 }
@@ -166,7 +166,7 @@ plot_predictions <- function(i, spp_name = NULL, scenario = NULL, id = NULL, ens
 mapview.occurrences <- function(x, spp_name, pa) {
   df <- x$occurrences
   if (!is.null(spp_name)) {
-    df <- filter(df, species == spp_name)
+    df <- dplyr::filter(df, species == spp_name)
   }
   if (pa == TRUE) {
 
@@ -183,7 +183,7 @@ mapview.predictors <- function(x) {
   if ("variable_selection" %in% names(x)) {
     st <- st[[x$variable_selection$vif$selected_variables]]
   }
-  tmp <- mapview(st_as_sf(x$data), burst = T, legend = F, hide = T)
+  tmp <- mapview::mapview(sf::st_as_sf(x$data), burst = T, legend = F, hide = T)
   return(tmp)
 }
 
@@ -207,11 +207,11 @@ mapview.predictions <- function(x, spp_name = NULL, scenario = NULL, id = NULL, 
   cell_id <- x[["predictions"]][[scenario]][[spp_name]][[1]]$cell_id
   if (ensemble) {
     v <- x[[ens]][[spp_name, scenario]][, ensemble_type]
-    grd <- filter(grd, grd$cell_id == cell_id)
+    grd <- dplyr::filter(grd, grd$cell_id == cell_id)
     grd[grd$cell_id %in% cell_id, "result"] <- v
   } else {
     v <- x[[ens]][[scenario]][[spp_name]][[id]]$presence
-    grd <- filter(grd, grd$cell_id == cell_id)
+    grd <- dplyr::filter(grd, grd$cell_id == cell_id)
     grd[grd$cell_id %in% cell_id, "result"] <- v
   }
   tmp <- mapview::mapview(grd, zcol = "result", layer.name = paste0(spp_name))
