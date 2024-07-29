@@ -13,13 +13,9 @@
 #' @author Luíz Fernando Esser (luizesser@gmail.com)
 #' https://luizfesser.wordpress.com
 #'
-#' @importFrom stars st_rasterize write_stars
-#' @importFrom sf st_write
-#' @importFrom dplyr select
-#'
 #' @export
 write_ensembles <- function(x, path = "results/ensembles", ext = ".tif") {
-  if (is_input_sdm(x)) {
+  if (class(x) == "input_sdm") {
     y <- x$predictions
   } else {
     y <- x
@@ -37,10 +33,10 @@ write_ensembles <- function(x, path = "results/ensembles", ext = ".tif") {
           dir.create(paste0(path, "/", sp), recursive = T)
         }
         if (ext == ".tif" | ext == ".asc") {
-          result <- merge(stars::st_rasterize(result))
-          stars::write_stars(result, paste0(path, "/", sp, "/", sc, ext))
+          result <- merge(st_rasterize(result))
+          write_stars(result, paste0(path, "/", sp, "/", sc, ext))
         } else if (ext %in% ext_sf) {
-          sf::st_write(result, paste0(path, "/", sp, "/", sc, ext))
+          st_write(result, paste0(path, "/", sp, "/", sc, ext))
         }
       }
     }
@@ -50,7 +46,7 @@ write_ensembles <- function(x, path = "results/ensembles", ext = ".tif") {
 #' @rdname write_ensembles
 #' @export
 write_predictions <- function(x, path = "results/predictions", ext = ".tif") {
-  if (is_input_sdm(x)) {
+  if (class(x) == "input_sdm") {
     y <- x$predictions
   } else {
     y <- x
@@ -63,16 +59,16 @@ write_predictions <- function(x, path = "results/predictions", ext = ".tif") {
     for (sc in scen) {
       cell_id <- y[["predictions"]][[sc]][[sp]][[1]]$cell_id
       for (id in names(y$predictions[[sc]][[sp]])) {
-        v <- dplyr::select(y$predictions[[sc]][[sp]][[id]], -"pseudoabsence")
+        v <- select(y$predictions[[sc]][[sp]][[id]], -"pseudoabsence")
         result <- merge(grd, v, by = "cell_id")
         if (!dir.exists(paste0(path, "/", sp))) {
           dir.create(paste0(path, "/", sp), recursive = T)
         }
         if (ext == ".tif" | ext == ".asc") {
           result <- merge(st_rasterize(result))
-          stars::write_stars(result, paste0(path, "/", sp, "/", sc, ext))
+          write_stars(result, paste0(path, "/", sp, "/", sc, ext))
         } else if (ext %in% ext_sf) {
-          sf::st_write(result, paste0(path, "/", sp, "/", sc, ext))
+          st_write(result, paste0(path, "/", sp, "/", sc, ext))
         }
       }
     }
@@ -82,7 +78,7 @@ write_predictions <- function(x, path = "results/predictions", ext = ".tif") {
 #' @rdname write_ensembles
 #' @export
 write_models <- function(x, path = "results/models") {
-  if (is_input_sdm(x)) {
+  if (class(x) == "input_sdm") {
     y <- x$models
   } else {
     y <- x
@@ -94,4 +90,40 @@ write_models <- function(x, path = "results/models") {
     }
     saveRDS(y$models[[sp]], paste0(path, "/", sp, "/models.rds"))
   }
+}
+
+
+#' @export
+write_gpkg <- function(x, file_path, file_name) {
+  assert_directory_cli(
+    file_path
+  )
+  assert_character_cli(
+    file_name,
+    min.chars = 1,
+    any.missing = FALSE,
+    all.missing = FALSE,
+    len = 1,
+    typed.missing = TRUE,
+    null.ok = FALSE
+  )
+  UseMethod("write_gpkg", x)
+}
+
+
+#' @export
+write_gpkg.sdm_area <- function(x, file_path, file_name) {
+  file_name_ext <- "gpkg"
+  file_name <- fs::path_file(file_name)
+  file_path <- fs::path_dir(file_path)
+  saving_local <- fs::path(file_path, file_name, ext = file_name_ext)
+  cli::cli_inform(
+    message = "Saving gpkg in: { saving_local }"
+  )
+  x$grid |>
+    sf::st_write(
+      dsn = saving_local,
+      delete_dsn = TRUE,
+      quiet =TRUE
+    )
 }

@@ -11,7 +11,7 @@ add_predictors(sdm_area, pred, variables_selected = NULL)
 
 \item{pred}{\code{RasterStack}, \code{SpatRaster} or \code{stars} object with predictors data.}
 
-\item{variables_selected}{\code{character} vector with variables names in \code{pred} to be used
+\item{variables_selected}{\code{character} vector with variables NULLmes in \code{pred} to be used
 as predictors. If \code{NULL} adds all variables.}
 }
 \value{
@@ -23,7 +23,7 @@ This function includes predictors to the \code{sdm_area} object.
 }
 \examples{
 # Create sdm_area object
-sa <- sdm_area(parana, cell_size = 25000, epsg = 6933)
+sa <- sdm_area(paraNULL, cell_size = 25000, epsg = 6933)
 
 # Include predictors
 sa <- add_predictors(sa, bioc)
@@ -33,6 +33,6 @@ sa <- add_predictors(sa, bioc)
 \code{\link{sdm_area} \link{predictors} \link{bioc}}
 }
 \author{
-Luíz Fernando Esser (luizesser@gmail.com)
+Luíz FerNULLndo Esser (luizesser@gmail.com)
 \link{https://luizfesser.wordpress.com}
 }

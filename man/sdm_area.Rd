@@ -4,15 +4,24 @@
 \alias{sdm_area}
 \title{Create a \code{sdm_area} object}
 \usage{
-sdm_area(x, cell_size, epsg)
+sdm_area(
+  x,
+  cell_size = NULL,
+  crs = NULL,
+  variables_selected = NULL,
+  gdal = TRUE,
+  crop_by = NULL
+)
 }
 \arguments{
-\item{x}{A shapefile or a raster. Usually a shapefile from \code{sf} class, but rasters from
+\item{x}{A shapefile or a raster. Usually a shapefile from \code{sf} class,
+but rasters from
 \code{stars}, \code{rasterStack} or \code{SpatRaster} class are also allowed.}
 
 \item{cell_size}{\code{numeric}. The cell size to be used in models.}
 
-\item{epsg}{\code{numeric}. Indicates which EPSG should the output grid be in. If \code{NULL},
+\item{crs}{\code{numeric}. Indicates which EPSG should the output grid be
+in. If \code{NULL},
 epsg from \code{x} is used.}
 }
 \value{
@@ -22,11 +31,12 @@ A \code{sdm_area} object.
 This function creates a new \code{sdm_area} object.
 }
 \details{
-The function returns a \code{sdm_area} object with a grid built upon the \code{x} parameter.
+The function returns a \code{sdm_area} object with a grid built upon the
+\code{x} parameter.
 }
 \examples{
 # Create sdm_area object
-sa <- sdm_area(parana, cell_size = 25000, epsg = 6933)
+sa <- sdm_area(parana, cell_size = 25000, crs = 6933)
 
 }
 \seealso{

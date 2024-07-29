@@ -1,14 +1,7 @@
-#' @keywords internal
-#' A internal version of checkmate package returning cli standardized messages.
-#' @return Cli standardized messages
-#' @import checkmate
-#' @import cli
-#' @export
 check_int_cli <- function(...){
   return(checkmate::check_int(...))
 }
 
-#' @export
 assert_int_cli <- function(x, ..., .var.name = vname(x), add = NULL){
   return(invisible(
     make_assertion(
@@ -20,12 +13,26 @@ assert_int_cli <- function(x, ..., .var.name = vname(x), add = NULL){
   ))
 }
 
-#' @export
+check_logical_cli <- function(...){
+  return(checkmate::check_logical(...))
+}
+
+assert_logical_cli <- function(x, ..., .var.name = vname(x), add = NULL){
+  return(invisible(
+    make_assertion(
+      x,
+      checkmate::check_logical(x, ...),
+      .var.name,
+      add
+    )
+  ))
+}
+
+
 check_directory_cli <- function(...){
   return(checkmate::checkDirectory(...))
 }
 
-#' @export
 assert_directory_cli <- function(x, ..., .var.name = vname(x), add = NULL){
   return(invisible(
     make_assertion(
@@ -37,12 +44,11 @@ assert_directory_cli <- function(x, ..., .var.name = vname(x), add = NULL){
   ))
 }
 
-#' @export
+
 check_numeric_cli <- function(...){
   return(checkmate::check_numeric(...))
 }
 
-#' @export
 assert_numeric_cli <- function(x, ..., .var.name = vname(x), add = NULL){
   return(invisible(
     make_assertion(
@@ -54,12 +60,26 @@ assert_numeric_cli <- function(x, ..., .var.name = vname(x), add = NULL){
   ))
 }
 
-#' @export
+check_number_cli <- function(...){
+  return(checkmate::check_number(...))
+}
+
+assert_number_cli <- function(x, ..., .var.name = vname(x), add = NULL){
+  return(invisible(
+    make_assertion(
+      x,
+      checkmate::check_number(x, ...),
+      .var.name,
+      add
+    )
+  ))
+}
+
+
 check_names_cli <- function(...){
   return(checkmate::check_names(...))
 }
 
-#' @export
 assert_names_cli <- function(x, ..., .var.name = vname(x), add = NULL){
   return(invisible(
     make_assertion(
@@ -71,12 +91,10 @@ assert_names_cli <- function(x, ..., .var.name = vname(x), add = NULL){
   ))
 }
 
-#' @export
 check_character_cli <- function(...){
   return(checkmate::check_character(...))
 }
 
-#' @export
 assert_character_cli <- function(x, ..., .var.name = vname(x), add = NULL){
   return(invisible(
     make_assertion(
@@ -88,12 +106,11 @@ assert_character_cli <- function(x, ..., .var.name = vname(x), add = NULL){
   ))
 }
 
-#' @export
+
 check_data_frame_cli <- function(...){
   return(checkmate::check_data_frame(...))
 }
 
-#' @export
 assert_data_frame_cli <- function(x, ..., .var.name = vname(x), add = NULL){
   return(invisible(
     make_assertion(
@@ -105,12 +122,11 @@ assert_data_frame_cli <- function(x, ..., .var.name = vname(x), add = NULL){
   ))
 }
 
-#' @export
+
 check_class_cli <- function(...){
   return(checkmate::check_class(...))
 }
 
-#' @export
 assert_class_cli <- function(x, ..., .var.name = vname(x), add = NULL){
   res <- make_assertion(
     x,
@@ -121,12 +137,10 @@ assert_class_cli <- function(x, ..., .var.name = vname(x), add = NULL){
   return(invisible(res))
 }
 
-#' @export
 check_vector_cli <- function(...){
   return(checkmate::check_vector(...))
 }
 
-#' @export
 assert_vector_cli <- function(x, ..., .var.name = vname(x), add = NULL){
   return(invisible(
     make_assertion(
@@ -138,12 +152,10 @@ assert_vector_cli <- function(x, ..., .var.name = vname(x), add = NULL){
   ))
 }
 
-#' @export
 check_list_cli <- function(...){
   return(checkmate::check_list(...))
 }
 
-#' @export
 assert_list_cli <- function(x, ..., .var.name = vname(x), add = NULL){
   return(invisible(
     make_assertion(
@@ -155,8 +167,8 @@ assert_list_cli <- function(x, ..., .var.name = vname(x), add = NULL){
   ))
 }
 
-#' @export
-cli_fmt <- function(res){
+
+sanitize_cli <- function(res){
   if (isTRUE(res)){
     return(res)
   } else {
@@ -168,7 +180,18 @@ cli_fmt <- function(res){
   }
 }
 
-#' @export
+fmt_bullet_cli <- function(res, cli_bullet="i"){
+   if (isTRUE(res)){
+     return(res)
+   } else {
+     res <- res |>
+       sanitize_cli() |>
+       setNames(rep("i", length(res)))
+
+     return(res)
+   }
+ }
+
 make_assertion = function(x, res, var.name, collection) {
   if (!isTRUE(res)) {
     checkmate::assertString(var.name, .var.name = ".var.name")
@@ -176,10 +199,10 @@ make_assertion = function(x, res, var.name, collection) {
     if (is.null(collection)) {
       cli::cli_abort(
         c(
-          "Assertion on { var.name } failed.",
-          "x" = res
+          "x" = "Assertion on { var.name } failed.",
+          "i" = res
         ),
-        .internal = TRUE,
+        #.internal = TRUE,
         call = parent.frame(n=2)
       )
     }
@@ -191,7 +214,7 @@ make_assertion = function(x, res, var.name, collection) {
   return(invisible(res))
 }
 
-#' @export
+
 assert_cli <- function(..., combine = "or", .var.name = NULL, add = NULL) {
   checkmate::assertChoice(combine, c("or", "and"))
   checkmate::assertClass(add, "AssertCollection", .var.name = "add", null.ok = TRUE)
@@ -224,7 +247,7 @@ assert_cli <- function(..., combine = "or", .var.name = NULL, add = NULL) {
   invisible(TRUE)
 }
 
-#' @export
+
 .mstopOrPush = function(res, v_name, collection = NULL) {
   if (!is.null(collection)) {
     purrr::map2(res, names(res), \(e, n) glue::glue("({n}): {e}")) |>
@@ -233,24 +256,24 @@ assert_cli <- function(..., combine = "or", .var.name = NULL, add = NULL) {
   } else if (length(v_name) > 1L) {
     v_name <- v_name |>
       unique()
-    names(res) <- rep("x", length(res))
+    names(res) <- rep("i", length(res))
     msg <- c(
       glue::glue("Assertion on < v_name > failed.", .open = "<", .close = ">"),
       res
     )
     cli::cli_abort(
       msg,
-      .internal = TRUE,
+      #.internal = TRUE,
       call = parent.frame(n=2)
     )
   } else {
     msg <- c(
       glue::glue("Assertion on < v_name > failed.", .open = "<", .close = ">"),
-      c("x" = res)
+      c("i" = res)
     )
     cli::cli_abort(
       msg,
-      .internal = TRUE,
+      #.internal = TRUE,
       call = parent.frame(n=2)
     )
   }
