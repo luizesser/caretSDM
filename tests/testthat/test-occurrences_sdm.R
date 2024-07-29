@@ -22,7 +22,7 @@ test_that("occurrences - tibble - multiple species", {
 
 test_that("occurrences - sf", {
   sf_occ <- st_as_sf(occ, coords = c(2:3))
-  st_crs(sf_occ) <- 6933
+  sf::st_crs(sf_occ) <- 6933
   expect_s3_class(occurrences_sdm(sf_occ), "occurrences")
 })
 
@@ -216,7 +216,7 @@ test_that("occurrences - indep_data is sf with epsg in it.", {
   tb <- tibble(decimalLatitude = runif(100), longitude = runif(100), sp = c(rep("Aa", 100)))
   indep_sf <- tibble(decimalLatitude = runif(100), longitude = runif(100), sp = c(rep("Aa", 100)))
   indep_sf <- st_as_sf(indep_sf, coords=colnames(indep_sf)[c(2,1)])
-  st_crs(indep_sf) <- 4326
+  sf::st_crs(indep_sf) <- 4326
   oc <- occurrences_sdm(tb, independent_test = indep_sf, epsg=6933)
   expect_true(st_crs(oc$independent_test) == st_crs(oc$occurrences))
 })
@@ -225,7 +225,7 @@ test_that("occurrences - indep_data is sf with no species column.", {
   tb <- tibble(decimalLatitude = runif(100), longitude = runif(100), sp = c(rep("Aa", 100)))
   indep_sf <- tibble(decimalLatitude = runif(100), longitude = runif(100))
   indep_sf <- st_as_sf(indep_sf, coords=colnames(indep_sf)[c(2,1)])
-  st_crs(indep_sf) <- 4326
+  sf::st_crs(indep_sf) <- 4326
   oc <- occurrences_sdm(tb, independent_test = indep_sf, epsg=6933)
   expect_true("species" %in% colnames(oc$independent_test))
 })
@@ -235,7 +235,7 @@ test_that("occurrences - indep_data is sf with no species column, but there are 
                                                                             rep("Bb", 50)))
   indep_sf <- tibble(decimalLatitude = runif(100), longitude = runif(100))
   indep_sf <- st_as_sf(indep_sf, coords=colnames(indep_sf)[c(2,1)])
-  st_crs(indep_sf) <- 4326
+  sf::st_crs(indep_sf) <- 4326
   expect_error(occurrences_sdm(tb, independent_test = indep_sf, epsg=6933))
 })
 
@@ -245,7 +245,7 @@ test_that("occurrences - indep_data is sf has species column, but there are miss
   indep_sf <- tibble(decimalLatitude = runif(100), longitude = runif(100),
                      species = c(rep("Aa", 100)))
   indep_sf <- st_as_sf(indep_sf, coords=colnames(indep_sf)[c(2,1)])
-  st_crs(indep_sf) <- 4326
+  sf::st_crs(indep_sf) <- 4326
   expect_error(occurrences_sdm(tb, independent_test = indep_sf, epsg=6933))
 })
 
