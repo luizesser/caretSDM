@@ -1,0 +1,494 @@
+---
+title: "Araucaria-angustifolia"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Araucaria-angustifolia}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+
+## Carregando pacotes
+
+```{r setup}
+library(caretSDM)
+library(stars)
+library(here)
+library(microbenchmark)
+here()
+```
+
+
+## Ocorrências
+
+
+```{r}
+
+occ_data <- here("tests", "testthat", "testdata", "Araucaria_angustifolia.csv") |>
+  read.csv() |>
+  occurrences_sdm()
+                     
+occ_data
+```
+## Área de estudo
+```{r}
+sa <- here("tests", "testthat", "testdata", "parana.shp") |> 
+  sdm_area(cell_size = 5000, epsg = 6933, variables_selected = c("Altmin", "Altmax", "FFp100", "FNp100"))
+
+plot(sa)
+
+sa
+```
+
+## Adicionar preditoras na área de estudo
+```{r}
+bioc <- here("tests", "testthat", "testdata", "WorldClim_data_current") |>
+  list.files(full.names = T) |>
+  read_stars(along = "band", normalize_path = F) |>
+  set_band_names(sort(paste0("bio", 1:19)))
+
+sa <- sa |> add_predictors(bioc)
+
+plot(sa$grid[1])
+```
+
+
+## Cenários
+
+
+## Teste de reprojeção na GRID
+```{r}
+bioc <- here("tests", "testthat", "testdata", "WorldClim_data_current") |>
+  list.files(full.names = T) |>
+  read_stars(along = "band", normalize_path = F) |>
+  set_band_names(sort(paste0("bio", 1:19)))
+
+epsg <- 6933
+cell_size <- 1000
+area_estudo <- pr_gpkg
+
+full_grid <- area_estudo |>
+  sf::st_transform(sf::st_crs(epsg)) |>
+  sf::st_bbox() |>
+  sf::st_make_grid(cellsize = cell_size) |>
+  sf::st_as_sf() |>
+  dplyr::mutate(cell_id = dplyr::row_number())
+  
+bbox <- st_bbox(full_grid)
+n_col <- ((bbox$xmax - bbox$xmin) / cell_size) |> unname()
+n_row <- ((bbox$ymax - bbox$ymin) / cell_size) |> unname()  
+
+full_grid <- full_grid |>  
+  dplyr::mutate(
+    cell_id = cell_id |>
+      purrr::imap_int(
+      \(x, idx) {
+        n_cel <- (n_col * n_row)
+        segment <- ((idx-1) %/% n_col) + 1
+        off_set <- idx - ((segment - 1) * n_col)
+        ((n_cel / n_col) - segment) * n_col + off_set
+      }
+      )
+)
+
+grid <- full_grid |>
+  sf::st_join(
+    area_estudo |> 
+      sf::st_transform(sf::st_crs(epsg)), 
+    left = FALSE
+  ) |>
+  dplyr::select(cell_id) 
+
+grid_aggregate <- 0
+area_aggregate <- bioc |> 
+      sf::st_crop(
+        sf::st_bbox(grid |> sf::st_transform(sf::st_crs(bioc)))
+      )   # crop only crops regular grids: maybe use st_warp() first?
+      
+area_aggregate <- area_aggregate |>
+  sf::st_transform(sf::st_crs(grid))
+area_aggregate_shp <- 0
+
+grid_join <- 0
+area_join <- area_aggregate
+area_join_shp <- 0
+
+grid_gdal <- 0
+area_gdal <- 0
+area_gdal_shp <- 0
+```
+
+```{r}
+mbm <- microbenchmark(
+  times = 10,
+  "aggregate" = {
+    area_aggregate_shp <<- area_aggregate |>
+      sf::st_as_sf() #|>
+      #sf::st_centroid()
+      
+    grid_aggregate <<- area_aggregate_shp |>
+      aggregate(grid, mean) |> 
+      dplyr::bind_cols(grid |> as.data.frame() |> select(cell_id)) |>
+      tidyr::drop_na()
+  },
+  "aggregate_centroids" = {
+    area_aggregate_shp <<- area_aggregate |>
+      sf::st_as_sf() |>
+      sf::st_centroid()
+      
+    grid_aggregate_centroids <<- area_aggregate_shp |>
+      aggregate(grid, mean) |> 
+      dplyr::bind_cols(grid |> as.data.frame() |> select(cell_id)) |>
+      tidyr::drop_na()
+  },
+  "join" = {
+    #194237
+    area_join_shp <<- area_join |> 
+      sf::st_as_sf() #|>
+      #sf::st_centroid()
+      
+    grid_tmp <<- grid |>
+      sf::st_join(
+        area_join_shp, 
+        left = FALSE
+      ) 
+
+    grid_join <<- grid_tmp |>
+      as.data.frame() |>
+      dplyr::select(-x) |>
+      dplyr::group_by(cell_id) |>
+      dplyr::summarise_all(mean) |>
+      dplyr::left_join(
+        grid_tmp |> dplyr::select(cell_id, x) |> unique(),
+        by = join_by(cell_id)
+      ) |>
+      dplyr::rename(geometry = x) |>
+      sf::st_as_sf()  |>
+      tidyr::drop_na()
+  },
+  "join_centroids" = {
+    area_join_shp <<- area_join |> 
+      sf::st_as_sf() |>
+      sf::st_centroid()
+      
+    grid_tmp <<- grid |>
+      sf::st_join(
+        area_join_shp, 
+        left = FALSE
+      ) 
+
+    grid_join_centroids <<- grid_tmp |>
+      as.data.frame() |>
+      dplyr::select(-x) |>
+      dplyr::group_by(cell_id) |>
+      dplyr::summarise_all(mean) |>
+      dplyr::left_join(
+        grid_tmp |> dplyr::select(cell_id, x) |> unique(),
+        by = join_by(cell_id)
+      ) |>
+      dplyr::rename(geometry = x) |>
+      sf::st_as_sf()  |>
+      tidyr::drop_na()
+  },
+  "gdal" = {
+    source = here("tests", "testthat", "testdata", "WorldClim_data_current") |>
+      list.files(full.names = T)
+
+    out_dir <- fs::path(paste0(tempdir(), "/gdal"))
+    if (fs::dir_exists(out_dir)) {
+      fs::dir_delete(out_dir)
+    } 
+    fs::dir_create(out_dir)
+  
+    source |> purrr::map(\(x){
+      in_file <- x
+      out_file <- fs::path(out_dir, fs::path_file(x))
+      sf::gdal_utils(
+        util = "warp",
+        source = in_file,
+        destination = out_file,
+        options = c(
+        #"-f", "GPKG", # output file format for GDAL < 2.3
+        "-overwrite",
+        "-s_srs", sf::st_crs(bioc)$input |> stringr::str_remove(" "), # input file SRS
+        "-t_srs", sf::st_crs(grid)$input, # output file SRS
+        "-te", c(sf::st_bbox(grid) |> as("vector")),
+        "-r", "average",
+        #"-co", "BIGTIFF=YES",
+        "-co", "COMPRESS=LZW",
+        "-dstnodata", "999999",
+        "-tr", cell_size, cell_size,
+        "-ot", "Float32",
+        "-overwrite"
+        )
+      )
+    })
+
+    bio_gdal <- out_dir |> 
+      list.files(full.names = T) |>
+      read_stars(along = "band", normalize_path = F) |>
+      set_band_names(sort(paste0("bio", 1:19))) |>
+      split()
+    bbox <- st_bbox(bio_gdal)
+    n_col <- ((bbox$xmax - bbox$xmin) / cell_size) |> unname()
+    n_row <- ((bbox$ymax - bbox$ymin) / cell_size) |> unname()
+    bio_gdal$cell_id <- seq(1, n_col * n_row)
+    
+    area_gdal_shp <<- bio_gdal |>
+      sf::st_as_sf() 
+    
+    grid_gdal <- area_gdal_shp |>
+      dplyr::inner_join(
+        grid |>
+          as.data.frame() |>
+          select(-x)) |>
+      tidyr::drop_na() |>
+      dplyr::relocate(cell_id)
+  }
+)
+```
+
+Melhor média:
+  - aggregate_polygons_centroids
+  - aggregate_polygons
+  - aggregate_centroids
+  - aggregate
+
+Melhor mediana:
+  - aggregate_polygons_centroids
+  - aggregate_centroids
+  - aggregate
+  - gdal
+  
+Melhor maximo:
+  - aggregate_polygons
+  - join_centroids
+  - aggregate_centroids
+  - aggregate_polygons_centroids
+
+Melhor minimo:
+  - aggregate_centroids
+  - aggregate_polygons_centroids
+  - aggregate
+  - gdal
+  
+```{r}
+mbm
+```
+
+
+```{r}
+grids_diff <-  grid |>
+  full_join(grid_aggregate |> as.data.frame() |> select(cell_id, bio1)) |>
+  rename(agg = bio1) |>
+  full_join(grid_aggregate_centroids |> as.data.frame() |> select(cell_id, bio1)) |>
+  rename(agg_c = bio1) |>
+  full_join(grid_join |> as.data.frame() |> select(cell_id, bio1)) |>
+  rename(join = bio1) |>
+  full_join(grid_join_centroids |> as.data.frame() |> select(cell_id, bio1)) |>
+  rename(join_c = bio1) |>
+  full_join(grid_gdal |> as.data.frame() |> select(cell_id, bio1)) |>
+  rename(gdal = bio1) 
+```
+
+```{r}
+grids_diff$agg__agg_c <- grids_diff$agg - grids_diff$agg_c
+grids_diff$agg__join <- grids_diff$agg - grids_diff$join
+grids_diff$agg__join_c <- grids_diff$agg - grids_diff$join_c
+grids_diff$agg__gdal <- grids_diff$agg - grids_diff$gdal
+
+grids_diff$agg_c__join <- grids_diff$agg_c - grids_diff$join
+grids_diff$agg_c__join_c <- grids_diff$agg_c - grids_diff$join_c
+grids_diff$agg_c__gdal <- grids_diff$agg_c - grids_diff$gdal
+
+grids_diff$join__join_c <- grids_diff$join - grids_diff$join_c
+grids_diff$join__gdal <- grids_diff$join - grids_diff$gdal
+
+grids_diff$join_c__gdal <- grids_diff$join_c - grids_diff$gdal
+```
+
+
+### Diferença entre as celulas para Bio1
+
+Segundo as diferenças maximas mostradas a seguir, 
+parece que quando usamos a opção centróide os resultados são diferentes. Tanto
+na grid como nos valares das células.
+
+```{r}
+grids_diff$agg__agg_c |> purrr::discard(is.na) |> max() |> paste("agg__agg_c")
+grids_diff$agg__join |> purrr::discard(is.na) |> max() |> paste("agg__join")
+grids_diff$agg__join_c |> purrr::discard(is.na) |> max() |> paste("agg__join_c")
+grids_diff$agg__gdal |> purrr::discard(is.na) |> max() |> paste("agg__gdal")
+
+grids_diff$agg_c__join |> purrr::discard(is.na) |> max() |> paste("agg_c__join")
+grids_diff$agg_c__join_c |> purrr::discard(is.na) |> max() |> paste("agg_c__join_c")
+grids_diff$agg_c__gdal |> purrr::discard(is.na) |> max() |> paste("agg_c__gdal")
+
+grids_diff$join__join_c |> purrr::discard(is.na) |> max() |> paste("join__join_c")
+grids_diff$join__gdal |> purrr::discard(is.na) |> max() |> paste("join__gdal")
+
+grids_diff$join_c__gdal |> purrr::discard(is.na) |> max() |> paste("join_c__gdal")
+```
+
+
+Diferença maior que limiar:
+```{r}
+limiar <- 0.01
+grids_diff$agg__agg_c |> purrr::discard(is.na) |> purrr::keep(\(x) x>limiar) |> length()
+grids_diff$agg__join |> purrr::discard(is.na) |> purrr::keep(\(x) x>limiar) |> length()
+grids_diff$agg__join_c |> purrr::discard(is.na) |> purrr::keep(\(x) x>limiar) |> length()
+grids_diff$agg__gdal |> purrr::discard(is.na) |> purrr::keep(\(x) x>limiar) |> length()
+
+grids_diff$agg_c__join |> purrr::discard(is.na) |> purrr::keep(\(x) x>limiar) |> length()
+grids_diff$agg_c__join_c |> purrr::discard(is.na) |> purrr::keep(\(x) x>limiar) |> length()
+grids_diff$agg_c__gdal |> purrr::discard(is.na) |> purrr::keep(\(x) x>limiar) |> length()
+
+grids_diff$join__join_c |> purrr::discard(is.na) |> purrr::keep(\(x) x>limiar) |> length()
+grids_diff$join__gdal |> purrr::discard(is.na) |> purrr::keep(\(x) x>limiar) |> length()
+
+grids_diff$join_c__gdal |> purrr::discard(is.na) |> purrr::keep(\(x) x>limiar) |> length()
+```
+
+
+Mapa das células das grids:
+
+```{r}
+area_join_shp["bio1"] |> sf::st_geometry() |> plot()
+grids_diff |> sf::st_union() |> plot(add=T, border="blue")
+area_estudo |> sf::st_transform(sf::st_crs(epsg)) |> sf::st_geometry() |> plot(add=T, border="green")
+```
+
+
+```{r}
+area_aggregate_shp["bio1"] |> sf::st_geometry() |> plot()
+grids_diff |> sf::st_union() |> plot(add=T, border="blue")
+area_estudo |> sf::st_transform(sf::st_crs(epsg)) |> sf::st_geometry() |> plot(add=T, border="green")
+```
+
+```{r}
+area_gdal_shp["bio1"] |> sf::st_geometry() |> plot()
+grids_diff |> sf::st_union() |> plot(add=T, border="blue")
+area_estudo |> sf::st_transform(sf::st_crs(epsg)) |> sf::st_geometry() |> plot(add=T, border="green")
+```
+
+
+
+Diferença das celulas entre todos os testes das grids.
+
+```{r}
+bbox <- grids_diff |> filter(is.na(agg)) |> sf::st_bbox()
+
+
+area_estudo |> sf::st_transform(sf::st_crs(epsg)) |> sf::st_geometry() |> plot()
+grids_diff |> filter(is.na(agg)) |> select(agg) |> plot(add=T, border="blue")
+
+area_estudo |> sf::st_transform(sf::st_crs(epsg)) |> sf::st_geometry() |> plot()
+grids_diff |> filter(is.na(join)) |> select(join) |> plot(add=T, border="green")
+
+area_estudo |> sf::st_transform(sf::st_crs(epsg)) |> sf::st_geometry() |> plot()
+grids_diff |> filter(is.na(gdal)) |> select(gdal) |> plot(add=T, border="red")
+```
+
+Aqui podemos ver que nas grids geradas não existe diferença grande quando não
+usamos a opção ``centroid``. 
+```{r}
+grid_join |> as.data.frame() |> select(cell_id) |> dplyr::anti_join(grid_gdal |> as.data.frame() |> select(cell_id))
+grid_aggregate |> as.data.frame() |> select(cell_id) |> dplyr::anti_join(grid_join |> as.data.frame() |> select(cell_id))
+
+
+grid_gdal |> as.data.frame() |> select(cell_id) |> dplyr::anti_join(grid_join |> as.data.frame() |> select(cell_id))
+
+```
+Comparando as grids com a opção ``centroid`` os resultados mostram....
+
+```{r}
+bbox <- grids_diff |> filter(is.na(agg)) |> sf::st_bbox()
+area_estudo |> sf::st_transform(sf::st_crs(epsg)) |> sf::st_crop(bbox) |> sf::st_geometry() |> plot()
+area_join_shp["bio1"] |> sf::st_crop(bbox) |> sf::st_geometry() |> plot(add=T, border="green")
+grid_join["bio1"]  |> sf::st_crop(bbox) |> sf::st_geometry() |> plot(add=T, border="blue")
+```
+
+```{r}
+bbox <- grids_diff |> filter(is.na(agg)) |> sf::st_bbox()
+area_estudo |> sf::st_transform(sf::st_crs(epsg)) |> sf::st_crop(bbox) |> sf::st_geometry() |> plot()
+area_aggregate_shp["bio1"] |> sf::st_crop(bbox) |> sf::st_geometry() |> plot(add=T, border="green")
+grid_aggregate["bio1"]  |> sf::st_crop(bbox) |> sf::st_geometry() |> plot(add=T, border="blue")
+```
+
+```{r}
+bbox <- grids_diff |> filter(is.na(agg)) |> sf::st_bbox()
+area_estudo |> sf::st_transform(sf::st_crs(epsg)) |> sf::st_crop(bbox) |> sf::st_geometry() |> plot()
+bio_gdal["bio1"] |> sf::st_crop(bbox) |> plot(add=T)
+grid_gdal["bio1"]  |> sf::st_crop(bbox) |> sf::st_geometry() |> plot(add=T, border="blue")
+```
+
+
+```{r}
+area_join_shp["bio1"] |> sf::st_crop(bbox) |> sf::st_geometry() |> plot(border="green")
+grid_gdal["bio1"]  |> sf::st_crop(bbox) |> sf::st_geometry() |> plot(add=T, border="red")
+grid_aggregate["bio1"]  |> sf::st_crop(bbox) |> sf::st_geometry() |> plot(add=T, border="blue")
+```
+
+
+```{r}
+library(microbenchmark)
+.adjust_bbox <- function(x = NULL, cell_size = NULL, crs = NULL) {
+  bbox <- x |>
+    sf::st_bbox()
+
+  centroid <- (bbox |> sf::st_as_sfc() |> sf::st_centroid())[[1]] |>
+    as.list() |>
+    setNames(c("x", "y"))
+
+  n_col <- ((bbox$xmax - bbox$xmin) / cell_size) |> ceiling()
+  n_row <- ((bbox$ymax - bbox$ymin) / cell_size) |> ceiling()
+  tot_w <- n_col * cell_size
+  tot_h <- n_row * cell_size
+  attr(sf::st_geometry(x), "bbox") <- c(
+    xmin = (centroid$x - (tot_w/2)) |> unname(),
+    xmax = (centroid$x - (tot_w/2) + tot_w) |> unname(),
+    ymin = (centroid$y - (tot_h/2)) |> unname(),
+    ymax = (centroid$y - (tot_h/2) + tot_h) |> unname()
+  ) |> sf::st_bbox(crs = crs)
+
+  return(x)
+}
+
+cell_size <- 5000
+x <- amazon_shp |> 
+  sf::st_transform(sf::st_crs(6933)) |>
+  .adjust_bbox(cell_size, crs=sf::st_crs(6933))
+
+ bbox <- st_bbox(x)
+  n_col <- ((bbox$xmax - bbox$xmin) / cell_size) |> unname() |> ceiling()
+  n_row <- ((bbox$ymax - bbox$ymin) / cell_size) |> unname() |> ceiling()
+  
+mbm <- microbenchmark(
+  times = 5,
+  "make_grid" = {
+    grd <- x |>
+      sf::st_make_grid(cellsize = cell_size) |>
+      sf::st_as_sf() |>
+      dplyr::mutate(cell_id = dplyr::row_number()) |>
+      dplyr::rename(geometry = x)
+  },
+  "st_as_sf" = {
+    grd_s <- bbox |>
+      st_as_stars(
+        nx = n_col,
+        ny = n_row,
+        values = seq(1, n_row * n_col)
+      ) |>
+      setNames("cell_id") |>
+      sf::st_as_sf()
+  }
+)
+mbm
+```
