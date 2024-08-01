@@ -12,7 +12,12 @@ input_sdm(...)
 \code{sdm_area} are used.}
 }
 \value{
-A \code{input_sdm} object.
+A \code{input_sdm} object containing:
+   \item{grid}{\code{sf} with \code{POLYGON} geometry representing the grid for the study area.}
+   \item{bbox}{Four corners for the bounding box (class \code{bbox}): minimum value of X, minimum value of Y, maximum value of X, maximum value of Y}
+   \item{cell_size}{\code{numeric} information regarding the size of the cell used to rescale variables to the study area, representing also the cell size in the \code{grid}.}
+   \item{epsg}{\code{character} information about the EPSG used in all slots from \code{sdm_area}.}
+   \item{predictors}{\code{character} vector with predictors names included in \code{sdm_area}.}
 }
 \description{
 This function creates a new \code{input_sdm} object.

@@ -5,7 +5,7 @@
     Output
               caretSDM       
       .......................
-      Class                 : Occurrences
+      Class                 : occurrences
       Species Names         : Aa 
       Number of presences   : 90 
       Independent Test      : TRUE (number of records =  10 )

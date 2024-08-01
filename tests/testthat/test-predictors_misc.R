@@ -1,6 +1,6 @@
 test_that("predictors misc - predictors_names", {
-  sa <- sdm_area(test_path("parana.gpkg"))
-  pred <- read_stars(test_path("parana.tiff"))
+  sa <- sdm_area(parana)
+  pred <- bioc
   suppressWarnings(sa_pred <- add_predictors(sa, pred))
   expect_equal(
     predictors_names(sa_pred),
@@ -9,8 +9,8 @@ test_that("predictors misc - predictors_names", {
 })
 
 test_that("predictors misc - set_predictors_names", {
-  sa <- sdm_area(test_path("parana.gpkg"))
-  pred <- read_stars(test_path("parana.tiff"))
+  sa <- sdm_area(parana)
+  pred <- bioc
   suppressWarnings(sa_pred <- add_predictors(sa, pred))
   expect_equal(get_predictors(sa_pred), sa_pred$grid)
 })

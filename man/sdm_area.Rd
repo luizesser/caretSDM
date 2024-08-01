@@ -14,25 +14,35 @@ sdm_area(
 )
 }
 \arguments{
-\item{x}{A shapefile or a raster. Usually a shapefile from \code{sf} class,
-but rasters from
+\item{x}{A shapefile or a raster. Usually a shapefile from \code{sf} class, but rasters from
 \code{stars}, \code{rasterStack} or \code{SpatRaster} class are also allowed.}
 
 \item{cell_size}{\code{numeric}. The cell size to be used in models.}
 
-\item{crs}{\code{numeric}. Indicates which EPSG should the output grid be
-in. If \code{NULL},
+\item{crs}{\code{numeric}. Indicates which EPSG should the output grid be in. If \code{NULL},
 epsg from \code{x} is used.}
+
+\item{variables_selected}{A \code{character} vector with variables in \code{x} to be used in models.
+If \code{NULL} (standard), all variables in \code{x} are used.}
+
+\item{gdal}{Boolean. Force the use or not of GDAL when available. See details.}
+
+\item{crop_by}{A shapefile from \code{sf} to crop \code{x}.}
 }
 \value{
-A \code{sdm_area} object.
+A \code{sdm_area} object containing:
+   \item{grid}{\code{sf} with \code{POLYGON} geometry representing the grid for the study area.}
+   \item{cell_size}{\code{numeric} information regarding the size of the cell used to rescale
+   variables to the study area, representing also the cell size in the \code{grid}.}
 }
 \description{
 This function creates a new \code{sdm_area} object.
 }
 \details{
-The function returns a \code{sdm_area} object with a grid built upon the
-\code{x} parameter.
+The function returns a \code{sdm_area} object with a grid built upon the \code{x} parameter.
+There are two ways to make the grid and resample the variables in \code{sdm_area}: with and
+without gdal. As standard, if gdal is available in you machine it will be used (\code{gdal = TRUE}),
+otherwise sf/stars will be used.
 }
 \examples{
 # Create sdm_area object
@@ -40,9 +50,9 @@ sa <- sdm_area(parana, cell_size = 25000, crs = 6933)
 
 }
 \seealso{
-\code{\link{WorldClim_data} \link{parana} \link{input_sdm}}
+\code{\link{WorldClim_data} \link{parana} \link{input_sdm}, \link{add_predictors}}
 }
 \author{
-Luíz Fernando Esser (luizesser@gmail.com)
+Luíz Fernando Esser (luizesser@gmail.com) and Reginaldo Ré.
 https://luizfesser.wordpress.com
 }

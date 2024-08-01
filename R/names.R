@@ -1,3 +1,33 @@
+#' Predictors Names Managing
+#'
+#' This function manage predictors names in \code{sdm_area} objects.
+#'
+#' @usage
+#' predictors(x)
+#'
+#' @param x A \code{sdm_area} object to get/set predictors names.
+#' @param new_names \code{character} vector from size \code{length(get_predictor_names(x))}
+#'
+#' @details
+#' This functions is available so users can modify predictors names to better represent them. Use
+#' carefully to avoid giving wrong names to the predictors. Useful to make sure the predictors names
+#' are equal the names in scenarios.
+#'
+#' @return A \code{character} vector with predictors names.
+#'
+#' @seealso \code{\link{parana} \link{sdm_area}}
+#'
+#' @author Luíz Fernando Esser (luizesser@gmail.com)
+#' https://luizfesser.wordpress.com
+#'
+#' @examples
+#' sa <- sdm_area(parana, cell_size = 25000, crs = 6933)
+#' predictors(sa)
+#'
+#' @importFrom dplyr select bind_cols relocate
+#' @importFrom purrr discard
+#'
+#' @export
 #' @rdname predictor_names
 #' @export
 predictors <- function(x) {
@@ -33,7 +63,7 @@ set_predictor_names.sdm_area <- function(x, new_names) {
   )
 
   grd_spatial <- x$grid |>
-    select(c(cell_id, geometry))
+    dplyr::select(c(cell_id, geometry))
   grd_data <- x$grid |>
     as.data.frame() |>
     dplyr::select(-c(cell_id, geometry))

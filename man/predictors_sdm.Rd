@@ -57,7 +57,7 @@ make sure the predictors names are equal the names in scenarios.
 \examples{
 i <- input_sdm(
      occurrences_sdm(occ_data),
-     predictors_sdm(bioc, study_area = parana)
+     sa <- sdm_area(parana, cell_size = 25000, crs = 6933)
      )
 i
 

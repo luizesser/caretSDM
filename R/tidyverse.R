@@ -1,11 +1,27 @@
-#' Title
+#' Tidyverse methods for caretSDM objects
 #'
-#' @param ...
+#' Set of functions to facilitate the use of caretSDM through tidyverse grammatics.
 #'
-#' @return
-#' @export
+#' @usage select(x, ...)
+#'
+#' @param x \code{sdm_area} object
+#' @param ... \code{character} vector with predictors to be selected.
 #'
 #' @examples
+#' # Create sdm_area object
+#' sa <- sdm_area(parana, cell_size = 25000, crs = 6933)
+#'
+#' # Include predictors
+#' sa <- add_predictors(sa, bioc)
+#'
+#' # Select predictors
+#' predictors(sa)
+#' sa <- select(sa, c("bio01", "bio12"))
+#'
+#' @importFrom dplyr select relocate
+#'
+#' @rdname tidyverse-methods
+#' @export
 select.sdm_area <- function(x, ...){
   .check_sdm_area(x)
   grd <- dplyr::select(x$grid, ...)

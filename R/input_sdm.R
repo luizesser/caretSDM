@@ -6,7 +6,12 @@
 #' \code{scenarios}, and/or a \code{sdm_area} object. Ideally, \code{occurrences} and
 #' \code{sdm_area} are used.
 #'
-#' @return A \code{input_sdm} object.
+#' @returns A \code{input_sdm} object containing:
+#'    \item{grid}{\code{sf} with \code{POLYGON} geometry representing the grid for the study area.}
+#'    \item{bbox}{Four corners for the bounding box (class \code{bbox}): minimum value of X, minimum value of Y, maximum value of X, maximum value of Y}
+#'    \item{cell_size}{\code{numeric} information regarding the size of the cell used to rescale variables to the study area, representing also the cell size in the \code{grid}.}
+#'    \item{epsg}{\code{character} information about the EPSG used in all slots from \code{sdm_area}.}
+#'    \item{predictors}{\code{character} vector with predictors names included in \code{sdm_area}.}
 #'
 #' @details
 #' If \code{sdm_area} is used, it can include predictors and scenarios. In this case,

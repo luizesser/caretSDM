@@ -1,0 +1,158 @@
+---
+title: "Araucaria"
+author: "Luíz Fernando Esser"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Araucaria}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+# Using polygons as area in caretSDM
+
+`caretSDM` is a under development R package that uses the powerful `caret` package as the main engine to obtain Species Distribution Models. One of its main attributes is the strong geoprocessing underlying its functions. Here we show how to model species distributions using `caretSDM` through the function `sdm_area` with a polygon.
+
+```{r open libraries}
+library(chooseGCM)
+library(caretSDM)
+library(stars)
+library(dplyr)
+```
+
+## Pre-Processing
+
+### Obtaining example data
+
+We will create some example data. Starting with occurrences and then predictors data. The first one is a function to obtain species data from GBIF, while the second is a function to obtain climatic variables from WorldClim 2.1. You can read more about them by running in the console `?GBIF_data` and `?WorldClim_data`.
+
+```{r GBIF_data}
+# Import data from GBIF
+occ_data <- GBIF_data('Araucaria angustifolia')
+
+# Remove records from outside the natural occurrence area
+occ_data <- filter(occ_data, decimalLongitude >= -64)
+occ_data <- filter(occ_data, decimalLongitude <= -36)
+occ_data <- filter(occ_data, decimalLatitude <= -10)
+occ_data <- filter(occ_data, decimalLatitude >= -80)
+```
+
+```{r worldclim_data}
+## Download current bioclimatic variables
+WorldClim_data(period = "current", resolution = 10)
+
+## Enter bioclimatic variables
+pred_data <- read_stars(list.files("input_data/WorldClim_data_current/", full.names = T), along = "band", normalize_path = F)
+```
+
+```{r study_area}
+study_area <- geobr::read_state("PR")
+```
+
+```{r create_buffer}
+buf <- st_as_sf(occ_data, coords=c(2,3))
+buf <- st_buffer(buf, dist=5)
+buf <- st_union(buf)
+st_crs(buf) <- 4326
+```
+
+```{r sdm_area}
+sa <- sdm_area(study_area, cell_size = 25000, crs = 6933)
+```
+
+```{r add_predictors}
+predictors(sa)
+sa <- add_predictors(sa, pred_data)
+predictors(sa)
+```
+
+```{r input_sdm}
+i_sa <- input_sdm(occurrences_sdm(occ_data, epsg = 4326), sa)
+```
+
+```{r data_clean}
+# funciona
+i_sa <- data_clean(i_sa)
+```
+
+```{r vif_predictors}
+i_sa <- vif_predictors(i_sa)
+```
+
+```{r}
+# Follow with the same SDM workflow:
+i_sa <- input_sdm(occurrences_sdm(occ_data, epsg = 4326), sa) |>
+  data_clean() |>
+  vif_predictors() |>
+  pseudoabsences(method = "bioclim", variables_selected = c("bio1", "bio12", "LENGTH_KM")) |>
+  train_sdm(algo = c("svmLinear2", "mda", "nnet", "nb", "kknn"), variables_selected = c("bio1", "bio12", "LENGTH_KM")) |>
+  predict_sdm(th = 0.9)
+
+```
+
+```{r}
+i <- vif_predictors(predictors(s,
+                               study_area = buf),
+                    area='all',
+                    variables_selected=c("bio1","bio2","bio3","bio4","bio5",
+                                         "bio6","bio7","bio8","bio9","bio10",
+                                         "bio11","bio12","bio13","bio14","bio15",
+                                         "bio16","bio17"))
+
+
+## Get VIF variable selection
+var_names <- predictors_names(i)
+
+# Run chooseGCM
+## Import GCMs data
+s_fut <- import_gcms('/Users/luizesser/Documents/GitHub/input_data/WorldClim_data_future_all') # Folder with all GCMs to use in choose GCMs
+names(s_fut) <- gsub("_ssp585_10_2090","",names(s_fut))
+
+## generate plots
+var_names2 <- c('bio10', 'bio13', 'bio14', 'bio02')
+res <- compare_gcms(s_fut, var_names2, study_area, k = 3)
+res
+
+## Download future data given chooseGCMs result
+#chooseGCM::WorldClim_data(path = 'input_data/WorldClim_data_future', period = 'future', variable = 'bioc', year = c('2050','2090'), gcm = as.character(res$suggested_gcms), ssp = c('245','585'), resolution = 10)
+
+# Run SDM
+## Put all data together
+i <- input_sdm(occurrences(occ_data),
+               predictors(s,
+                          study_area = buf),
+               scenarios("input_data/WorldClim_data_future",
+                         study_area = study_area))
+
+## Data cleaning routine
+i <- data_clean(i)
+
+## Pseudoabsence selection
+i <- pseudoabsences(i, method='bioclim', variables_selected=var_names)
+
+## Modelling
+library(caret)
+ctrl <- trainControl(method = "repeatedcv", number = 4,
+                     repeats = 10, classProbs = TRUE, returnResamp = "all",
+                     summaryFunction = twoClassSummary, savePredictions = "all")
+i <- train_sdm(i,  algo=c('svmLinear2','mda','nnet','nb', 'kknn'), ctrl=ctrl, variables_selected=var_names)
+
+## Predictions and ensembling
+i <- predict_sdm(i, th=0.9)
+
+## Plot ensembles:
+plot_predictions(i, scenario = 'uk_ssp585_10_2090')
+
+# Export data
+## Export rasters
+write_ensembles(i)
+
+## Obtain important data
+mean_validation_metrics(i)
+
+## Export i
+saveRDS(i, 'Araucaria_angustifolia.Rds')
+##### End of Script #####
+
+
+x4 <- Sys.time()
+```

@@ -4,6 +4,8 @@
 \alias{write_ensembles}
 \alias{write_predictions}
 \alias{write_models}
+\alias{write_gpkg}
+\alias{write_gpkg.sdm_area}
 \title{Write caretSDM data}
 \usage{
 write_ensembles(x, path = "results/ensembles", ext = ".tif")
@@ -11,6 +13,10 @@ write_ensembles(x, path = "results/ensembles", ext = ".tif")
 write_predictions(x, path = "results/predictions", ext = ".tif")
 
 write_models(x, path = "results/models")
+
+write_gpkg(x, file_path, file_name)
+
+\method{write_gpkg}{sdm_area}(x, file_path, file_name)
 }
 \arguments{
 \item{x}{Object to be written. Can be of class \code{input_sdm}, \code{predictions} or
@@ -18,6 +24,10 @@ write_models(x, path = "results/models")
 
 \item{path}{A path with filename and the proper extension (see details) or the directory to save
 files in.}
+
+\item{file_path}{A path to save the \code{sdm_area} GeoPackage file.}
+
+\item{file_name}{The name of the \code{sdm_area} GeoPackage file to be saved without extension.}
 
 \item{extension}{How it should be saved?}
 }

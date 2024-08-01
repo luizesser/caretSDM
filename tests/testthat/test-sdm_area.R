@@ -132,8 +132,8 @@ test_that("sdm_area - stars/epsg", {
 
 ## Test stars
 test_that("sdm_area - stars/predictors", {
-  pr_tif_tmp <- set_band_names(pr_tif, c("wc2.1_10m_bio_1", "cell_id"))
-  sa <- sdm_area(pr_tif_tmp, cell_size = 1)
+  sa <- sdm_area(pr_tif, cell_size = 1)
+  sa <- set_predictor_names(sa, c("wc2.1_10m_bio_1", "cell_id"))
   expect_equal(predictors(sa), c("wc2.1_10m_bio_1", "cell_id.2"))
   expect_true("cell_id" %in% colnames(sa$grid))
   expect_true("geometry" %in% colnames(sa$grid))

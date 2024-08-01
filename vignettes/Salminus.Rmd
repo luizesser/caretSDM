@@ -1,0 +1,65 @@
+---
+title: "Salminus"
+author: "Luíz Fernando Esser"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Salminus}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+# Using lines as study_area in caretSDM
+
+`caretSDM` is a under development R package that uses the powerful `caret` package as the main engine to obtain Species Distribution Models. One of its main attributes is the strong geoprocessing underlying its functions. Here we show how to model species distributions using `caretSDM` through the function `sdm_area` with lines instead of polygons. This is implemented mostly thinking in HydroSHEDS database, which is particularly important for continental aquatic environments modeling.
+
+```{r open libraries}
+library(chooseGCM)
+library(caretSDM)
+library(dplyr)
+library(stars)
+```
+
+```{r GBIF_data}
+# Import data from GBIF
+occ_data <- GBIF_data('Salminus brasiliensis')
+```
+
+```{r}
+## Download current bioclimatic variables
+WorldClim_data(period = "current", resolution = 10)
+
+## Enter bioclimatic variables
+pred_data <- read_stars(list.files("input_data/WorldClim_data_current/", full.names = T), along = "band", normalize_path = F)
+pred_data <- set_band_names(pred_data, paste0("bio", 1:19))
+```
+
+```{r study_area}
+study_area <- st_read('input_data/parana_paraguay.gpkg')
+```
+
+```{r create_buffer}
+buf <- st_as_sf(occ_data, coords=c(2,3))
+st_crs(buf) <- 4326
+buf <- st_crop(buf, study_area)
+buf <- st_buffer(buf, dist=5)
+buf <- st_union(buf)
+```
+
+```{r sdm_area}
+sa <- sdm_area(study_area, cell_size = 25000, crs = 6933, gdal = FALSE)
+```
+
+```{r add_predictors}
+predictors(sa)
+sa <- add_predictors(sa, pred_data)
+predictors(sa)
+```
+
+```{r input_sdm}
+i_sa <- input_sdm(occurrences_sdm(occ_data, epsg = 4326), sa)
+```
+
+```{r data_clean}
+# funciona
+i_sa <- data_clean(i_sa, terrestrial = FALSE)
+```

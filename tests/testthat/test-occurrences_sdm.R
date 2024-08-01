@@ -33,7 +33,7 @@ test_that("occurrences - missing lat/long column", {
 
 test_that("occurrences - missing sp column", {
   tb <- tibble(longitude = runif(100), decimalLatitude = runif(100))
-  expect_warning(occurrences_sdm(tb))
+  expect_message(occurrences_sdm(tb))
 })
 
 test_that("occurrences - check data columns names", {
@@ -74,7 +74,7 @@ test_that("occurrences - reordering of columns", {
 test_that("occurrences - species column without proper name", {
   tb <- tibble(decimalLatitude = runif(100), longitude = runif(100), araucaria = c(rep("Aa", 50),
                                                                                    rep("Bb", 50)))
-  expect_warning(occurrences_sdm(tb))
+  expect_message(occurrences_sdm(tb))
 })
 
 #### testar epsgs validos
@@ -172,7 +172,7 @@ test_that("occurrences - check indep_test columns classes", {
 test_that("occurrences - both data have no sp info", {
   tb <- tibble(decimalLatitude = runif(100), longitude = runif(100))
   indep_tb <- tibble(y = runif(100), x = runif(100))
-  expect_warning(oc <- occurrences_sdm(tb, independent_test = indep_tb, independent_test_epsg = 4326))
+  expect_message(oc <- occurrences_sdm(tb, independent_test = indep_tb, independent_test_epsg = 4326))
   a <- unique(oc$occurrences$species)
   b <- unique(oc$independent_test$species)
   expect_equal(a,b)

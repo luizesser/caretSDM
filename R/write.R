@@ -9,6 +9,8 @@
 #' @param path A path with filename and the proper extension (see details) or the directory to save
 #' files in.
 #' @param extension How it should be saved?
+#' @param file_path A path to save the \code{sdm_area} GeoPackage file.
+#' @param file_name The name of the \code{sdm_area} GeoPackage file to be saved without extension.
 #'
 #' @author Luíz Fernando Esser (luizesser@gmail.com)
 #' https://luizfesser.wordpress.com
@@ -92,7 +94,7 @@ write_models <- function(x, path = "results/models") {
   }
 }
 
-
+#' @rdname write_ensembles
 #' @export
 write_gpkg <- function(x, file_path, file_name) {
   assert_directory_cli(
@@ -110,7 +112,7 @@ write_gpkg <- function(x, file_path, file_name) {
   UseMethod("write_gpkg", x)
 }
 
-
+#' @rdname write_ensembles
 #' @export
 write_gpkg.sdm_area <- function(x, file_path, file_name) {
   file_name_ext <- "gpkg"

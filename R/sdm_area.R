@@ -2,37 +2,57 @@
 #'
 #' This function creates a new \code{sdm_area} object.
 #'
-#' @param x A shapefile or a raster. Usually a shapefile from \code{sf} class,
-#' but rasters from
+#' @param x A shapefile or a raster. Usually a shapefile from \code{sf} class, but rasters from
 #' \code{stars}, \code{rasterStack} or \code{SpatRaster} class are also allowed.
 #' @param cell_size \code{numeric}. The cell size to be used in models.
-#' @param crs \code{numeric}. Indicates which EPSG should the output grid be
-#' in. If \code{NULL},
+#' @param crs \code{numeric}. Indicates which EPSG should the output grid be in. If \code{NULL},
 #' epsg from \code{x} is used.
+#' @param variables_selected A \code{character} vector with variables in \code{x} to be used in models.
+#' If \code{NULL} (standard), all variables in \code{x} are used.
+#' @param gdal Boolean. Force the use or not of GDAL when available. See details.
+#' @param crop_by A shapefile from \code{sf} to crop \code{x}.
 #'
 #' @details
-#' The function returns a \code{sdm_area} object with a grid built upon the
-#' \code{x} parameter.
+#' The function returns a \code{sdm_area} object with a grid built upon the \code{x} parameter.
+#' There are two ways to make the grid and resample the variables in \code{sdm_area}: with and
+#' without gdal. As standard, if gdal is available in you machine it will be used (\code{gdal = TRUE}),
+#' otherwise sf/stars will be used.
 #'
-#' @returns A \code{sdm_area} object.
+#' @returns A \code{sdm_area} object containing:
+#'    \item{grid}{\code{sf} with \code{POLYGON} geometry representing the grid for the study area.}
+#'    \item{cell_size}{\code{numeric} information regarding the size of the cell used to rescale
+#'    variables to the study area, representing also the cell size in the \code{grid}.}
 #'
-#' @seealso \code{\link{WorldClim_data} \link{parana} \link{input_sdm}}
+#' @seealso \code{\link{WorldClim_data} \link{parana} \link{input_sdm}, \link{add_predictors}}
 #'
-#' @author Luíz Fernando Esser (luizesser@gmail.com)
+#' @author Luíz Fernando Esser (luizesser@gmail.com) and Reginaldo Ré.
 #' https://luizfesser.wordpress.com
 #'
 #' @examples
 #' # Create sdm_area object
 #' sa <- sdm_area(parana, cell_size = 25000, crs = 6933)
 #'
-#' @import checkmate
-#' @import cli
-#' @import stars
-#' @import tibble
-#' @import dplyr
+#' @importFrom stars st_as_stars read_stars write_stars
+#' @importFrom sf st_crs st_read st_bbox st_as_sf gdal_utils st_crop st_make_valid st_transform
+#' st_write st_as_sf st_intersects st_length st_intersection st_join st_area sf_extSoftVersion
+#' st_geometry_type st_as_sfc st_centroid st_geometry
+#' @importFrom cli cli_abort cli_inform cli_warn
+#' @importFrom dplyr setdiff select all_of any_of join_by relocate mutate arrange desc filter
+#' group_by reframe across inner_join join_by
+#' @importFrom checkmate test_class makeAssertCollection test_list
+#' @importFrom tidyr drop_na
+#' @importFrom fs path dir_exists dir_delete dir_create dir_ls path_file path_ext_remove
+#' @importFrom purrr map map_chr compact list_rbind detect_index
+#' @importFrom future plan multisession sequential
+#' @importFrom parallelly availableCores
+#' @importFrom progressr handlers progressor
+#' @importFrom glue glue
+#' @importFrom furrr future_map2
+#' @importFrom stringr str_replace_all str_replace
 #'
 #' @export
-sdm_area <- function(x, cell_size = NULL, crs = NULL, variables_selected = NULL, gdal = TRUE, crop_by = NULL) {
+sdm_area <- function(x, cell_size = NULL, crs = NULL, variables_selected = NULL, gdal = TRUE,
+                     crop_by = NULL) {
   assert_cli(
     check_int_cli(
       crs,
@@ -106,14 +126,16 @@ sdm_area <- function(x, cell_size = NULL, crs = NULL, variables_selected = NULL,
 }
 
 #' @export
-sdm_area.RasterStack <- function(x, cell_size = NULL, crs = NULL, variables_selected = NULL, gdal= TRUE, crop_by = NULL) {
+sdm_area.RasterStack <- function(x, cell_size = NULL, crs = NULL, variables_selected = NULL,
+                                 gdal= TRUE, crop_by = NULL) {
   xs <- stars::st_as_stars(x)
   sa <- sdm_area(xs, cell_size, crs, variables_selected, gdal, crop_by)
   return(invisible(sa))
 }
 
 #' @export
-sdm_area.SpatRaster <- function(x, cell_size = NULL, crs = NULL, variables_selected = NULL, gdal= TRUE, crop_by = NULL) {
+sdm_area.SpatRaster <- function(x, cell_size = NULL, crs = NULL, variables_selected = NULL,
+                                gdal= TRUE, crop_by = NULL) {
   xs <- stars::st_as_stars(x)
   names(st_dimensions(xs)) <- c("x", "y", "band")
   sa <- sdm_area(xs, cell_size, crs, variables_selected, gdal, crop_by)
@@ -121,7 +143,8 @@ sdm_area.SpatRaster <- function(x, cell_size = NULL, crs = NULL, variables_selec
 }
 
 #' @export
-sdm_area.character <- function(x, cell_size = NULL, crs = NULL, variables_selected = NULL, gdal= TRUE, crop_by = NULL) {
+sdm_area.character <- function(x, cell_size = NULL, crs = NULL, variables_selected = NULL,
+                               gdal= TRUE, crop_by = NULL) {
   xs <- tryCatch(
     sf::st_read(x, quiet = TRUE),
     error = function(e) NA
@@ -153,7 +176,8 @@ sdm_area.character <- function(x, cell_size = NULL, crs = NULL, variables_select
 }
 
 #' @export
-sdm_area.stars <- function(x, cell_size = NULL, crs = NULL, variables_selected = NULL, gdal= TRUE, crop_by = NULL) {
+sdm_area.stars <- function(x, cell_size = NULL, crs = NULL, variables_selected = NULL, gdal= TRUE,
+                           crop_by = NULL) {
   #if (length(names(x)) > 1) {
   #  cli::cli_abort(c(
   #    "x" = "x has more than 1 attribute:",
@@ -211,7 +235,8 @@ sdm_area.stars <- function(x, cell_size = NULL, crs = NULL, variables_selected =
 
   } else {
     info_msg <- c("!" = "Making grid over study area is an expensive task. Please, be patient!")
-    if (gdal) info_msg <- append(info_msg, c("i" = "GDAl not installed. Please, read the instructions {.href [here](https://gdal.org/download.html)}."))
+    if (gdal) info_msg <- append(info_msg, c("i" = "GDAl not installed. Please, read the
+                                             instructions {.href [here](https://gdal.org/download.html)}."))
     info_msg <- c(info_msg, c("i"="Using sf/Stars to make the grid and resample the variables."))
     cli::cli_inform(info_msg)
     l <- list(
@@ -258,7 +283,7 @@ sdm_area.stars <- function(x, cell_size = NULL, crs = NULL, variables_selected =
           purrr::map(
             \(v_name) {
               x[v_name] |>
-                write_stars(
+                stars::write_stars(
                   fs::path(in_dir, v_name, ext="tif"),
                   options="COMPRESS=LZW"
                 )
@@ -343,7 +368,7 @@ sdm_area.stars <- function(x, cell_size = NULL, crs = NULL, variables_selected =
 
   grd <- out_dir |>
     list.files(full.names = T) |>
-    read_stars(normalize_path = F) |>
+    stars::read_stars(normalize_path = F) |>
     setNames(var_names)
 
   n_col <- attr(grd, "dimensions")[["x"]]$to
@@ -411,7 +436,8 @@ sdm_area.stars <- function(x, cell_size = NULL, crs = NULL, variables_selected =
 }
 
 #' @export
-sdm_area.sf <- function(x, cell_size = NULL, crs = NULL, variables_selected = NULL, gdal= TRUE, crop_by = NULL) {
+sdm_area.sf <- function(x, cell_size = NULL, crs = NULL, variables_selected = NULL, gdal= TRUE,
+                        crop_by = NULL) {
   assert_class_cli(
     sf::st_crs(x),
     classes = "crs",
@@ -489,7 +515,8 @@ sdm_area.sf <- function(x, cell_size = NULL, crs = NULL, variables_selected = NU
     )
   } else {
     info_msg <- c("!" = "Making grid over the study area is an expensive task. Please, be patient!")
-    if (gdal) info_msg <- append(info_msg, c("i" = "GDAl not installed. Please, read the instructions {.href [here](https://gdal.org/download.html)}."))
+    if (gdal) info_msg <- append(info_msg, c("i" = "GDAl not installed. Please, read the
+                                             instructions {.href [here](https://gdal.org/download.html)}."))
     info_msg <- c(info_msg, c("i"="Using sf/Stars to make the grid and resample the variables."))
     cli::cli_inform(info_msg)
     l <- list(
@@ -640,7 +667,7 @@ sdm_area.sf <- function(x, cell_size = NULL, crs = NULL, variables_selected = NU
 
 
   grd <- fs::dir_ls(out_dir_warp, type = "file") |>
-    read_stars(normalize_path = F) |>
+    stars::read_stars(normalize_path = F) |>
     setNames(
       fs::dir_ls(out_dir, type = "file") |>
         fs::path_file() |>
@@ -1020,7 +1047,7 @@ plot.sdm_area <- function(x, y, ...) {
   n_row <- ((bbox$ymax - bbox$ymin) / cell_size) |> unname() |> ceiling()
 
   grd <- bbox |>
-    st_as_stars(
+    stars::st_as_stars(
       nx = n_col,
       ny = n_row,
       dx = cell_size,

@@ -10,7 +10,6 @@ if (fs::dir_exists(here::here("tests", "testthat", "testdata"))) {
     sf::st_read(quiet = TRUE)
 }
 
-
 # Predictors
 
 test_that("predictors - sdm_area", {

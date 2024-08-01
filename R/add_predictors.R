@@ -1,39 +1,44 @@
 #' Add predictors to \code{sdm_area}
 #'
-#' This function includes predictors to the \code{sdm_area} object.
+#' This function includes new predictors to the \code{sdm_area} object.
 #'
-#' @usage add_predictors(sdm_area, pred, variables_selected = NULL)
+#' @usage add_predictors(sdm_area, pred, variables_selected = NULL, gdal= TRUE)
 #'
 #' @param sdm_area A \code{sdm_area} object.
 #' @param pred \code{RasterStack}, \code{SpatRaster} or \code{stars} object with predictors data.
-#' @param variables_selected \code{character} vector with variables NULLmes in \code{pred} to be used
+#' @param variables_selected \code{character} vector with variables names in \code{pred} to be used
 #' as predictors. If \code{NULL} adds all variables.
+#' @param gdal Boolean. Force the use or not of GDAL when available. See details.
 #'
-#' @returns The input \code{sdm_area} object with a new grid including the \code{pred} data as a
-#' \code{sf} object.
+#' @details
+#' The function returns a \code{sdm_area} object with a grid built upon the \code{x} parameter.
+#' There are two ways to make the grid and resample the variables in \code{sdm_area}: with and
+#' without gdal. As standard, if gdal is available in you machine it will be used (\code{gdal = TRUE}),
+#' otherwise sf/stars will be used.
+#'
+#' @returns The same input \code{sdm_area} object is returned including the \code{pred} data binded
+#' to the previous \code{grid}.
 #'
 #' @seealso \code{\link{sdm_area} \link{predictors} \link{bioc}}
 #'
-#' @author Luíz FerNULLndo Esser (luizesser@gmail.com)
+#' @author Luíz Fernando Esser (luizesser@gmail.com) and Reginaldo Ré.
 #' \link{https://luizfesser.wordpress.com}
 #'
 #' @examples
 #' # Create sdm_area object
-#' sa <- sdm_area(paraNULL, cell_size = 25000, epsg = 6933)
+#' sa <- sdm_area(parana, cell_size = 25000, epsg = 6933)
 #'
 #' # Include predictors
 #' sa <- add_predictors(sa, bioc)
 #'
-#' @import checkmate
-#' @import cli
-#' @import stars
-#' @import tibble
-#' @import dplyr
+#' @importFrom cli cli_abort
+#' @importFrom dplyr inner_join join_by select
+#' @importFrom sf st_crs st_bbox
 #'
 #' @export
 add_predictors <- function(sdm_area, pred, variables_selected = NULL, gdal= TRUE) {
   if (!is_sdm_area(sdm_area)) {
-    cli_abort(c(
+    cli::cli_abort(c(
       "x" = "The sdm_area argument must be an instance of class sdm_area."
     ))
   }

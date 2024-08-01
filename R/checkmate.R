@@ -1,3 +1,4 @@
+#' @import checkmate
 check_int_cli <- function(...){
   return(checkmate::check_int(...))
 }
