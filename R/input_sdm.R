@@ -125,7 +125,7 @@ print.input_sdm <- function(x) {
       }
     } else if (is_sdm_area(x$predictors)) {
       cat("--------  Predictors  ---------\n")
-      cat("Number of Predictors          :", ncol(i_sa$predictors$grid)-2, "\n")
+      cat("Number of Predictors          :", ncol(x$predictors$grid)-2, "\n")
       cat(cat("Predictors Names              : "), cat(predictors(x$predictors), sep = ", "), "\n")
       if (!is.null(x$predictors$bbox)) {
         cat("Extent                        :", sf::st_bbox(x$predictors$grid), "(xmin, xmax, ymin, ymax)\n")
