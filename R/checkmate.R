@@ -193,7 +193,7 @@ fmt_bullet_cli <- function(res, cli_bullet="i"){
    }
  }
 
-make_assertion = function(x, res, var.name, collection) {
+make_assertion <- function(x, res, var.name, collection) {
   if (!isTRUE(res)) {
     checkmate::assertString(var.name, .var.name = ".var.name")
 

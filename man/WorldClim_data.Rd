@@ -4,7 +4,8 @@
 \alias{WorldClim_data}
 \title{Download WorldClim v.2.1 bioclimatic data}
 \usage{
-WorldClim_data(period = 'current',
+WorldClim_data(path = NULL,
+               period = 'current',
                variable = 'bioc',
                year = '2030',
                gcm = 'mi',

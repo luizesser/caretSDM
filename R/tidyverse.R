@@ -33,3 +33,20 @@ select.sdm_area <- function(x, ...){
   x$grid <- grd
   return(x)
 }
+
+#' @rdname tidyverse-methods
+#' @export
+select.input_sdm <- function(x, ...){
+  i <- x
+  x <- x$predictors
+  .check_sdm_area(x)
+  grd <- dplyr::select(x$grid, ...)
+  grd_col_names <- colnames(grd)
+  if (!("cell_id" %in% grd_col_names)) {
+    grd[["cell_id"]] <- x$grid[["cell_id"]]
+  }
+  grd <- grd |> dplyr::relocate(cell_id, ...)
+  x$grid <- grd
+  i$predictors <- x
+  return(i)
+}

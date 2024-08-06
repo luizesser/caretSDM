@@ -125,16 +125,16 @@ print.input_sdm <- function(x) {
       }
     } else if (is_sdm_area(x$predictors)) {
       cat("--------  Predictors  ---------\n")
-      cat("Number of Predictors          :", length(x$predictors$predictors), "\n")
-      cat(cat("Predictors Names              : "), cat(x$predictors$predictors, sep = ", "), "\n")
+      cat("Number of Predictors          :", ncol(i_sa$predictors$grid)-2, "\n")
+      cat(cat("Predictors Names              : "), cat(predictors(x$predictors), sep = ", "), "\n")
       if (!is.null(x$predictors$bbox)) {
-        cat("Extent                        :", x$predictors$bbox, "(xmin, xmax, ymin, ymax)\n")
+        cat("Extent                        :", sf::st_bbox(x$predictors$grid), "(xmin, xmax, ymin, ymax)\n")
       }
       if (!is.null(x$predictors$epsg)) {
-        cat("EPSG                          :", x$predictors$epsg, "\n")
+        cat("EPSG                          :", substr(sf::st_crs(x$predictors$grid)$input, 1, 20), "\n")
       }
       if (!is.null(x$predictors$resolution)) {
-        cat("Resolution                    :", x$predictors$cell_size, "(x, y)\n")
+        cat("Resolution                    :", paste0("(", x$predictors$cell_size, ", ", x$cell_size, ")"), "(x, y)\n")
       }
       if (!is.null(x$predictors$variable_selection$vif)) {
         cat(

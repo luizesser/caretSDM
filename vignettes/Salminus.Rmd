@@ -30,7 +30,6 @@ WorldClim_data(period = "current", resolution = 10)
 
 ## Enter bioclimatic variables
 pred_data <- read_stars(list.files("input_data/WorldClim_data_current/", full.names = T), along = "band", normalize_path = F)
-pred_data <- set_band_names(pred_data, paste0("bio", 1:19))
 ```
 
 ```{r study_area}
@@ -46,20 +45,44 @@ buf <- st_union(buf)
 ```
 
 ```{r sdm_area}
-sa <- sdm_area(study_area, cell_size = 25000, crs = 6933, gdal = FALSE)
+sa <- sdm_area(study_area, cell_size = 25000, crs = 6933, gdal = F)
 ```
 
-```{r add_predictors}
-predictors(sa)
-sa <- add_predictors(sa, pred_data)
-predictors(sa)
+```{r add_predictors, eval=F}
+get_predictor_names(sa)
+sa <- add_predictors(sa, pred_data, gdal = F)
+get_predictor_names(sa)
+```
+
+```{r}
+sa <- add_scenarios(sa)
 ```
 
 ```{r input_sdm}
-i_sa <- input_sdm(occurrences_sdm(occ_data, epsg = 4326), sa)
+i_sa <- input_sdm(occurrences_sdm(occ_data, crs = 4326), sa)
 ```
 
 ```{r data_clean}
 # funciona
 i_sa <- data_clean(i_sa, terrestrial = FALSE)
+```
+
+```{r vif_predictors}
+i_sa <- vif_predictors(i_sa)
+```
+
+```{r pseudoabsence}
+i_sa <- pseudoabsences(i_sa, method = "random", variables_selected = "vif") 
+```
+
+```{r}
+i_sa <- train_sdm(i_sa, algo = c("svmLinear2", "mda", "nnet", "nb", "kknn"), variables_selected = "vif")
+```
+
+```{r}
+i_sa <- predict_sdm(i_sa, th = 0.74)
+```
+
+```{r}
+plot_predictions(i_sa)
 ```

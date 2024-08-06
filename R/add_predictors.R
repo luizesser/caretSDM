@@ -9,6 +9,7 @@
 #' @param variables_selected \code{character} vector with variables names in \code{pred} to be used
 #' as predictors. If \code{NULL} adds all variables.
 #' @param gdal Boolean. Force the use or not of GDAL when available. See details.
+#' @param i \code{input_sdm} or \code{sdm_area} object to retrieve data from.
 #'
 #' @details
 #' The function returns a \code{sdm_area} object with a grid built upon the \code{x} parameter.
@@ -110,13 +111,17 @@ add_predictors.sf <- function(sdm_area, pred, variables_selected = NULL, gdal= T
 
 
 .add_predictors <- function(sdm_area, pred, variables_selected = NULL, gdal= TRUE) {
+  #if(sf::st_crs(pred) != sf::st_crs(sdm_area$grid)){
+  #  pred <- st_transform(pred, crs=sf::st_crs(sdm_area$grid))
+  #}
+  #pred <- pred[sdm_area$grid]
   pred_sdm_area <- pred |>
     sdm_area(
       cell_size = sdm_area$cell_size,
       crs = sdm_area$grid |> sf::st_crs(),
       variables_selected = variables_selected,
       gdal = gdal,
-      crop_by = sdm_area$grid |> sf::st_bbox()
+      crop_by = sdm_area$grid #|> sf::st_bbox()
     )
   if (is.null(pred_sdm_area)){
     return(sdm_area)
@@ -140,4 +145,17 @@ add_predictors.sf <- function(sdm_area, pred, variables_selected = NULL, gdal= T
   sdm_area$grid <- grd
 
   return(sdm_area)
+}
+
+#' @rdname add_predictors
+#' @export
+get_predictors <- function(i) {
+  assert_cli(
+    check_class_cli(i, c('input_sdm')),
+    check_class_cli(i, c('sdm_area'))
+  )
+  if (is_input_sdm(i)) {
+    i <- i$predictors
+  }
+  return(i$grid)
 }

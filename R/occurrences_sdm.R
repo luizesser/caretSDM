@@ -6,8 +6,8 @@
 #' occurrences_sdm(x,
 #'                 independent_test = NULL,
 #'                 p = 0.1,
-#'                 epsg = NULL,
-#'                 independent_test_epsg = NULL,
+#'                 crs = NULL,
+#'                 independent_test_crs = NULL,
 #'                 ...)
 #'
 #' @param x A \code{data.frame}, \code{tibble} or \code{sf} with species records.
@@ -16,8 +16,8 @@
 #' \code{data.frame} or a \code{sf}, with species records to be used as independent test. Structure
 #' and names should be identical to those in \code{x}.
 #' @param p Numeric. Fraction of data to be used as independent test. Standard is 0.1.
-#' @param epsg Numeric. EPSG of \code{x}.
-#' @param independent_test_epsg Numeric. EPSG of \code{independent_test} if it is a
+#' @param crs Numeric. CRS of \code{x}.
+#' @param independent_test_crs Numeric. CRS of \code{independent_test} if it is a
 #' \code{data.frame}.
 #' @param ... A vector with column names addressing the columns with species names, longitude and
 #' latitude, respectively, in \code{x}.
@@ -41,7 +41,7 @@
 #' https://luizfesser.wordpress.com
 #'
 #' @examples
-#' occ <- occurrences_sdm(occ, epsg = 6933)
+#' occ <- occurrences_sdm(occ, crs = 6933)
 #'
 #' @importFrom caret createDataPartition
 #' @importFrom dplyr select
@@ -49,31 +49,31 @@
 #' @importFrom cli cli_alert_warning cli_abort
 #'
 #' @export
-occurrences_sdm <- function(x, independent_test = NULL, p = 0.1, epsg = NULL,
-                            independent_test_epsg = NULL, ...) {
+occurrences_sdm <- function(x, independent_test = NULL, p = 0.1, crs = NULL,
+                            independent_test_crs = NULL, ...) {
   UseMethod("occurrences_sdm")
 }
 
 #' @export
-occurrences_sdm.data.frame <- function(x, independent_test = NULL, p = 0.1, epsg = NULL,
-                                       independent_test_epsg = NULL, ...) {
-  occ <- .occurrences(x, independent_test, p, epsg, independent_test_epsg, ...)
+occurrences_sdm.data.frame <- function(x, independent_test = NULL, p = 0.1, crs = NULL,
+                                       independent_test_crs = NULL, ...) {
+  occ <- .occurrences(x, independent_test, p, crs, independent_test_crs, ...)
   return(occ)
 }
 
 #' @export
-occurrences_sdm.tbl_df <- function(x, independent_test = NULL, p = 0.1, epsg = NULL,
-                                   independent_test_epsg = NULL, ...) {
+occurrences_sdm.tbl_df <- function(x, independent_test = NULL, p = 0.1, crs = NULL,
+                                   independent_test_crs = NULL, ...) {
   x <- as.data.frame(x)
-  occ <- .occurrences(x, independent_test, p, epsg, independent_test_epsg, ...)
+  occ <- .occurrences(x, independent_test, p, crs, independent_test_crs, ...)
   return(occ)
 }
 
 #' @export
-occurrences_sdm.sf <- function(x, independent_test = NULL, p = 0.1, epsg = NULL,
-                               independent_test_epsg = NULL, ...) {
+occurrences_sdm.sf <- function(x, independent_test = NULL, p = 0.1, crs = NULL,
+                               independent_test_crs = NULL, ...) {
   x <- cbind(dplyr::select(as.data.frame(x), -"geometry"), sf::st_coordinates(x))
-  occ <- .occurrences(x, independent_test, p, epsg, independent_test_epsg, ...)
+  occ <- .occurrences(x, independent_test, p, crs, independent_test_crs, ...)
   return(occ)
 }
 
@@ -118,10 +118,10 @@ get_coords <- function(i) {
 }
 
 #' @export
-.occurrences <- function(x, independent_test = NULL, p = 0.1, epsg = NULL,
-                         independent_test_epsg = NULL, ...) {
-  assert_int_cli(epsg, lower = 1024, upper = 32766, null.ok = TRUE)
-  assert_int_cli(independent_test_epsg, lower = 1024, upper = 32766, null.ok = TRUE)
+.occurrences <- function(x, independent_test = NULL, p = 0.1, crs = NULL,
+                         independent_test_crs = NULL, ...) {
+  assert_int_cli(crs, lower = 1024, upper = 32766, null.ok = TRUE)
+  assert_int_cli(independent_test_crs, lower = 1024, upper = 32766, null.ok = TRUE)
   if(isTRUE(independent_test)){
     assert_numeric_cli(p, lower = 0.0001, upper = 0.9999, len=1)
   }
@@ -135,11 +135,11 @@ get_coords <- function(i) {
     colnames(x) <- c("species", "decimalLongitude", "decimalLatitude")
   }
   spp_names <- unique(x[,1])
-  if (is.null(epsg)) {
-    epsg <- 4326
+  if (is.null(crs)) {
+    crs <- 4326
   }
   x <- sf::st_as_sf(x, coords = colnames(x)[c(2, 3)])
-  sf::st_crs(x) <- epsg
+  sf::st_crs(x) <- crs
   if (!is.null(independent_test)) {
     if (isTRUE(independent_test)) {
       n <- as.vector(caret::createDataPartition(x$species, list = FALSE, p = p))
@@ -150,24 +150,24 @@ get_coords <- function(i) {
         spp_names = spp_names,
         n_presences = table(x2$species),
         independent_test = indep_test_data,
-        epsg = epsg
+        crs = crs
       ), class = "occurrences")
     } else if(any(class(independent_test) %in% c("data.frame"))) {
       if(any(class(independent_test) %in% c("sf"))) {
         if(is.na(sf::st_crs(independent_test))) {
-          if(is.null(independent_test_epsg)) {
+          if(is.null(independent_test_crs)) {
             cli::cli_abort(c(
-              "x" = "{.var independent_test_epsg} is {.cls {class(independent_test_epsg)}}, must be
+              "x" = "{.var independent_test_crs} is {.cls {class(independent_test_crs)}}, must be
               numeric",
-              "i" = "To avoid geographical errors, it is important to know your EPSGs. To solve this
-              issue inform the EPSG using the {.var independent_test_epsg} parameter. Usually, GPS
+              "i" = "To avoid geographical errors, it is important to know your CRSs. To solve this
+              issue inform the CRS using the {.var independent_test_crs} parameter. Usually, GPS
               systems use EPSG:4326."
             ))
           } else {
-            sf::st_crs(independent_test) <- sf::st_crs(independent_test_epsg)
+            sf::st_crs(independent_test) <- sf::st_crs(independent_test_crs)
           }
         } else {
-          independent_test_epsg <- sf::st_crs(independent_test)
+          independent_test_crs <- sf::st_crs(independent_test)
         }
         if("species" %in% colnames(independent_test)) {
           if(!all(spp_names %in% unique(independent_test$species))) {
@@ -199,15 +199,15 @@ get_coords <- function(i) {
           spp_names = spp_names,
           n_presences = table(x$species),
           independent_test = independent_test,
-          epsg = epsg
+          crs = crs
         ), class = "occurrences")
       } else {
-        if(is.null(independent_test_epsg)){
+        if(is.null(independent_test_crs)){
           cli::cli_abort(c(
-            "x" = "{.var independent_test_epsg} is {.cls {class(independent_test_epsg)}}, must be
+            "x" = "{.var independent_test_crs} is {.cls {class(independent_test_crs)}}, must be
             numeric",
-            "i" = "To avoid geographical errors, it is important to know your EPSGs. To solve this
-              issue inform the EPSG using the {.var independent_test_epsg} parameter. Usually, GPS
+            "i" = "To avoid geographical errors, it is important to know your CRSs. To solve this
+              issue inform the CRS using the {.var independent_test_crs} parameter. Usually, GPS
               systems use EPSG:4326."
           ))
         }
@@ -233,16 +233,16 @@ get_coords <- function(i) {
         }
         independent_test <- sf::st_as_sf(independent_test,
                                          coords = colnames(independent_test)[c(2, 3)])
-        sf::st_crs(independent_test) <- independent_test_epsg
-        if(independent_test_epsg != epsg){
-          independent_test <- sf::st_transform(independent_test, epsg)
+        sf::st_crs(independent_test) <- independent_test_crs
+        if(independent_test_crs != crs){
+          independent_test <- sf::st_transform(independent_test, crs)
         }
         occ <- structure(list(
           occurrences = x,
           spp_names = spp_names,
           n_presences = table(x$species),
           independent_test = independent_test,
-          epsg = epsg
+          crs = crs
         ), class = "occurrences")
       }
     } else {
@@ -257,7 +257,7 @@ get_coords <- function(i) {
       occurrences = x,
       spp_names = spp_names,
       n_presences = table(x$species),
-      epsg = epsg
+      crs = crs
     ), class = "occurrences")
   }
 

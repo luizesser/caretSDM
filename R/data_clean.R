@@ -39,13 +39,13 @@
 #'
 #' @examples
 #' # Create sdm_area object:
-#' sa <- sdm_area(parana, cell_size = 25000, epsg = 6933)
+#' sa <- sdm_area(parana, cell_size = 25000, crs = 6933)
 #'
 #' # Include predictors:
 #' sa <- add_predictors(sa, bioc)
 #'
 #' # Create input_sdm:
-#' i <- input_sdm(occurrences_sdm(occ, epsg= 6933), sa)
+#' i <- input_sdm(occurrences_sdm(occ, crs= 6933), sa)
 #'
 #' # Clean coordinates:
 #' i <- data_clean(i)
@@ -68,7 +68,7 @@ data_clean <- function(occ, pred = NULL, species = NA, lon = NA, lat = NA, terre
   } else {
     y <- occ
   }
-  if(y$epsg != 4326){
+  if(y$crs != 4326){
     sf_t <- sf::st_transform(y$occurrences, 4326)
     x <- sf_to_df_sdm(sf_t)
   } else {
@@ -129,8 +129,8 @@ data_clean <- function(occ, pred = NULL, species = NA, lon = NA, lat = NA, terre
                       coords = c(lon, lat),
                       crs = 4326)
   }
-  if(sf::st_crs(x) != sf::st_crs(y$epsg)){
-    x <- sf::st_transform(x, y$epsg)
+  if(sf::st_crs(x) != sf::st_crs(y$crs)){
+    x <- sf::st_transform(x, y$crs)
   }
   y$occurrences <- x
   clean_methods <- c("NAs", "Capitals", "Centroids", "Geographically Duplicated", "Identical Lat/Long", "Institutions", "Invalid")

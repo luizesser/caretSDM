@@ -1,3 +1,4 @@
+library(tibble)
 test_that("occurrences - data.frame - single species", {
   df <- data.frame(spp_names = rep("Aa", 100), longitude = runif(100), decimalLatitude = runif(100))
   expect_s3_class(occurrences_sdm(df), "occurrences")
@@ -77,41 +78,41 @@ test_that("occurrences - species column without proper name", {
   expect_message(occurrences_sdm(tb))
 })
 
-#### testar epsgs validos
-test_that("occurrences - epsg out of range", {
+#### testar crss validos
+test_that("occurrences - crs out of range", {
   tb <- tibble(decimalLatitude = runif(100), longitude = runif(100), sp = c(rep("Aa", 50),
                                                                             rep("Bb", 50)))
-  expect_error(occurrences_sdm(tb, epsg = 1))
+  expect_error(occurrences_sdm(tb, crs = 1))
 })
 
-test_that("occurrences - epsg not numeric", {
+test_that("occurrences - crs not numeric", {
   tb <- tibble(decimalLatitude = runif(100), longitude = runif(100), sp = c(rep("Aa", 50),
                                                                             rep("Bb", 50)))
-  expect_error(occurrences_sdm(tb, epsg = "a"))
+  expect_error(occurrences_sdm(tb, crs = "a"))
 })
 
-test_that("occurrences - valid epsg", {
+test_that("occurrences - valid crs", {
   tb <- tibble(decimalLatitude = runif(100), longitude = runif(100), sp = c(rep("Aa", 50),
                                                                             rep("Bb", 50)))
-  oc <- occurrences_sdm(tb, epsg = 4326)
-  expect_true(oc$epsg==4326)
+  oc <- occurrences_sdm(tb, crs = 4326)
+  expect_true(oc$crs==4326)
 })
 
-test_that("occurrences - independent epsg", {
+test_that("occurrences - independent crs", {
   set.seed(1)
   tb <- tibble(decimalLatitude = runif(100), longitude = runif(100), sp = c(rep("Aa", 100)))
   indep_tb <- tibble(y = runif(100), x = runif(100), spp = c(rep("Aa", 100)))
-  oc <- occurrences_sdm(tb, independent_test = indep_tb, epsg = 6933, independent_test_epsg = 4326)
+  oc <- occurrences_sdm(tb, independent_test = indep_tb, crs = 6933, independent_test_crs = 4326)
   s <- oc$occurrences
   expect_equal(as.character(st_crs(oc$occurrences)[1]), "EPSG:6933")
   expect_equal(as.character(st_crs(oc$independent_test)[1]), "EPSG:6933")
 })
 
-test_that("occurrences - independent epsg not given", {
+test_that("occurrences - independent crs not given", {
   set.seed(1)
   tb <- tibble(decimalLatitude = runif(100), longitude = runif(100), sp = c(rep("Aa", 100)))
   indep_tb <- tibble(y = runif(100), x = runif(100), spp = c(rep("Aa", 100)))
-  expect_error(occurrences_sdm(tb, independent_test = indep_tb, epsg = 6933))
+  expect_error(occurrences_sdm(tb, independent_test = indep_tb, crs = 6933))
 })
 
 #### testar dados independentes
@@ -119,7 +120,7 @@ test_that("occurrences - independent data has same colnames as data", {
   tb <- tibble(decimalLatitude = runif(100), longitude = runif(100), sp = c(rep("Aa", 50),
                                                                             rep("Bb", 50)))
   indep_tb <- tibble(y = runif(100), x = runif(100), spp = c(rep("Aa", 50), rep("Bb", 50)))
-  oc <- occurrences_sdm(tb, independent_test = indep_tb, independent_test_epsg = 4326)
+  oc <- occurrences_sdm(tb, independent_test = indep_tb, independent_test_crs = 4326)
   expect_true(all(colnames(oc$independent_test) == colnames(oc$occurrences)))
 })
 
@@ -172,7 +173,7 @@ test_that("occurrences - check indep_test columns classes", {
 test_that("occurrences - both data have no sp info", {
   tb <- tibble(decimalLatitude = runif(100), longitude = runif(100))
   indep_tb <- tibble(y = runif(100), x = runif(100))
-  expect_message(oc <- occurrences_sdm(tb, independent_test = indep_tb, independent_test_epsg = 4326))
+  expect_message(oc <- occurrences_sdm(tb, independent_test = indep_tb, independent_test_crs = 4326))
   a <- unique(oc$occurrences$species)
   b <- unique(oc$independent_test$species)
   expect_equal(a,b)
@@ -182,13 +183,13 @@ test_that("occurrences - indep_data has no sp info and data has two species", {
   tb <- tibble(decimalLatitude = runif(100), longitude = runif(100), sp = c(rep("Aa", 50),
                                                                             rep("Bb", 50)))
   indep_tb <- tibble(y = runif(100), x = runif(100))
-  expect_error(occurrences_sdm(tb, independent_test = indep_tb, independent_test_epsg = 4326))
+  expect_error(occurrences_sdm(tb, independent_test = indep_tb, independent_test_crs = 4326))
 })
 
 test_that("occurrences - indep_data has no sp info and data has one species", {
   tb <- tibble(decimalLatitude = runif(100), longitude = runif(100), sp = c(rep("Aa", 100)))
   indep_tb <- tibble(y = runif(100), x = runif(100))
-  oc <- occurrences_sdm(tb, independent_test = indep_tb, independent_test_epsg = 4326)
+  oc <- occurrences_sdm(tb, independent_test = indep_tb, independent_test_crs = 4326)
   expect_equal(unique(oc$occurrences$species),unique(oc$independent_test$species))
 })
 
@@ -197,27 +198,27 @@ test_that("occurrences - indep_data is from wrong class", {
   expect_error(occurrences_sdm(tb, independent_test = "a"))
 })
 
-test_that("occurrences - indep_data is sf with no epsg", {
+test_that("occurrences - indep_data is sf with no crs", {
   tb <- tibble(decimalLatitude = runif(100), longitude = runif(100), sp = c(rep("Aa", 100)))
   indep_sf <- tibble(decimalLatitude = runif(100), longitude = runif(100), sp = c(rep("Aa", 100)))
   indep_sf <- st_as_sf(indep_sf, coords=colnames(indep_sf)[c(2,1)])
   expect_error(occurrences_sdm(tb, independent_test = indep_sf))
 })
 
-test_that("occurrences - indep_data is sf with given epsg", {
+test_that("occurrences - indep_data is sf with given crs", {
   tb <- tibble(decimalLatitude = runif(100), longitude = runif(100), sp = c(rep("Aa", 100)))
   indep_sf <- tibble(decimalLatitude = runif(100), longitude = runif(100), sp = c(rep("Aa", 100)))
   indep_sf <- st_as_sf(indep_sf, coords=colnames(indep_sf)[c(2,1)])
-  oc <- occurrences_sdm(tb, independent_test = indep_sf, epsg=6933, independent_test_epsg = 4326)
+  oc <- occurrences_sdm(tb, independent_test = indep_sf, crs=6933, independent_test_crs = 4326)
   expect_true(st_crs(oc$independent_test) == st_crs(oc$occurrences))
 })
 
-test_that("occurrences - indep_data is sf with epsg in it.", {
+test_that("occurrences - indep_data is sf with crs in it.", {
   tb <- tibble(decimalLatitude = runif(100), longitude = runif(100), sp = c(rep("Aa", 100)))
   indep_sf <- tibble(decimalLatitude = runif(100), longitude = runif(100), sp = c(rep("Aa", 100)))
   indep_sf <- st_as_sf(indep_sf, coords=colnames(indep_sf)[c(2,1)])
   sf::st_crs(indep_sf) <- 4326
-  oc <- occurrences_sdm(tb, independent_test = indep_sf, epsg=6933)
+  oc <- occurrences_sdm(tb, independent_test = indep_sf, crs=6933)
   expect_true(st_crs(oc$independent_test) == st_crs(oc$occurrences))
 })
 
@@ -226,7 +227,7 @@ test_that("occurrences - indep_data is sf with no species column.", {
   indep_sf <- tibble(decimalLatitude = runif(100), longitude = runif(100))
   indep_sf <- st_as_sf(indep_sf, coords=colnames(indep_sf)[c(2,1)])
   sf::st_crs(indep_sf) <- 4326
-  oc <- occurrences_sdm(tb, independent_test = indep_sf, epsg=6933)
+  oc <- occurrences_sdm(tb, independent_test = indep_sf, crs=6933)
   expect_true("species" %in% colnames(oc$independent_test))
 })
 
@@ -236,7 +237,7 @@ test_that("occurrences - indep_data is sf with no species column, but there are 
   indep_sf <- tibble(decimalLatitude = runif(100), longitude = runif(100))
   indep_sf <- st_as_sf(indep_sf, coords=colnames(indep_sf)[c(2,1)])
   sf::st_crs(indep_sf) <- 4326
-  expect_error(occurrences_sdm(tb, independent_test = indep_sf, epsg=6933))
+  expect_error(occurrences_sdm(tb, independent_test = indep_sf, crs=6933))
 })
 
 test_that("occurrences - indep_data is sf has species column, but there are missing species.", {
@@ -246,7 +247,7 @@ test_that("occurrences - indep_data is sf has species column, but there are miss
                      species = c(rep("Aa", 100)))
   indep_sf <- st_as_sf(indep_sf, coords=colnames(indep_sf)[c(2,1)])
   sf::st_crs(indep_sf) <- 4326
-  expect_error(occurrences_sdm(tb, independent_test = indep_sf, epsg=6933))
+  expect_error(occurrences_sdm(tb, independent_test = indep_sf, crs=6933))
 })
 
 # Test species_names
@@ -339,10 +340,10 @@ test_that("occurrences - sf_output bbox", {
                c(0.38049389, 0.14330438, 0.92861520, 0.86433947))
 })
 
-test_that("occurrences - sf_output epsg", {
+test_that("occurrences - sf_output crs", {
   set.seed(1)
   tb <- tibble(decimalLatitude = runif(100), longitude = runif(100), sp = c(rep("Aa", 100)))
-  oc <- occurrences_sdm(tb, independent_test = TRUE, epsg=6933)
+  oc <- occurrences_sdm(tb, independent_test = TRUE, crs=6933)
   s <- oc$occurrences
   expect_equal(as.character(st_crs(oc$occurrences)[1]), "EPSG:6933")
   expect_equal(as.character(st_crs(oc$independent_test)[1]), "EPSG:6933")

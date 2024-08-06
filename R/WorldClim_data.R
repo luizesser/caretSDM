@@ -4,7 +4,8 @@
 #' (https://www.worldclim.org/data/index.html) considering multiple GCMs, time periods and SSPs.
 #'
 #' @usage
-#' WorldClim_data(period = 'current',
+#' WorldClim_data(path = NULL,
+#'                period = 'current',
 #'                variable = 'bioc',
 #'                year = '2030',
 #'                gcm = 'mi',

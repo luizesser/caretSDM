@@ -131,30 +131,26 @@ test_that("sdm_area - stars/epsg", {
 })
 
 ## Test stars
-test_that("sdm_area - stars/predictors", {
+test_that("sdm_area - stars/predictors - wrong names", {
   sa <- sdm_area(pr_tif, cell_size = 1)
-  sa <- set_predictor_names(sa, c("wc2.1_10m_bio_1", "cell_id"))
-  expect_equal(predictors(sa), c("wc2.1_10m_bio_1", "cell_id.2"))
-  expect_true("cell_id" %in% colnames(sa$grid))
-  expect_true("geometry" %in% colnames(sa$grid))
+  expect_error(set_predictor_names(sa, c("wc2.1_10m_bio_1", "cell_id")))
+  expect_error(set_predictor_names(sa, c("wc2.1_10m_bio_1", "geometry")))
 })
 
-test_that("sdm_area - stars/predictors chossing some vars", {
-  pr_tif_tmp <- set_band_names(pr_tif, c("wc2.1_10m_bio_1", "wc2.1_10m_bio_2"))
-  sa <- sdm_area(pr_tif_tmp, cell_size = 1, variables_selected = c("wc2.1_10m_bio_1"))
-  expect_equal(predictors(sa), c("wc2.1_10m_bio_1"))
+test_that("sdm_area - stars/predictors choosing some vars", {
+  sa <- sdm_area(pr_tif, cell_size = 1, variables_selected = c("wc2.1_10m_bio_1", "wc2.1_10m_bio_12"))
+  sa <- set_predictor_names(sa, c("bio1", "bio12"))
+  expect_equal(predictors(sa), c("bio1", "bio12"))
   expect_true("cell_id" %in% colnames(sa$grid))
   expect_true("geometry" %in% colnames(sa$grid))
 })
 
 test_that("sdm_area - stars/predictors chossing some vars using list", {
-  pr_tif_tmp <- set_band_names(pr_tif, c("wc2.1_10m_bio_1", "wc2.1_10m_bio_2"))
-  sa <- sdm_area(pr_tif_tmp, cell_size = 1, variables_selected = list("wc2.1_10m_bio_1"))
+  sa <- sdm_area(pr_tif, cell_size = 1, variables_selected = list("wc2.1_10m_bio_1"))
   expect_equal(predictors(sa), c("wc2.1_10m_bio_1"))
   expect_true("cell_id" %in% colnames(sa$grid))
   expect_true("geometry" %in% colnames(sa$grid))
 })
-
 
 test_that("sdm_area - stars/grid-bbox", {
   sa <- sdm_area(pr_tif, cell_size = 1)
@@ -251,6 +247,16 @@ test_that("sdm_area - print", {
   expect_snapshot(print(sa), error = FALSE)
 })
 
+test_that("sdm_area - stars' crs = NA", {
+  pr_tif2 <- pr_tif
+  st_crs(pr_tif2) <- NA
+  expect_error(sdm_area(pr_tif2, cell_size = 50000, crs=6933, gdal=F))
+})
+
+test_that("sdm_area - crs=NA", {
+  expect_error(sdm_area(pr_tif, cell_size = 50000, crs=NA, gdal=F))
+})
+
 ## Test outputs
 test_that("sdm_area - GEOMTYPE - sf", {
   if (fs::dir_exists(here::here("tests", "testthat", "testdata"))) {
@@ -337,3 +343,54 @@ test_that("sdm_area - sdm_area para ser detectado com avisos", {
     )
   )
 })
+
+# test crop!=NULL
+test_that("sdm_area - crop_by tem crs diferente", {
+  expect_error(sdm_area(bioc, cell_size = 50000, crs = 6933, crop_by = pr_gpkg))
+})
+
+test_that("sdm_area - crop_by tem crs igual", {
+  pr <- sf::st_transform(pr_gpkg, crs=6933)
+  sa <- sdm_area(bioc, cell_size = 50000, crs = 6933, crop_by = pr)
+  expect_equal(sf::st_crs(pr)[2], sf::st_crs(sa$grid)[2])
+})
+
+test_that("sdm_area - crop_by tem crs diferente de bioc e crs=NULL", {
+  pr <- sf::st_transform(pr_gpkg, crs=6933)
+  expect_error(sdm_area(bioc, cell_size = 50000, crs = NULL, crop_by = pr))
+})
+
+# print
+test_that("sdm_area - print", {
+  sa <- sdm_area(bioc, cell_size = 50000, crs = 6933)
+  expect_snapshot(sa)
+})
+
+# test gdal=F
+test_that("sdm_area - sf+gdal=F", {
+  sa <- sdm_area(pr_gpkg, cell_size = 50000, crs=6933, gdal=F)
+  expect_snapshot(sa)
+})
+
+test_that("sdm_area - sf+gdal=F areas do not intersect", {
+  am <- sf::st_transform(amazon_shp, crs=6933)
+  expect_warning(sdm_area(pr_gpkg, cell_size = 50000, crs=6933, crop_by = am, gdal=F))
+})
+
+test_that("sdm_area - sf+gdal=F numeric col", {
+  pr_gpkg2 <- pr_gpkg
+  class(pr_gpkg2$CODIGOIB1) <- "numeric"
+  sa <- sdm_area(pr_gpkg2, cell_size = 50000, crs=6933, gdal=F)
+  expect_true(is.numeric(sa$grid$CODIGOIB1))
+})
+
+test_that("sdm_area - stars+gdal=F", {
+  sa <- sdm_area(pr_tif, cell_size = 50000, crs=6933, gdal=F)
+  expect_snapshot(sa)
+})
+
+test_that("sdm_area - stars+gdal=F areas do not intersect", {
+  am <- sf::st_transform(amazon_shp, crs=6933)
+  expect_warning(sdm_area(pr_tif, cell_size = 50000, crs=6933, crop_by = am, gdal=F))
+})
+

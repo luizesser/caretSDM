@@ -3,26 +3,35 @@
 \name{predictors}
 \alias{predictors}
 \alias{predictors.sdm_area}
+\alias{predictors.input_sdm}
 \alias{set_predictor_names}
+\alias{set_predictor_names.input_sdm}
 \alias{set_predictor_names.sdm_area}
 \alias{get_predictor_names}
 \alias{get_predictor_names.sdm_area}
+\alias{get_predictor_names.input_sdm}
 \title{Predictors Names Managing}
 \usage{
 predictors(x)
 
 \method{predictors}{sdm_area}(x, ...)
 
+\method{predictors}{input_sdm}(x, ...)
+
 set_predictor_names(x, new_names)
+
+\method{set_predictor_names}{input_sdm}(x, new_names)
 
 \method{set_predictor_names}{sdm_area}(x, new_names)
 
 get_predictor_names(x)
 
 \method{get_predictor_names}{sdm_area}(x)
+
+\method{get_predictor_names}{input_sdm}(x)
 }
 \arguments{
-\item{x}{A \code{sdm_area} object to get/set predictors names.}
+\item{x}{A \code{sdm_area} or \code{input_sdm} object to get/set predictors names.}
 
 \item{new_names}{\code{character} vector from size \code{length(get_predictor_names(x))}}
 }

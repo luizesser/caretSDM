@@ -10,8 +10,8 @@
 occurrences_sdm(x,
                 independent_test = NULL,
                 p = 0.1,
-                epsg = NULL,
-                independent_test_epsg = NULL,
+                crs = NULL,
+                independent_test_crs = NULL,
                 ...)
 
 n_records(i)
@@ -30,9 +30,9 @@ and names should be identical to those in \code{x}.}
 
 \item{p}{Numeric. Fraction of data to be used as independent test. Standard is 0.1.}
 
-\item{epsg}{Numeric. EPSG of \code{x}.}
+\item{crs}{Numeric. CRS of \code{x}.}
 
-\item{independent_test_epsg}{Numeric. EPSG of \code{independent_test} if it is a
+\item{independent_test_crs}{Numeric. CRS of \code{independent_test} if it is a
 \code{data.frame}.}
 
 \item{...}{A vector with column names addressing the columns with species names, longitude and
@@ -57,7 +57,7 @@ it is only necessary a species column.
 \code{get_coords} return a \code{data.frame} with coordinates of species records.
 }
 \examples{
-occ <- occurrences_sdm(occ, epsg = 6933)
+occ <- occurrences_sdm(occ, crs = 6933)
 
 }
 \seealso{

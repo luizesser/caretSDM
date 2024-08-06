@@ -103,7 +103,7 @@ add_scenarios.stars <- function(sdm_area, scen, scenarios_names = NULL, pred_as_
   fut_names <- scen[1] |>
     split("band") |>
     names()
-  pres_names <- sdm_area$predictors
+  pres_names <- get_predictor_names(sdm_area)
   if (!any(fut_names %in% pres_names)) {
     stop("The names of future variables do not match with any predictors")
   }
@@ -130,34 +130,4 @@ add_scenarios.stars <- function(sdm_area, scen, scenarios_names = NULL, pred_as_
   sa_data$data <- l
   sdm_area$scenarios <- sa_data
   return(sdm_area)
-}
-
-#' @export
-.sdm_area <- function(x) {
-  sa <- structure(
-    list(
-      grid = x$grid,
-      bbox = x$bbox,
-      cell_size = x$cell_size,
-      epsg = x$epsg,
-      predictors = x$predictors
-    ),
-    class = "sdm_area"
-  )
-  return(sa)
-}
-
-#' Print method for predictors
-#' @exportS3Method base::print
-print.sdm_area <- function(x) {
-  cat("          caretSDM         \n")
-  cat("...........................\n")
-  cat("Class                     : sdm_area\n")
-  cat("Extent                    :", x$bbox, "(xmin, xmax, ymin, ymax)\n")
-  cat("EPSG                      :", x$epsg, "\n")
-  cat("Resolution                :", x$cell_size, "(x, y)\n")
-  if (!is.null(x$predictors)) {
-    cat("Number of Predictors      :", length(x$predictors), "\n")
-    cat(cat("Predictors Names          : "), cat(x$predictors, sep = ", "), "\n")
-  }
 }

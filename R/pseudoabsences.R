@@ -67,14 +67,14 @@
 #' i <- pseudoabsence(i, method="bioclim", variables_selected = "vif")
 #' i
 #'
-#' @import dismo
-#' @import sp
-#' @import dplyr
-#' @import stars
+#' @importFrom dismo bioclim
+#' @importFrom sf st_centroid st_as_sf st_crs st_transform
+#' @importFrom dplyr select all_of filter
+#' @importFrom stars st_extract
 #'
 #' @export
 pseudoabsences <- function(occ, pred = NULL, method = "random", n_set = 10, n_pa = NULL, variables_selected = NULL, th = 0) {
-  if (class(occ) == "input_sdm") {
+  if (is_input_sdm(occ)) {
     y <- occ$occurrences
     pred <- occ$predictors
   } else {
@@ -115,11 +115,11 @@ pseudoabsences <- function(occ, pred = NULL, method = "random", n_set = 10, n_pa
     cat("Using variables selected by ", variables_selected, ": ", selected_vars)
   }
   if (is_predictors(pred)) {
-    suppressWarnings(df <- st_centroid(st_as_sf(filter(na.omit(pred$data), band %in% selected_vars))))
-    df <- select(cbind(pred$grid, df), -"geometry.1")
+    suppressWarnings(df <- sf::st_centroid(sf::st_as_sf(dplyr::filter(na.omit(pred$data), band %in% selected_vars))))
+    df <- dplyr::select(cbind(pred$grid, df), -"geometry.1")
   } else if (is_sdm_area(pred)) {
     df <- pred$grid |>
-      select(all_of(c("cell_id", selected_vars)))
+      dplyr::select(dplyr::all_of(c("cell_id", selected_vars)))
   }
 
   if (method == "random") {
@@ -140,8 +140,13 @@ pseudoabsences <- function(occ, pred = NULL, method = "random", n_set = 10, n_pa
   if (method == "bioclim") {
     if (class(occ) == "input_sdm") {
       l <- sapply(y$spp_names, function(sp) {
-        occ2 <- df[df$cell_id %in% y$occurrences[y$occurrences$species == sp, ]$cell_id, ]
-        model <- dismo::bioclim(x = select(as.data.frame(occ2), all_of(selected_vars)))
+        if(sf::st_crs(y$occurrences) != sf::st_crs(df)){
+           sf_occ <- sf::st_transform(y$occurrences, crs = sf::st_crs(df))
+        } else {
+          sf_occ <- y$occurrences
+        }
+        occ2 <- st_intersection(sf_occ, df)
+        model <- dismo::bioclim(x = dplyr::select(as.data.frame(occ2), dplyr::all_of(selected_vars)))
         p <- predict(model, as.data.frame(df))
         p[p[] > th] <- NA
         p <- data.frame(cell_id = df$cell_id, pred = p)
@@ -209,7 +214,7 @@ pseudoabsences <- function(occ, pred = NULL, method = "random", n_set = 10, n_pa
 #' @export
 n_pseudoabsences <- function(i) {
   x=i
-  if (class(x) == "input_sdm") {
+  if (is_input_sdm(x)) {
     y <- x$occurrences
   } else {
     y <- x
@@ -221,7 +226,7 @@ n_pseudoabsences <- function(i) {
 #' @export
 pseudoabsence_method <- function(i) {
   x=i
-  if (class(x) == "input_sdm") {
+  if (is_input_sdm(x)) {
     y <- x$occurrences
   } else {
     y <- x
@@ -233,7 +238,7 @@ pseudoabsence_method <- function(i) {
 #' @export
 pseudoabsence_data <- function(i) {
   x=i
-  if (class(x) == "input_sdm") {
+  if (is_input_sdm(x)) {
     y <- x$occurrences
   } else {
     y <- x

@@ -117,7 +117,7 @@ train_sdm <- function(occ, pred = NULL, algo, ctrl = NULL, variables_selected = 
   if (is.null(ctrl)) {
     ctrl <- caret::trainControl(
       method = "repeatedcv", number = 4, repeats = 1, classProbs = TRUE, returnResamp = "all", # retornar folds
-      summaryFunction = twoClassSummary, savePredictions = "all", allowParallel = FALSE
+      summaryFunction = caret::twoClassSummary, savePredictions = "all", allowParallel = FALSE
     )
   }
   algo2 <- algo
@@ -407,16 +407,22 @@ train_sdm <- function(occ, pred = NULL, algo, ctrl = NULL, variables_selected = 
       occ2 <- dplyr::filter(env, env$cell_id %in% occ2)
       occ2 <- dplyr::select(occ2, dplyr::all_of(selected_vars))
     } else if (is_sdm_area(pred)) {
-      occ2 <- z$occurrences |>
-        dplyr::filter(species == sp) |>
-        dplyr::select(dplyr::all_of(selected_vars))
+      #occ2 <- z$occurrences |>
+      #  dplyr::filter(species == sp) |>
+      #  dplyr::select(dplyr::all_of(selected_vars))
+      ### Talvez alguma coisa com st_intersect?
+      if(sf::st_crs(z$occurrences) != sf::st_crs(pred$grid)){
+          occ2 <- sf::st_transform(z$occurrences, crs = sf::st_crs(pred$grid))
+      }
+      suppressWarnings(occ2 <- st_intersection(occ2, pred$grid))
     }
 
     for (i in 1:length(z$pseudoabsences$data[[sp]])) {
       pa <- z$pseudoabsences$data[[sp]][[i]]
-      pa <- pa[, match(colnames(occ2), colnames(pa))]
+      pa <- pa[, names(occ2)[match(names(pa), names(occ2))]]
+      occ2 <- occ2[, names(occ2)[match(names(pa), names(occ2))]]
       x <- rbind(occ2, pa)
-      x <- dplyr::select(as.data.frame(x), selected_vars)
+      x <- dplyr::select(as.data.frame(x), dplyr::all_of(selected_vars))
       df <- as.factor(c(rep("presence", nrow(occ2)), rep("pseudoabsence", nrow(pa))))
 
       if (class(algo) == "list" & !"fit" %in% names(algo)) {

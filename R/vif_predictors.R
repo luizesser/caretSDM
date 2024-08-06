@@ -73,7 +73,7 @@ vif_predictors <- function(pred, area = "all", th = 0.5, maxobservations = 5000,
     v <- usdm::vifcor(p, th = th, size = maxobservations)
   } else if (is_sdm_area(x)) {
     if (is.null(variables_selected)) {
-      selected_variables <- x$predictors
+      selected_variables <- predictors(x)
     }
     facnum <- function(x) {
       return(as.numeric(as.factor(x)))

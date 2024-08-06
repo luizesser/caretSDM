@@ -2,9 +2,12 @@
 % Please edit documentation in R/add_predictors.R
 \name{add_predictors}
 \alias{add_predictors}
+\alias{get_predictors}
 \title{Add predictors to \code{sdm_area}}
 \usage{
 add_predictors(sdm_area, pred, variables_selected = NULL, gdal= TRUE)
+
+get_predictors(i)
 }
 \arguments{
 \item{sdm_area}{A \code{sdm_area} object.}
@@ -15,6 +18,8 @@ add_predictors(sdm_area, pred, variables_selected = NULL, gdal= TRUE)
 as predictors. If \code{NULL} adds all variables.}
 
 \item{gdal}{Boolean. Force the use or not of GDAL when available. See details.}
+
+\item{i}{\code{input_sdm} or \code{sdm_area} object to retrieve data from.}
 }
 \value{
 The same input \code{sdm_area} object is returned including the \code{pred} data binded

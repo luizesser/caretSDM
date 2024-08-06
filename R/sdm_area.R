@@ -32,7 +32,7 @@
 #' # Create sdm_area object
 #' sa <- sdm_area(parana, cell_size = 25000, crs = 6933)
 #'
-#' @importFrom stars st_as_stars read_stars write_stars
+#' @importFrom stars st_as_stars read_stars write_stars st_dimensions
 #' @importFrom sf st_crs st_read st_bbox st_as_sf gdal_utils st_crop st_make_valid st_transform
 #' st_write st_as_sf st_intersects st_length st_intersection st_join st_area sf_extSoftVersion
 #' st_geometry_type st_as_sfc st_centroid st_geometry
@@ -137,7 +137,7 @@ sdm_area.RasterStack <- function(x, cell_size = NULL, crs = NULL, variables_sele
 sdm_area.SpatRaster <- function(x, cell_size = NULL, crs = NULL, variables_selected = NULL,
                                 gdal= TRUE, crop_by = NULL) {
   xs <- stars::st_as_stars(x)
-  names(st_dimensions(xs)) <- c("x", "y", "band")
+  names(stars::st_dimensions(xs)) <- c("x", "y", "band")
   sa <- sdm_area(xs, cell_size, crs, variables_selected, gdal, crop_by)
   return(invisible(sa))
 }
@@ -388,7 +388,7 @@ sdm_area.stars <- function(x, cell_size = NULL, crs = NULL, variables_selected =
     x <- sf::st_transform(x, sf::st_crs(crs))
   }
 
-  x |>
+  x <- x |>
     sf::st_as_sf() |>
     sf::st_make_valid()
 
@@ -1067,6 +1067,7 @@ plot.sdm_area <- function(x, y, ...) {
     sf::st_geometry_type(by_geometry = F) %in%
     c("LINESTRING", "MULTILINESTRING", "CIRCULARSTRING", "MULTICURVE")
 }
+
 .try_split <- function(x = NULL) {
   x_tmp <- try(split(x), silent = T)
   if (!("try-error" %in% class(x_tmp))) {
@@ -1117,7 +1118,6 @@ plot.sdm_area <- function(x, y, ...) {
   )
 }
 
-
 .adjust_geom_col <- function(x = NULL) {
   geom_name <- attr(x, "sf_column")
   x <- x |>
@@ -1131,6 +1131,6 @@ plot.sdm_area <- function(x, y, ...) {
 }
 
 .is_integer <- function(n) {
-  (is.numeric(n) && !is_float(n))
+  (is.numeric(n) && !.is_float(n))
 }
 

@@ -1,7 +1,7 @@
 test_that("data_clean - normal path with sdm_area", {
-  sa <- sdm_area(parana, cell_size = 25000, epsg = 6933)
+  sa <- sdm_area(parana, cell_size = 25000, crs = 6933)
   sa <- add_predictors(sa, bioc)
-  oc <- occurrences_sdm(occ, independent_test = TRUE, epsg= 6933)
+  oc <- occurrences_sdm(occ, independent_test = TRUE, crs= 6933)
   i <- input_sdm(oc, sa)
   i <- data_clean(i)
   expect_true(st_crs(i$occurrences$occurrences) == st_crs(oc$occurrences))
@@ -15,8 +15,8 @@ test_that("data_clean - normal path with sdm_area", {
 })
 
 test_that("data_clean - normal path with pred", {
-  pred <- predictors_sdm(bioc)
-  oc <- occurrences_sdm(occ, independent_test = TRUE, epsg= 6933)
+  pred <- sdm_area(bioc, cell_size = 1)
+  oc <- occurrences_sdm(occ, independent_test = TRUE, crs= 6933)
   i <- input_sdm(oc, pred)
   i <- data_clean(i)
   expect_true(st_crs(i$occurrences$occurrences) == st_crs(oc$occurrences))
@@ -30,7 +30,7 @@ test_that("data_clean - normal path with pred", {
 })
 
 test_that("data_clean - normal path without pred", {
-  oc <- occurrences_sdm(occ, epsg= 6933)
+  oc <- occurrences_sdm(occ, crs= 6933)
   i <- input_sdm(oc)
   i <- data_clean(i)
   expect_true(st_crs(i$occurrences$occurrences) == st_crs(oc$occurrences))
@@ -44,7 +44,7 @@ test_that("data_clean - normal path without pred", {
 })
 
 test_that("data_clean - normal path with occurences", {
-  oc <- occurrences_sdm(occ, epsg= 6933)
+  oc <- occurrences_sdm(occ, crs= 6933)
   i <- data_clean(oc)
   expect_true(st_crs(i$occurrences) == st_crs(oc$occurrences))
   expect_true(sf::st_geometry_type(oc$occurrences, by_geometry = FALSE) ==
@@ -58,12 +58,12 @@ test_that("data_clean - normal path with occurences", {
 })
 
 test_that("data_clean - normal path with pred at wgs84", {
-  pred <- predictors_sdm(bioc)
+  pred <- sdm_area(bioc, cell_size = 1)
   occ2 <- sf::st_as_sf(occ,
                      coords = c("decimalLongitude", "decimalLatitude"),
                      crs = 6933)
   occ2 <- sf::st_transform(occ2, crs = 4326)
-  oc <- occurrences_sdm(occ2, independent_test = TRUE, epsg= 4326)
+  oc <- occurrences_sdm(occ2, independent_test = TRUE, crs= 4326)
   i <- input_sdm(oc, pred)
   i <- data_clean(i)
   expect_true(st_crs(i$occurrences$occurrences) == st_crs(oc$occurrences))

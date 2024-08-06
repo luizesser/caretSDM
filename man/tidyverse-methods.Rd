@@ -2,9 +2,12 @@
 % Please edit documentation in R/tidyverse.R
 \name{select.sdm_area}
 \alias{select.sdm_area}
+\alias{select.input_sdm}
 \title{Tidyverse methods for caretSDM objects}
 \usage{
 select(x, ...)
+
+\method{select}{input_sdm}(x, ...)
 }
 \arguments{
 \item{x}{\code{sdm_area} object}
