@@ -107,6 +107,27 @@ test_that("add_predictors - stack/terra", {
       "wc2.1_10m_bio_12"
     )
   )
+
+})
+
+test_that("add_predictors, but there is no overlap", {
+  expect_error(add_predictors(sa, amazon_shp))
+})
+
+test_that("get_predictors - sdm_area", {
+  sa_pred <- add_predictors(sa, pr_raster)
+  expect_equal(get_predictors(sa_pred), sa_pred$grid)
+})
+
+test_that("get_predictors - input_sdm", {
+  sa_pred <- add_predictors(sa, pr_raster)
+  expect_equal(get_predictors(input_sdm(sa_pred)), sa_pred$grid)
+})
+
+test_that("add_predictors, character input", {
+  sa_pred <- add_predictors(sa, here::here("tests", "testthat", "testdata", "parana.tiff"))
+  sa_pred2 <- add_predictors(sa, pr_raster)
+  expect_equal(sa_pred$grid, sa_pred2$grid)
 })
 
 
