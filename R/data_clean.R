@@ -105,14 +105,15 @@ data_clean <- function(occ, pred = NULL, species = NA, lon = NA, lat = NA, terre
     if (sf::st_crs(x2) != sf::st_crs(pred$grid)) {
       x2 <- sf::st_transform(x2, crs = sf::st_crs(pred$grid))
     }
-    if (is_predictors(pred)) {
-      preds <- stars::st_rasterize(sf::st_as_sf(pred$grid))
-      x2 <- sf::st_transform(x2, crs = sf::st_crs(preds))
-      teste <- cbind(stars::st_extract(preds, x2), x2$species)
-      x <- na.omit(teste[!duplicated(select(as.data.frame(teste), -"geometry")), ])
-      colnames(x) <- c("cell_id", "species", "geometry")
-      x <- select(x, c("species"))
-    } else if (is_sdm_area(pred)) {
+    #if (is_predictors(pred)) {
+    #  preds <- stars::st_rasterize(sf::st_as_sf(pred$grid))
+    #  x2 <- sf::st_transform(x2, crs = sf::st_crs(preds))
+    #  teste <- cbind(stars::st_extract(preds, x2), x2$species)
+    #  x <- na.omit(teste[!duplicated(select(as.data.frame(teste), -"geometry")), ])
+    #  colnames(x) <- c("cell_id", "species", "geometry")
+    #  x <- select(x, c("species"))
+    #} else
+    if (is_sdm_area(pred)) {
       teste <- pred$grid |>
         stars::st_rasterize() |>
         stars::st_extract(x2) |>
@@ -172,14 +173,15 @@ data_clean <- function(occ, pred = NULL, species = NA, lon = NA, lat = NA, terre
       if (sf::st_crs(x2) != sf::st_crs(pred$grid)) {
         x2 <- sf::st_transform(x2, crs = sf::st_crs(pred$grid))
       }
-      if (is_predictors(pred)) {
-        preds <- stars::st_rasterize(sf::st_as_sf(pred$grid))
-        x2 <- sf::st_transform(x2, crs = sf::st_crs(preds))
-        teste <- cbind(stars::st_extract(preds, x2), x2$species)
-        x <- na.omit(teste[!duplicated(select(as.data.frame(teste), -"geometry")), ])
-        colnames(x) <- c("cell_id", "species", "geometry")
-        x <- select(x, c("species"))
-      } else if (is_sdm_area(pred)) {
+      #if (is_predictors(pred)) {
+      #  preds <- stars::st_rasterize(sf::st_as_sf(pred$grid))
+      #  x2 <- sf::st_transform(x2, crs = sf::st_crs(preds))
+      #  teste <- cbind(stars::st_extract(preds, x2), x2$species)
+      #  x <- na.omit(teste[!duplicated(select(as.data.frame(teste), -"geometry")), ])
+      #  colnames(x) <- c("cell_id", "species", "geometry")
+      #  x <- select(x, c("species"))
+      #} else
+      if (is_sdm_area(pred)) {
         teste <- pred$grid |>
           stars::st_rasterize() |>
           stars::st_extract(x2) |>

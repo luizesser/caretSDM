@@ -76,11 +76,11 @@ i_sa <- pseudoabsences(i_sa, method = "random", variables_selected = "vif")
 ```
 
 ```{r}
-i_sa <- train_sdm(i_sa, algo = c("svmLinear2", "mda", "nnet", "nb", "kknn"), variables_selected = "vif")
+i_sa <- train_sdm(i_sa, algo = c("svmLinear2", "mda", "nnet", "kknn"), variables_selected = "vif")
 ```
 
 ```{r}
-i_sa <- predict_sdm(i_sa, th = 0.74)
+i_sa <- predict_sdm(i_sa, th = 0.75)
 ```
 
 ```{r}

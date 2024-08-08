@@ -249,7 +249,7 @@ test_that("sdm_area - print", {
 
 test_that("sdm_area - stars' crs = NA", {
   pr_tif2 <- pr_tif
-  st_crs(pr_tif2) <- NA
+  sf::st_crs(pr_tif2) <- NA
   expect_error(sdm_area(pr_tif2, cell_size = 50000, crs=6933, gdal=F))
 })
 

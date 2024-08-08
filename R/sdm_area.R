@@ -38,7 +38,7 @@
 #' st_geometry_type st_as_sfc st_centroid st_geometry
 #' @importFrom cli cli_abort cli_inform cli_warn
 #' @importFrom dplyr setdiff select all_of any_of join_by relocate mutate arrange desc filter
-#' group_by reframe across inner_join join_by
+#' group_by reframe across inner_join join_by distinct
 #' @importFrom checkmate test_class makeAssertCollection test_list
 #' @importFrom tidyr drop_na
 #' @importFrom fs path dir_exists dir_delete dir_create dir_ls path_file path_ext_remove
@@ -757,8 +757,8 @@ sdm_area.sf <- function(x, cell_size = NULL, crs = NULL, variables_selected = NU
         dplyr::across(where(.is_integer), ~ median(.x, na.rm = TRUE)),
         dplyr::across(where(is.character), ~ .x[[1]])
       ) |>
-      distinct() |>
-      select(-..weighting_factor)
+      dplyr::distinct() |>
+      dplyr::select(-..weighting_factor)
   )
   grd <- grd_geometry |>
     dplyr::inner_join(grd, by = dplyr::join_by(cell_id))

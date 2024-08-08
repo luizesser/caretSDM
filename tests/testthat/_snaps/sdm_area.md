@@ -25,6 +25,20 @@
       Number of Predictors      : 4 
       Predictors Names          : GID0, CODIGOIB1, NOMEUF2, SIGLAUF3 
 
+---
+
+    Code
+      sa
+    Output
+                caretSDM         
+      ...........................
+      Class                     : sdm_area
+      Extent                    : -5274583 -3300323 -4624583 -2700323 (xmin, xmax, ymin, ymax)
+      CRS                       : WGS 84 / NSIDC EASE- 
+      Resolution                : (50000, 50000) (x, y)
+      Number of Predictors      : 2 
+      Predictors Names          : bio01, bio12 
+
 # sdm_area - sdm_area para ser detectado
 
     Code
@@ -49,4 +63,32 @@
       ! A sdm_area object was detected but some parameters are different. Please check it!
       i The cell size of the polygon of the row 1 of the grid is different from the cell_size.
       i Detected CRS (WGS 84 / NSIDC EASE-) is different from informed one (EPSG:5388).
+
+# sdm_area - sf+gdal=F
+
+    Code
+      sa
+    Output
+                caretSDM         
+      ...........................
+      Class                     : sdm_area
+      Extent                    : -5276744 -3295037 -4626744 -2795037 (xmin, xmax, ymin, ymax)
+      CRS                       : EPSG:6933 
+      Resolution                : (50000, 50000) (x, y)
+      Number of Predictors      : 4 
+      Predictors Names          : GID0, CODIGOIB1, NOMEUF2, SIGLAUF3 
+
+# sdm_area - stars+gdal=F
+
+    Code
+      sa
+    Output
+                caretSDM         
+      ...........................
+      Class                     : sdm_area
+      Extent                    : -5286881 -3291876 -4586881 -2691876 (xmin, xmax, ymin, ymax)
+      CRS                       : EPSG:6933 
+      Resolution                : (50000, 50000) (x, y)
+      Number of Predictors      : 2 
+      Predictors Names          : wc2.1_10m_bio_1, wc2.1_10m_bio_12 
 

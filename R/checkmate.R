@@ -168,6 +168,27 @@ assert_list_cli <- function(x, ..., .var.name = vname(x), add = NULL){
   ))
 }
 
+assert_file_exists_cli <- function(x, ..., .var.name = vname(x), add = NULL){
+  return(invisible(
+    make_assertion(
+      x,
+      checkmate::check_file_exists(x, ...),
+      .var.name,
+      add
+    )
+  ))
+}
+
+assert_choice_cli <- function(x, ..., .var.name = vname(x), add = NULL){
+  return(invisible(
+    make_assertion(
+      x,
+      checkmate::check_choice(x, ...),
+      .var.name,
+      add
+    )
+  ))
+}
 
 sanitize_cli <- function(res){
   if (isTRUE(res)){
@@ -214,7 +235,6 @@ make_assertion <- function(x, res, var.name, collection) {
   }
   return(invisible(res))
 }
-
 
 assert_cli <- function(..., combine = "or", .var.name = NULL, add = NULL) {
   checkmate::assertChoice(combine, c("or", "and"))
