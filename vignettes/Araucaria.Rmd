@@ -67,7 +67,7 @@ sa <- select(sa, get_predictor_names(sa)[!get_predictor_names(sa) %in% p])
 
 ```{r world_clim_future}
 ## Download current bioclimatic variables
-WorldClim_data("input_data/WorldClim_data_future/",period = "future", year = c('2050', '2090'), ssp = c('245','585'), resolution = 10)
+WorldClim_data(path="input_data/WorldClim_data_future/",period = "future", year = c('2050', '2090'), ssp = c('245','585'), resolution = 10)
 
 ## Enter bioclimatic variables
 scen <- read_stars(list.files("input_data/WorldClim_data_future/", full.names = T), normalize_path = F)
@@ -77,8 +77,14 @@ sa <- set_predictor_names(sa, sort(paste0("bio",1:19)))
 sa <- add_scenarios(sa, scen)
 ```
 
+```{r}
+# Join occ and sa
+occ <- occurrences_sdm(occ_data, crs = 4326) |>
+  join_area(sa)
+```
+
 ```{r input_sdm}
-i_sa <- input_sdm(occurrences_sdm(occ_data, crs = 4326), sa)
+i_sa <- input_sdm(occ, sa)
 ```
 
 ```{r data_clean}
@@ -94,7 +100,7 @@ i_sa <- pseudoabsences(i_sa, method = "random", variables_selected = "vif")
 ```
 
 ```{r train_sdm}
-i_sa <- train_sdm(i_sa, algo = c("svmLinear2", "mda", "nnet", "nb", "kknn"), variables_selected = "vif")
+i_sa <- train_sdm(i_sa, algo = c("svmLinear2", "mda", "nnet", "kknn"), variables_selected = "vif")
 ```
 
 ```{r predict_sdm}

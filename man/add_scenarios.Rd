@@ -9,8 +9,8 @@ add_scenarios(sdm_area, scen = NULL, variables_selected = NULL)
 \arguments{
 \item{sdm_area}{A \code{sdm_area} object.}
 
-\item{scen}{\code{RasterStack}, \code{SpatRaster}, \code{stars} object or a directory with
-scenarios data. If \code{NULL} adds predictors as a scenario.}
+\item{scen}{\code{RasterStack}, \code{SpatRaster} or \code{stars} object. If \code{NULL} adds
+predictors as a scenario.}
 
 \item{variables_selected}{Character vector with variables names in \code{scen} to be used as
 predictors. If \code{NULL} adds all variables.}
