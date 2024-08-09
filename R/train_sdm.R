@@ -68,7 +68,7 @@
 #' i <- train_sdm(i, algo = c("nnet", "kknn"), variables_selected = "vif")
 #' i
 #'
-#' @importFrom sf st_centroid st_as_sf
+#' @importFrom sf st_centroid st_as_sf st_join
 #' @importFrom maxnet maxnet.default.regularization maxnet.formula maxnet
 #' @importFrom dismo bioclim mahal
 #' @importFrom dplyr arrange select filter all_of bind_cols summarise group_by across everything
@@ -401,16 +401,18 @@ train_sdm <- function(occ, pred = NULL, algo, ctrl = NULL, variables_selected = 
   # } else {
 
   l <- sapply(z$spp_names, function(sp) {
-    if (is_predictors(pred)) {
-      occ2 <- z$occurrences[z$occurrences$species == sp, ]$cell_id
-      suppressWarnings(env <- dplyr::select(cbind(sf::st_centroid(sf::st_as_sf(pred$data)), pred$grid), -"geometry.1"))
-      occ2 <- dplyr::filter(env, env$cell_id %in% occ2)
-      occ2 <- dplyr::select(occ2, dplyr::all_of(selected_vars))
-    } else if (is_sdm_area(pred)) {
-      #occ2 <- z$occurrences |>
-      #  dplyr::filter(species == sp) |>
-      #  dplyr::select(dplyr::all_of(selected_vars))
-      ### Talvez alguma coisa com st_intersect?
+    #if (is_predictors(pred)) {
+    #  occ2 <- z$occurrences[z$occurrences$species == sp, ]$cell_id
+    #  suppressWarnings(env <- dplyr::select(cbind(sf::st_centroid(sf::st_as_sf(pred$data)), pred$grid), -"geometry.1"))
+    #  occ2 <- dplyr::filter(env, env$cell_id %in% occ2)
+    #  occ2 <- dplyr::select(occ2, dplyr::all_of(selected_vars))
+    #} else
+    if (is_sdm_area(pred)) {
+      occ2 <- z$occurrences |>
+        sf::st_join(pred$grid) |>
+        dplyr::filter(species == sp) |>
+        dplyr::select(dplyr::all_of(selected_vars))
+      ## Talvez alguma coisa com st_intersect?
       if(sf::st_crs(z$occurrences) != sf::st_crs(pred$grid)){
           occ2 <- sf::st_transform(z$occurrences, crs = sf::st_crs(pred$grid))
       }

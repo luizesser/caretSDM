@@ -56,7 +56,7 @@ st_crs(buf) <- 4326
 ```
 
 ```{r sdm_area}
-sa <- sdm_area(study_area, cell_size = 10000, crs = 6933)
+sa <- sdm_area(study_area, cell_size = 20000, crs = 6933)
 ```
 
 ```{r add_predictors}
@@ -79,12 +79,12 @@ sa <- add_scenarios(sa, scen)
 
 ```{r}
 # Join occ and sa
-occ <- occurrences_sdm(occ_data, crs = 4326) |>
+oc <- occurrences_sdm(occ_data, crs = 4326) |>
   join_area(sa)
 ```
 
 ```{r input_sdm}
-i_sa <- input_sdm(occ, sa)
+i_sa <- input_sdm(oc, sa)
 ```
 
 ```{r data_clean}
@@ -96,7 +96,7 @@ i_sa <- vif_predictors(i_sa)
 ```
 
 ```{r pseudoabsence}
-i_sa <- pseudoabsences(i_sa, method = "random", variables_selected = "vif") 
+i_sa <- pseudoabsences(i_sa, method = "bioclim", variables_selected = "vif") 
 ```
 
 ```{r train_sdm}

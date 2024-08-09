@@ -84,5 +84,7 @@ join_area <- function(occ, pred) {
   }
 
   occ$occurrences <- oc
+  occ$n_presences <- length(oc$cell_id)
+  occ$crs <- sf::st_crs(oc)$epsg
   return(occ)
 }

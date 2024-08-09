@@ -68,7 +68,7 @@ data_clean <- function(occ, pred = NULL, species = NA, lon = NA, lat = NA, terre
   } else {
     y <- occ
   }
-  if(y$crs != 4326){
+  if(sf::st_crs(y) !=4326){
     sf_t <- sf::st_transform(y$occurrences, 4326)
     x <- sf_to_df_sdm(sf_t)
   } else {

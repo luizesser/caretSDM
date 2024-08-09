@@ -67,10 +67,11 @@
 #' i <- pseudoabsence(i, method="bioclim", variables_selected = "vif")
 #' i
 #'
-#' @importFrom dismo bioclim
-#' @importFrom sf st_centroid st_as_sf st_crs st_transform
+#' @import sdmppa
+#' @importFrom sf st_centroid st_as_sf st_crs st_transform st_intersection
 #' @importFrom dplyr select all_of filter
 #' @importFrom stars st_extract
+#' @importFrom dismo bioclim predict
 #'
 #' @export
 pseudoabsences <- function(occ, pred = NULL, method = "random", n_set = 10, n_pa = NULL, variables_selected = NULL, th = 0) {
@@ -80,44 +81,49 @@ pseudoabsences <- function(occ, pred = NULL, method = "random", n_set = 10, n_pa
   } else {
     y <- occ
   }
+
   if (!is.null(occ$pseudoabsences)) {
     warning("Previous pseudoabsence element on Occurrences object was overwrited.", call. = F)
   }
   if (is.null(n_pa)) {
     n_pa <- y$n_presences
   }
-  if (is_predictors(pred)) {
+  #if (is_predictors(pred)) {
+  #  if (is.null(variables_selected)) {
+  #    selected_vars <- pred$predictors_names
+  #    cat("Using all variables available: ", selected_vars)
+  #  }
+  #  if (any(variables_selected %in% pred$predictors_names)) {
+  #    selected_vars <- pred$predictors_names[pred$predictors_names %in% variables_selected]
+  #    cat("Using given variables: ", selected_vars)
+  #  }
+  #} else
+  if (is_sdm_area(pred)) {
     if (is.null(variables_selected)) {
-      selected_vars <- pred$predictors_names
+      selected_vars <- get_predictor_names(pred)
       cat("Using all variables available: ", selected_vars)
-    }
-    if (any(variables_selected %in% pred$predictors_names)) {
-      selected_vars <- pred$predictors_names[pred$predictors_names %in% variables_selected]
+    } else if (any(variables_selected %in% get_predictor_names(pred))) {
+      p_names <- get_predictor_names(pred)
+      selected_vars <- p_names[p_names %in% variables_selected]
       cat("Using given variables: ", selected_vars)
-    }
-  } else if (is_sdm_area(pred)) {
-    if (is.null(variables_selected)) {
-      selected_vars <- pred$predictors
-      cat("Using all variables available: ", selected_vars)
-    }
-    if (any(variables_selected %in% pred$predictors)) {
-      selected_vars <- pred$predictors[pred$predictors %in% variables_selected]
-      cat("Using given variables: ", selected_vars)
+    } else if (variables_selected == "vif"){
+      selected_vars <- pred$variable_selection$vif$selected_variables
     }
   }
 
-  if (length(variables_selected) == 1) {
-    if (length(pred$variable_selection[attributes(pred$variable_selection)$names %in% variables_selected]) == 0) {
-      print(paste0("Variable selection method not detected."))
-      stop()
-    }
-    selected_vars <- unlist(pred$variable_selection[attributes(pred$variable_selection)$names %in% variables_selected], rec = F)[[paste0(variables_selected, ".selected_variables")]]
-    cat("Using variables selected by ", variables_selected, ": ", selected_vars)
-  }
-  if (is_predictors(pred)) {
-    suppressWarnings(df <- sf::st_centroid(sf::st_as_sf(dplyr::filter(na.omit(pred$data), band %in% selected_vars))))
-    df <- dplyr::select(cbind(pred$grid, df), -"geometry.1")
-  } else if (is_sdm_area(pred)) {
+  #if (length(variables_selected) == 1) {
+  #  if (length(pred$variable_selection[attributes(pred$variable_selection)$names %in% variables_selected]) == 0) {
+  #    print(paste0("Variable selection method not detected."))
+  #    stop()
+  #  }
+  #  selected_vars <- unlist(pred$variable_selection[attributes(pred$variable_selection)$names %in% variables_selected], rec = F)[[paste0(variables_selected, ".selected_variables")]]
+  #  cat("Using variables selected by ", variables_selected, ": ", selected_vars)
+  #}
+  #if (is_predictors(pred)) {
+  #  suppressWarnings(df <- sf::st_centroid(sf::st_as_sf(dplyr::filter(na.omit(pred$data), band %in% selected_vars))))
+  #  df <- dplyr::select(cbind(pred$grid, df), -"geometry.1")
+  #} else
+  if (is_sdm_area(pred)) {
     df <- pred$grid |>
       dplyr::select(dplyr::all_of(c("cell_id", selected_vars)))
   }
@@ -145,9 +151,9 @@ pseudoabsences <- function(occ, pred = NULL, method = "random", n_set = 10, n_pa
         } else {
           sf_occ <- y$occurrences
         }
-        occ2 <- st_intersection(sf_occ, df)
+        occ2 <- sf::st_intersection(sf_occ, df)
         model <- dismo::bioclim(x = dplyr::select(as.data.frame(occ2), dplyr::all_of(selected_vars)))
-        p <- predict(model, as.data.frame(df))
+        p <- dismo::predict(model, as.data.frame(df))
         p[p[] > th] <- NA
         p <- data.frame(cell_id = df$cell_id, pred = p)
         p <- p[!is.na(p$pred), ]
