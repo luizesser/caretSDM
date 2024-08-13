@@ -14,6 +14,17 @@ assert_int_cli <- function(x, ..., .var.name = vname(x), add = NULL){
   ))
 }
 
+assert_subset_cli <- function(x, ..., .var.name = vname(x), add = NULL){
+  return(invisible(
+    make_assertion(
+      x,
+      checkmate::check_subset(x, ...),
+      .var.name,
+      add
+    )
+  ))
+}
+
 check_logical_cli <- function(...){
   return(checkmate::check_logical(...))
 }
