@@ -110,3 +110,11 @@ i_sa <- predict_sdm(i_sa, th = 0.7)
 ```{r plot_predictions}
 plot_predictions(i_sa)
 ```
+
+```{r pdp_sdm}
+pdp_sdm(i_sa)
+```
+
+```{r varImp_sdm}
+varImp_sdm(i_sa)
+```

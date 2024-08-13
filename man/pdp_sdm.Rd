@@ -32,13 +32,13 @@ If
 }
 \examples{
 # Create sdm_area object:
-sa <- sdm_area(parana, cell_size = 25000, epsg = 6933)
+sa <- sdm_area(parana, cell_size = 25000, crs = 6933)
 
 # Include predictors:
 sa <- add_predictors(sa, bioc)
 
 # Create input_sdm:
-i <- input_sdm(occurrences(occ), sa)
+i <- input_sdm(occurrences_sdm(occ), sa)
 
 # Clean coordinates:
 i <- data_clean(i)
@@ -48,7 +48,7 @@ i <- vif_predictors(i)
 i
 
 # Pseudoabsence generation:
-i <- pseudoabsence(i, method="bioclim", variables_selected = "vif")
+i <- pseudoabsences(i, method="bioclim", variables_selected = "vif")
 
 # Train models:
 i <- train_sdm(i, algo = c("nnet", "kknn"), variables_selected = "vif")

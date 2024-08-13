@@ -48,7 +48,7 @@ buf <- st_union(buf)
 sa <- sdm_area(study_area, cell_size = 25000, crs = 6933, gdal = F)
 ```
 
-```{r add_predictors, eval=F}
+```{r add_predictors}
 get_predictor_names(sa)
 sa <- add_predictors(sa, pred_data, gdal = F)
 get_predictor_names(sa)
@@ -75,14 +75,22 @@ i_sa <- vif_predictors(i_sa)
 i_sa <- pseudoabsences(i_sa, method = "random", variables_selected = "vif") 
 ```
 
-```{r}
+```{r train_sdm}
 i_sa <- train_sdm(i_sa, algo = c("svmLinear2", "mda", "nnet", "kknn"), variables_selected = "vif")
 ```
 
-```{r}
+```{r predict_sdm}
 i_sa <- predict_sdm(i_sa, th = 0.75)
 ```
 
-```{r}
+```{r plot_predictions}
 plot_predictions(i_sa)
+```
+
+```{r pdp_sdm}
+pdp_sdm(i_sa)
+```
+
+```{r varImp_sdm}
+varImp_sdm(i_sa)
 ```
