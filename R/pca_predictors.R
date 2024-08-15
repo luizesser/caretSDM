@@ -1,37 +1,76 @@
-#' Calculate PCA
+#' Predictors as PCA-axis
 #'
-#' Apply PCA calculation in a predictors object.
+#' Transform predictors data into PCA-axis.
 #'
-#' @param pred A predictors object
-#' @param variables_selected Subset of variables to be included in the PCA
+#' @usage pca_predictors(i)
 #'
-#' @return A predictors object with PCA data
+#' @param i A \code{input_sdm} object.
+#'
+#' @return \code{input_sdm} object with variables from both \code{predictors} and \code{scenarios}
+#' transformed in PCA-axis.
+#'
+#' @seealso \code{\link{vif_sdm} \link{sdm_area} \link{add_scenarios} \link{add_predictors}}
 #'
 #' @author Luíz Fernando Esser (luizesser@gmail.com)
 #' https://luizfesser.wordpress.com
 #'
+#' @examples
+#' # Create sdm_area object:
+#' sa <- sdm_area(parana, cell_size = 25000, crs = 6933)
+#'
+#' # Include predictors:
+#' sa <- add_predictors(sa, bioc)
+#'
+#' # Create input_sdm:
+#' i <- input_sdm(occurrences_sdm(occ), sa)
+#'
+#' # Clean coordinates:
+#' i <- data_clean(i)
+#'
+#' # VIF calculation:
+#' i <- pca_predictors(i)
+#' i
+#'
+#' @importFrom dplyr select
+#'
 #' @export
-pca_predictors <- function(pred, variables_selected = NULL) {
-  if (is_input_sdm(pred)) {
-    x <- pred$predictors
-    occ <- pred$occurrences$occurrences
-  } else {
-    x <- pred
-  }
-  if (is.null(variables_selected)) {
-    selected_vars <- x$predictors_names
-    print(cat("Using all variables available: "), cat(selected_vars, sep = ", "))
-  }
-  if (any(variables_selected %in% x$predictors_names)) {
-    selected_vars <- x$predictors_names[x$predictors_names %in% variables_selected]
-    print(cat("Using given variables: "), cat(selected_vars, sep = ", "))
-  }
+pca_predictors <- function(i) {
+  assert_class_cli(i, "input_sdm")
 
-  x$variable_selection$pca$model <- pc_model
-  x$variable_selection$pca$data <- pc_data
-  if (is_input_sdm(pred)) {
-    pred$predictors <- x
-    x <- pred
-  }
-  return(x)
+  pred_df <- get_predictors(i) |>
+    as.data.frame() |>
+    dplyr::select(-c('cell_id', 'geometry'))
+
+  pca_model <- prcomp(pred_df)
+
+  pred_pca <- get_predictors(i) |>
+    cbind(pca_model$x)
+
+  scen_df <- i$scenarios$data |>
+    lapply(function(x){
+      as.data.frame(x) |>
+        dplyr::select(-c('cell_id', 'geometry'))
+    })
+
+  scen_pca <- names(scen_df) |>
+    sapply(function(x){
+      i$scenarios$data[[x]] |>
+        cbind(predict(pca_model, newdata = scen_df[[x]]))
+    }, simplify = FALSE, USE.NAMES = TRUE)
+
+  i$predictors$variable_selection$pca$data <- pred_pca |> select(!get_predictor_names(i))
+  i$predictors$variable_selection$pca$summary <- summary(pca_model)
+  i$predictors$variable_selection$pca$selected_variables <- colnames(pca_summary(i)$importance)[1:(sum(pca_summary(i)$importance["Cumulative Proportion",]<0.99)+1)]
+
+  i$predictors$grid <- pred_pca
+  i$scenarios$data <- scen_pca
+
+  return(i)
+}
+
+#' @rdname pca_predictors
+#' @export
+pca_summary <- function(i){
+  caretSDM:::assert_class_cli(i, "input_sdm")
+  return(i$predictors$variable_selection$pca$summary)
 }

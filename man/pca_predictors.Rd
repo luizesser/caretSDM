@@ -2,20 +2,43 @@
 % Please edit documentation in R/pca_predictors.R
 \name{pca_predictors}
 \alias{pca_predictors}
-\title{Calculate PCA}
+\alias{pca_summary}
+\title{Predictors as PCA-axis}
 \usage{
-pca_predictors(pred, variables_selected = NULL)
+pca_predictors(i)
+
+pca_summary(i)
 }
 \arguments{
-\item{pred}{A predictors object}
-
-\item{variables_selected}{Subset of variables to be included in the PCA}
+\item{i}{A \code{input_sdm} object.}
 }
 \value{
-A predictors object with PCA data
+\code{input_sdm} object with variables from both \code{predictors} and \code{scenarios}
+transformed in PCA-axis.
 }
 \description{
-Apply PCA calculation in a predictors object.
+Transform predictors data into PCA-axis.
+}
+\examples{
+# Create sdm_area object:
+sa <- sdm_area(parana, cell_size = 25000, crs = 6933)
+
+# Include predictors:
+sa <- add_predictors(sa, bioc)
+
+# Create input_sdm:
+i <- input_sdm(occurrences_sdm(occ), sa)
+
+# Clean coordinates:
+i <- data_clean(i)
+
+# VIF calculation:
+i <- pca_predictors(i)
+i
+
+}
+\seealso{
+\code{\link{vif_sdm} \link{sdm_area} \link{add_scenarios} \link{add_predictors}}
 }
 \author{
 Luíz Fernando Esser (luizesser@gmail.com)

@@ -142,6 +142,12 @@ print.input_sdm <- function(x) {
           cat("Selected Variables (VIF)      : "), cat(x$predictors$variable_selection$vif$selected_variables, sep = ", "), "\n"
         )
       }
+      if (!is.null(x$predictors$variable_selection$pca)) {
+        cat(
+          cat("PCA-transformed variables     : DONE \n"),
+          cat("Cummulative proportion (0.99) : "), cat(x$predictors$variable_selection$pca$selected_variables, sep = ", "), "\n"
+        )
+      }
     }
   }
   if ("scenarios" %in% names(x)) {

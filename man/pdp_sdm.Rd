@@ -5,7 +5,7 @@
 \alias{get_pdp_sdm}
 \title{Model Response to Variables}
 \usage{
-pdp_sdm(models, variables_selected = NULL)
+pdp_sdm(i, spp = NULL, algo = NULL, variables_selected = NULL)
 
 get_pdp_sdm(i, spp = NULL, algo = NULL, variables_selected = NULL)
 }
@@ -26,9 +26,6 @@ A plot (for \code{pdp_sdm}) or a data.frame (for \code{get_pdp_sdm}) with PDP va
 }
 \description{
 Obtain the Partial Dependence Plots (PDP) to each variable.
-}
-\details{
-If
 }
 \examples{
 # Create sdm_area object:

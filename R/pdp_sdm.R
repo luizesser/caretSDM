@@ -2,7 +2,7 @@
 #'
 #' Obtain the Partial Dependence Plots (PDP) to each variable.
 #'
-#' @usage pdp_sdm(models, variables_selected = NULL)
+#' @usage pdp_sdm(i, spp = NULL, algo = NULL, variables_selected = NULL)
 #'
 #' @param i A \code{input_sdm} object.
 #' @param spp A \code{character} vector with species names to obtain the PDPs. If \code{NULL}
@@ -13,9 +13,6 @@
 #' can be informed using this parameter.
 #'
 #' @return A plot (for \code{pdp_sdm}) or a data.frame (for \code{get_pdp_sdm}) with PDP values.
-#'
-#' @details
-#' If
 #'
 #' @seealso \code{\link{varImp_sdm}}
 #'

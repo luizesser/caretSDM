@@ -108,6 +108,8 @@ pseudoabsences <- function(occ, pred = NULL, method = "random", n_set = 10, n_pa
       cat("Using given variables: ", selected_vars)
     } else if (variables_selected == "vif"){
       selected_vars <- pred$variable_selection$vif$selected_variables
+    } else if (variables_selected == "pca"){
+      selected_vars <- pred$variable_selection$pca$selected_variables
     }
   }
 

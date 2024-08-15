@@ -124,10 +124,18 @@ test_that("get_predictors - input_sdm", {
   expect_equal(get_predictors(input_sdm(sa_pred)), sa_pred$grid)
 })
 
-test_that("add_predictors, character input", {
+test_that("add_predictors - character input", {
   sa_pred <- add_predictors(sa, here::here("tests", "testthat", "testdata", "parana.tiff"))
   sa_pred2 <- add_predictors(sa, pr_raster)
   expect_equal(sa_pred$grid, sa_pred2$grid)
 })
 
-
+test_that("add_predictors - buffer", {
+  buf_sa <- occ |>
+    st_as_sf(coords=c(2,3)) |>
+    st_buffer(dist=10000) |>
+    st_union() |>
+    st_as_sf(crs=st_crs(6933))
+  sa_teste <- sdm_area(buf_sa, cell_size = 5000, crs = 6933)
+  expect_no_error( add_predictors(sa_teste, bioc) ) # Não deveria gerar erro.
+})
