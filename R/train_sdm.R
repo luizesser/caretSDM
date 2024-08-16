@@ -88,20 +88,20 @@ train_sdm <- function(occ, pred = NULL, algo, ctrl = NULL, variables_selected = 
 
   if (is_predictors(pred)) {
     if (is.null(variables_selected)) {
-      selected_vars <- pred$predictors_names
+      selected_vars <- get_predictor_names(pred)
       cat("Using all variables available: ", selected_vars)
     }
-    if (any(variables_selected %in% pred$predictors_names)) {
-      selected_vars <- pred$predictors_names[pred$predictors_names %in% variables_selected]
+    if (any(variables_selected %in% get_predictor_names(pred))) {
+      selected_vars <- get_predictor_names(pred)[get_predictor_names(pred) %in% variables_selected]
       cat("Using given variables: ", selected_vars)
     }
   } else if (is_sdm_area(pred)) {
     if (is.null(variables_selected)) {
-      selected_vars <- pred$predictors
+      selected_vars <- get_predictor_names(pred)
       cat("Using all variables available: ", selected_vars)
     }
-    if (any(variables_selected %in% pred$predictors)) {
-      selected_vars <- pred$predictors[pred$predictors %in% variables_selected]
+    if (any(variables_selected %in% get_predictor_names(pred))) {
+      selected_vars <- get_predictor_names(pred)[get_predictor_names(pred) %in% variables_selected]
       cat("Using given variables: ", selected_vars)
     }
   }
@@ -110,9 +110,10 @@ train_sdm <- function(occ, pred = NULL, algo, ctrl = NULL, variables_selected = 
     if (length(pred$variable_selection[attributes(pred$variable_selection)$names %in% variables_selected]) == 0) {
       print(paste0("Variable selection method not detected."))
       stop()
+    } else {
+      selected_vars <- unlist(pred$variable_selection[attributes(pred$variable_selection)$names %in% variables_selected], rec = F)[[paste0(variables_selected, ".selected_variables")]]
+      print(cat("Using variables selected by ", variables_selected, ": ", selected_vars))
     }
-    selected_vars <- unlist(pred$variable_selection[attributes(pred$variable_selection)$names %in% variables_selected], rec = F)[[paste0(variables_selected, ".selected_variables")]]
-    print(cat("Using variables selected by ", variables_selected, ": ", selected_vars))
   }
   if (is.null(ctrl)) {
     ctrl <- caret::trainControl(

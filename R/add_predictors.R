@@ -35,6 +35,7 @@
 #' @importFrom cli cli_abort
 #' @importFrom dplyr inner_join join_by select
 #' @importFrom sf st_crs st_bbox
+#' @importFrom tidyr drop_na
 #'
 #' @export
 add_predictors <- function(sdm_area, pred, variables_selected = NULL, gdal= TRUE) {
@@ -121,7 +122,7 @@ add_predictors.sf <- function(sdm_area, pred, variables_selected = NULL, gdal= T
       crs = sdm_area$grid |> sf::st_crs(),
       variables_selected = variables_selected,
       gdal = gdal,
-      crop_by = sdm_area$grid |> sf::st_bbox()
+      crop_by = sdm_area$grid #|> sf::st_bbox()
     )
   if (is.null(pred_sdm_area)){
     return(sdm_area)

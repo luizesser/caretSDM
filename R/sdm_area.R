@@ -380,6 +380,8 @@ sdm_area.stars <- function(x, cell_size = NULL, crs = NULL, variables_selected =
     tidyr::drop_na() |>
     dplyr::relocate(cell_id)
 
+  attr(sf::st_geometry(grd), "bbox") <- sf::st_bbox(crop_by)
+
   return(grd)
 }
 
@@ -525,6 +527,8 @@ sdm_area.sf <- function(x, cell_size = NULL, crs = NULL, variables_selected = NU
       cell_size = cell_size
     )
   }
+
+  l$grid <- l$grid[x,]
 
   sa <- .sdm_area(l)
   return(invisible(sa))
@@ -680,7 +684,8 @@ sdm_area.sf <- function(x, cell_size = NULL, crs = NULL, variables_selected = NU
 
   grd <- grd |>
     sf::st_as_sf() |>
-    tidyr::drop_na()
+    tidyr::drop_na() #####################################
+
 
   return(grd)
 }
@@ -736,14 +741,14 @@ sdm_area.sf <- function(x, cell_size = NULL, crs = NULL, variables_selected = NU
         }
       ) |>
       purrr::list_rbind() |>
-      tidyr::drop_na() |>
+      tidyr::drop_na() |> ##########################################
       dplyr::filter(..weighting_factor > 0 & !is.na(..weighting_factor))
 
     future::plan(future::sequential)
   } else {
     grd <- grd |>
       sf::st_join(x, left = FALSE) |>
-      tidyr::drop_na()
+      tidyr::drop_na() ############################################
     grd$..weighting_factor <- 1
   }
 
@@ -792,6 +797,12 @@ print.sdm_area <- function(x) {
   if (length(predictors_sdm)>0) {
     cat("Number of Predictors      :", length(predictors_sdm), "\n")
     cat(cat("Predictors Names          : "), cat(predictors_sdm, sep = ", "),
+        "\n")
+  }
+  scen_names <- scenarios_names(x)
+  if (length(scen_names)>0) {
+    cat("Number of Scenarios      :", length(scen_names), "\n")
+    cat(cat("Scenarios Names          : "), cat(scen_names, sep = ", "),
         "\n")
   }
 }

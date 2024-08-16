@@ -57,7 +57,7 @@ pdp_sdm <- function(i, spp = NULL, algo = NULL, variables_selected = NULL) {
   assert_class_cli(i, "input_sdm")
   assert_subset_cli(algo, algorithms_used(i))
   assert_subset_cli(spp, species_names(i))
-  assert_subset_cli(variables_selected, i_sa$models$predictors)
+  assert_subset_cli(variables_selected, i$models$predictors)
 
   if(is.null(spp)){ spp <- species_names(i)[1] }
   if(is.null(algo)){ algo <- algorithms_used(i) }
@@ -91,7 +91,7 @@ get_pdp_sdm <- function(i, spp = NULL, algo = NULL, variables_selected = NULL){
   assert_class_cli(i, "input_sdm")
   assert_subset_cli(algo, algorithms_used(i))
   assert_subset_cli(spp, species_names(i))
-  assert_subset_cli(variables_selected, i_sa$models$predictors)
+  assert_subset_cli(variables_selected, i$models$predictors)
 
   m <- get_models(i)
   if(is.null(spp)){ spp <- species_names(i)[1] }

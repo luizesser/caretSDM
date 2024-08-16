@@ -428,6 +428,8 @@ scenarios_names <- function(i) {
   x=i
   if (is_input_sdm(x)) {
     y <- x$scenarios
+  } else if (is_sdm_area(x)) {
+    y <- x$scenarios
   } else {
     y <- x
   }

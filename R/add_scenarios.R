@@ -31,7 +31,7 @@
 #'
 #' @importFrom stars read_stars st_as_stars st_dimensions st_get_dimension_values
 #' @importFrom sf st_transform st_crs st_as_sf st_crop
-#' @importFrom dplyr select
+#' @importFrom dplyr select all_of
 #'
 #' @export
 add_scenarios <- function(sdm_area, scen = NULL, variables_selected = NULL, ...) {
@@ -132,16 +132,18 @@ add_scenarios.stars <- function(sdm_area, scen, scenarios_names = NULL, pred_as_
       aggregate(grid_t, mean) |>
       sf::st_as_sf() |>
       sf::st_transform(sf::st_crs(sdm_area$grid)) |>
-      cbind(sdm_area$grid) |>
-      dplyr::select(c(cell_id, all_of(variables_selected)))
+      cbind(select(sdm_area$grid, "cell_id")) |>
+      dplyr::select(dplyr::all_of(c("cell_id", variables_selected)))
   }
 
   if (pred_as_scen) {
-    l[["current"]] <- sdm_area$grid |> dplyr::select(c(cell_id, all_of(variables_selected)))
+    l[["current"]] <- sdm_area$grid |>
+      dplyr::select(c(cell_id, dplyr::all_of(variables_selected)))
   }
 
   sa_data$data <- l
-  sa_data$grid <- sdm_area$grid |> dplyr::select(c(cell_id, all_of(variables_selected)))
+  sa_data$grid <- sdm_area$grid |>
+    dplyr::select(c(cell_id, dplyr::all_of(variables_selected)))
   sdm_area$scenarios <- sa_data
   sdm_area$grid <- sa_data$grid
 

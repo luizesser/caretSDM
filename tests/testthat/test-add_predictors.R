@@ -130,12 +130,14 @@ test_that("add_predictors - character input", {
   expect_equal(sa_pred$grid, sa_pred2$grid)
 })
 
-test_that("add_predictors - buffer", {
+test_that("add_predictors - correção do tidyr::drop_na", {
   buf_sa <- occ |>
     st_as_sf(coords=c(2,3)) |>
     st_buffer(dist=10000) |>
     st_union() |>
     st_as_sf(crs=st_crs(6933))
-  sa_teste <- sdm_area(buf_sa, cell_size = 5000, crs = 6933)
-  expect_no_error( add_predictors(sa_teste, bioc) ) # Não deveria gerar erro.
+  sa_buf <- sdm_area(buf_sa, cell_size = 5000, crs = 6933)
+  #sa_pred <- sdm_area(bioc, cell_size = 5000, crs = 6933)
+  sa_pred <- add_predictors(sa_buf, bioc)
+  expect_equal(st_bbox(sa_buf$grid), st_bbox(sa_pred$grid))
 })

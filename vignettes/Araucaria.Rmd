@@ -8,11 +8,13 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-# Using polygons as area in caretSDM
+# Using polygons as area in caretSDM 
 
-`caretSDM` is a under development R package that uses the powerful `caret` package as the main engine to obtain Species Distribution Models. One of its main attributes is the strong geoprocessing underlying its functions. Here we show how to model species distributions using `caretSDM` through the function `sdm_area` with a polygon.
+`caretSDM` is a under development R package that uses the powerful `caret` package as the main engine to obtain Species Distribution Models. One of its main attributes is the strong geoprocessing underlying its functions. Here we show how to model species distributions using `caretSDM` through the function `sdm_area` with a polygon. The aim of this modeling will be to obtain the distribution of *Araucaria angustifolia*, a long-living pine-tree species from Brazil, to current and future climate change scenarios.
 
-```{r open libraries}
+First, we need to open our libraries.
+
+```{r open_libraries}
 library(caretSDM)
 library(stars) # Package used to manipulate GIS data
 library(dplyr) # Package to improve data handling
@@ -20,140 +22,215 @@ library(dplyr) # Package to improve data handling
 
 ## Pre-Processing
 
-### Obtaining example data
+To obtain models, we will need climatic data and species records. To easily obtain these data, we have two functions: `WorldClim_data` function downloads climatic variables from WorldClim 2.1, a widely used open-source database; in the same way, `GBIF_data` function downloads species records from GBIF, also a widely used open-source database. You can read more about them by running in the console `?GBIF_data` and `?WorldClim_data`.
 
-We will create some example data. Starting with occurrences and then predictors data. The first one is a function to obtain species data from GBIF, while the second is a function to obtain climatic variables from WorldClim 2.1. You can read more about them by running in the console `?GBIF_data` and `?WorldClim_data`.
+### Obtaining climatic data
 
-```{r GBIF_data}
-## Import data from GBIF
-occ_data <- GBIF_data('Araucaria angustifolia')
+We will first download and import current data, which is used to build the models. WorldClim_data function has an argument to set the directory in which you want to save the files. If you don't set it, files will be saved in your working directory (run `getwd()` to find out your working dirrectory) in the folder "input_data/WorldClim_data_current/". If period is set to "future", then it is saved in "input_data/WorldClim_data_future/". We could run this routine with a smaller resolution, but as the aim here is to show how the package works, we will use a resolution of 10 arc-minutes, which is very coarse, but quicker to download and run.
 
-## Remove records from outside the natural occurrence area
-occ_data <- filter(occ_data, decimalLongitude >= -64)
-occ_data <- filter(occ_data, decimalLongitude <= -36)
-occ_data <- filter(occ_data, decimalLatitude <= -10)
-occ_data <- filter(occ_data, decimalLatitude >= -80)
-```
-
-```{r worldclim_data}
-## Download current bioclimatic variables
+```{r WorldClim_data_current}
+# Download current bioclimatic variables
 WorldClim_data(period = "current", resolution = 10)
 
-## Import bioclimatic variables to R
-pred_data <- read_stars(list.files("input_data/WorldClim_data_current/", full.names = T), along = "band", normalize_path = F)
+# Import current bioclimatic variables to R
+pred <- read_stars(list.files("input_data/WorldClim_data_current/", full.names = T), along = "band", normalize_path = F)
+
+# See what is inside pred
+pred
 ```
 
-### The `sdm_area` class
+Now we can download future data. Future data should have the same resolution of current data. Pay attention also on SSPs chosen given the study's aim. For the purpose of exemplification, we will download the MIROC6 General Circulation Model (GCM), but note that this could not be the best choice for the study area. To better choose a GCM, please see the [chooseGCM package](https://github.com/luizesser/chooseGCM). A further development of caretSDM aims to merge chooseGCM functionalities.
 
-In this package there is a function that groups all the transformations regarding the area to build and project the models. The `sdm_area` function is this function and is also responsible to check CRSs and create a grid to build models. This grid may seem unpurpose for terrestrial ecologists, but is a key element when modeling continental aquatic environments.
+```{r WorldClim_data_future}
+# Download future scenarios
+WorldClim_data(path="input_data/WorldClim_data_future/",period = "future", year = c('2050', '2090'), ssp = c('245','585'), resolution = 10)
 
-```{r study_area, eval=F}
-## Download Paraná state boundaries
-study_area2 <- geobr::read_state("PR")
+# Import scenarios to R
+scen <- read_stars(list.files("input_data/WorldClim_data_future/", full.names = T), normalize_path = F)
+
+# See what is inside pred_data
+scen
 ```
 
-A possible alternative would be to use a buffer around records to delimitate accessible area.
+If you don't noticed, WorldClim data has a mismatch between bioclimatic variables names:
+
+```{r see_names}
+# Predictors names from current data
+st_get_dimension_values(pred, "band")
+
+# Predictors names from scenarios data
+st_get_dimension_values(scen, "band")
+```
+
+This could lead to errors in the future, because models will try to project on data that are not included in the model. In other words, the model will have a parameter called "1.tif", while scenarios will have a "bio01" parameter, but both should have the same name so the function can match them. To correct this issue, we can use the `stars` package itself, but pay attention to not attribute a wrong name to your predictors: bioclimatic variables in `pred` are in alphabetical order! We will use the `sort` function to avoid this error. We will also change scenarios names to mark them as different SSPs (this second transformation is totally optional).
+
+```{r rename_biocs}
+# Change bioclimatic variable names in scen
+scen <- st_set_dimensions(scen, "band", values=paste0("bio",1:19))
+
+# Change scenarios names in scen
+names(scen) <- paste0("ssp", names(scen))
+
+# Change bioclimatic variable names in pred to match scen
+pred <- st_set_dimensions(pred, "band", values=sort(paste0("bio",1:19)))
+```
+
+Now both `pred` and `scen` should have the same variables names:
+
+```{r test_names}
+# Test if all predictors names are equal
+all(sort(st_get_dimension_values(scen, "band")) == st_get_dimension_values(pred, "band"))
+```
+
+### Obtaining species records
+
+A easy way to get species data using `caretSDM` is the function `GBIF_data`, which retrieves species records from GBIF. Understandably, there are other sources of species data available, as well as our own data that can be the result of field work. In this sense, one can import to R it's own data in multiple ways, but be sure that the table will have three columns: species, decimalLongitude and decimalLatitude. `GBIF_data` function retrieves the data ready to be included in caretSDM, thus if you have any doubt on how to format your own data, use `GBIF_data` function to retrieve an example table.
+
+```{r GBIF_data}
+# Import data from GBIF
+occ <- GBIF_data('Araucaria angustifolia')
+
+# See how the data is formated:
+head(occ)
+```
+
+The only transformation we will perform on our occurrence data is the exclusion of the records outside the natural occurrence area of the species. Other data cleaning methods will be applied automatically in the next steps.
+
+```{r filter_occ}
+# Remove records from outside the natural occurrence area
+occ <- filter(occ, decimalLongitude >= -64)
+occ <- filter(occ, decimalLongitude <= -36)
+occ <- filter(occ, decimalLatitude <= -10)
+occ <- filter(occ, decimalLatitude >= -80)
+```
+
+### Defining the study area
+
+A important step on model building in Species Distribution Models, is the definition of accessible area (the M in BAM diagram). This area can be, in Geographical Information Systems terms, as an example, the delimitation of a habitat (polygon) or a river basin network (lines). Another broadly used approach is the use of buffers around presences. The buffer size translates the potential distribution capabilities of a species.
 
 ```{r create_buffer}
-## Create a buffer around records
-study_area <- occ_data |>
-  st_as_sf(coords=c(2,3)) |>
-  st_buffer(dist=5) |>
-  st_union() |>
-  st_as_sf(crs=st_crs(4326))
-
+# Create a buffer around records
+study_area <- buffer_sdm(occ, size = 5, crs = 4326)
+study_area
 ```
 
-### 
+In `caretSDM` there is a function that groups all the transformations regarding the study area to build and project the models. The `sdm_area` function is this function and is also responsible to check CRSs and create a grid to build models. This grid may seem unpurposed for terrestrial ecologists, but is a key element when modeling continental aquatic environments. `sdm_area` class will also keep the environmental/climatic data (*i.e.* "predictor variables", "covariates", "explanatory variables", "features" or "control variables"). With this class we will perform analysis using only the predictors (such as predictors transformations).
 
-```{r sdm_area}
-## Create a sdm_area object
-sa <- sdm_area(study_area, cell_size = 20000, crs = 6933)
+```{r}
+# Create a sdm_area object
+sa <- sdm_area(study_area, cell_size = 100000, crs = 6933)
+sa
+plot(sa)
 ```
+
+Now that we have a study area, we can assign predictor variables and scenarios to it.
 
 ```{r add_predictors}
 ## Add predictor variables into sdm_area
-p <- get_predictor_names(sa)
-sa_teste <- add_predictors(sa_teste, pred_data, gdal=F)
-sa <- select(sa, get_predictor_names(sa)[!get_predictor_names(sa) %in% p])
+sa <- add_predictors(sa, pred)
+sa
+plot(sa)
 ```
 
-```{r world_clim_future}
-## Download future scenarios
-WorldClim_data(path="input_data/WorldClim_data_future/",period = "future", year = c('2050', '2090'), ssp = c('245','585'), resolution = 10)
-
-## Import scenarios to R
-scen <- read_stars(list.files("input_data/WorldClim_data_future/", full.names = T), normalize_path = F)
-
-sa <- set_predictor_names(sa, sort(paste0("bio",1:19)))
-
+```{r add_scenarios}
+## Add scenarios into sdm_area
 sa <- add_scenarios(sa, scen)
+sa
 ```
 
-```{r}
-# Join occ and sa
-oc <- occurrences_sdm(occ_data, crs = 4326) |>
+Usually, we will need to subset variables that will inform our model. This can be due to statistical artifacts that are common in quarter bioclimatic variables, or a causation subset, aiming for those variables with causality effect on species distribution.
+
+```{r select_preds}
+# Select predictors
+sa <- select(sa, c("bio1", "bio2", "bio3", "bio4", "bio5", "bio6", "bio7", "bio12", "bio13", "bio14", "bio15"))
+```
+
+### Defining the occurrences set in the study area
+
+As `caretSDM` has a strong GIS background, it is necessary to explicitly tell which CRS is your data in. This will assure that every GIS transformation is correct. This step also assigns occurrences into a study area, excluding records outside the study area or with NAs in predictors. `occurrences_sdm` function creates a occurrences class (*i.e.* "response variable", "target" or "label") that will be used in occurrences transformations and functions, as pseudoabsences generation.
+
+```{r occurrences_sdm}
+# Join occurrences to the study area
+oc <- occurrences_sdm(occ, crs = 4326) |>
   join_area(sa)
+oc
 ```
 
 ### The `input_sdm` class
 
-In this package we will use multiple classes to perform our analysis. Every time we use those objects to perform some kind of analysis, the object will keep the information of what we did. Ideally, the workflow will have only one object throughout it. The `input_sdm` class is the key class in the workflow, where every function will orbitate. That class puts occurrences, predictors, scenarios, models and predictions together to perform analysis that are only possible when two or more of these classes are available. First, we create the object by informing the occurrences, predictors and scenarios classes.
-
-The first class we will use is the occurrences class (*i.e.* "response variable", "target" or "label"). This class receives the occurrence data of the species. But, despite most species data available is presence-only, we consider here in this package that occurrence data is composed of two classes: presences and absences. If absences are not available in species data (which is expected), we will build multiple sets of pseudo-absences to be used in substitution. These datasets will be stored under `occurrences` in `input_sdm`.
-
-Parallel to the `occurrences` class, we will have the `predictors` class to receive the environmental/climatic data (*i.e.* "predictor variables", "covariates", "explanatory variables", "features" or "control variables"). With this class we will perform analysis using only the predictors (such as geoprocessing transformations; `rescaling` argument) and together with the `occurrences` class (such as variable selection routines). It is important to say that this package has a strong geoprocessing background. In this way, it is possible to declare your study area using a shapefile, but also create a new grid over the study area by applying a rescaling method. This can also provide new EPSG to the data to avoid latidudinal convergence.
-
-`input_sdm` function also receives a `scenarios` object, where the researcher can provide new data to project the models. This data can be from future or past scenarios. One can also provide a new `study_area` if the aim of the modeling is to project a model in a new area (*e.g.* as in invasiveness assessments). Lately, when projecting the models, we can include the predictors data as new data to be projected on. This is useful for projecting models in the same region where the model was built.
-
-It is possible to pass multiple classes to the `occurrences`, `predictors` and `scenarios` functions as rasterStacks (from raster package), SpatRaster (from terra package), stars (from stars package), data.frames, simple features (sf package) and others. In this way, if you want to import data to R in your own way and then work them with your favorite package your are able to pass it to `caretSDM` afterwards. We propose here the use of the directory to enter data into caretSDM. By passing the directory to the predictors and scenarios functions, they will recognize data in folder and import it as stars objects (all the processing with geographic data in `caretSDM` is done using `stars` and `sf` packages).
+In `caretSDM` we use multiple classes to perform our analysis. Every time we perform a new analysis, objects keep the information of what we did. Ideally, the workflow will have only one object throughout it. The `input_sdm` class is the key class in the workflow, where every function will orbitate. That class puts occurrences, predictors, scenarios, models and predictions together to perform analysis that are only possible when two or more of these classes are available. First, we create the object by informing the occurrences and sdm_area.
 
 ```{r input_sdm}
-i_sa <- input_sdm(oc, sa)
+i <- input_sdm(oc, sa)
+i
 ```
 
 ### Data cleaning routine
 
+As the first step in our workflow with the `input_sdm` object, we will clean our occurrences data by applying a group of functions from the package `CoordinateCleaner`. In this function, we also provide a way to check for environmental duplicates, by including a predictors object. This function also checks for records in the sea if the species is terrestrial, but note that this can be switched off if the studied species is not terrestrial. The way `caretSDM` works, we can always overwrite the main `input_sdm` object to update it. The function will return a new object with all the previous information and the new information obtained from the `data_clean` function, note that at the end of the Data Cleaning information there is the Duplicated Cell method. This method is only possible when we have both the `occurrence` and `predictors` data.
+
 ```{r data_clean}
-i_sa <- data_clean(i_sa)
+i <- data_clean(i)
+i
 ```
 
 ### Removing multicolinearity from predictors' data
 
-```{r vif_predictors}
-i_sa <- vif_predictors(i_sa)
+In `vif_predictors`, we are able to perform two methods to select variables: selecting all area or using the presence records (which is debatable, but implemented).
+
+```{r pca_predictors}
+i <- pca_predictors(i)
+i
 ```
 
 ### Obtaining pseudoabsence data
 
+As we mentioned before, pseudoabsence data will be stored in the `occurrences` object (inside the `input_sdm`). To generate them, you can inform some parameters. The argument `variables_selected` will inform which variables you want to use to build your pseudoabsences/models. This can either be a vector of variables names or a previously performed selection method.
+
 ```{r pseudoabsence}
-i_sa <- pseudoabsences(i_sa, method = "bioclim", variables_selected = "vif") 
+i <- pseudoabsences(i, method = "bioclim", variables_selected = "pca") 
+i
 ```
+
+**TIP:** Note that the information regarding the `i` object has increased. Now it includes the information that we performed a Data Cleaning routine, explicitly informing what methods were used, the information regarding VIF routine and the pseudoabsences.
 
 ## Processing
 
 ### Modeling species relationship with variables
 
+With the occurrences and predictors data put together, we can pass to the modeling. As the name suggests, `caretSDM` uses the `caret` package underlying its modeling procedure. For those who are not familiar, `caret` is the easiest way to perform Machine Learning analysis in R. It works by setting a modeling wrapper to pass multiple packages and can provide a lot of automation regarding algorithms fine-tuning, data spliting, pre-processing methods and predictions. These automated functions from `caret` can be altered using the `ctrl` argument in `train_sdm` function. See `?caret::trainControl` for all options available.
+
+Note that, when you are using an algorithm for the first time, caret will ask you to install the relevant packages to properly run the algorithm.
+
 ```{r train_sdm}
-i_sa <- train_sdm(i_sa, algo = c("svmLinear2", "mda", "nnet", "kknn"), variables_selected = "vif")
+i <- train_sdm(i, algo = c("svmLinear2", "mda", "nnet", "kknn"), variables_selected = "pca")
+i
 ```
+
+With models built, we can see Partial Dependence Plots (a.k.a., response curves)...
 
 ```{r pdp_sdm}
-pdp_sdm(i_sa)
+pdp_sdm(i)
 ```
 
+... and the variables importance.
+
 ```{r varImp_sdm}
-varImp_sdm(i_sa)
+varImp_sdm(i)
 ```
 
 ## Post-Processing
 
 ### Predicting species distribution in given scenarios
 
+Now that we have our models, we can make predictions in new scenarios. The function `predict_sdm` incorporates also the prediction of ensembles (`ensembles=TRUE` is standard).
+
 ```{r predict_sdm}
-i_sa <- predict_sdm(i_sa, th = 0.7)
+i <- predict_sdm(i, th = 0.9)
 ```
 
+To generate maps in `caretSDM` we can simply plot the `input_sdm` object. The plot function will look for ensembles, predictions, models and occurrences to be ploted, in this order. In this way, if only occurrences are available, it will plot the occurrences. If ensembles are available, it will plot the ensembles. You can specify what to plot using the `what` argument or use a direct function as `plot_predictions`.
+
 ```{r plot_predictions}
-plot_predictions(i_sa)
+plot_predictions(i, scenario = "current")
 ```
