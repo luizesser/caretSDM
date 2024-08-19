@@ -16,7 +16,7 @@ package.
 
 ``` r
 install.packages(setdiff("devtools", rownames(installed.packages())))
-install_github("luizesser/caretSDM", build_vignettes = TRUE)
+devtools::install_github("luizesser/caretSDM", build_vignettes = TRUE)
 ```
 
 ``` r
@@ -50,3 +50,9 @@ wrong, try to take a look at those objects or the vignettes:
 
 - `Salminus` is the main vignette for continental aquatic species
   modeling.
+
+To access the vignettes in R, simply run:
+
+``` r
+vignette("Araucaria", "caretSDM")
+```

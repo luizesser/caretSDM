@@ -42,9 +42,8 @@ caretSDM is vastly documented and has included some objects that can guide your 
 
 -   `Araucaria` is the main vignette for terrestrial species modeling.
 
-```{=html}
 <!-- -->
-```
+
 -   `Salminus` is the main vignette for continental aquatic species modeling.
 
 To access the vignettes in R, simply run:
