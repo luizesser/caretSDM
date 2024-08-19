@@ -13,10 +13,9 @@ vignette: >
 `caretSDM` is a under development R package that uses the powerful `caret` package as the main engine to obtain Species Distribution Models. One of its main attributes is the strong geoprocessing underlying its functions. Here we show how to model species distributions using `caretSDM` through the function `sdm_area` with lines instead of polygons. This is implemented mostly thinking in HydroSHEDS database, which is particularly important for continental aquatic environments modeling.
 
 ```{r open libraries}
-library(chooseGCM)
 library(caretSDM)
-library(dplyr)
-library(stars)
+library(stars) # Package used to manipulate GIS data
+library(dplyr) # Package to improve data handling
 ```
 
 ```{r GBIF_data}
@@ -45,12 +44,12 @@ buf <- st_union(buf)
 ```
 
 ```{r sdm_area}
-sa <- sdm_area(study_area, cell_size = 25000, crs = 6933, gdal = F)
+sa <- sdm_area(study_area, cell_size = 25000, crs = 6933, gdal = T)
 ```
 
 ```{r add_predictors}
 get_predictor_names(sa)
-sa <- add_predictors(sa, pred_data, gdal = F)
+sa <- add_predictors(sa, pred_data, gdal = T)
 get_predictor_names(sa)
 ```
 
@@ -59,38 +58,50 @@ sa <- add_scenarios(sa)
 ```
 
 ```{r input_sdm}
-i_sa <- input_sdm(occurrences_sdm(occ_data, crs = 4326), sa)
+i <- input_sdm(occurrences_sdm(occ_data, crs = 4326), sa)
+i
 ```
 
 ```{r data_clean}
 # funciona
-i_sa <- data_clean(i_sa, terrestrial = FALSE)
+i <- data_clean(i, terrestrial = FALSE)
+i
 ```
 
 ```{r vif_predictors}
-i_sa <- vif_predictors(i_sa)
+i <- vif_predictors(i)
+i
 ```
 
 ```{r pseudoabsence}
-i_sa <- pseudoabsences(i_sa, method = "random", variables_selected = "vif") 
+i <- pseudoabsences(i, method = "bioclim", variables_selected = "vif") 
+i
 ```
 
-```{r train_sdm}
-i_sa <- train_sdm(i_sa, algo = c("svmLinear2", "mda", "nnet", "kknn"), variables_selected = "vif")
+```{r train_sdm, eval=TRUE, include=FALSE}
+i <- train_sdm(i, algo = c("svmLinear2", "mda", "nnet", "kknn"), variables_selected = "vif")
+```
+
+```{r train_sdm2, eval=FALSE, include=TRUE}
+i <- train_sdm(i, algo = c("svmLinear2", "mda", "nnet", "kknn"), variables_selected = "vif")
+```
+
+```{r}
+i
 ```
 
 ```{r predict_sdm}
-i_sa <- predict_sdm(i_sa, th = 0.75)
+i <- predict_sdm(i, th = 0.85)
 ```
 
 ```{r plot_predictions}
-plot_predictions(i_sa)
+plot_predictions(i, scenario = "current")
 ```
 
 ```{r pdp_sdm}
-pdp_sdm(i_sa)
+pdp_sdm(i)
 ```
 
 ```{r varImp_sdm}
-varImp_sdm(i_sa)
+varImp_sdm(i)
 ```
