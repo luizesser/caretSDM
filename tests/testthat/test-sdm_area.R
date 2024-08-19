@@ -103,7 +103,7 @@ test_that("sdm_area - sf/grid erro", {
   sa <- sdm_area(pr_gpkg, cell_size = 1)
   sa$grid <- sa$grid |> select(-cell_id)
   expect_error(
-    .check_sdm_area(sa),
+    caretSDM:::.check_sdm_area(sa),
     "sdm_area object is corrupted!"
   )
 })
@@ -113,7 +113,7 @@ test_that("sdm_area - sf/grid erro tamanho celula", {
   sa2 <- sdm_area(pr_gpkg, cell_size = 49000, crs = 6933)
   sa$grid <- sa2$grid
   expect_error(
-    .check_sdm_area(sa),
+    caretSDM:::.check_sdm_area(sa),
     "sdm_area object is corrupted!"
   )
 })

@@ -130,14 +130,39 @@ test_that("add_predictors - character input", {
   expect_equal(sa_pred$grid, sa_pred2$grid)
 })
 
-test_that("add_predictors - correção do tidyr::drop_na", {
+
+# Novos testes
+test_that("add_predictors - correção do tidyr::drop_na: drop_na modifica o bbox buff+gdal", {
   buf_sa <- occ |>
-    st_as_sf(coords=c(2,3)) |>
-    st_buffer(dist=10000) |>
-    st_union() |>
-    st_as_sf(crs=st_crs(6933))
+    sf::st_as_sf(coords = c(2,3)) |>
+    sf::st_buffer(dist = 10000) |>
+    sf::st_union() |>
+    sf::st_as_sf(crs=sf::st_crs(6933))
   sa_buf <- sdm_area(buf_sa, cell_size = 5000, crs = 6933)
-  #sa_pred <- sdm_area(bioc, cell_size = 5000, crs = 6933)
   sa_pred <- add_predictors(sa_buf, bioc)
-  expect_equal(st_bbox(sa_buf$grid), st_bbox(sa_pred$grid))
+  expect_equal(sf::st_bbox(sa_buf$grid), sf::st_bbox(sa_pred$grid))
 })
+
+test_that("add_predictors - correção do tidyr::drop_na: drop_na modifica o bbox Gpkg+gdal", {
+  sa_buf <- sdm_area(pr_gpkg, cell_size = 5000, crs = 6933)
+  sa_pred <- add_predictors(sa_buf, bioc)
+  expect_equal(sf::st_bbox(sa_buf$grid), sf::st_bbox(sa_pred$grid))
+})
+
+test_that("add_predictors - correção do tidyr::drop_na: drop_na modifica o bbox buff-nogdal", {
+  buf_sa <- occ |>
+    sf::st_as_sf(coords = c(2,3)) |>
+    sf::st_buffer(dist = 10000) |>
+    sf::st_union() |>
+    sf::st_as_sf(crs=sf::st_crs(6933))
+  sa_buf <- sdm_area(buf_sa, cell_size = 5000, crs = 6933, gdal = FALSE)
+  sa_pred <- add_predictors(sa_buf, bioc, gdal = FALSE)
+  expect_equal(sf::st_bbox(sa_buf$grid), sf::st_bbox(sa_pred$grid))
+})
+
+test_that("add_predictors - correção do tidyr::drop_na: drop_na modifica o bbox Gpkg-nogdal", {
+  sa_buf <- sdm_area(pr_gpkg, cell_size = 5000, crs = 6933, gdal = FALSE)
+  sa_pred <- add_predictors(sa_buf, bioc, gdal = FALSE)
+  expect_equal(sf::st_bbox(sa_buf$grid), sf::st_bbox(sa_pred$grid))
+})
+

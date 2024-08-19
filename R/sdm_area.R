@@ -376,11 +376,21 @@ sdm_area.stars <- function(x, cell_size = NULL, crs = NULL, variables_selected =
   grd$cell_id <- seq(1, n_col * n_row)
 
   grd <- grd |>
-    sf::st_as_sf() |>
+    sf::st_as_sf()
+
+  if(is.null(crop_by)){
+    grd_bbox <- sf::st_bbox(grd)
+  }
+
+ grd <- grd |>
     tidyr::drop_na() |>
     dplyr::relocate(cell_id)
 
-  attr(sf::st_geometry(grd), "bbox") <- sf::st_bbox(crop_by)
+  if (!is.null(crop_by)){
+    attr(sf::st_geometry(grd), "bbox") <- sf::st_bbox(crop_by)
+  } else {
+    attr(sf::st_geometry(grd), "bbox") <- grd_bbox
+  }
 
   return(grd)
 }
