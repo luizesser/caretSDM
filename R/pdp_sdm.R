@@ -66,17 +66,17 @@ pdp_sdm <- function(i, spp = NULL, algo = NULL, variables_selected = NULL) {
   l <- get_pdp_sdm(i, spp, algo, variables_selected)
   l2 <- bind_rows(l)
 
-  summary_stats <- l2 |>
-    dplyr::group_by(value, variable) |>
-    dplyr::summarise(mean_value = mean(yhat, na.rm = TRUE),
-                     min_value = min(yhat, na.rm = TRUE),
-                     max_value = max(yhat, na.rm = TRUE))
+  #summary_stats <- l2 |>
+  #  dplyr::group_by(value, variable) |>
+  #  dplyr::summarise(mean_value = mean(yhat, na.rm = TRUE),
+  #                   min_value = min(yhat, na.rm = TRUE),
+  #                   max_value = max(yhat, na.rm = TRUE))
 
-  x <- ggplot2::ggplot(data = summary_stats, ggplot2::aes(x = value, y = mean_value, group = variable)) +
-    ggplot2::geom_ribbon(ggplot2::aes(ymin = min_value, ymax = max_value), fill = "grey", alpha = 0.5) +  # Grey ribbon for range
-    ggplot2::geom_smooth(ggplot2::aes(x = value, y = mean_value), color = "red",
-                         linewidth = 1.2) +  # Add mean line
-    ggplot2::facet_wrap(~ variable, scales = "free_x") +
+  x <- ggplot2::ggplot(data = group_by(l2,variable), ggplot2::aes(x = value, y = yhat, group = id)) +
+    ggplot2::facet_wrap(~ variable, scales = "free_x")+
+    ggplot2::geom_line(alpha=0.2) +
+    ggplot2::geom_smooth(ggplot2::aes(x = value, y = yhat, group=variable), color = "blue",
+                         linewidth = 1.2) +
     ggplot2::labs(title = "Partial Dependence Plot",
                   x = "",
                   y = "Probability of Occurrence") +
