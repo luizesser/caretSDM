@@ -201,8 +201,15 @@ With the occurrences and predictors data put together, we can pass to the modeli
 
 Note that, when you are using an algorithm for the first time, caret will ask you to install the relevant packages to properly run the algorithm.
 
-```{r train_sdm}
+```{r train_sdm, eval=TRUE, include=FALSE}
 i <- train_sdm(i, algo = c("svmLinear2", "mda", "nnet", "kknn"), variables_selected = "pca")
+```
+
+```{r train_sdm2, eval=FALSE, include=TRUE}
+i <- train_sdm(i, algo = c("svmLinear2", "mda", "nnet", "kknn"), variables_selected = "pca")
+```
+
+```{r}
 i
 ```
 
