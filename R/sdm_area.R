@@ -528,7 +528,7 @@ sdm_area.sf <- function(x, cell_size = NULL, crs = NULL, variables_selected = NU
     )
   }
 
-  l$grid <- l$grid[x,]
+#  l$grid <- l$grid[x,]
 
   sa <- .sdm_area(l)
   return(invisible(sa))

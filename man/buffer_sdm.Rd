@@ -23,7 +23,7 @@ Obtain the Partial Dependence Plots (PDP) to each variable.
 }
 \examples{
 # Create sdm_area object:
-study_area <- buffer_sdm(occ, size=10000, crs=4326)
+study_area <- buffer_sdm(occ_data, size=5, crs=4326)
 plot(study_area)
 
 }

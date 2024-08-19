@@ -1,5 +1,5 @@
 ---
-title: "Araucaria"
+title: "Using polygons as area in caretSDM"
 author: "Luíz Fernando Esser"
 output: rmarkdown::html_vignette
 vignette: >
@@ -7,8 +7,6 @@ vignette: >
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
-
-# Using polygons as area in caretSDM 
 
 `caretSDM` is a under development R package that uses the powerful `caret` package as the main engine to obtain Species Distribution Models. One of its main attributes is the strong geoprocessing underlying its functions. Here we show how to model species distributions using `caretSDM` through the function `sdm_area` with a polygon. The aim of this modeling will be to obtain the distribution of *Araucaria angustifolia*, a long-living pine-tree species from Brazil, to current and future climate change scenarios.
 
@@ -26,7 +24,7 @@ To obtain models, we will need climatic data and species records. To easily obta
 
 ### Obtaining climatic data
 
-We will first download and import current data, which is used to build the models. WorldClim_data function has an argument to set the directory in which you want to save the files. If you don't set it, files will be saved in your working directory (run `getwd()` to find out your working dirrectory) in the folder "input_data/WorldClim_data_current/". If period is set to "future", then it is saved in "input_data/WorldClim_data_future/". We could run this routine with a smaller resolution, but as the aim here is to show how the package works, we will use a resolution of 10 arc-minutes, which is very coarse, but quicker to download and run.
+We will first download and import current data, which is used to build the models. `WorldClim_data` function has an argument to set the directory in which you want to save the files. If you don't set it, files will be saved in your working directory (run `getwd()` to find out your working dirrectory) in the folder "input_data/WorldClim_data_current/". If period is set to "future", then it is saved in "input_data/WorldClim_data_future/". We could run this script with a smaller resolution, but as the aim here is to show how the package works, we will use a resolution of 10 arc-minutes, which is very coarse, but quicker to download and run.
 
 ```{r WorldClim_data_current}
 # Download current bioclimatic variables
@@ -111,7 +109,8 @@ A important step on model building in Species Distribution Models, is the defini
 ```{r create_buffer}
 # Create a buffer around records
 study_area <- buffer_sdm(occ, size = 5, crs = 4326)
-study_area
+study_area <- cbind(buffer=1,study_area)
+#study_area <- geobr::read_state("PR")
 ```
 
 In `caretSDM` there is a function that groups all the transformations regarding the study area to build and project the models. The `sdm_area` function is this function and is also responsible to check CRSs and create a grid to build models. This grid may seem unpurposed for terrestrial ecologists, but is a key element when modeling continental aquatic environments. `sdm_area` class will also keep the environmental/climatic data (*i.e.* "predictor variables", "covariates", "explanatory variables", "features" or "control variables"). With this class we will perform analysis using only the predictors (such as predictors transformations).
@@ -119,7 +118,7 @@ In `caretSDM` there is a function that groups all the transformations regarding 
 ```{r}
 # Create a sdm_area object
 sa <- sdm_area(study_area, cell_size = 100000, crs = 6933)
-sa
+sa$grid <- select(sa$grid, -buffer)
 plot(sa)
 ```
 
@@ -229,7 +228,7 @@ Now that we have our models, we can make predictions in new scenarios. The funct
 i <- predict_sdm(i, th = 0.9)
 ```
 
-To generate maps in `caretSDM` we can simply plot the `input_sdm` object. The plot function will look for ensembles, predictions, models and occurrences to be ploted, in this order. In this way, if only occurrences are available, it will plot the occurrences. If ensembles are available, it will plot the ensembles. You can specify what to plot using the `what` argument or use a direct function as `plot_predictions`.
+To generate maps in `caretSDM` we can simply plot the `input_sdm` object using the function `plot_predictions`. This function has a series of arguments to plot specific maps within `i`. You can take a look at `?plot_predictions` to know more.
 
 ```{r plot_predictions}
 plot_predictions(i, scenario = "current")

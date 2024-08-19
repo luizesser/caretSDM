@@ -11,7 +11,7 @@ Authors@R: c(
            comment = c(ORCID = "0000")),
     person("Reginaldo", "Ré", role = "aut",
            comment = c(ORCID = "0000")),
-   person("Valéria", "Batista", role = "aut",
+    person("Valéria", "Batista", role = "aut",
            comment = c(ORCID = "0000")),
     person("Luíz", "Esser", , "luizesser@gmail.com", role = c("aut", "cre"),
            comment = c(ORCID = "0000")))
