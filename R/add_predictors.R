@@ -116,6 +116,7 @@ add_predictors.sf <- function(sdm_area, pred, variables_selected = NULL, gdal= T
   #  pred <- st_transform(pred, crs=sf::st_crs(sdm_area$grid))
   #}
   #pred <- pred[sdm_area$grid]
+
   pred_sdm_area <- pred |>
     sdm_area(
       cell_size = sdm_area$cell_size,
@@ -127,13 +128,7 @@ add_predictors.sf <- function(sdm_area, pred, variables_selected = NULL, gdal= T
   if (is.null(pred_sdm_area)){
     return(sdm_area)
   }
-  if (!all((sdm_area$grid |> sf::st_bbox()) ==  (pred_sdm_area$grid |> sf::st_bbox()))){
-    cli::cli_abort(c(
-      "x" = "The bounding box of sdm_area and pred is not identical!"
-    ),
-    .internal = TRUE
-    )
-  }
+
 
   grd <- sdm_area$grid |>
     dplyr::inner_join(
@@ -143,6 +138,7 @@ add_predictors.sf <- function(sdm_area, pred, variables_selected = NULL, gdal= T
       dplyr::join_by(cell_id)
     )
 
+  #attr(sf::st_geometry(grd), "bbox") <- sf::st_bbox(sdm_area$grid)
   sdm_area$grid <- grd
 
   return(sdm_area)

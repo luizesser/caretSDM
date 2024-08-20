@@ -382,7 +382,8 @@ sdm_area.stars <- function(x, cell_size = NULL, crs = NULL, variables_selected =
     grd_bbox <- sf::st_bbox(grd)
   }
 
- grd <- grd |>
+
+  grd <- grd |>
     tidyr::drop_na() |>
     dplyr::relocate(cell_id)
 
@@ -538,8 +539,6 @@ sdm_area.sf <- function(x, cell_size = NULL, crs = NULL, variables_selected = NU
     )
   }
 
-#  l$grid <- l$grid[x,]
-
   sa <- .sdm_area(l)
   return(invisible(sa))
 }
@@ -692,10 +691,20 @@ sdm_area.sf <- function(x, cell_size = NULL, crs = NULL, variables_selected = NU
   n_row <- attr(grd, "dimensions")[["y"]]$to
   grd$cell_id <- seq(1, n_col * n_row)
 
-  grd <- grd |>
-    sf::st_as_sf() |>
-    tidyr::drop_na() #####################################
 
+  grd <- grd |>
+    sf::st_as_sf()
+
+  grd_bbox <- sf::st_bbox(grd)
+
+  if (length(grd |> names() |> setdiff(c("cell_id", "geometry"))) == 0) {
+    grd <- grd[x, ]
+  }
+
+  grd <- grd |>
+    tidyr::drop_na()
+
+  attr(sf::st_geometry(grd), "bbox") <- grd_bbox
 
   return(grd)
 }
@@ -731,6 +740,7 @@ sdm_area.sf <- function(x, cell_size = NULL, crs = NULL, variables_selected = NU
       weighting_factor_calc_func <- sf::st_area
     }
 
+
     progressr::handlers("cli")
     p_bar_inter <- progressr::progressor(length(int_list) + 1)
     no_cores <- parallelly::availableCores() - 1
@@ -751,14 +761,14 @@ sdm_area.sf <- function(x, cell_size = NULL, crs = NULL, variables_selected = NU
         }
       ) |>
       purrr::list_rbind() |>
-      tidyr::drop_na() |> ##########################################
+      tidyr::drop_na() |>
       dplyr::filter(..weighting_factor > 0 & !is.na(..weighting_factor))
 
     future::plan(future::sequential)
   } else {
     grd <- grd |>
       sf::st_join(x, left = FALSE) |>
-      tidyr::drop_na() ############################################
+      tidyr::drop_na()
     grd$..weighting_factor <- 1
   }
 

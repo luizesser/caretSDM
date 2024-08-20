@@ -16,6 +16,8 @@ vignette: >
 library(caretSDM)
 library(stars) # Package used to manipulate GIS data
 library(dplyr) # Package to improve data handling
+library(progressr) # Package to show progress bars
+progressr::handlers(global = TRUE)
 ```
 
 ### Obtaining climatic data
