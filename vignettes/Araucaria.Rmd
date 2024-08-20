@@ -8,7 +8,7 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-`caretSDM` is a under development R package that uses the powerful `caret` package as the main engine to obtain Species Distribution Models. One of its main attributes is the strong geoprocessing underlying its functions. Here we show how to model species distributions using `caretSDM` through the function `sdm_area` with a polygon. The aim of this modeling will be to obtain the distribution of *Araucaria angustifolia*, a long-living pine-tree species from Brazil, to current and future climate change scenarios.
+`caretSDM` is a under development R package that uses the powerful `caret` package as the main engine to obtain Species Distribution Models. One of its main attributes is the strong geoprocessing underlying its functions. Here we show how to model species distributions using `caretSDM` through the function `sdm_area` with a polygon. We will also show how to apply a PCA in predictors and scenarios to avoid multicolinearity. The aim of this modeling will be to obtain the distribution of *Araucaria angustifolia*, a long-living pine-tree species from Brazil, to current and future climate change scenarios.
 
 First, we need to open our libraries.
 

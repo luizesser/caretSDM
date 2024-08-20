@@ -10,13 +10,17 @@ vignette: >
 
 # Using lines as study_area in caretSDM
 
-`caretSDM` is a under development R package that uses the powerful `caret` package as the main engine to obtain Species Distribution Models. One of its main attributes is the strong geoprocessing underlying its functions. Here we show how to model species distributions using `caretSDM` through the function `sdm_area` with lines instead of polygons. This is implemented mostly thinking in HydroSHEDS database, which is particularly important for continental aquatic environments modeling.
+`caretSDM` is a under development R package that uses the powerful `caret` package as the main engine to obtain Species Distribution Models. One of its main attributes is the strong geoprocessing underlying its functions. Here we show how to model species distributions using `caretSDM` through the function `sdm_area` with lines instead of polygons. This is implemented mostly thinking in HydroSHEDS database, which is particularly important for continental aquatic environments modeling. We also show how to avoid multicolinearity using a Variance Inflation Factor (VIF) routine. The aim of this modeling will be to obtain the current distribution of *Salminus brasiliensis*, a economically and ecologically key fish species from Paraná-Paraguay watershed.
 
 ```{r open libraries}
 library(caretSDM)
 library(stars) # Package used to manipulate GIS data
 library(dplyr) # Package to improve data handling
 ```
+
+### Obtaining climatic data
+
+We will first download and import current data, which is used to build and project the models. `WorldClim_data` function has an argument to set the directory in which you want to save the files. If you don't set it, files will be saved in your working directory (run `getwd()` to find out your working dirrectory) in the folder "input_data/WorldClim_data_current/". We could run this script with a smaller resolution, but as the aim here is to show how the package works, we will use a resolution of 10 arc-minutes, which is very coarse, but quicker to download and run.
 
 ```{r GBIF_data}
 # Import data from GBIF
