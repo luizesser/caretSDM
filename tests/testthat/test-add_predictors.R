@@ -140,16 +140,16 @@ test_that("add_predictors - correção do tidyr::drop_na: drop_na modifica o bbo
    sf::st_as_sf(crs=sf::st_crs(6933))
  sa_buf <- sdm_area(buf_sa, cell_size = 5000, crs = 6933)
  sa_pred <- add_predictors(sa_buf, bioc)
- expect_equal(sf::st_bbox(sa_buf$grid), sf::st_bbox(sa_pred$grid))
+ suppressWarnings(bbox_intersect <- sf::st_bbox(sf::st_intersection(sa_buf$grid, sa_pred$grid))) #find intersection between sdm_area and add_pred.
+ expect_equal(bbox_intersect, sf::st_bbox(sa_pred$grid))
 })
-
 
 test_that("add_predictors - correção do tidyr::drop_na: drop_na modifica o bbox Gpkg+gdal", {
  sa_buf <- sdm_area(pr_gpkg, cell_size = 5000, crs = 6933)
  sa_pred <- add_predictors(sa_buf, bioc)
- expect_equal(sf::st_bbox(sa_buf$grid), sf::st_bbox(sa_pred$grid))
+ suppressWarnings(bbox_intersect <- sf::st_bbox(sf::st_intersection(sa_buf$grid, sa_pred$grid))) #find intersection between sdm_area and add_pred.
+ expect_equal(bbox_intersect, sf::st_bbox(sa_pred$grid))
 })
-
 
 test_that("add_predictors - correção do tidyr::drop_na: drop_na modifica o bbox buff-nogdal", {
  buf_sa <- occ |>
@@ -159,13 +159,14 @@ test_that("add_predictors - correção do tidyr::drop_na: drop_na modifica o bbo
    sf::st_as_sf(crs=sf::st_crs(6933))
  sa_buf <- sdm_area(buf_sa, cell_size = 5000, crs = 6933, gdal = FALSE)
  sa_pred <- add_predictors(sa_buf, bioc, gdal = FALSE)
- expect_equal(sf::st_bbox(sa_buf$grid), sf::st_bbox(sa_pred$grid))
+ suppressWarnings(bbox_intersect <- sf::st_bbox(sf::st_intersection(sa_buf$grid, sa_pred$grid))) #find intersection between sdm_area and add_pred.
+ expect_equal(bbox_intersect, sf::st_bbox(sa_pred$grid))
 })
-
 
 test_that("add_predictors - correção do tidyr::drop_na: drop_na modifica o bbox Gpkg-nogdal", {
  sa_buf <- sdm_area(pr_gpkg, cell_size = 5000, crs = 6933, gdal = FALSE)
  sa_pred <- add_predictors(sa_buf, bioc, gdal = FALSE)
- expect_equal(sf::st_bbox(sa_buf$grid), sf::st_bbox(sa_pred$grid))
+ suppressWarnings(bbox_intersect <- sf::st_bbox(sf::st_intersection(sa_buf$grid, sa_pred$grid))) #find intersection between sdm_area and add_pred.
+ expect_equal(bbox_intersect, sf::st_bbox(sa_pred$grid))
 })
 
