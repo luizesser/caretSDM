@@ -127,14 +127,14 @@ plot(sa)
 Now that we have a study area, we can assign predictor variables and scenarios to it.
 
 ```{r add_predictors}
-## Add predictor variables into sdm_area
+# Add predictor variables into sdm_area
 sa <- add_predictors(sa, pred)
 sa
 plot(sa)
 ```
 
 ```{r add_scenarios}
-## Add scenarios into sdm_area
+# Add scenarios into sdm_area
 sa <- add_scenarios(sa, scen)
 sa
 ```
@@ -175,9 +175,9 @@ i <- data_clean(i)
 i
 ```
 
-### Removing multicolinearity from predictors' data
+### Removing multicollinearity from predictors' data
 
-In `vif_predictors`, we are able to perform two methods to select variables: selecting all area or using the presence records (which is debatable, but implemented).
+An alternative implemented to avoid multicollinearity in predictors data is the use of PCA-axis. This strategy generates a PCA with predictors and uses models describing PCA-axis to project these axis in space.
 
 ```{r pca_predictors}
 i <- pca_predictors(i)
@@ -213,18 +213,6 @@ i <- train_sdm(i, algo = c("svmLinear2", "mda", "nnet", "kknn"), variables_selec
 
 ```{r}
 i
-```
-
-With models built, we can see Partial Dependence Plots (a.k.a., response curves)...
-
-```{r pdp_sdm}
-pdp_sdm(i)
-```
-
-... and the variables importance.
-
-```{r varImp_sdm}
-varImp_sdm(i)
 ```
 
 ## Post-Processing
