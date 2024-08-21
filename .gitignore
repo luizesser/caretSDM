@@ -44,7 +44,6 @@ current_10_m.zip
 current_10m.zip
 input_data/Shape.zip
 .DS_Store
-vignettes/input_data/parana_paraguay.gpkg
 vignettes/input_data/WorldClim_data_current/wc2.1_10m_bio_1.tif
 vignettes/input_data/WorldClim_data_current/wc2.1_10m_bio_10.tif
 vignettes/input_data/WorldClim_data_current/wc2.1_10m_bio_11.tif
