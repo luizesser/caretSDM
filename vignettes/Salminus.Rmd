@@ -1,5 +1,5 @@
 ---
-title: "Salminus"
+title: "Using lines as study_area in caretSDM"
 author: "Luíz Fernando Esser"
 output: rmarkdown::html_vignette
 vignette: >
@@ -8,16 +8,14 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-# Using lines as study_area in caretSDM
-
 `caretSDM` is a under development R package that uses the powerful `caret` package as the main engine to obtain Species Distribution Models. One of its main attributes is the strong geoprocessing underlying its functions. Here we show how to model species distributions using `caretSDM` through the function `sdm_area` with lines instead of polygons. This is implemented mostly thinking in HydroSHEDS database, which is particularly important for continental aquatic environments modeling. We also show how to avoid multicolinearity using a Variance Inflation Factor (VIF) routine. The aim of this modeling will be to obtain the current distribution of *Salminus brasiliensis*, a economically and ecologically key fish species from Paraná-Paraguay watershed.
 
 ```{r open libraries}
 library(caretSDM)
 library(stars) # Package used to manipulate GIS data
 library(dplyr) # Package to improve data handling
-library(progressr) # Package to show progress bars
-progressr::handlers(global = TRUE)
+#library(progressr) # Package to show progress bars
+#progressr::handlers(global = TRUE)
 ```
 
 ### Obtaining climatic data
