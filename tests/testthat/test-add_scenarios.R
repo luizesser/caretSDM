@@ -106,3 +106,12 @@ test_that("add_scenarios - stars mas nem todas variaveis estão presente", {
   expect_error(add_scenarios(sa, scen, variables_selected=c(1,2,3)))
 })
 
+test_that("add_scenarios - input_sdm", {
+  i <- input_sdm(sa)
+  i <- add_scenarios(i)
+  expect_true("scenarios" %in% names(i))
+  expect_true(all(i$scenarios$grid == i$predictors$grid))
+  expect_equal(i$scenarios$cell_size, i$predictors$cell_size)
+  expect_equal("current", names(i$scenarios$data))
+  expect_true(all(i$predictors$grid == i$scenarios$data$current))
+})

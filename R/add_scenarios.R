@@ -32,6 +32,7 @@
 #' @importFrom stars read_stars st_as_stars st_dimensions st_get_dimension_values
 #' @importFrom sf st_transform st_crs st_as_sf st_crop
 #' @importFrom dplyr select all_of
+#' @importFrom tidyr drop_na
 #'
 #' @export
 add_scenarios <- function(sdm_area, scen = NULL, variables_selected = NULL, ...) {
@@ -40,10 +41,18 @@ add_scenarios <- function(sdm_area, scen = NULL, variables_selected = NULL, ...)
 
 #' @export
 add_scenarios.NULL <- function(sdm_area, scen = NULL, variables_selected = NULL, ...) {
-  sa_teste <- sdm_area
-  sa_teste$data <- list(current = sa_teste$grid)
-  sdm_area$scenarios <- sa_teste
-  return(sdm_area)
+  if(is_sdm_area(sdm_area)){
+    sa_teste <- sdm_area
+    sa_teste$data <- list(current = sa_teste$grid)
+    sdm_area$scenarios <- sa_teste
+    return(sdm_area)
+  } else if (is_input_sdm(sdm_area)){
+    sa_teste <- sdm_area$predictors
+    sa_teste$data <- list(current = sa_teste$grid)
+    sdm_area$scenarios <- sa_teste
+    return(sdm_area)
+  }
+
 }
 
 # #' @export
@@ -124,7 +133,7 @@ add_scenarios.stars <- function(sdm_area, scen, scenarios_names = NULL, pred_as_
   }
 
   grid_t <- sf::st_transform(sa$grid, sf::st_crs(scen))
-  suppressWarnings(scen <- sf::st_crop(scen, grid_t))
+  #suppressWarnings(scen <- sf::st_crop(scen, grid_t))
 
   l <- list()
   for (i in 1:length(scen)) {
@@ -133,7 +142,8 @@ add_scenarios.stars <- function(sdm_area, scen, scenarios_names = NULL, pred_as_
       sf::st_as_sf() |>
       sf::st_transform(sf::st_crs(sdm_area$grid)) |>
       cbind(select(sdm_area$grid, "cell_id")) |>
-      dplyr::select(dplyr::all_of(c("cell_id", variables_selected)))
+      dplyr::select(dplyr::all_of(c("cell_id", variables_selected))) |>
+      tidyr::drop_na()
   }
 
   if (pred_as_scen) {

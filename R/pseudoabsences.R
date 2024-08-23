@@ -75,14 +75,19 @@
 #'
 #' @export
 pseudoabsences <- function(occ, pred = NULL, method = "random", n_set = 10, n_pa = NULL, variables_selected = NULL, th = 0) {
+  assert_class_cli(occ, "input_sdm")
   if (is_input_sdm(occ)) {
     y <- occ$occurrences
     pred <- occ$predictors
-  } else {
-    y <- occ
   }
+  assert_class_cli(pred, "sdm_area")
+  assert_choice_cli(method, c("random", "bioclim", "mahal.dist"))
+  assert_int_cli(n_set)
+  assert_int_cli(n_pa, null.ok = TRUE)
+  assert_numeric_cli(th, len=1, null.ok=FALSE, upper=1, lower=0, any.missing=FALSE)
+  assert_subset_cli(variables_selected, c(get_predictor_names(pred), "vif", "pca"), empty.ok=T)
 
-  if (!is.null(occ$pseudoabsences)) {
+  if (!is.null(y$pseudoabsences)) {
     warning("Previous pseudoabsence element on Occurrences object was overwrited.", call. = F)
   }
   if (is.null(n_pa)) {
@@ -207,11 +212,8 @@ pseudoabsences <- function(occ, pred = NULL, method = "random", n_set = 10, n_pa
     }
     pa <- .pseudoabsences(y, l, method, n_set, n_pa)
   }
-  if (method == "cluster") {
-    # Reginaldo
-  }
 
-  if (class(occ) == "input_sdm") {
+  if (is_input_sdm(occ)) {
     occ$occurrences <- pa
     pa <- occ
   }

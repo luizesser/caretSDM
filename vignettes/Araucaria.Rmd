@@ -184,6 +184,12 @@ i <- pca_predictors(i)
 i
 ```
 
+We can analyse the PCA-axis summary statistics using `pca_summary` function.
+
+```{r pca_summary}
+pca_summary(i)
+```
+
 ### Obtaining pseudoabsence data
 
 As we mentioned before, pseudoabsence data will be stored in the `occurrences` object (inside the `input_sdm`). To generate them, you can inform some parameters. The argument `variables_selected` will inform which variables you want to use to build your pseudoabsences/models. This can either be a vector of variables names or a previously performed selection method.

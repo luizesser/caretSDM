@@ -79,42 +79,50 @@
 #'
 #' @export
 train_sdm <- function(occ, pred = NULL, algo, ctrl = NULL, variables_selected = NULL, parallel = FALSE, ...) {
+  assert_class_cli(occ, "input_sdm")
   if (is_input_sdm(occ)) {
     z <- occ$occurrences
     pred <- occ$predictors
-  } else {
-    z <- occ
   }
+  assert_character_cli(algo)
+  if(!is.null(ctrl)){
+    assert_list_cli(ctrl, len=27)
+    assert_names_cli(names(ctrl),
+                     must.include = c("method", "number", "repeats", "search", "p", "initialWindow",
+                                      "horizon", "fixedWindow", "skip", "verboseIter", "returnData",
+                                      "returnResamp", "savePredictions", "classProbs",
+                                      "summaryFunction", "selectionFunction", "preProcOptions",
+                                      "sampling", "index", "indexOut", "indexFinal", "timingSamps",
+                                      "predictionBounds", "seeds", "adaptive", "trim", "allowParallel"))
+  }
+  assert_subset_cli(variables_selected, c(get_predictor_names(pred), "vif", "pca"), empty.ok=T)
 
-  if (is_predictors(pred)) {
+  #if (is_predictors(pred)) {
+  #  if (is.null(variables_selected)) {
+  #    selected_vars <- get_predictor_names(pred)
+  #    cat("Using all variables available: ", selected_vars)
+  #  }
+  #  if (any(variables_selected %in% get_predictor_names(pred))) {
+  #    selected_vars <- get_predictor_names(pred)[get_predictor_names(pred) %in% variables_selected]
+  #    cat("Using given variables: ", selected_vars)
+  #  }
+  #} else
+  if (is_sdm_area(pred)) {
     if (is.null(variables_selected)) {
       selected_vars <- get_predictor_names(pred)
       cat("Using all variables available: ", selected_vars)
-    }
-    if (any(variables_selected %in% get_predictor_names(pred))) {
+    } else if (any(variables_selected %in% get_predictor_names(pred))) {
       selected_vars <- get_predictor_names(pred)[get_predictor_names(pred) %in% variables_selected]
       cat("Using given variables: ", selected_vars)
-    }
-  } else if (is_sdm_area(pred)) {
-    if (is.null(variables_selected)) {
-      selected_vars <- get_predictor_names(pred)
-      cat("Using all variables available: ", selected_vars)
-    }
-    if (any(variables_selected %in% get_predictor_names(pred))) {
-      selected_vars <- get_predictor_names(pred)[get_predictor_names(pred) %in% variables_selected]
-      cat("Using given variables: ", selected_vars)
-    }
-  }
-
-  if (length(variables_selected) == 1) {
-    if (length(pred$variable_selection[attributes(pred$variable_selection)$names %in% variables_selected]) == 0) {
-      print(paste0("Variable selection method not detected."))
-      stop()
-    } else {
-      selected_vars <- unlist(pred$variable_selection[attributes(pred$variable_selection)$names %in% variables_selected], rec = F)[[paste0(variables_selected, ".selected_variables")]]
+    } else if (variables_selected == "vif"){
+      selected_vars <- pred$variable_selection$vif$selected_variables
+      print(cat("Using variables selected by ", variables_selected, ": ", selected_vars))
+    } else if (variables_selected == "pca"){
+      selected_vars <- pred$variable_selection$pca$selected_variables
       print(cat("Using variables selected by ", variables_selected, ": ", selected_vars))
     }
   }
+
   if (is.null(ctrl)) {
     ctrl <- caret::trainControl(
       method = "repeatedcv", number = 4, repeats = 1, classProbs = TRUE, returnResamp = "all", # retornar folds
@@ -122,223 +130,223 @@ train_sdm <- function(occ, pred = NULL, algo, ctrl = NULL, variables_selected = 
     )
   }
   algo2 <- algo
-  if (length(algo2) == 1) {
-    if ("maxent" %in% algo2) {
-      algo <- list(
-        label = "Maximum Entropy Modeling",
-        library = "maxnet",
-        loop = NULL,
-        type = c("Classification", "Regression"),
-        levels = c("presence", "pseudoabsence"),
-        parameters = data.frame(
-          parameter = c("regmult"),
-          class = c("numeric"),
-          label = c("Regularization Multiplier")
-        ),
-        grid = function(x, y, len = NULL, search = "grid") {
-          if (search == "grid") {
-            out <- expand.grid(regmult = 1:len)
-          } else {
-            out <- expand.grid(regmult = 1:len)
-          }
-          out
-        },
-        fit = function(x, y, wts, param, lev, last, classProbs, ...) {
-          model <- maxnet::maxnet(
-            p = ifelse(as.numeric(y) == 1, 1, 0), data = x,
-            f = maxnet::maxnet.formula(p = ifelse(as.numeric(y) == 1, 1, 0), data = x),
-            regmult = param$regmult,
-            regfun = maxnet::maxnet.default.regularization, addsamplestobackground = T, ...
-          )
-          return(model)
-        },
-        predict = function(modelFit, newdata, preProc = NULL, submodels = NULL) {
-          pred_maxnet <- function(object, newdata, clamp = T, type = c("logistic"), ...) {
-            if (clamp) {
-              for (v in intersect(names(object$varmax), names(newdata))) {
-                newdata[, v] <- pmin(
-                  pmax(newdata[, v], object$varmin[v]),
-                  object$varmax[v]
-                )
-              }
-            }
-            hingeval <- function(x, min, max) {
-              pmin(1, pmax(0, (x - min) / (max - min)))
-            }
-            terms <- sub(
-              "hinge\\((.*)\\):(.*):(.*)$", "hingeval(\\1,\\2,\\3)",
-              names(object$betas)
-            )
-            terms <- sub(
-              "categorical\\((.*)\\):(.*)$", "categoricalval(\\1,\"\\2\")",
-              terms
-            )
-            terms <- sub(
-              "thresholds\\((.*)\\):(.*)$", "thresholdval(\\1,\\2)",
-              terms
-            )
-            f <- formula(paste("~", paste(terms, collapse = " + "), "-1"))
-            mm <- model.matrix(f, data.frame(newdata))
-            if (clamp) {
-              mm <- t(pmin(
-                pmax(t(mm), object$featuremins[names(object$betas)]),
-                object$featuremaxs[names(object$betas)]
-              ))
-            }
-            link <- (mm %*% object$betas) + object$alpha
-            if (type == "logistic") {
-              res <- 1 / (1 + exp(-object$entropy - link))
-            }
-            return(res)
-          }
-          pred <- pred_maxnet(modelFit, newdata, clamp = T, type = c("logistic"))
-          pred <- data.frame(presence = pred, pseudoabsence = 1 - pred)
-          pred <- as.factor(colnames(pred)[apply(pred, 1, which.max)])
-          return(pred)
-        },
-        prob = function(modelFit, newdata, preProc = NULL, submodels = NULL) {
-          prob_maxnet <- function(object, newdata, clamp = T, type = c("cloglog"), ...) {
-            if (clamp) {
-              for (v in intersect(names(object$varmax), names(newdata))) {
-                newdata[, v] <- pmin(
-                  pmax(newdata[, v], object$varmin[v]),
-                  object$varmax[v]
-                )
-              }
-            }
-            hingeval <- function(x, min, max) {
-              pmin(1, pmax(0, (x - min) / (max - min)))
-            }
-            terms <- sub(
-              "hinge\\((.*)\\):(.*):(.*)$", "hingeval(\\1,\\2,\\3)",
-              names(object$betas)
-            )
-            terms <- sub(
-              "categorical\\((.*)\\):(.*)$", "categoricalval(\\1,\"\\2\")",
-              terms
-            )
-            terms <- sub(
-              "thresholds\\((.*)\\):(.*)$", "thresholdval(\\1,\\2)",
-              terms
-            )
-            f <- formula(paste("~", paste(terms, collapse = " + "), "-1"))
-            mm <- model.matrix(f, data.frame(newdata))
-            if (clamp) {
-              mm <- t(pmin(
-                pmax(t(mm), object$featuremins[names(object$betas)]),
-                object$featuremaxs[names(object$betas)]
-              ))
-            }
-            link <- (mm %*% object$betas) + object$alpha
-            if (type == "cloglog") {
-              res <- 1 - exp(0 - exp(object$entropy + link))
-            }
-            return(res)
-          }
-          prob <- prob_maxnet(modelFit, newdata, clamp = T, type = c("cloglog"))
-          prob <- data.frame(presence = prob, pseudoabsence = 1 - prob)
-          return(prob)
-        },
-        predictors = function(x, ...) {
-          colnames(x)
-        },
-        varImp = NULL,
-        tags = c("MaxEnt")
-      )
-    } else if ("bioclim" %in% algo2) {
-      algo <- list(
-        label = "Bioclimatic Envelope Model",
-        library = "dismo",
-        loop = NULL,
-        type = c("Classification", "Regression"),
-        levels = c("presence", "pseudoabsence"),
-        parameters = data.frame(
-          parameter = c("abs"),
-          class = c("logical"),
-          label = c("Absolute absence")
-        ),
-        grid = function(x, y, len = NULL, search = "grid") {
-          if (search == "grid") {
-            out <- expand.grid(abs = c(TRUE, FALSE))
-          } else {
-            out <- expand.grid(abs = c(TRUE, FALSE))
-          }
-          return(out)
-        },
-        fit = function(x, y, wts, param, lev, last, classProbs, ...) {
-          model <- dismo::bioclim(x = x[y == "presence", ])
-          result <- list(model = model, abs = param$abs)
-          return(result)
-        },
-        predict = function(modelFit, newdata, preProc = NULL, submodels = NULL) {
-          pred <- predict(modelFit$model, newdata) ## should be dismo::predict?
-          pred <- data.frame(presence = pred, pseudoabsence = 1 - pred)
-          if (modelFit$abs) {
-            pred <- as.factor(ifelse(pred$presence > 0, "presence", "pseudoabsence"))
-          } else {
-            pred <- as.factor(colnames(pred)[apply(pred, 1, which.max)])
-          }
-          return(pred)
-        },
-        prob = function(modelFit, newdata, preProc = NULL, submodels = NULL) {
-          prob <- predict(modelFit$model, newdata)
-          prob <- data.frame(presence = prob, pseudoabsence = 1 - prob)
-          return(prob)
-        },
-        predictors = function(x, ...) {
-          colnames(x)
-        },
-        varImp = NULL,
-        tags = c("Bioclim")
-      )
-    } else if ("mahal.dist" %in% algo2) {
-      algo <- list(
-        label = "Mahalanobis Distance",
-        library = "dismo",
-        loop = NULL,
-        type = c("Classification", "Regression"),
-        levels = c("presence", "pseudoabsence"),
-        parameters = data.frame(
-          parameter = c("abs"),
-          class = c("logical"),
-          label = c("Absolute absence")
-        ),
-        grid = function(x, y, len = NULL, search = "grid") {
-          if (search == "grid") {
-            out <- expand.grid(abs = c(TRUE, FALSE))
-          } else {
-            out <- expand.grid(abs = c(TRUE, FALSE))
-          }
-          return(out)
-        },
-        fit = function(x, y, wts, param, lev, last, classProbs, ...) {
-          model <- dismo::mahal(x = x[y == "presence", ])
-          result <- list(model = model, abs = param$abs)
-          return(result)
-        },
-        predict = function(modelFit, newdata, preProc = NULL, submodels = NULL) {
-          pred <- predict(modelFit$model, newdata)
-          pred <- data.frame(presence = pred, pseudoabsence = 1 - pred)
-          if (modelFit$abs) {
-            pred <- as.factor(ifelse(pred$presence > 0, "presence", "pseudoabsence"))
-          } else {
-            pred <- as.factor(colnames(pred)[apply(pred, 1, which.max)])
-          }
-          return(pred)
-        },
-        prob = function(modelFit, newdata, preProc = NULL, submodels = NULL) {
-          prob <- predict(modelFit$model, newdata)
-          prob <- data.frame(presence = prob, pseudoabsence = 1 - prob)
-          return(prob)
-        },
-        predictors = function(x, ...) {
-          colnames(x)
-        },
-        varImp = NULL,
-        tags = c("Distance")
-      )
-    }
-  }
+  #if (length(algo2) == 1) {
+  #  if ("maxent" %in% algo2) {
+  #    algo <- list(
+  #      label = "Maximum Entropy Modeling",
+  #      library = "maxnet",
+  #      loop = NULL,
+  #      type = c("Classification", "Regression"),
+  #      levels = c("presence", "pseudoabsence"),
+  #      parameters = data.frame(
+  #        parameter = c("regmult"),
+  #        class = c("numeric"),
+  #        label = c("Regularization Multiplier")
+  #      ),
+  #      grid = function(x, y, len = NULL, search = "grid") {
+  #        if (search == "grid") {
+  #          out <- expand.grid(regmult = 1:len)
+  #        } else {
+  #          out <- expand.grid(regmult = 1:len)
+  #        }
+  #        out
+  #      },
+  #      fit = function(x, y, wts, param, lev, last, classProbs, ...) {
+  #        model <- maxnet::maxnet(
+  #          p = ifelse(as.numeric(y) == 1, 1, 0), data = x,
+  #          f = maxnet::maxnet.formula(p = ifelse(as.numeric(y) == 1, 1, 0), data = x),
+  #          regmult = param$regmult,
+  #          regfun = maxnet::maxnet.default.regularization, addsamplestobackground = T, ...
+  #        )
+  #        return(model)
+  #      },
+  #      predict = function(modelFit, newdata, preProc = NULL, submodels = NULL) {
+  #        pred_maxnet <- function(object, newdata, clamp = T, type = c("logistic"), ...) {
+  #          if (clamp) {
+  #            for (v in intersect(names(object$varmax), names(newdata))) {
+  #              newdata[, v] <- pmin(
+  #                pmax(newdata[, v], object$varmin[v]),
+  #                object$varmax[v]
+  #              )
+  #            }
+  #          }
+  #          hingeval <- function(x, min, max) {
+  #            pmin(1, pmax(0, (x - min) / (max - min)))
+  #          }
+  #          terms <- sub(
+  #            "hinge\\((.*)\\):(.*):(.*)$", "hingeval(\\1,\\2,\\3)",
+  #            names(object$betas)
+  #          )
+  #          terms <- sub(
+  #            "categorical\\((.*)\\):(.*)$", "categoricalval(\\1,\"\\2\")",
+  #            terms
+  #          )
+  #          terms <- sub(
+  #            "thresholds\\((.*)\\):(.*)$", "thresholdval(\\1,\\2)",
+  #            terms
+  #          )
+  #          f <- formula(paste("~", paste(terms, collapse = " + "), "-1"))
+  #          mm <- model.matrix(f, data.frame(newdata))
+  #          if (clamp) {
+  #            mm <- t(pmin(
+  #              pmax(t(mm), object$featuremins[names(object$betas)]),
+  #              object$featuremaxs[names(object$betas)]
+  #            ))
+  #          }
+  #          link <- (mm %*% object$betas) + object$alpha
+  #          if (type == "logistic") {
+  #            res <- 1 / (1 + exp(-object$entropy - link))
+  #          }
+  #          return(res)
+  #        }
+  #        pred <- pred_maxnet(modelFit, newdata, clamp = T, type = c("logistic"))
+  #        pred <- data.frame(presence = pred, pseudoabsence = 1 - pred)
+  #        pred <- as.factor(colnames(pred)[apply(pred, 1, which.max)])
+  #        return(pred)
+  #      },
+  #      prob = function(modelFit, newdata, preProc = NULL, submodels = NULL) {
+  #        prob_maxnet <- function(object, newdata, clamp = T, type = c("cloglog"), ...) {
+  #          if (clamp) {
+  #            for (v in intersect(names(object$varmax), names(newdata))) {
+  #              newdata[, v] <- pmin(
+  #                pmax(newdata[, v], object$varmin[v]),
+  #                object$varmax[v]
+  #              )
+  #            }
+  #          }
+  #          hingeval <- function(x, min, max) {
+  #            pmin(1, pmax(0, (x - min) / (max - min)))
+  #          }
+  #          terms <- sub(
+  #            "hinge\\((.*)\\):(.*):(.*)$", "hingeval(\\1,\\2,\\3)",
+  #            names(object$betas)
+  #          )
+  #          terms <- sub(
+  #            "categorical\\((.*)\\):(.*)$", "categoricalval(\\1,\"\\2\")",
+  #            terms
+  #          )
+  #          terms <- sub(
+  #            "thresholds\\((.*)\\):(.*)$", "thresholdval(\\1,\\2)",
+  #            terms
+  #          )
+  #          f <- formula(paste("~", paste(terms, collapse = " + "), "-1"))
+  #          mm <- model.matrix(f, data.frame(newdata))
+  #          if (clamp) {
+  #            mm <- t(pmin(
+  #              pmax(t(mm), object$featuremins[names(object$betas)]),
+  #              object$featuremaxs[names(object$betas)]
+  #            ))
+  #          }
+  #          link <- (mm %*% object$betas) + object$alpha
+  #          if (type == "cloglog") {
+  #            res <- 1 - exp(0 - exp(object$entropy + link))
+  #          }
+  #          return(res)
+  #        }
+  #        prob <- prob_maxnet(modelFit, newdata, clamp = T, type = c("cloglog"))
+  #        prob <- data.frame(presence = prob, pseudoabsence = 1 - prob)
+  #        return(prob)
+  #      },
+  #      predictors = function(x, ...) {
+  #        colnames(x)
+  #      },
+  #      varImp = NULL,
+  #      tags = c("MaxEnt")
+  #    )
+  #  } else if ("bioclim" %in% algo2) {
+  #    algo <- list(
+  #      label = "Bioclimatic Envelope Model",
+  #      library = "dismo",
+  #      loop = NULL,
+  #      type = c("Classification", "Regression"),
+  #      levels = c("presence", "pseudoabsence"),
+  #      parameters = data.frame(
+  #        parameter = c("abs"),
+  #        class = c("logical"),
+  #        label = c("Absolute absence")
+  #      ),
+  #      grid = function(x, y, len = NULL, search = "grid") {
+  #        if (search == "grid") {
+  #          out <- expand.grid(abs = c(TRUE, FALSE))
+  #        } else {
+  #          out <- expand.grid(abs = c(TRUE, FALSE))
+  #        }
+  #        return(out)
+  #      },
+  #      fit = function(x, y, wts, param, lev, last, classProbs, ...) {
+  #        model <- dismo::bioclim(x = x[y == "presence", ])
+  #        result <- list(model = model, abs = param$abs)
+  #        return(result)
+  #      },
+  #      predict = function(modelFit, newdata, preProc = NULL, submodels = NULL) {
+  #        pred <- predict(modelFit$model, newdata) ## should be dismo::predict?
+  #        pred <- data.frame(presence = pred, pseudoabsence = 1 - pred)
+  #        if (modelFit$abs) {
+  #          pred <- as.factor(ifelse(pred$presence > 0, "presence", "pseudoabsence"))
+  #        } else {
+  #          pred <- as.factor(colnames(pred)[apply(pred, 1, which.max)])
+  #        }
+  #        return(pred)
+  #      },
+  #      prob = function(modelFit, newdata, preProc = NULL, submodels = NULL) {
+  #        prob <- predict(modelFit$model, newdata)
+  #        prob <- data.frame(presence = prob, pseudoabsence = 1 - prob)
+  #        return(prob)
+  #      },
+  #      predictors = function(x, ...) {
+  #        colnames(x)
+  #      },
+  #      varImp = NULL,
+  #      tags = c("Bioclim")
+  #    )
+  #  } else if ("mahal.dist" %in% algo2) {
+  #    algo <- list(
+  #      label = "Mahalanobis Distance",
+  #      library = "dismo",
+  #      loop = NULL,
+  #      type = c("Classification", "Regression"),
+  #      levels = c("presence", "pseudoabsence"),
+  #      parameters = data.frame(
+  #        parameter = c("abs"),
+  #        class = c("logical"),
+  #        label = c("Absolute absence")
+  #      ),
+  #      grid = function(x, y, len = NULL, search = "grid") {
+  #        if (search == "grid") {
+  #          out <- expand.grid(abs = c(TRUE, FALSE))
+  #        } else {
+  #          out <- expand.grid(abs = c(TRUE, FALSE))
+  #        }
+  #        return(out)
+  #      },
+  #      fit = function(x, y, wts, param, lev, last, classProbs, ...) {
+  #        model <- dismo::mahal(x = x[y == "presence", ])
+  #        result <- list(model = model, abs = param$abs)
+  #        return(result)
+  #      },
+  #      predict = function(modelFit, newdata, preProc = NULL, submodels = NULL) {
+  #        pred <- predict(modelFit$model, newdata)
+  #        pred <- data.frame(presence = pred, pseudoabsence = 1 - pred)
+  #        if (modelFit$abs) {
+  #          pred <- as.factor(ifelse(pred$presence > 0, "presence", "pseudoabsence"))
+  #        } else {
+  #          pred <- as.factor(colnames(pred)[apply(pred, 1, which.max)])
+  #        }
+  #        return(pred)
+  #      },
+  #      prob = function(modelFit, newdata, preProc = NULL, submodels = NULL) {
+  #        prob <- predict(modelFit$model, newdata)
+  #        prob <- data.frame(presence = prob, pseudoabsence = 1 - prob)
+  #        return(prob)
+  #      },
+  #      predictors = function(x, ...) {
+  #        colnames(x)
+  #      },
+  #      varImp = NULL,
+  #      tags = c("Distance")
+  #    )
+  #  }
+  #}
 
   l <- list()
   if ("independent_test" %in% names(z)) {
@@ -431,43 +439,43 @@ train_sdm <- function(occ, pred = NULL, algo, ctrl = NULL, variables_selected = 
       x <- dplyr::select(as.data.frame(x), dplyr::all_of(selected_vars))
       df <- as.factor(c(rep("presence", nrow(occ2)), rep("pseudoabsence", nrow(pa))))
 
-      if (class(algo) == "list" & !"fit" %in% names(algo)) {
-        print(paste0("Stacking ensemble"))
-        m <- list()
-        for (j in 1:length(algo)) {
-          if (j == 1) {
-            x2 <- x
-          }
-          print(paste0("Layer ", j))
-          layer1 <- lapply(algo[[j]], function(a) {
-            caret::train(x2,
-              df,
-              method = a,
-              trControl = ctrl,
-              ...
-            )
-          })
-          layer1_output <- lapply(layer1, function(l1) {
-            predict(l1, newdata = x2, type = "prob")$presence
-          })
-          layer1_output <- as.data.frame(dplyr::bind_cols(layer1_output))
-          # layer1_output <- as.data.frame(lapply(layer1, function(z){z$pred$presence}))
-          colnames(layer1_output) <- algo[[j]]
-          x2 <- layer1_output
-          m[[j]] <- layer1
-          names(m[[j]]) <- algo[[j]]
-        }
-        names(m) <- paste0("layer_", 1:length(m))
-      } else {
-        if (class(algo) == "list" & "fit" %in% names(algo)) {
-          m <- caret::train(x,
-            df,
-            method = algo,
-            trControl = ctrl
-          )
-          m$method <- algo2
-          m <- list(m)
-        } else {
+      #if (class(algo) == "list" & !"fit" %in% names(algo)) {
+      #  print(paste0("Stacking ensemble"))
+      #  m <- list()
+      #  for (j in 1:length(algo)) {
+      #    if (j == 1) {
+      #      x2 <- x
+      #    }
+      #    print(paste0("Layer ", j))
+      #    layer1 <- lapply(algo[[j]], function(a) {
+      #      caret::train(x2,
+      #        df,
+      #        method = a,
+      #        trControl = ctrl,
+      #        ...
+      #      )
+      #    })
+      #    layer1_output <- lapply(layer1, function(l1) {
+      #      predict(l1, newdata = x2, type = "prob")$presence
+      #    })
+      #    layer1_output <- as.data.frame(dplyr::bind_cols(layer1_output))
+      #    # layer1_output <- as.data.frame(lapply(layer1, function(z){z$pred$presence}))
+      #    colnames(layer1_output) <- algo[[j]]
+      #    x2 <- layer1_output
+      #    m[[j]] <- layer1
+      #    names(m[[j]]) <- algo[[j]]
+      #  }
+      #  names(m) <- paste0("layer_", 1:length(m))
+      #} else {
+        #if (class(algo) == "list" & "fit" %in% names(algo)) {
+        # m <- caret::train(x,
+        #   df,
+        #   method = algo,
+        #   trControl = ctrl
+        # )
+        # m$method <- algo2
+        # m <- list(m)
+        #} else {
           m <- lapply(algo, function(a) {
             caret::train(x, # usar sapply para que o id seja mais organizado
               df,
@@ -475,18 +483,18 @@ train_sdm <- function(occ, pred = NULL, algo, ctrl = NULL, variables_selected = 
               trControl = ctrl
             ) # lapply retorna diferentes valores de tuning (padronizar com seed?)
           })
-        }
-      }
+        #}
+      #}
 
-      if ("independent_test" %in% names(z)) {
-        iv <- lapply(m, function(m2) {
-          r <- rep(1, nrow(it))
-          p <- predict(m2, newdata = it, type = "prob")
-          iv2 <- pROC::roc(r, p$presence)
-          iv2 <- as.numeric(iv2$auc)
-        })
-        indep_val[[paste0("m", i)]] <- iv
-      }
+      #if ("independent_test" %in% names(z)) {
+      #  iv <- lapply(m, function(m2) {
+      #    r <- rep(1, nrow(it))
+      #    p <- predict(m2, newdata = it, type = "prob")
+      #    iv2 <- pROC::roc(r, p$presence)
+      #    iv2 <- as.numeric(iv2$auc)
+      #  })
+      #  indep_val[[paste0("m", i)]] <- iv
+      #}
 
       l[[paste0("m", i, ".")]] <- m
       #  }
@@ -496,15 +504,15 @@ train_sdm <- function(occ, pred = NULL, algo, ctrl = NULL, variables_selected = 
 
   ##################################
 
-  if (class(algo) == "list" & !"fit" %in% names(algo)) {
-    n <- length(algo)
-    n <- paste0("layer_", n)
-    m <- unlist(lapply(l, function(x) x[[n]]), recursive = F)
-  } else {
+  #if (class(algo) == "list" & !"fit" %in% names(algo)) {
+  #  n <- length(algo)
+  #  n <- paste0("layer_", n)
+  #  m <- unlist(lapply(l, function(x) x[[n]]), recursive = F)
+  #} else {
     m <- apply(l, 2, function(x) {
       unlist(x, recursive = F)
     })
-  }
+  #}
 
   metrics <- sapply(z$spp_names, function(sp) {
     metrics <- lapply(m[[sp]], function(x) {
@@ -527,9 +535,9 @@ train_sdm <- function(occ, pred = NULL, algo, ctrl = NULL, variables_selected = 
     models = m
   )
 
-  if ("independent_test" %in% names(z)) {
-    m2$independent_validation <- indep_val
-  }
+  #if ("independent_test" %in% names(z)) {
+  #  m2$independent_validation <- indep_val
+  #}
 
   models <- .models(m2)
 

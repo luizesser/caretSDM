@@ -3,11 +3,17 @@
 \name{select.sdm_area}
 \alias{select.sdm_area}
 \alias{select.input_sdm}
+\alias{mutate.sdm_area}
+\alias{mutate.input_sdm}
 \title{Tidyverse methods for caretSDM objects}
 \usage{
 select(x, ...)
 
 \method{select}{input_sdm}(x, ...)
+
+\method{mutate}{sdm_area}(x, ...)
+
+\method{mutate}{input_sdm}(x, ...)
 }
 \arguments{
 \item{x}{\code{sdm_area} object}

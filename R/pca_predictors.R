@@ -36,6 +36,8 @@
 #' @export
 pca_predictors <- function(i) {
   assert_class_cli(i, "input_sdm")
+  assert_subset_cli("predictors", names(i), empty.ok=F)
+  assert_class_cli(i$predictors, "sdm_area")
 
   pred_df <- get_predictors(i) |>
     as.data.frame() |>
@@ -46,6 +48,9 @@ pca_predictors <- function(i) {
   pred_pca <- get_predictors(i) |>
     cbind(pca_model$x)
 
+  if(!"scenarios" %in% names(i)){
+    i <- add_scenarios(i)
+  }
   scen_df <- i$scenarios$data |>
     lapply(function(x){
       as.data.frame(x) |>
@@ -71,6 +76,12 @@ pca_predictors <- function(i) {
 #' @rdname pca_predictors
 #' @export
 pca_summary <- function(i){
-  caretSDM:::assert_class_cli(i, "input_sdm")
+  assert_class_cli(i, "input_sdm")
+  assert_subset_cli("predictors", names(i), empty.ok=F)
+  assert_subset_cli("variable_selection", names(i$predictors), empty.ok=F)
+  assert_subset_cli("pca", names(i$predictors$variable_selection), empty.ok=F)
+  assert_subset_cli("summary", names(i$predictors$variable_selection$pca), empty.ok=F)
+  assert_class_cli(i$predictors$variable_selection$pca$summary, "summary.prcomp")
+
   return(i$predictors$variable_selection$pca$summary)
 }

@@ -56,12 +56,13 @@ input_sdm <- function(...) {
     } else {
       l$predictors <- x[classes %in% "sdm_area"][[1]]
     }
-  } else if ("predictors" %in% classes) {
-    l$predictors <- x[classes %in% "predictors"][[1]]
   }
-  if ("scenarios" %in% classes) {
-    l$scenarios <- x[classes %in% "scenarios"][[1]]
-  }
+  #else if ("predictors" %in% classes) {
+  #  l$predictors <- x[classes %in% "predictors"][[1]]
+  #}
+  #if ("scenarios" %in% classes) {
+  #  l$scenarios <- x[classes %in% "scenarios"][[1]]
+  #}
 
   inp <- structure(l,
     class = "input_sdm"
@@ -139,6 +140,7 @@ print.input_sdm <- function(x) {
       if (!is.null(x$predictors$variable_selection$vif)) {
         cat(
           cat("Area (VIF)                    : "), cat(x$predictors$variable_selection$vif$area), cat("\n"),
+          cat("Threshold                     : "), cat(x$predictors$variable_selection$vif$threshold), cat("\n"),
           cat("Selected Variables (VIF)      : "), cat(x$predictors$variable_selection$vif$selected_variables, sep = ", "), "\n"
         )
       }

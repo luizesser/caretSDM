@@ -84,7 +84,7 @@ join_area <- function(occ, pred) {
   }
 
   occ$occurrences <- oc
-  occ$n_presences <- length(oc$cell_id)
+  occ$n_presences <- table(oc$species)
   occ$crs <- sf::st_crs(oc)$epsg
   return(occ)
 }

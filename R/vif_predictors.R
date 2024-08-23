@@ -41,37 +41,45 @@
 #'
 #' @export
 vif_predictors <- function(pred, area = "all", th = 0.5, maxobservations = 5000, variables_selected = NULL) {
+  assert_class_cli(pred, "input_sdm")
+  assert_subset_cli("predictors", names(pred), empty.ok=F)
+  assert_class_cli(pred$predictors, "sdm_area")
+  assert_class_cli(pred, "input_sdm")
+  assert_numeric_cli(th, len=1, null.ok=FALSE, upper=1, lower=0, any.missing=FALSE)
+  assert_numeric_cli(maxobservations, len=1, null.ok=FALSE, any.missing=FALSE)
+  assert_subset_cli(variables_selected, c(get_predictor_names(pred), "vif", "pca"), empty.ok=T)
+  assert_choice_cli(area, c("all", "occurrences"))
+
   if (is_input_sdm(pred)) {
     x <- pred$predictors
     occ <- pred$occurrences$occurrences
-    epsg <- pred$occurrences$epsg
-  } else {
-    x <- pred
+    epsg <- pred$occurrences$crs
   }
 
-  if (is_predictors(x)) {
-    if (is.null(variables_selected)) {
-      selected_vars <- x$predictors_names
-      cat(cat("Using all variables available: "), cat(selected_vars, sep = ", "))
-    } else if (any(variables_selected %in% x$predictors_names)) {
-      selected_vars <- x$predictors_names[x$predictors_names %in% variables_selected]
-      cat(cat("Using given variables: "), cat(selected_vars, sep = ", "))
-    }
-    if (area == "all") {
-      suppressWarnings(sf_x <- sf::st_centroid(sf::st_as_sf(dplyr::filter(x$data, band %in% selected_vars))))
-      p <- select(as.data.frame(sf_x), -"geometry")
-    }
-    if (area == "occurrences") {
-      if (!is_input_sdm(pred)) {
-        stop("Method only available with input_sdm class.")
-      }
-      #cols <- find_columns(occ$occurrences)
-      #coordinates(occ$occurrences) <- cols[2:3]
-      #st_crs(occ) <- as.character(st_crs(epsg))[1]
-      p <- sf::st_extract(as.data.frame(x$data[selected_vars, ])[, selected_vars], sf::st_as_sf(occ))
-    }
-    v <- usdm::vifcor(p, th = th, size = maxobservations)
-  } else if (is_sdm_area(x)) {
+  #if (is_predictors(x)) {
+  #  if (is.null(variables_selected)) {
+  #    selected_vars <- x$predictors_names
+  #    cat(cat("Using all variables available: "), cat(selected_vars, sep = ", "))
+  #  } else if (any(variables_selected %in% x$predictors_names)) {
+  #    selected_vars <- x$predictors_names[x$predictors_names %in% variables_selected]
+  #    cat(cat("Using given variables: "), cat(selected_vars, sep = ", "))
+  #  }
+  #  if (area == "all") {
+  #    suppressWarnings(sf_x <- sf::st_centroid(sf::st_as_sf(dplyr::filter(x$data, band %in% selected_vars))))
+  #    p <- select(as.data.frame(sf_x), -"geometry")
+  #  }
+  #  if (area == "occurrences") {
+  #    if (!is_input_sdm(pred)) {
+  #      stop("Method only available with input_sdm class.")
+  #    }
+  #    #cols <- find_columns(occ$occurrences)
+  #    #coordinates(occ$occurrences) <- cols[2:3]
+  #    #st_crs(occ) <- as.character(st_crs(epsg))[1]
+  #    p <- sf::st_extract(as.data.frame(x$data[selected_vars, ])[, selected_vars], sf::st_as_sf(occ))
+  #  }
+  #  v <- usdm::vifcor(p, th = th, size = maxobservations)
+  #} else
+  if (is_sdm_area(x)) {
     if (is.null(variables_selected)) {
       selected_variables <- predictors(x)
     }

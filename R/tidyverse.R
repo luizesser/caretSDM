@@ -50,3 +50,38 @@ select.input_sdm <- function(x, ...){
   i$predictors <- x
   return(i)
 }
+
+#' @rdname tidyverse-methods
+#' @export
+mutate.sdm_area <- function(x, ...){
+  .check_sdm_area(x)
+  grd <- dplyr::mutate(x$grid, ...)
+  grd_col_names <- colnames(grd)
+  if (!("cell_id" %in% grd_col_names)) {
+    grd[["cell_id"]] <- x$grid[["cell_id"]]
+  }
+  grd_col_names2 <- setdiff(grd_col_names, c('cell_id','geometry'))
+  grd <- grd |> dplyr::relocate(cell_id, all_of(grd_col_names2), geometry)
+  x$grid <- grd
+  return(x)
+}
+
+#' @rdname tidyverse-methods
+#' @export
+mutate.input_sdm <- function(x, ...){
+  i <- x
+  x <- x$predictors
+  .check_sdm_area(x)
+  grd <- dplyr::mutate(x$grid, ...)
+  grd_col_names <- colnames(grd)
+  if (!("cell_id" %in% grd_col_names)) {
+    grd[["cell_id"]] <- x$grid[["cell_id"]]
+  }
+  grd_col_names2 <- setdiff(grd_col_names, c('cell_id','geometry'))
+  grd <- grd |> dplyr::relocate(cell_id, all_of(grd_col_names2), geometry)
+  x$grid <- grd
+  i$predictors <- x
+  return(i)
+}
+
+
