@@ -2,6 +2,8 @@
 % Please edit documentation in R/predict_sdm.R
 \name{predict_sdm}
 \alias{predict_sdm}
+\alias{scenarios_names}
+\alias{get_scenarios_data}
 \alias{get_predictions}
 \alias{get_ensembles}
 \title{Predict SDM models in new data}
@@ -12,9 +14,13 @@ predict_sdm(m,
             tp = "prob",
             ensembles = TRUE)
 
-get_predictions(x)
+scenarios_names(i)
 
-get_ensembles(x)
+get_scenarios_data(i)
+
+get_predictions(i)
+
+get_ensembles(i)
 }
 \arguments{
 \item{m}{A \code{input_sdm} or a \code{models} object.}
@@ -22,7 +28,10 @@ get_ensembles(x)
 \item{scen}{A \code{scenarios} object or \code{NULL}. If \code{NULL} and \code{m} is a
 \code{input_sdm} with a scenarios slot, it will be used.}
 
-\item{th}{Thresholds for metrics.}
+\item{metric}{A character containing the metric in which the \code{th} will be calculated/applied.
+Default is ROC. See \code{?mean_validation_metrics} for the metrics available.}
+
+\item{th}{Thresholds for metrics. Can be numeric or a function.}
 
 \item{tp}{Type of output to be retrieved. See details.}
 
@@ -53,6 +62,12 @@ methods.
 
 \code{get_ensembles} returns a \code{matrix} of \code{data.frame}s, where each column is a
 scenario and each row is a species.
+
+\code{scenarios_names} returns the scenarios names in a \code{sdm_area} or \code{input_sdm}
+object.
+
+\code{get_scenarios_data} returns the data from scenarios in a \code{sdm_area} or
+\code{input_sdm} object.
 }
 \examples{
 # Create sdm_area object:
@@ -82,7 +97,7 @@ i
 
 }
 \seealso{
-\code{\link{sdm_area} \link{input_sdm}}
+\code{\link{sdm_area} \link{input_sdm} \link{mean_validation_metrics}}
 }
 \author{
 Luíz Fernando Esser (luizesser@gmail.com)

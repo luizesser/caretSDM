@@ -321,7 +321,7 @@ test_that("sdm_area - sdm_area para ser detectado com parametros diferentes", {
 
 test_that("sdm_area - sf/predictors try detect lines instead of polygons", {
   expect_equal(
-    .detect_sdm_area(amazon_shp |> rename(cell_id=HYRIV_ID), cell_size = 10000, crs = 6933),
+    .detect_sdm_area(amazon_shp |> dplyr::rename(cell_id=HYRIV_ID), cell_size = 10000, crs = 6933),
     "x has other features than of polygons."
   )
 })
