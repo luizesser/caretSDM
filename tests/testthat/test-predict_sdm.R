@@ -3,7 +3,15 @@ sa <- sdm_area(parana, 0.1)
 sa <- add_predictors(sa, bioc)
 sa <- select(sa, c("bio01", "bio12"))
 sa <- add_scenarios(sa)
+test_that("scenarios_names - sa", {
+  expect_equal(names(sa$scenarios$data), scenarios_names(sa))
+  expect_equal(get_scenarios_data(sa), sa$scenarios$data)
+})
 oc <- occurrences_sdm(occ, crs=6933)
+test_that("scenarios_names - NULL", {
+  expect_null(scenarios_names(oc))
+  expect_null(get_scenarios_data(oc))
+})
 suppressWarnings(oc <- join_area(oc, sa))
 i <- input_sdm(oc, sa)
 suppressWarnings(i <- pseudoabsences(i, method = "bioclim"))
@@ -13,7 +21,7 @@ test_that("predict_sdm - no model", {
 suppressWarnings(i <- train_sdm(i, algo=c("svmLinear2", "mda", "nnet", "kknn")))
 
 test_that("predict_sdm - errors", {
-  expect_warning(predict_sdm(i, th=1))
+  expect_error(predict_sdm(i, th=1))
   expect_error(predict_sdm(i, th="a"))
   expect_error(predict_sdm(i, metric="auc"))
   expect_error(predict_sdm(i, tp="a"))
@@ -30,6 +38,8 @@ test_that("predict_sdm", {
   expect_snapshot(p$predictions)
   expect_true("predictions" %in% names(p))
   expect_true("ensembles" %in% names(p$predictions))
+
+  expect_equal(get_scenarios_data(p), p$scenarios$data)
 
   pred <- get_predictions(p)
   expect_true(all(names(pred$current$`Araucaria angustifolia`) %in%
@@ -108,7 +118,44 @@ test_that("predict_sdm - th function", {
   expect_equal(colnames(ens), scenarios_names(p))
   expect_equal(c("cell_id", "mean_occ_prob", "wmean_AUC", "committee_avg"),
                colnames(ens[1,1][[1]]))
+
+
+
 })
 
+test_that("test ensembles", {
+  p <- predict_sdm(i, th=0.995)
+  p2 <- get_predictions(p)
+  expect_equal(length(p2$current[[1]]), 10)
+})
 
+test_that("test ensembles", {
+  i2 <- i
+  i2$scenarios$data$teste <- i2$scenarios$data$current
+  i2$scenarios$data$teste$bio12 <- i2$scenarios$data$teste$bio12*0
+  i2$scenarios$data$teste$bio01 <- i2$scenarios$data$teste$bio01*0
+
+  p <- predict_sdm(i2, th=mean)
+  e <- get_ensembles(p)
+
+  expect_equal(length(unique(e[,"teste"][[1]]$committee_avg)), 1)
+  expect_equal(length(unique(e[,"teste"][[1]]$wmean_AUC)), 1)
+  expect_equal(length(unique(e[,"teste"][[1]]$mean_occ_prob)), 1)
+  expect_false(any(e[,"current"][[1]][,2] > 1 ))
+  expect_false(any(e[,"current"][[1]][,3] > 1 ))
+  expect_false(any(e[,"current"][[1]][,4] > 1 ))
+  expect_false(any(e[,"current"][[1]][,2] < 0 ))
+  expect_false(any(e[,"current"][[1]][,3] < 0 ))
+  expect_false(any(e[,"current"][[1]][,4] < 0 ))
+  expect_false(any(is.na(e[,"current"][[1]][,2])))
+  expect_false(any(is.na(e[,"current"][[1]][,3])))
+  expect_false(any(is.na(e[,"current"][[1]][,4])))
+  expect_false(any(is.nan(e[,"current"][[1]][,2])))
+  expect_false(any(is.nan(e[,"current"][[1]][,3])))
+  expect_false(any(is.nan(e[,"current"][[1]][,4])))
+
+
+
+
+})
 

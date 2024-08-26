@@ -104,14 +104,23 @@ predict_sdm.sdm_area <- function(m, scen, metric = "ROC", th = 0.9, tp = "prob",
     tm <- deparse(th)
     th1 <- sapply(names(y$models), function(sp) {
       th2 <- th(y$validation$metrics[[sp]][,metric])
-      res <- filter(y$validation$metrics[[sp]], .data[[metric]] > th2)
+      res1 <- dplyr::filter(mean_validation_metrics(m)[[sp]], .data[[metric]] > th2)
+      if (nrow(res1)==0){
+        cli_abort("Threshold is too high. No models passing the threshold.")
+      }
+      res <- dplyr::filter(get_validation_metrics(m)[[sp]], algo %in% res1$algo)
+
       return(res)
     }, simplify = FALSE, USE.NAMES = TRUE)
   } else {
     if (is.numeric(th)) {
       tm <- paste0("threshold: ", th)
       th1 <- sapply(names(y$models), function(sp) {
-        res <- filter(y$validation$metrics[[sp]], .data[[metric]] > th)
+        res1 <- dplyr::filter(mean_validation_metrics(m)[[sp]], .data[[metric]] > th)
+        if (nrow(res1)==0){
+          cli_abort("Threshold is too high. No models passing the threshold.")
+        }
+        res <- dplyr::filter(get_validation_metrics(m)[[sp]], algo %in% res1$algo)
         return(res)
       }, simplify = FALSE, USE.NAMES = TRUE)
     } else {
@@ -405,7 +414,7 @@ scenarios_names <- function(i) {
 #' @rdname predict_sdm
 #' @export
 get_scenarios_data <- function(i) {
-  if (is_input_sdm(i)) {
+  if (is_input_sdm(i) | is_sdm_area(i)) {
     return(i$scenarios$data)
   }
   return(NULL)
