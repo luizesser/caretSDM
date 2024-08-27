@@ -25,6 +25,7 @@ test_that("predict_sdm - errors", {
   expect_error(predict_sdm(i, th="a"))
   expect_error(predict_sdm(i, metric="auc"))
   expect_error(predict_sdm(i, tp="a"))
+  expect_error(predict_sdm(i, th=function(x){NULL}))
   expect_null(get_predictions(i))
   expect_null(get_ensembles(i))
   expect_null(get_predictions("i"))
@@ -130,6 +131,8 @@ test_that("test ensembles", {
 })
 
 test_that("test ensembles", {
+  expect_no_error(predict_sdm(i, th=mean, ensembles = FALSE))
+
   i2 <- i
   i2$scenarios$data$teste <- i2$scenarios$data$current
   i2$scenarios$data$teste$bio12 <- i2$scenarios$data$teste$bio12*0

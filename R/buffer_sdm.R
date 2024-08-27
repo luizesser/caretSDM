@@ -19,13 +19,10 @@
 #'
 #' @examples
 #' # Create sdm_area object:
-#' study_area <- buffer_sdm(occ_data, size=5, crs=4326)
+#' study_area <- buffer_sdm(occ, size=50000, crs=6933)
 #' plot(study_area)
 #'
-#' @importFrom dplyr bind_rows all_of filter group_by summarise
-#' @importFrom tidyr pivot_longer
-#' @importFrom pdp partial
-#' @importFrom ggplot2 ggplot aes geom_ribbon geom_smooth facet_wrap labs theme_minimal
+#' @importFrom sf st_as_sf st_buffer st_union st_crs st_set_geometry
 #'
 #' @export
 buffer_sdm <- function(occ_data, size = NULL, crs = NULL) {
@@ -33,13 +30,16 @@ buffer_sdm <- function(occ_data, size = NULL, crs = NULL) {
   assert_class_cli(crs, "numeric")
 
   cnames <- find_columns(occ_data)
+  if(length(cnames)>2){
+    cnames <- cnames[c(2,3)]
+  }
   x <- occ_data |>
-    st_as_sf(coords=cnames[c(2,3)]) |>
-    st_buffer(dist=size) |>
-    st_union() |>
-    st_as_sf(crs=st_crs(crs))
+    sf::st_as_sf(coords=cnames[c(1,2)]) |>
+    sf::st_buffer(dist=size) |>
+    sf::st_union() |>
+    sf::st_as_sf(crs=sf::st_crs(crs))
 
-  x <- st_set_geometry(x, "geometry")
+  x <- sf::st_set_geometry(x, "geometry")
 
   return(x)
 }

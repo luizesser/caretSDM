@@ -32,18 +32,19 @@ tsne_sdm <- function(occ, pred = NULL, variables_selected = NULL) {
     }
   }
   if (is.null(variables_selected)) {
-    variables_selected <- names(pred$grid)
-  } else {
-    if (variables_selected == "vif") {
-      variables_selected <- pred$variable_selection$vif$selected_variables
-    }
+    variables_selected <- get_predictor_names(occ)
+  } else if ("vif" %in% variables_selected) {
+    variables_selected <- pred$variable_selection$vif$selected_variables
+  } else if ("pca" %in% variables_selected) {
+    variables_selected <- pred$variable_selection$pca$selected_variables
   }
-  tsne_sp <- sapply(y$spp_names, function(sp) {
+
+  tsne_sp <- sapply(species_names(occ), function(sp) {
     pa_id <- lapply(y$pseudoabsences$data[[sp]], function(x) {
       x$cell_id
     })
     p <- y$occurrences[y$occurrences$species == sp, ]$cell_id
-    env <- dplyr::select(cbind(pred$grid, sf::st_as_sf(pred$data)), -"geometry.1")
+    env <- pred$grid
     p <- dplyr::filter(env, env$cell_id %in% p)
     Presence <- c(rep("Presence", nrow(p)), rep("Pseudoabsence", length(pa_id[[1]])))
 

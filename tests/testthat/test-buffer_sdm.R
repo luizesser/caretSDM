@@ -1,0 +1,11 @@
+test_that("buffer_sdm", {
+  expect_no_error(b <- buffer_sdm(occ, size = 100000, crs = 6933))
+  expect_true(sf::st_geometry_type(b) == "POLYGON")
+  expect_no_error(b <- buffer_sdm(occ, size = 10000, crs = 6933))
+  expect_true(sf::st_geometry_type(b) == "MULTIPOLYGON")
+  expect_no_error(b <- buffer_sdm(occ[,-1], size = 10000, crs = 6933))
+  expect_true(sf::st_geometry_type(b) == "MULTIPOLYGON")
+  expect_error(buffer_sdm(occ[,-3], size = 10000, crs = 6933))
+  expect_error(buffer_sdm(occ, size = "10000", crs = 6933))
+  expect_error(buffer_sdm(occ, size = 10000, crs = "6933"))
+})

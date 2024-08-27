@@ -122,7 +122,7 @@ data_clean <- function(occ, pred = NULL, species = NA, lon = NA, lat = NA, terre
         as.data.frame() |>
         dplyr::select(-"geometry") |>
         duplicated()
-      x <- teste[!dup_rows, c("species", "geometry")]
+      x <- teste[!dup_rows, c("cell_id","species", "geometry")]
     }
   }
   if(is.data.frame(x)){
@@ -190,7 +190,7 @@ data_clean <- function(occ, pred = NULL, species = NA, lon = NA, lat = NA, terre
           as.data.frame() |>
           dplyr::select(-"geometry") |>
           duplicated()
-        x <- teste[!dup_rows, c("species", "geometry")]
+        x <- teste[!dup_rows, c("cell_id","species", "geometry")]
       }
     }
     y$independent_test <- x

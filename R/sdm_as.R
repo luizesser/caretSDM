@@ -12,7 +12,8 @@
 #'
 #' @param x A \code{caretSDM} object.
 #' @param what Sometimes multiple data inside \code{x} could be transformed. This parameter allows
-#' users to specify what needs to be converted.
+#' users to specify what needs to be converted.It can be one of: "predictors", "scenarios",
+#' "predictions" or "ensembles".
 #' @param spp \code{character}. Which species should be converted?
 #' @param scen \code{character}. Which scenario should be converted?
 #' @param id \code{character}. Which id should be converted?
@@ -32,52 +33,54 @@
 sdm_as_stars <- function(x, what = NULL, spp = NULL, scen = NULL, id = NULL, ens = NULL) {
   if (is.null(what)) {
     if ("predictions" %in% names(x)) {
-      if ("ensembles" %in% names(x$predictions)) {
+      if ("ensembles" %in% names(x$predictions) & !is.null(x$predictions$ensembles)) {
         what <- "ensembles"
       } else {
         what <- "predictions"
       }
-    } else if ("predictors" %in% names(x)) {
-      what <- "predictors"
     } else if ("scenarios" %in% names(x)) {
       what <- "scenarios"
+    } else if ("predictors" %in% names(x)) {
+      what <- "predictors"
     }
   }
   if (is_input_sdm(x)) {
     if (what == "scenarios") {
-      return(x$scenarios$data)
+      s <- sapply(x$scenarios$data, function(y){stars::st_as_stars(y)}, USE.NAMES = TRUE, simplify = FALSE)
+      return(s)
     }
     if (what == "predictors") {
-      return(x$predictors$data)
+      return(stars::st_as_stars(x$predictors$grid))
     }
     if (what == "predictions") {
       if (is.null(spp)) {
-        spp <- names(x$predictions$predictions[[1]])[1]
+        spp <- species_names(x)[[1]][1]
       }
       if (is.null(scen)) {
-        scen <- names(x$predictions$predictions)[1]
+        scen <- scenarios_names(x)[1]
       }
       if (is.null(id)) {
         id <- names(x$predictions$predictions[[1]][[1]])[1]
       }
       grd <- x$predictors$grid
-      v <- dplyr::select(x$predictions$predictions[[scen]][[spp]][[id]], -"pseudoabsence")
-      result <- stars::st_as_stars(merge(grd, v, by = "cell_id"))
+      v <- get_predictions(x)[[scen]][[spp]][[id]]
+      result <- stars::st_as_stars(v)
       return(result)
     }
     if (what == "ensembles") {
       if (is.null(spp)) {
-        spp <- rownames(x$predictions$ensembles)[1]
+        spp <- species_names(x)[1]
       }
       if (is.null(scen)) {
-        scen <- colnames(x$predictions$ensembles)[1]
+        scen <- scenarios_names(x)[1]
       }
       if (is.null(ens)) {
         ens <- "mean_occ_prob"
       }
       grd <- x$predictors$grid
-      v <- x$predictions$ensembles[[spp, scen]][, c("cell_id", ens)]
+      v <- get_ensembles(x)[[spp, scen]][, c("cell_id", ens)]
       result <- stars::st_as_stars(merge(grd, v, by = "cell_id"))
+      result <- select(result, c("cell_id", ens))
       return(result)
     }
   }

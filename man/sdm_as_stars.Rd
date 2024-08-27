@@ -21,7 +21,8 @@ sdm_as_terra(x, what = NULL, spp = NULL, scen = NULL, id = NULL, ens = NULL)
 \item{x}{A \code{caretSDM} object.}
 
 \item{what}{Sometimes multiple data inside \code{x} could be transformed. This parameter allows
-users to specify what needs to be converted.}
+users to specify what needs to be converted.It can be one of: "predictors", "scenarios",
+"predictions" or "ensembles".}
 
 \item{spp}{\code{character}. Which species should be converted?}
 

@@ -201,9 +201,6 @@ predict_sdm.sdm_area <- function(m, scen, metric = "ROC", th = 0.9, tp = "prob",
           # save everything
           df <- data.frame(cell_id = x[[1]]$cell_id, mean_occ_prob, wmean_AUC, committee_avg)
           return(df)
-        } else {
-          warning(paste0(sp, " has no models passing the threshold."))
-          df <- NULL
         }
       }, simplify = FALSE, USE.NAMES = TRUE)
     }, USE.NAMES = TRUE)
@@ -213,14 +210,25 @@ predict_sdm.sdm_area <- function(m, scen, metric = "ROC", th = 0.9, tp = "prob",
       colnames(e) <- gsub(paste0(".", names(p[[1]])), "", colnames(e))
     }
   }
-  p2 <- list(
-    thresholds = list(values = th1, method = tm, criteria = deparse(th)),
-    predictions = p,
-    models = m,
-    file = file,
-    ensembles = e,
-    grid = scen$grid
-  )
+  if(ensembles) {
+    p2 <- list(
+      thresholds = list(values = th1, method = tm, criteria = deparse(th)),
+      predictions = p,
+      models = m,
+      file = file,
+      ensembles = e,
+      grid = scen$grid
+    )
+  } else {
+    p2 <- list(
+      thresholds = list(values = th1, method = tm, criteria = deparse(th)),
+      predictions = p,
+      models = m,
+      file = file,
+      grid = scen$grid
+    )
+  }
+
   predic <- .predictions(p2)
   if (is_input_sdm(m)) {
     m$predictions <- predic
