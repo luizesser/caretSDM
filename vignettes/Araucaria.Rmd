@@ -111,7 +111,6 @@ A important step on model building in Species Distribution Models, is the defini
 ```{r create_buffer}
 # Create a buffer around records
 study_area <- buffer_sdm(occ, size = 5, crs = 4326)
-study_area <- cbind(buffer=1,study_area)
 #study_area <- geobr::read_state("PR")
 ```
 
@@ -120,8 +119,8 @@ In `caretSDM` there is a function that groups all the transformations regarding 
 ```{r}
 # Create a sdm_area object
 sa <- sdm_area(study_area, cell_size = 100000, crs = 6933)
-sa$grid <- select(sa$grid, -buffer)
-plot(sa)
+#sa$grid <- select(sa$grid, -buffer)
+plot(sa$grid)
 ```
 
 Now that we have a study area, we can assign predictor variables and scenarios to it.
@@ -130,7 +129,7 @@ Now that we have a study area, we can assign predictor variables and scenarios t
 # Add predictor variables into sdm_area
 sa <- add_predictors(sa, pred)
 sa
-plot(sa)
+plot_predictors(sa)
 ```
 
 ```{r add_scenarios}
@@ -143,7 +142,7 @@ Usually, we will need to subset variables that will inform our model. This can b
 
 ```{r select_preds}
 # Select predictors
-sa <- select(sa, c("bio1", "bio2", "bio3", "bio4", "bio5", "bio6", "bio7", "bio12", "bio13", "bio14", "bio15"))
+sa <- dplyr::select(sa, c("bio1", "bio2", "bio3", "bio4", "bio5", "bio6", "bio7", "bio12", "bio13", "bio14", "bio15"))
 ```
 
 ### Defining the occurrences set in the study area
@@ -210,11 +209,33 @@ With the occurrences and predictors data put together, we can pass to the modeli
 Note that, when you are using an algorithm for the first time, caret will ask you to install the relevant packages to properly run the algorithm.
 
 ```{r train_sdm, eval=TRUE, include=FALSE}
-i <- train_sdm(i, algo = c("svmLinear2", "mda", "nnet", "kknn"), variables_selected = "pca")
+ctrl_sdm <- caret::trainControl(method = "repeatedcv", 
+                                number = 4, 
+                                repeats = 10, 
+                                classProbs = TRUE,
+                                returnResamp = "all",
+                                summaryFunction = summary_sdm,
+                                savePredictions = "all")
+
+i <- train_sdm(i, 
+               algo = c("svmLinear2", "mda", "nnet", "kknn"), 
+               crtl=ctrl_sdm, 
+               variables_selected = "pca")
 ```
 
 ```{r train_sdm2, eval=FALSE, include=TRUE}
-i <- train_sdm(i, algo = c("svmLinear2", "mda", "nnet", "kknn"), variables_selected = "pca")
+ctrl_sdm <- caret::trainControl(method = "repeatedcv", 
+                                number = 4, 
+                                repeats = 10, 
+                                classProbs = TRUE,
+                                returnResamp = "all",
+                                summaryFunction = summary_sdm,
+                                savePredictions = "all")
+
+i <- train_sdm(i, 
+               algo = c("svmLinear2", "mda", "nnet", "kknn"), 
+               crtl = ctrl_sdm, 
+               variables_selected = "pca")
 ```
 
 ```{r}
@@ -228,7 +249,10 @@ i
 Now that we have our models, we can make predictions in new scenarios. The function `predict_sdm` incorporates also the prediction of ensembles (`ensembles=TRUE` is standard).
 
 ```{r predict_sdm}
-i <- predict_sdm(i, th = 0.9)
+
+# inclui métrica nova
+
+i <- predict_sdm(i, th = 0.9, ensembles = TRUE)
 ```
 
 To generate maps in `caretSDM` we can simply plot the `input_sdm` object using the function `plot_predictions`. This function has a series of arguments to plot specific maps within `i`. You can take a look at `?plot_predictions` to know more.

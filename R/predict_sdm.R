@@ -185,7 +185,7 @@ predict_sdm.sdm_area <- function(m, scen, metric = "ROC", th = 0.9, tp = "prob",
             )
           }))
           th2 <- lapply(th2, function(x) {
-            x <- x %>% dplyr::mutate(th = Sensitivity + Specificity)
+            x <- x |> dplyr::mutate(th = Sensitivity + Specificity)
             th <- x[x$th == max(x$th), "prob_threshold"]
             if (length(th) > 1) {
               th <- mean(th)
@@ -414,7 +414,12 @@ predict_sdm.sdm_area <- function(m, scen, metric = "ROC", th = 0.9, tp = "prob",
 #' @export
 scenarios_names <- function(i) {
   if (is_input_sdm(i) | is_sdm_area(i)) {
-    return(names(i$scenarios$data))
+    if("scenarios" %in% names(i)) {
+      return(names(i$scenarios$data))
+    }
+    if("data" %in% names(i)) {
+      return(names(i$data))
+    }
   }
   return(NULL)
 }

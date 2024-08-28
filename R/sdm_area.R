@@ -827,11 +827,6 @@ print.sdm_area <- function(x) {
   }
 }
 
-#' @exportS3Method base::plot
-plot.sdm_area <- function(x, y, ...) {
-  plot(x$grid, ...)
-}
-
 .check_sdm_area <- function(x) {
   error_collection <- checkmate::makeAssertCollection()
 

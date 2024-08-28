@@ -16,91 +16,180 @@
 #'
 #'
 #' @importFrom mapview mapview
-#' @importFrom ggplot2 ggplot geom_sf aes scale_fill_viridis_c xlab ylab ggtitle theme_minimal
+#' @importFrom ggplot2 ggplot geom_sf aes scale_fill_viridis_c xlab ylab ggtitle theme_minimal unit
 #' @importFrom ggspatial annotation_scale north_arrow_fancy_orienteering annotation_north_arrow
 #' @importFrom dplyr filter
 #' @importFrom gtools mixedsort
 #' @importFrom data.table rbindlist
 #' @importFrom stringdist stringdist
 #' @importFrom sf st_as_sf
+#' @importFrom tidyr pivot_longer
 #'
 #' @export
 plot_occurrences <- function(i, spp_name = NULL, pa = TRUE) {
-  return(plot(i$occurrences, spp_name, pa))
+  assert_subset_cli(class(i), c("occurrences", "input_sdm"))
+  assert_subset_cli(spp_name, species_names(i))
+  assert_logical_cli(pa)
+  assert_subset_cli("occurrences", names(i))
+  if(is_input_sdm(i)){
+      return(plot(i$occurrences, spp_name, pa))
+  } else if (is_occurrences(i)){
+    return(plot(i, spp_name, pa))
+  }
 }
 
 #' @exportS3Method base::plot
 plot.occurrences <- function(x, spp_name = NULL, pa = TRUE) {
-  df <- x$occurrences
-  valid_spp <- unique(df$species)
+  grd <- x$occurrences
+  valid_spp <- species_names(x)
   if (!is.null(spp_name)) {
     spp_name <- valid_spp[which.min(stringdist::stringdist(spp_name, valid_spp))]
   } else {
     spp_name <- valid_spp[1]
   }
-  df <- dplyr::filter(df, species == spp_name)
-  tmp <- plot(df["species"])
-  return(tmp)
-}
+  grd <- dplyr::filter(grd, species %in% spp_name) |> dplyr::select(species)
 
-#' @exportS3Method base::plot
-plot.predictors <- function(x, variables_selected = NULL) {
-  st <- x$data
-  if (variables_selected == "vif") {
-    st <- st[, , x$variable_selection$vif$selected_variables]
-  } else {
-    st <- st[[variables_selected]]
-  }
-  tmp <- plot(st, col = viridis(1000))
+  tmp <- ggplot2::ggplot() +
+    ggplot2::geom_sf(data = grd, ggplot2::aes(fill = species)) +
+    ggplot2::scale_fill_viridis_d(name = paste0("Species")) +
+    ggplot2::xlab("Longitude") +
+    ggplot2::ylab("Latitude") +
+    ggplot2::ggtitle("Species occurrence records") +
+    ggplot2::theme_minimal() +
+    ggspatial::annotation_north_arrow(
+      height = ggplot2::unit(1, "cm"),
+      width = ggplot2::unit(1, "cm"),
+      style = ggspatial::north_arrow_fancy_orienteering,
+      pad_x = ggplot2::unit(0.2, "cm"),
+      pad_y = ggplot2::unit(0.7, "cm")
+    ) +
+    ggspatial::annotation_scale(height = ggplot2::unit(0.2, "cm"))
   return(tmp)
 }
 
 #' @rdname plot_occurrences
 #' @export
+plot_grid <- function(i) {
+  assert_subset_cli(class(i), c("sdm_area", "input_sdm"))
+  if(is_input_sdm(i)){
+    i <- i$predictors
+  }
+  return(plot(i, scenario="grid"))
+}
+
+#' @rdname plot_occurrences
+#' @export
 plot_predictors <- function(i, variables_selected = NULL) {
-  return(plot(i$predictors, variables_selected))
+  assert_subset_cli(class(i), c("sdm_area", "input_sdm"))
+  assert_subset_cli(variables_selected, c(get_predictor_names(i), "vif", "pca"))
+  if (is_input_sdm(i)){
+    return(plot(i$predictors, variables_selected, scenario="predictors"))
+  } else if (is_sdm_area(i)) {
+    return(plot(i, variables_selected, scenario="predictors"))
+  }
+}
+
+#' @rdname plot_occurrences
+#' @export
+plot_scenarios <- function(i, variables_selected = NULL, scenario = NULL) {
+  assert_subset_cli(class(i), c("sdm_area", "input_sdm"))
+  assert_subset_cli(variables_selected, c(get_predictor_names(i), "vif", "pca"))
+  assert_subset_cli(scenario, scenarios_names(i))
+  assert_subset_cli("predictors", names(i))
+  return(plot(i$scenarios, variables_selected, scenario))
 }
 
 #' @exportS3Method base::plot
-plot.models <- function(x) {
-  ids <- x$validation$metrics
-  alg <- x$algorithms
-  ids <- as.data.frame(sapply(alg, function(x) {
-    rownames(ids[ids$algo == x, ])
-  }, USE.NAMES = T))
-  models <- sapply(alg, function(a) {
-    x$models[names(x$models) %in% ids$a]
-  }, USE.NAMES = T)
-  hyp <- as.vector(unlist(sapply(names(models), function(m) {
-    colnames(models[[m]][[1]]$bestTune)
-  }, USE.NAMES = T)))
-  sa <- sapply(models, function(m) {
-    sapply(m, function(m2) {
-      cols <- colnames(m2$results) %in% c(hyp, "ROC")
-      df <- m2$results[, cols]
-      return(df)
-    }, USE.NAMES = T)
-  }, USE.NAMES = T)
-  df <- lapply(sa, function(x) {
-    as.data.frame(data.table::rbindlist(apply(x, 2, as.data.frame)))
-  })
-  tmp <- lapply(df, function(x) {
-    if (ncol(x) > 2) {
-      sd <- apply(x, 2, sd)
-      sd["ROC"] <- 0
-      for (n in names(which(sd != 0))) {
-        tmp2 <- plot(x[, c(n, "ROC")])
-      }
-    } else {
-      tmp2 <- plot(x)
+plot.sdm_area <- function(x, variables_selected = NULL, scenario = NULL) {
+  if(scenario=="grid"){
+    tmp <- ggplot2::ggplot(x$grid) +
+      ggplot2::geom_sf(data=x$grid, ggplot2::aes(fill = cell_id)) +
+      ggplot2::scale_fill_viridis_c() +
+      ggplot2::xlab("Longitude") +
+      ggplot2::ylab("Latitude") +
+      ggplot2::ggtitle("Grid built using study_area()") +
+      ggplot2::theme_minimal() +
+      ggspatial::annotation_north_arrow(
+        height = ggplot2::unit(1, "cm"),
+        width = ggplot2::unit(1, "cm"),
+        style = ggspatial::north_arrow_fancy_orienteering,
+        pad_x = ggplot2::unit(0.2, "cm"),
+        pad_y = ggplot2::unit(0.7, "cm")
+      ) +
+      ggspatial::annotation_scale(height = ggplot2::unit(0.2, "cm"))
+    return(tmp)
+  }
+
+  if ("vif" %in% variables_selected) {
+    variables_selected <- x$variable_selection$vif$selected_variables
+  } else if ("pca" %in% variables_selected) {
+    variables_selected <- x$variable_selection$pca$selected_variables
+  } else if (is.null(variables_selected)) {
+    variables_selected <- get_predictor_names(x)
+  }
+
+ if(scenario=="predictors"){
+    st <- x$grid |> dplyr::select(all_of(variables_selected))
+    teste <- tidyr::pivot_longer(st, variables_selected)
+
+    tmp <- ggplot2::ggplot(teste) +
+      ggplot2::facet_grid(. ~ name) +
+      ggplot2::geom_sf(data = teste, ggplot2::aes(fill = value)) +
+      ggplot2::scale_fill_viridis_c() +
+      ggplot2::xlab("Longitude") +
+      ggplot2::ylab("Latitude") +
+      ggplot2::ggtitle("Predictor variables") +
+      ggplot2::theme_minimal() +
+      ggspatial::annotation_north_arrow(
+        height = ggplot2::unit(1, "cm"),
+        width = ggplot2::unit(1, "cm"),
+        style = ggspatial::north_arrow_fancy_orienteering,
+        pad_x = ggplot2::unit(0.2, "cm"),
+        pad_y = ggplot2::unit(0.7, "cm")
+      ) +
+      ggspatial::annotation_scale(height = ggplot2::unit(0.2, "cm"))
+  } else {
+    if(is.null(scenario)){
+      scenario <- scenarios_names(x)[1]
     }
-    return(tmp2)
-  })
+    st <- x$data[[scenario]] |> dplyr::select(all_of(variables_selected))
+    teste <- tidyr::pivot_longer(st, variables_selected)
+
+    tmp <- ggplot2::ggplot(teste) +
+      ggplot2::facet_grid(. ~ name) +
+      ggplot2::geom_sf(data = teste, ggplot2::aes(fill = value)) +
+      ggplot2::scale_fill_viridis_c() +
+      ggplot2::xlab("Longitude") +
+      ggplot2::ylab("Latitude") +
+      ggplot2::ggtitle(paste0("Predictor variables for ", scenario," scenario")) +
+      ggplot2::theme_minimal() +
+      ggspatial::annotation_north_arrow(
+        height = ggplot2::unit(1, "cm"),
+        width = ggplot2::unit(1, "cm"),
+        style = ggspatial::north_arrow_fancy_orienteering,
+        pad_x = ggplot2::unit(0.2, "cm"),
+        pad_y = ggplot2::unit(0.7, "cm")
+      ) +
+      ggspatial::annotation_scale(height = ggplot2::unit(0.2, "cm"))
+  }
+
   return(tmp)
 }
 
+#' @rdname plot_occurrences
+#' @export
+plot_predictions <- function(i, spp_name = NULL, scenario = NULL, id = NULL, ensemble = TRUE,
+                             ensemble_type = "mean_occ_prob") {
+  assert_class_cli(i, "input_sdm")
+  assert_subset_cli(spp_name, species_names(i))
+  assert_subset_cli(scenario, scenarios_names(i))
+  assert_subset_cli("predictions", names(i))
+  return(plot(i$predictions, spp_name, scenario, id, ensemble, ensemble_type))
+}
+
 #' @exportS3Method base::plot
-plot.predictions <- function(x, spp_name = NULL, scenario = NULL, id = NULL, ensemble = TRUE, ensemble_type = "mean_occ_prob") {
+plot.predictions <- function(x, spp_name = NULL, scenario = NULL, id = NULL, ensemble = TRUE,
+                             ensemble_type = "mean_occ_prob") {
   valid_spp <- names(x$predictions[[1]])
   valid_scen <- names(x$predictions)
   ens <- ifelse(ensemble, "ensembles", "predictions")
@@ -145,54 +234,120 @@ plot.predictions <- function(x, spp_name = NULL, scenario = NULL, id = NULL, ens
     ggplot2::ggtitle(paste0(spp_name, " distribution in the ", scenario, " scenario"), subtitle = subtitle) +
     ggplot2::theme_minimal() +
     ggspatial::annotation_north_arrow(
-      height = unit(1, "cm"),
-      width = unit(1, "cm"),
+      height = ggplot2::unit(1, "cm"),
+      width = ggplot2::unit(1, "cm"),
       style = ggspatial::north_arrow_fancy_orienteering,
-      pad_x = unit(0.2, "cm"),
-      pad_y = unit(0.7, "cm")
+      pad_x = ggplot2::unit(0.2, "cm"),
+      pad_y = ggplot2::unit(0.7, "cm")
     ) +
-    ggspatial::annotation_scale(height = unit(0.2, "cm"))
+    ggspatial::annotation_scale(height = ggplot2::unit(0.2, "cm"))
 
   return(p)
 }
 
 #' @rdname plot_occurrences
 #' @export
-plot_predictions <- function(i, spp_name = NULL, scenario = NULL, id = NULL, ensemble = TRUE, ensemble_type = "mean_occ_prob") {
-  return(plot(i$predictions, spp_name, scenario, id, ensemble, ensemble_type))
+mapview_grid <- function(i) {
+  assert_subset_cli(class(i), c("sdm_area", "input_sdm"))
+
+  if(is_input_sdm(i)) {
+    x <- i$predictors
+  } else if(is_sdm_area(i)) {
+    x <- i
+  }
+
+  grd <- x$grid |> dplyr::select("cell_id")
+
+  mapview::mapview(grd, zcol = "cell_id", layer.name = "cell_id")
 }
 
-#' @exportS3Method mapview::mapview
-mapview.occurrences <- function(x, spp_name, pa) {
-  df <- x$occurrences
+#' @rdname plot_occurrences
+#' @export
+mapview_occurrences <- function(i, spp_name = NULL, pa = TRUE) {
+  assert_subset_cli(class(i), c("occurrences", "input_sdm"))
+  assert_subset_cli(spp_name, species_names(i))
+  assert_logical_cli(pa)
+  assert_subset_cli("occurrences", names(i))
+
+  if(is_input_sdm(i)) {
+    x <- i$occurrences
+  } else if(is_occurrences(i)) {
+    x <- i
+  }
+  valid_spp <- species_names(x)
   if (!is.null(spp_name)) {
-    df <- dplyr::filter(df, species == spp_name)
-  }
-  if (pa == TRUE) {
-
+    spp_name <- valid_spp[which.min(stringdist::stringdist(spp_name, valid_spp))]
   } else {
-
+    spp_name <- valid_spp[1]
   }
-  tmp <- mapview::mapview(df, zcol = "species", layer.name = "Species")
-  return(tmp)
+
+  grd <- x$occurrences
+  grd <- dplyr::filter(grd, species %in% spp_name) |> dplyr::select(species)
+
+  mapview::mapview(grd, zcol = "species", layer.name = "Species")
 }
 
-#' @exportS3Method mapview::mapview
-mapview.predictors <- function(x) {
-  st <- x$grid
-  if ("variable_selection" %in% names(x)) {
-    st <- st[[x$variable_selection$vif$selected_variables]]
+#' @rdname plot_occurrences
+#' @export
+mapview_predictors <- function(i, variables_selected = NULL) {
+  assert_subset_cli(class(i), c("input_sdm", "sdm_area"))
+  assert_subset_cli(variables_selected, c(get_predictor_names(i), "vif", "pca"))
+
+  if(is_input_sdm(i)){
+    x <- i$predictors
+  } else if(is_sdm_area(i)){
+    x <- i
   }
-  tmp <- mapview::mapview(sf::st_as_sf(x$data), burst = T, legend = F, hide = T)
-  return(tmp)
+
+  if ("vif" %in% variables_selected) {
+    variables_selected <- x$variable_selection$vif$selected_variables
+  } else if ("pca" %in% variables_selected) {
+    variables_selected <- x$variable_selection$pca$selected_variables
+  } else if (is.null(variables_selected)) {
+    variables_selected <- get_predictor_names(x)[1]
+  }
+
+  st <- x$grid |> dplyr::select(all_of(variables_selected))
+  mapview::mapview(st, layer.name=variables_selected)
 }
 
-#' @exportS3Method mapview::mapview
-mapview.predictions <- function(x, spp_name = NULL, scenario = NULL, id = NULL, ensemble = TRUE, ensemble_type = "mean_occ_prob") {
+#' @rdname plot_occurrences
+#' @export
+mapview_scenarios <- function(i, variables_selected = NULL, scenario = NULL) {
+  assert_subset_cli(class(i), c("input_sdm", "sdm_area"))
+  assert_subset_cli(variables_selected, c(get_predictor_names(i), "vif", "pca"))
+  assert_subset_cli(scenario, scenarios_names(i))
+
+  if(is_input_sdm(i)){
+    x <- i$predictors
+  } else if(is_sdm_area(i)){
+    x <- i
+  }
+
+  if ("vif" %in% variables_selected) {
+    variables_selected <- x$variable_selection$vif$selected_variables
+  } else if ("pca" %in% variables_selected) {
+    variables_selected <- x$variable_selection$pca$selected_variables
+  } else if (is.null(variables_selected)) {
+    variables_selected <- get_predictor_names(x)
+  }
+
+  if(is.null(scenario)){
+    scenario <- scenarios_names(x)[1]
+  }
+  st <- x$data[[scenario]] |> dplyr::select(all_of(variables_selected))
+  mapview::mapview(st, layer.name = paste0(scenario,"\n",variables_selected))
+}
+
+#' @rdname plot_occurrences
+#' @export
+mapview_predictions <- function(i, spp_name = NULL, scenario = NULL, id = NULL, ensemble = TRUE, ensemble_type = "mean_occ_prob") {
+  assert_class_cli(i, "input_sdm")
+
+  x <- i$predictions
   valid_spp <- names(x$predictions[[1]])
   valid_scen <- names(x$predictions)
   ens <- ifelse(ensemble, "ensembles", "predictions")
-  # valid_id
   grd <- x$grid
   if (!is.null(scenario)) {
     scenario <- valid_scen[which.min(stringdist::stringdist(scenario, valid_scen))]
@@ -214,6 +369,22 @@ mapview.predictions <- function(x, spp_name = NULL, scenario = NULL, id = NULL, 
     grd <- dplyr::filter(grd, grd$cell_id == cell_id)
     grd[grd$cell_id %in% cell_id, "result"] <- v
   }
-  tmp <- mapview::mapview(grd, zcol = "result", layer.name = paste0(spp_name))
-  return(tmp)
+  mapview::mapview(grd, zcol = "result", layer.name = paste0(spp_name))
+}
+
+#' @exportS3Method base::plot
+plot.input_sdm <- function(i) {
+  assert_class_cli(i, "input_sdm")
+  if ("predictions" %in% names(i)) {
+    return(plot_predictions(i))
+  }
+  #if ("scenarios" %in% names(i)) {
+  #  return(plot_scenarios(i))
+  #}
+  if ("predictors" %in% names(i)) {
+    return(plot_predictors(i))
+  }
+  if ("occurrences" %in% names(i)) {
+    return(plot_occurrences(i))
+  }
 }

@@ -99,32 +99,7 @@ print.input_sdm <- function(x) {
     }
   }
   if ("predictors" %in% names(x)) {
-    if (is_predictors(x$predictors)) {
-      cat("--------  Predictors  ---------\n")
-      cat("Number of Predictors          :", length(x$predictors$predictors), "\n")
-      cat(cat("Predictors Names              : "), cat(x$predictors$predictors, sep = ", "), "\n")
-      if (!is.null(x$predictors$bbox)) {
-        cat("Extent                        :", x$predictors$bbox, "(xmin, xmax, ymin, ymax)\n")
-      }
-      if (!is.null(x$predictors$epsg)) {
-        cat("EPSG                          :", x$predictors$epsg, "\n")
-      }
-      if (!is.null(x$predictors$resolution)) {
-        cat("Resolution                    :", x$predictors$resolution, "(x, y)\n")
-      }
-      if (!is.null(x$rescaling)) {
-        cat(
-          "Rescaling                     :\n",
-          "   Cellsize                   :", x$predictors$rescaling$cellsize, "\n"
-        )
-      }
-      if (!is.null(x$predictors$variable_selection$vif)) {
-        cat(
-          cat("Area (VIF)                    : "), cat(x$predictors$variable_selection$vif$area), cat("\n"),
-          cat("Selected Variables (VIF)      : "), cat(x$predictors$variable_selection$vif$selected_variables, sep = ", "), "\n"
-        )
-      }
-    } else if (is_sdm_area(x$predictors)) {
+    if (is_sdm_area(x$predictors)) {
       cat("--------  Predictors  ---------\n")
       cat("Number of Predictors          :", ncol(x$predictors$grid)-2, "\n")
       cat(cat("Predictors Names              : "), cat(predictors(x$predictors), sep = ", "), "\n")
@@ -174,7 +149,7 @@ print.input_sdm <- function(x) {
       "   Number                    :", x$models$validation$number, "\n",
       "   Metrics                   :\n"
     )
-    print(mean_validation_metrics(x))
+    print(lapply(mean_validation_metrics(x), function(y){ as.data.frame(y[,1:5])}))
     if ("independent_validation" %in% names(x$models)) {
       cat(
         "Independent Validation        :\n",

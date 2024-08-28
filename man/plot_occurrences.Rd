@@ -2,15 +2,43 @@
 % Please edit documentation in R/plot.R
 \name{plot_occurrences}
 \alias{plot_occurrences}
+\alias{plot_grid}
 \alias{plot_predictors}
+\alias{plot_scenarios}
 \alias{plot_predictions}
+\alias{mapview_grid}
+\alias{mapview_occurrences}
+\alias{mapview_predictors}
+\alias{mapview_scenarios}
+\alias{mapview_predictions}
 \title{S3 Methods for plot}
 \usage{
 plot_occurrences(i, spp_name = NULL, pa = TRUE)
 
+plot_grid(i)
+
 plot_predictors(i, variables_selected = NULL)
 
+plot_scenarios(i, variables_selected = NULL, scenario = NULL)
+
 plot_predictions(
+  i,
+  spp_name = NULL,
+  scenario = NULL,
+  id = NULL,
+  ensemble = TRUE,
+  ensemble_type = "mean_occ_prob"
+)
+
+mapview_grid(i)
+
+mapview_occurrences(i, spp_name = NULL, pa = TRUE)
+
+mapview_predictors(i, variables_selected = NULL)
+
+mapview_scenarios(i, variables_selected = NULL, scenario = NULL)
+
+mapview_predictions(
   i,
   spp_name = NULL,
   scenario = NULL,
