@@ -11,6 +11,7 @@ This package is intended to help modelers to build Species Distribution Modeling
 \seealso{
 Useful links:
 \itemize{
+  \item \url{https://luizesser.github.io/caretSDM/}
   \item Report bugs at \url{https://github.com/luizesser/caretSDM/issues}
 }
 

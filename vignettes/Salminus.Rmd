@@ -147,11 +147,33 @@ With the occurrences and predictors data put together, we can pass to the modeli
 Note that, when you are using an algorithm for the first time, caret will ask you to install the relevant packages to properly run the algorithm.
 
 ```{r train_sdm, eval=TRUE, include=FALSE}
-i <- train_sdm(i, algo = c("svmLinear2", "mda", "nnet", "kknn"), variables_selected = "vif")
+ctrl_sdm <- caret::trainControl(method = "repeatedcv", 
+                                number = 4, 
+                                repeats = 10, 
+                                classProbs = TRUE,
+                                returnResamp = "all",
+                                summaryFunction = summary_sdm,
+                                savePredictions = "all")
+
+i <- train_sdm(i, 
+               algo = c("svmLinear2", "mda", "nnet", "kknn"), 
+               crtl = ctrl_sdm, 
+               variables_selected = "vif")
 ```
 
 ```{r train_sdm2, eval=FALSE, include=TRUE}
-i <- train_sdm(i, algo = c("svmLinear2", "mda", "nnet", "kknn"), variables_selected = "vif")
+ctrl_sdm <- caret::trainControl(method = "repeatedcv", 
+                                number = 4, 
+                                repeats = 10, 
+                                classProbs = TRUE,
+                                returnResamp = "all",
+                                summaryFunction = summary_sdm,
+                                savePredictions = "all")
+
+i <- train_sdm(i, 
+               algo = c("svmLinear2", "mda", "nnet", "kknn"), 
+               crtl = ctrl_sdm, 
+               variables_selected = "vif")
 ```
 
 ```{r}
