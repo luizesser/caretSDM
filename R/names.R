@@ -21,8 +21,14 @@
 #' https://luizfesser.wordpress.com
 #'
 #' @examples
+#' # Create sdm_area object:
 #' sa <- sdm_area(parana, cell_size = 25000, crs = 6933)
-#' predictors(sa)
+#'
+#' # Include predictors:
+#' sa <- add_predictors(sa, bioc) |> dplyr::select(c("bio01", "bio12"))
+#'
+#' # Check predictors' names:
+#' get_predictor_names(sa)
 #'
 #' @importFrom dplyr select bind_cols relocate
 #' @importFrom purrr discard

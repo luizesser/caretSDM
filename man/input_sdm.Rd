@@ -30,13 +30,20 @@ detecting their classes.
 The returned object is used throughout the whole workflow to apply functions.
 }
 \examples{
-# Create sdm_area object
-sa <- sdm_area(parana, cell_size = 25000, epsg = 6933)
+# Create sdm_area object:
+sa <- sdm_area(parana, cell_size = 25000, crs = 6933)
 
-# Include predictors
-sa <- add_predictors(sa, bioc)
+# Include predictors:
+sa <- add_predictors(sa, bioc) |> dplyr::select(c("bio01", "bio12"))
 
-i <- input_sdm(occurrences(occ), sa)
+# Include scenarios:
+sa <- add_scenarios(sa)
+
+# Create occurrences:
+oc <- occurrences_sdm(occ, crs = 6933) |> join_area(sa)
+
+# Create input_sdm:
+i <- input_sdm(oc, sa)
 
 }
 \seealso{

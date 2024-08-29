@@ -20,14 +20,14 @@
 #' https://luizfesser.wordpress.com
 #'
 #' @examples
-#' # Create sdm_area object
-#' sa <- sdm_area(parana, cell_size = 25000, epsg = 6933)
+#' # Create sdm_area object:
+#' sa <- sdm_area(parana, cell_size = 25000, crs = 6933)
 #'
-#' # Include predictors
-#' sa <- add_predictors(sa, bioc)
+#' # Include predictors:
+#' sa <- add_predictors(sa, bioc) |> dplyr::select(c("bio01", "bio12"))
 #'
-#' # Include scenarios
-#' sa <- add_scenarios(sa, scen)
+#' # Include scenarios:
+#' sa <- add_scenarios(sa)
 #'
 #' @importFrom stars read_stars st_as_stars st_dimensions st_get_dimension_values
 #' @importFrom sf st_transform st_crs st_as_sf st_crop

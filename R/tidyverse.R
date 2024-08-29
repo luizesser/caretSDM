@@ -8,17 +8,13 @@
 #' @param ... \code{character} vector with predictors to be selected.
 #'
 #' @examples
-#' # Create sdm_area object
+#' # Create sdm_area object:
 #' sa <- sdm_area(parana, cell_size = 25000, crs = 6933)
 #'
-#' # Include predictors
-#' sa <- add_predictors(sa, bioc)
+#' # Include predictors:
+#' sa <- add_predictors(sa, bioc) |> dplyr::select(c("bio01", "bio12"))
 #'
-#' # Select predictors
-#' predictors(sa)
-#' sa <- select(sa, c("bio01", "bio12"))
-#'
-#' @importFrom dplyr select relocate
+#' @importFrom dplyr select relocate mutate
 #'
 #' @rdname tidyverse-methods
 #' @export

@@ -76,9 +76,11 @@
 #' # Pseudoabsence generation:
 #' i <- pseudoabsence(i, method="bioclim", variables_selected = "vif")
 #'
+#' # Custom trainControl:
+#' ctrl_sdm <- caret::trainControl(method = "repeatedcv", number = 4, repeats = 10, classProbs = TRUE,
+#' returnResamp = "all", summaryFunction = summary_sdm, savePredictions = "all")
+#'
 #' # Train models:
-#' ctrl_sdm <- caret::trainControl(method = "repeatedcv", number = 4, repeats = 10,
-#' classProbs = TRUE, returnResamp = "all", summaryFunction = summary_sdm, savePredictions = "all")
 #' i <- train_sdm(i, algo = c("nnet", "kknn"), variables_selected = "vif", ctrl=ctrl_sdm)
 #'
 #' # Predict models:

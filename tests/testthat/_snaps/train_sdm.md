@@ -27,13 +27,11 @@
           Number                    : 4 
           Metrics                   :
       $`Araucaria angustifolia`
-      # A tibble: 4 x 7
-        algo         ROC  Sens  Spec   ROCSD  SensSD SpecSD
-        <chr>      <dbl> <dbl> <dbl>   <dbl>   <dbl>  <dbl>
-      1 kknn       0.993 0.994 0.991 0.00834 0.00784 0.0155
-      2 mda        0.994 0.990 0.982 0.0163  0.0152  0.0286
-      3 nnet       0.995 1     0.932 0.0907  0.0106  0.164 
-      4 svmLinear2 0.953 0.984 0.935 0.0374  0.0150  0.0380
+              algo       ROC       TSS Sensitivity Specificity
+      1       kknn 0.9937239 0.9834901    0.994425    0.989000
+      2        mda 0.9924916 0.9700045    0.987850    0.983325
+      3       nnet 0.9938679 0.9281474    1.000000    0.932050
+      4 svmLinear2 0.9520057 0.9203348    0.987150    0.933175
       
 
 # train_sdm - pca
@@ -67,13 +65,11 @@
           Number                    : 4 
           Metrics                   :
       $`Araucaria angustifolia`
-      # A tibble: 4 x 7
-        algo         ROC  Sens  Spec  ROCSD  SensSD SpecSD
-        <chr>      <dbl> <dbl> <dbl>  <dbl>   <dbl>  <dbl>
-      1 kknn       0.974 0.997 0.938 0.0353 0.00523 0.0851
-      2 mda        0.999 1     0.888 0.106  0.0111  0.145 
-      3 nnet       0.976 1     0.887 0.129  0.00241 0.535 
-      4 svmLinear2 0.898 1     0.784 0.101  0       0.153 
+              algo       ROC       TSS Sensitivity Specificity
+      1       kknn 0.9760767 0.9367208      0.9978    0.938900
+      2        mda 0.9993776 0.8861145      1.0000    0.891700
+      3       nnet 0.9722440 0.8820169      1.0000    0.882525
+      4 svmLinear2 0.8977778 0.7772222      1.0000    0.777275
       
 
 # train_sdm - change ctrl
@@ -107,13 +103,11 @@
           Number                    : 10 
           Metrics                   :
       $`Araucaria angustifolia`
-      # A tibble: 4 x 7
-        algo         ROC  Sens  Spec  ROCSD   SensSD SpecSD
-        <chr>      <dbl> <dbl> <dbl>  <dbl>    <dbl>  <dbl>
-      1 kknn       0.973 0.996 0.944 0.0303 0.00731  0.0617
-      2 mda        0.995 0.998 0.904 0.0809 0.00995  0.0934
-      3 nnet       0.960 1     0.854 0.102  0.00565  0.470 
-      4 svmLinear2 0.901 1.00  0.773 0.0663 0.000780 0.139 
+              algo       ROC     Sens      Spec      ROCSD
+      1       kknn 0.9691691 0.996277 0.9371996 0.03311052
+      2        mda 0.9925113 0.998841 0.8836304 0.08687516
+      3       nnet 0.9580712 1.000000 0.8453276 0.09673926
+      4 svmLinear2 0.8903401 1.000000 0.7591607 0.06386788
       
 
 # train_sdm - vif
@@ -148,13 +142,11 @@
           Number                    : 4 
           Metrics                   :
       $`Araucaria angustifolia`
-      # A tibble: 4 x 7
-        algo         ROC  Sens  Spec  ROCSD  SensSD SpecSD
-        <chr>      <dbl> <dbl> <dbl>  <dbl>   <dbl>  <dbl>
-      1 kknn       0.987 0.993 0.978 0.0114 0.00975 0.0266
-      2 mda        0.985 0.990 0.949 0.0278 0.0165  0.0437
-      3 nnet       0.726 1     0.440 0.251  0.0120  0.464 
-      4 svmLinear2 0.963 0.955 0.959 0.0274 0.0204  0.0334
+              algo       ROC       TSS Sensitivity Specificity
+      1       kknn 0.9887991 0.9756446    0.992500    0.983150
+      2        mda 0.9850524 0.9383663    0.990475    0.951125
+      3       nnet 0.6906980 0.3870676    1.000000    0.391200
+      4 svmLinear2 0.9653114 0.9156171    0.955350    0.961325
       
 
 # train_sdm - selecting vars
@@ -186,12 +178,10 @@
           Number                    : 4 
           Metrics                   :
       $`Araucaria angustifolia`
-      # A tibble: 4 x 7
-        algo         ROC  Sens  Spec   ROCSD  SensSD SpecSD
-        <chr>      <dbl> <dbl> <dbl>   <dbl>   <dbl>  <dbl>
-      1 kknn       0.993 0.994 0.991 0.00906 0.00770 0.0156
-      2 mda        0.994 0.989 0.984 0.0146  0.0147  0.0256
-      3 nnet       0.994 1     0.929 0.185   0.00737 0.250 
-      4 svmLinear2 0.954 0.985 0.934 0.0424  0.0159  0.0417
+              algo       ROC       TSS Sensitivity Specificity
+      1       kknn 0.9908311 0.9816621     0.99265    0.988875
+      2        mda 0.9924188 0.9706946     0.98980    0.983850
+      3       nnet 0.9918583 0.9287376     1.00000    0.933375
+      4 svmLinear2 0.9541996 0.9201095     0.98300    0.937125
       
 

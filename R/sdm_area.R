@@ -29,7 +29,7 @@
 #' https://luizfesser.wordpress.com
 #'
 #' @examples
-#' # Create sdm_area object
+#' # Create sdm_area object:
 #' sa <- sdm_area(parana, cell_size = 25000, crs = 6933)
 #'
 #' @importFrom stars st_as_stars read_stars write_stars st_dimensions

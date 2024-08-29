@@ -35,10 +35,10 @@ without gdal. As standard, if gdal is available in you machine it will be used (
 otherwise sf/stars will be used.
 }
 \examples{
-# Create sdm_area object
-sa <- sdm_area(parana, cell_size = 25000, epsg = 6933)
+# Create sdm_area object:
+sa <- sdm_area(parana, cell_size = 25000, crs = 6933)
 
-# Include predictors
+# Include predictors:
 sa <- add_predictors(sa, bioc)
 
 }

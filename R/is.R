@@ -11,7 +11,9 @@
 #' @examples
 #' # Create sdm_area object:
 #' sa <- sdm_area(parana, cell_size = 25000, epsg = 6933)
+#'
 #' is_sdm_area(sa)
+#'
 #' is_input_sdm(sa)
 #'
 #' @author Luíz Fernando Esser (luizesser@gmail.com)

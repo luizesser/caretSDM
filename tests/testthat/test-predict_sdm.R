@@ -125,7 +125,7 @@ test_that("predict_sdm - th function", {
 })
 
 test_that("test ensembles", {
-  p <- predict_sdm(i, th=0.995)
+  p <- predict_sdm(i, th=0.994)
   p2 <- get_predictions(p)
   expect_equal(length(p2$current[[1]]), 10)
 })

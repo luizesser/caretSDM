@@ -41,7 +41,17 @@
 #' https://luizfesser.wordpress.com
 #'
 #' @examples
-#' occ <- occurrences_sdm(occ, crs = 6933)
+#' # Create sdm_area object:
+#' sa <- sdm_area(parana, cell_size = 25000, crs = 6933)
+#'
+#' # Include predictors:
+#' sa <- add_predictors(sa, bioc) |> dplyr::select(c("bio01", "bio12"))
+#'
+#' # Include scenarios:
+#' sa <- add_scenarios(sa)
+#'
+#' # Create occurrences:
+#' oc <- occurrences_sdm(occ, crs = 6933)
 #'
 #' @importFrom caret createDataPartition
 #' @importFrom dplyr select

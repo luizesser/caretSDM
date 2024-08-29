@@ -29,15 +29,13 @@ convert \code{occ}.
 sa <- sdm_area(parana, cell_size = 25000, crs = 6933)
 
 # Include predictors:
-sa <- add_predictors(sa, bioc)
+sa <- add_predictors(sa, bioc) |> dplyr::select(c("bio01", "bio12"))
 
-# Create input_sdm:
-occ <- occurrences_sdm(occ, crs= 6933)
-occ
+# Include scenarios:
+sa <- add_scenarios(sa)
 
-# Join cell_id data:
-occ <- join_area(occ, sa)
-occ
+# Create occurrences:
+oc <- occurrences_sdm(occ, crs = 6933) |> join_area(sa)
 
 }
 \seealso{

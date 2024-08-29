@@ -24,14 +24,10 @@ select(x, ...)
 Set of functions to facilitate the use of caretSDM through tidyverse grammatics.
 }
 \examples{
-# Create sdm_area object
+# Create sdm_area object:
 sa <- sdm_area(parana, cell_size = 25000, crs = 6933)
 
-# Include predictors
-sa <- add_predictors(sa, bioc)
-
-# Select predictors
-predictors(sa)
-sa <- select(sa, c("bio01", "bio12"))
+# Include predictors:
+sa <- add_predictors(sa, bioc) |> dplyr::select(c("bio01", "bio12"))
 
 }

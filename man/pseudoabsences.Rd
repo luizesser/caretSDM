@@ -66,13 +66,19 @@ Pseudoabsences are retrieved outside the projected distribution of the species.
 }
 \examples{
 # Create sdm_area object:
-sa <- sdm_area(parana, cell_size = 25000, epsg = 6933)
+sa <- sdm_area(parana, cell_size = 25000, crs = 6933)
 
 # Include predictors:
-sa <- add_predictors(sa, bioc)
+sa <- add_predictors(sa, bioc) |> dplyr::select(c("bio01", "bio12"))
+
+# Include scenarios:
+sa <- add_scenarios(sa)
+
+# Create occurrences:
+oc <- occurrences_sdm(occ, crs = 6933) |> join_area(sa)
 
 # Create input_sdm:
-i <- input_sdm(occurrences(occ), sa)
+i <- input_sdm(oc, sa)
 
 # Clean coordinates:
 i <- data_clean(i)
@@ -82,7 +88,6 @@ i <- vif_predictors(i)
 
 # Pseudoabsence generation:
 i <- pseudoabsence(i, method="bioclim", variables_selected = "vif")
-i
 
 }
 \seealso{
