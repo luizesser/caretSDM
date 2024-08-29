@@ -74,7 +74,7 @@
 #' @importFrom dplyr arrange select filter all_of bind_cols summarise group_by across everything
 #' @importFrom raster extract
 #' @importFrom pROC roc
-#' @importFrom caret train trainControl twoClassSummary
+#' @importFrom caret train trainControl
 #' @importFrom stars st_extract
 #'
 #' @export
@@ -126,7 +126,7 @@ train_sdm <- function(occ, pred = NULL, algo, ctrl = NULL, variables_selected = 
   if (is.null(ctrl)) {
     ctrl <- caret::trainControl(
       method = "repeatedcv", number = 4, repeats = 1, classProbs = TRUE, returnResamp = "all", # retornar folds
-      summaryFunction = caret::twoClassSummary, savePredictions = "all", allowParallel = FALSE
+      summaryFunction = summary_sdm, savePredictions = "all", allowParallel = FALSE
     )
   }
   algo2 <- algo
