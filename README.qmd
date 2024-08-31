@@ -5,8 +5,6 @@ format: gfm
 editor: visual
 ---
 
-# caretSDM
-
 `caretSDM` is a under development R package that uses the powerful `caret` package as the main engine to obtain Species Distribution Models. As `caret` is a packaged turned to build machine learning models, `caretSDM` has a strong focus on this approach.
 
 ## Installing

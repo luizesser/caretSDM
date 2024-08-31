@@ -111,7 +111,6 @@ A important step on model building in Species Distribution Models, is the defini
 ```{r create_buffer}
 # Create a buffer around records
 study_area <- buffer_sdm(occ, size = 5, crs = 4326)
-#study_area <- geobr::read_state("PR")
 ```
 
 In `caretSDM` there is a function that groups all the transformations regarding the study area to build and project the models. The `sdm_area` function is this function and is also responsible to check CRSs and create a grid to build models. This grid may seem unpurposed for terrestrial ecologists, but is a key element when modeling continental aquatic environments. `sdm_area` class will also keep the environmental/climatic data (*i.e.* "predictor variables", "covariates", "explanatory variables", "features" or "control variables"). With this class we will perform analysis using only the predictors (such as predictors transformations).

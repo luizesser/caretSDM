@@ -1,8 +1,6 @@
 # caretSDM
 Luíz Fernando Esser
 
-# caretSDM
-
 `caretSDM` is a under development R package that uses the powerful
 `caret` package as the main engine to obtain Species Distribution
 Models. As `caret` is a packaged turned to build machine learning

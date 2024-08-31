@@ -144,34 +144,36 @@ i
 
 With the occurrences and predictors data put together, we can pass to the modeling. As the name suggests, `caretSDM` uses the `caret` package underlying its modeling procedure. For those who are not familiar, `caret` is the easiest way to perform Machine Learning analysis in R. It works by setting a modeling wrapper to pass multiple packages and can provide a lot of automation regarding algorithms fine-tuning, data spliting, pre-processing methods and predictions. These automated functions from `caret` can be altered using the `ctrl` argument in `train_sdm` function. See `?caret::trainControl` for all options available.
 
+We show here how to use a repeated crossvalidation method, which is defined through `caret::trainControl`.
+
 Note that, when you are using an algorithm for the first time, caret will ask you to install the relevant packages to properly run the algorithm.
 
 ```{r train_sdm, eval=TRUE, include=FALSE}
 ctrl_sdm <- caret::trainControl(method = "repeatedcv", 
-                                number = 4, 
-                                repeats = 10, 
+                                number = 4, # Number of folds
+                                repeats = 10, # Number of complete sets of folds to compute
                                 classProbs = TRUE,
                                 returnResamp = "all",
                                 summaryFunction = summary_sdm,
                                 savePredictions = "all")
 
 i <- train_sdm(i, 
-               algo = c("svmLinear2", "mda", "nnet", "kknn"), 
+               algo = c("svmLinear2", "mda", "nnet", "kknn", "nb"), 
                crtl = ctrl_sdm, 
                variables_selected = "vif")
 ```
 
 ```{r train_sdm2, eval=FALSE, include=TRUE}
 ctrl_sdm <- caret::trainControl(method = "repeatedcv", 
-                                number = 4, 
-                                repeats = 10, 
+                                number = 4, # Number of folds
+                                repeats = 10, # Number of complete sets of folds to compute
                                 classProbs = TRUE,
                                 returnResamp = "all",
                                 summaryFunction = summary_sdm,
                                 savePredictions = "all")
 
 i <- train_sdm(i, 
-               algo = c("svmLinear2", "mda", "nnet", "kknn"), 
+               algo = c("svmLinear2", "mda", "nnet", "kknn", "nb"), 
                crtl = ctrl_sdm, 
                variables_selected = "vif")
 ```
