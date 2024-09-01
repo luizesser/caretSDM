@@ -32,6 +32,8 @@
 #'
 #' @importFrom dplyr select bind_cols relocate
 #' @importFrom purrr discard
+#' @importFrom stars st_set_dimensions st_get_dimension_values
+#' @importFrom stringdist stringdist
 #'
 #' @export
 #' @rdname predictor_names
@@ -109,6 +111,22 @@ set_predictor_names.input_sdm <- function(x, new_names) {
     dplyr::relocate(geometry, .after = last_col())
 
   i$predictors <- x
+
+  if("scenarios" %in% names(x)){
+    i$scenarios$data <- sapply(x$scenarios$data, function(y) {
+      grd_spatial <- y |>
+        dplyr::select(c(cell_id, geometry))
+      grd_data <- y |>
+        as.data.frame() |>
+        dplyr::select(-c(cell_id, geometry))
+
+      names(grd_data) <- new_names
+      y <- grd_spatial |>
+        dplyr::bind_cols(grd_data) |>
+        dplyr::relocate(geometry, .after = last_col())
+    }, simplify = FALSE, USE.NAMES = TRUE)
+  }
+
   return(i)
 }
 
@@ -146,6 +164,20 @@ set_predictor_names.sdm_area <- function(x, new_names) {
     dplyr::bind_cols(grd_data) |>
     dplyr::relocate(geometry, .after = last_col())
 
+  if("scenarios" %in% names(x)){
+    x$scenarios$data <- sapply(x$scenarios$data, function(y) {
+      grd_spatial <- y |>
+        dplyr::select(c(cell_id, geometry))
+      grd_data <- y |>
+        as.data.frame() |>
+        dplyr::select(-c(cell_id, geometry))
+
+      names(grd_data) <- new_names
+      y <- grd_spatial |>
+        dplyr::bind_cols(grd_data) |>
+        dplyr::relocate(geometry, .after = last_col())
+    }, simplify = FALSE, USE.NAMES = TRUE)
+  }
   return(x)
 }
 
@@ -172,4 +204,73 @@ get_predictor_names.sdm_area <- function(x) {
 #' @export
 get_predictor_names.input_sdm <- function(x) {
   return(predictors(x$predictors))
+}
+
+#' @rdname predictor_names
+#' @export
+test_variables_names <- function(sa, s2){
+  assert_class_cli(sa, "sdm_area")
+  assert_class_cli(s2, "stars")
+  s1_names <- get_predictor_names(sa)
+  s2_names <- sort(stars::st_get_dimension_values(s2, "band"))
+  return(all( s1_names == s2_names ))
+}
+
+#' @rdname predictor_names
+#' @export
+find_closest_matches <- function(inputs, valid_inputs) {
+  closest_matches <- character(length(inputs))
+  for (i in seq_along(inputs)) {
+    distances <- stringdist::stringdist(inputs[i], valid_inputs)
+    closest_index <- which.min(distances)
+    closest_matches[i] <- valid_inputs[closest_index]
+    valid_inputs <- valid_inputs[-closest_index]
+  }
+  df <- data.frame(s1_names=inputs, s2_names=closest_matches)
+  return(df)
+}
+
+#' @rdname predictor_names
+#' @export
+set_variables_names <- function(s1 = NULL, s2 = NULL, new_names = NULL) {
+  assert_class_cli(s1, "stars")
+  if(is.null(new_names)) {
+    assert_subset_cli(class(s2), c("stars", "sdm_area"))
+    if(class(s2) == "stars") {
+      assert_class_cli(s2, "stars")
+      len_s2 <- length(stars::st_get_dimension_values(s2, "band"))
+      len_s1 <- length(stars::st_get_dimension_values(s1, "band"))
+      if (!len_s1 == len_s2) {
+        cli_abort("i" = "{.var s1} has {len_s1} variable{?s},
+                  while {.var s2} has {len_s2} variable{?s}.",
+                  "x" = "{.var s1} and {.var s2} should have the same number of variables.")
+      }
+      if(!all(sort(stars::st_get_dimension_values(s2, "band")) == stars::st_get_dimension_values(s1, "band"))){
+        closest_match <- find_closest_matches(stars::st_get_dimension_values(s1, "band"),
+                                              stars::st_get_dimension_values(s2, "band"))
+        print(closest_match)
+        s1 <- stars::st_set_dimensions(s1, "band", values = closest_match$s2_names)
+      }
+    }
+    if(class(s2) == "sdm_area") {
+      len_s2 <- length(get_predictor_names(s2))
+      len_s1 <- length(stars::st_get_dimension_values(s1, "band"))
+      if (!len_s1 == len_s2) {
+        cli_abort("i" = "{.var s1} has {len_s1} variable{?s},
+                  while {.var s2} has {len_s2} variable{?s}.",
+                  "x" = "{.var s1} and {.var s2} should have the same number of variables.")
+      }
+      if(!all(sort(get_predictor_names(s2)) == stars::st_get_dimension_values(s1, "band"))){
+        closest_match <- find_closest_matches(stars::st_get_dimension_values(s1, "band"),
+                                              get_predictor_names(s2))
+        print(closest_match)
+        s1 <- stars::st_set_dimensions(s1, "band", values = closest_match$s2_names)
+      }
+    }
+  } else {
+    len_s1 <- length(stars::st_get_dimension_values(s1, "band"))
+    assert_character_cli(new_names, len = len_s1)
+    s1 <- stars::st_set_dimensions(s1, "band", values = new_names)
+  }
+  return(s1)
 }

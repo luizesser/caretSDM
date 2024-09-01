@@ -52,36 +52,6 @@ scen <- read_stars(list.files("input_data/WorldClim_data_future/", full.names = 
 scen
 ```
 
-If you don't noticed, WorldClim data has a mismatch between bioclimatic variables names:
-
-```{r see_names}
-# Predictors names from current data
-st_get_dimension_values(pred, "band")
-
-# Predictors names from scenarios data
-st_get_dimension_values(scen, "band")
-```
-
-This could lead to errors in the future, because models will try to project on data that are not included in the model. In other words, the model will have a parameter called "1.tif", while scenarios will have a "bio01" parameter, but both should have the same name so the function can match them. To correct this issue, we can use the `stars` package itself, but pay attention to not attribute a wrong name to your predictors: bioclimatic variables in `pred` are in alphabetical order! We will use the `sort` function to avoid this error. We will also change scenarios names to mark them as different SSPs (this second transformation is totally optional).
-
-```{r rename_biocs}
-# Change bioclimatic variable names in scen
-scen <- st_set_dimensions(scen, "band", values=paste0("bio",1:19))
-
-# Change scenarios names in scen
-names(scen) <- paste0("ssp", names(scen))
-
-# Change bioclimatic variable names in pred to match scen
-pred <- st_set_dimensions(pred, "band", values=sort(paste0("bio",1:19)))
-```
-
-Now both `pred` and `scen` should have the same variables names:
-
-```{r test_names}
-# Test if all predictors names are equal
-all(sort(st_get_dimension_values(scen, "band")) == st_get_dimension_values(pred, "band"))
-```
-
 ### Obtaining species records
 
 A easy way to get species data using `caretSDM` is the function `GBIF_data`, which retrieves species records from GBIF. Understandably, there are other sources of species data available, as well as our own data that can be the result of field work. In this sense, one can import to R it's own data in multiple ways, but be sure that the table will have three columns: species, decimalLongitude and decimalLatitude. `GBIF_data` function retrieves the data ready to be included in caretSDM, thus if you have any doubt on how to format your own data, use `GBIF_data` function to retrieve an example table.
@@ -119,7 +89,13 @@ In `caretSDM` there is a function that groups all the transformations regarding 
 # Create a sdm_area object
 sa <- sdm_area(study_area, cell_size = 100000, crs = 6933)
 #sa$grid <- select(sa$grid, -buffer)
-plot(sa$grid)
+plot_grid(sa)
+```
+
+An alternative to visualize grid data is the use of mapview:
+
+```{r mapview_grid}
+mapview_grid(sa)
 ```
 
 Now that we have a study area, we can assign predictor variables and scenarios to it.
@@ -131,10 +107,34 @@ sa
 plot_predictors(sa)
 ```
 
+An alternative to visualize predictors' data is the use of mapview:
+
+```{r mapview_predictors}
+mapview_predictors(sa)
+```
+
+If you don't noticed, WorldClim data has a mismatch between bioclimatic variables names:
+
+```{r see_names}
+# Predictors names from current data
+st_get_dimension_values(pred, "band")
+
+# Predictors names from scenarios data
+st_get_dimension_values(scen, "band")
+```
+
+This could lead to errors in the future, because models will try to project on data that are not included in the model. In other words, the model will have a parameter called "1.tif", while scenarios will have a "bio01" parameter, but both should have the same name so the function can match them. To correct this issue, we can use the `stars` package itself, but pay attention to not attribute a wrong name to your predictors: bioclimatic variables in `pred` are in alphabetical order! Here, we addressed this by implementing a solution in `add_scenarios` function.
+
 ```{r add_scenarios}
 # Add scenarios into sdm_area
 sa <- add_scenarios(sa, scen)
 sa
+```
+
+Now both predictors and scenarios should have the same variables names. In any case, you can change the names by using the `set_predictor_names` function.
+
+```{r}
+sa <- set_predictor_names(sa, sort(paste0("bio", 1:19)))
 ```
 
 Usually, we will need to subset variables that will inform our model. This can be due to statistical artifacts that are common in quarter bioclimatic variables, or a causation subset, aiming for those variables with causality effect on species distribution.
@@ -164,6 +164,18 @@ i <- input_sdm(oc, sa)
 i
 ```
 
+Now we can visualize `oc` data using plot:
+
+```{r plot_occurrences}
+plot_occurrences(i)
+```
+
+Or, using mapview:
+
+```{r mapview_occ}
+mapview_occurrences(i)
+```
+
 ### Data cleaning routine
 
 As the first step in our workflow with the `input_sdm` object, we will clean our occurrences data by applying a group of functions from the package `CoordinateCleaner`. In this function, we also provide a way to check for environmental duplicates, by including a predictors object. This function also checks for records in the sea if the species is terrestrial, but note that this can be switched off if the studied species is not terrestrial. The way `caretSDM` works, we can always overwrite the main `input_sdm` object to update it. The function will return a new object with all the previous information and the new information obtained from the `data_clean` function, note that at the end of the Data Cleaning information there is the Duplicated Cell method. This method is only possible when we have both the `occurrence` and `predictors` data.
@@ -171,6 +183,16 @@ As the first step in our workflow with the `input_sdm` object, we will clean our
 ```{r data_clean}
 i <- data_clean(i)
 i
+```
+
+Check the difference of occurrences data before applying the data cleaning routine:
+
+```{r}
+plot_occurrences(i)
+```
+
+```{r}
+mapview_occurrences(i)
 ```
 
 ### Removing multicollinearity from predictors' data
@@ -258,4 +280,10 @@ To generate maps in `caretSDM` we can simply plot the `input_sdm` object using t
 
 ```{r plot_predictions}
 plot_predictions(i, scenario = "current")
+```
+
+The same goes for mapview:
+
+```{r}
+mapview_predictions(i)
 ```

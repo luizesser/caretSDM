@@ -108,6 +108,10 @@ add_scenarios.stars <- function(sdm_area, scen, scenarios_names = NULL, pred_as_
                                 variables_selected = NULL, ...) {
   pres_names <- get_predictor_names(sdm_area)
 
+  if ( !test_variables_names(sdm_area, scen) ){
+    scen <- set_variables_names(scen, sdm_area)
+  }
+
   assert_choice_cli(
     x = variables_selected,
     choices = pres_names,

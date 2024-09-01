@@ -10,6 +10,9 @@
 \alias{get_predictor_names}
 \alias{get_predictor_names.sdm_area}
 \alias{get_predictor_names.input_sdm}
+\alias{test_variables_names}
+\alias{find_closest_matches}
+\alias{set_variables_names}
 \title{Predictors Names Managing}
 \usage{
 predictors(x)
@@ -29,6 +32,12 @@ get_predictor_names(x)
 \method{get_predictor_names}{sdm_area}(x)
 
 \method{get_predictor_names}{input_sdm}(x)
+
+test_variables_names(sa, s2)
+
+find_closest_matches(inputs, valid_inputs)
+
+set_variables_names(s1 = NULL, s2 = NULL, new_names = NULL)
 }
 \arguments{
 \item{x}{A \code{sdm_area} or \code{input_sdm} object to get/set predictors names.}
