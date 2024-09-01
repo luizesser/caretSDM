@@ -14,7 +14,7 @@ package.
 
 ``` r
 install.packages(setdiff("devtools", rownames(installed.packages())))
-devtools::install_github("luizesser/caretSDM", build_vignettes = TRUE)
+devtools::install_github("luizesser/caretSDM", build_vignettes = TRUE) # This can take around 7 minutes to complete.
 ```
 
 ``` r
