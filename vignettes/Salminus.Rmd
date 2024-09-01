@@ -46,6 +46,8 @@ A easy way to get species data using `caretSDM` is the function `GBIF_data`, whi
 ```{r GBIF_data}
 # Import data from GBIF
 occ <- GBIF_data('Salminus brasiliensis')
+
+# See how the data is formated:
 head(occ)
 ```
 
@@ -64,15 +66,29 @@ In `caretSDM` there is a function that groups all the transformations regarding 
 ```{r sdm_area}
 # Create a sdm_area object
 sa <- sdm_area(study_area, cell_size = 25000, crs = 6933, gdal = T)
+sa
+plot_grid(sa)
+```
+
+An alternative to visualize grid data is the use of mapview:
+
+```{r mapview_grid}
+mapview_grid(sa)
 ```
 
 Now that we have a study area, we can assign predictors and scenarios variables to it.
 
 ```{r add_predictors}
 # Add predictor variables into sdm_area
-get_predictor_names(sa)
 sa <- add_predictors(sa, pred)
-get_predictor_names(sa)
+sa
+plot_predictors(sa)
+```
+
+An alternative to visualize predictors' data is the use of mapview:
+
+```{r mapview_predictors}
+mapview_predictors(sa)
 ```
 
 Here, we will add only the "current" scenario, which is the same data used as predictors.
@@ -80,6 +96,7 @@ Here, we will add only the "current" scenario, which is the same data used as pr
 ```{r}
 # Add predictors as scenarios:
 sa <- add_scenarios(sa)
+sa
 ```
 
 Usually, we will need to subset variables that will inform our model. This can be due to statistical artifacts that are common in quarter bioclimatic variables, or a causation subset, aiming for those variables with causality effect on species distribution.
@@ -87,6 +104,7 @@ Usually, we will need to subset variables that will inform our model. This can b
 ```{r select_preds}
 # Select predictors
 sa <- select(sa, c("LENGTH_KM", "DIST_DN_KM", "DIST_UP_KM", "CATCH_SKM", "UPLAND_SKM", "DIS_AV_CMS", "ORD_STRA","X1.tif", "X2.tif", "X3.tif", "X4.tif", "X5.tif", "X6.tif", "X7.tif", "X12.tif", "X13.tif", "X14.tif", "X15.tif"))
+sa
 ```
 
 ### Defining the occurrences set in the study area
@@ -109,6 +127,18 @@ i <- input_sdm(oc, sa)
 i
 ```
 
+Now we can visualize `oc` data using plot:
+
+```{r plot_occurrences}
+plot_occurrences(i)
+```
+
+Or, using mapview:
+
+```{r mapview_occ}
+mapview_occurrences(i)
+```
+
 ### Data cleaning routine
 
 As the first step in our workflow with the `input_sdm` object, we will clean our occurrences data by applying a group of functions from the package `CoordinateCleaner`. In this function, we also provide a way to check for environmental duplicates, by including a predictors object. This function also checks for records in the sea if the species is terrestrial, but note that this can be switched off if the studied species is not terrestrial. The way `caretSDM` works, we can always overwrite the main `input_sdm` object to update it. The function will return a new object with all the previous information and the new information obtained from the `data_clean` function, note that at the end of the Data Cleaning information there is the Duplicated Cell method. This method is only possible when we have both the `occurrence` and `predictors` data.
@@ -116,6 +146,16 @@ As the first step in our workflow with the `input_sdm` object, we will clean our
 ```{r data_clean}
 i <- data_clean(i, terrestrial = FALSE)
 i
+```
+
+Check the difference of occurrences data before applying the data cleaning routine:
+
+```{r}
+plot_occurrences(i)
+```
+
+```{r}
+mapview_occurrences(i)
 ```
 
 ### Removing multicolinearity from predictors' data
@@ -158,7 +198,7 @@ ctrl_sdm <- caret::trainControl(method = "repeatedcv",
                                 savePredictions = "all")
 
 i <- train_sdm(i, 
-               algo = c("svmLinear2", "mda", "nnet", "kknn", "nb"), 
+               algo = c("svmLinear2", "mda", "nnet", "kknn"), 
                crtl = ctrl_sdm, 
                variables_selected = "vif")
 ```
@@ -173,7 +213,7 @@ ctrl_sdm <- caret::trainControl(method = "repeatedcv",
                                 savePredictions = "all")
 
 i <- train_sdm(i, 
-               algo = c("svmLinear2", "mda", "nnet", "kknn", "nb"), 
+               algo = c("svmLinear2", "mda", "nnet", "kknn"), 
                crtl = ctrl_sdm, 
                variables_selected = "vif")
 ```
@@ -202,10 +242,17 @@ Now that we have our models, we can make predictions in new scenarios. The funct
 
 ```{r predict_sdm}
 i <- predict_sdm(i, th = 0.8)
+i
 ```
 
 To generate maps in `caretSDM` we can simply plot the `input_sdm` object using the function `plot_predictions`. This function has a series of arguments to plot specific maps within `i`. You can take a look at `?plot_predictions` to know more.
 
 ```{r plot_predictions}
 plot_predictions(i, scenario = "current")
+```
+
+The same goes for mapview:
+
+```{r}
+mapview_predictions(i)
 ```

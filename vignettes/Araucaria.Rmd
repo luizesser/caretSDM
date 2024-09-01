@@ -81,6 +81,7 @@ A important step on model building in Species Distribution Models, is the defini
 ```{r create_buffer}
 # Create a buffer around records
 study_area <- buffer_sdm(occ, size = 5, crs = 4326)
+study_area
 ```
 
 In `caretSDM` there is a function that groups all the transformations regarding the study area to build and project the models. The `sdm_area` function is this function and is also responsible to check CRSs and create a grid to build models. This grid may seem unpurposed for terrestrial ecologists, but is a key element when modeling continental aquatic environments. `sdm_area` class will also keep the environmental/climatic data (*i.e.* "predictor variables", "covariates", "explanatory variables", "features" or "control variables"). With this class we will perform analysis using only the predictors (such as predictors transformations).
@@ -88,7 +89,7 @@ In `caretSDM` there is a function that groups all the transformations regarding 
 ```{r}
 # Create a sdm_area object
 sa <- sdm_area(study_area, cell_size = 100000, crs = 6933)
-#sa$grid <- select(sa$grid, -buffer)
+sa
 plot_grid(sa)
 ```
 
@@ -135,6 +136,7 @@ Now both predictors and scenarios should have the same variables names. In any c
 
 ```{r}
 sa <- set_predictor_names(sa, sort(paste0("bio", 1:19)))
+sa
 ```
 
 Usually, we will need to subset variables that will inform our model. This can be due to statistical artifacts that are common in quarter bioclimatic variables, or a causation subset, aiming for those variables with causality effect on species distribution.
@@ -142,6 +144,7 @@ Usually, we will need to subset variables that will inform our model. This can b
 ```{r select_preds}
 # Select predictors
 sa <- dplyr::select(sa, c("bio1", "bio2", "bio3", "bio4", "bio5", "bio6", "bio7", "bio12", "bio13", "bio14", "bio15"))
+sa
 ```
 
 ### Defining the occurrences set in the study area
@@ -270,10 +273,8 @@ i
 Now that we have our models, we can make predictions in new scenarios. The function `predict_sdm` incorporates also the prediction of ensembles (`ensembles=TRUE` is standard).
 
 ```{r predict_sdm}
-
-# inclui métrica nova
-
 i <- predict_sdm(i, th = 0.9, ensembles = TRUE)
+i
 ```
 
 To generate maps in `caretSDM` we can simply plot the `input_sdm` object using the function `plot_predictions`. This function has a series of arguments to plot specific maps within `i`. You can take a look at `?plot_predictions` to know more.
