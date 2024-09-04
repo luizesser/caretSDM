@@ -72,7 +72,6 @@
 #' # Pseudoabsence generation:
 #' i <- pseudoabsence(i, method="bioclim", variables_selected = "vif")
 #'
-#' @import sdmppa
 #' @importFrom sf st_centroid st_as_sf st_crs st_transform st_intersection
 #' @importFrom dplyr select all_of filter
 #' @importFrom stars st_extract
