@@ -180,7 +180,7 @@ WorldClim_data <- function(path = NULL, period = "current", variable = "bioc", y
       "IPSL-CM6A-LR", "MIROC-ES2L", "MIROC6", "MPI-ESM1-2-HR",
       "MPI-ESM1-2-LR", "MRI-ESM2-0", "UKESM1-0-LL"
     )
-    if (gcm == "all") {
+    if ("all" %in% gcm) {
       gcm <- all_gcm
     }
     gcm3 <- gcm2[match(gcm, all_gcm)]

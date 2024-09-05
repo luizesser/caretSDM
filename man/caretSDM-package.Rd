@@ -17,15 +17,15 @@ Useful links:
 
 }
 \author{
-\strong{Maintainer}: Luíz Esser \email{luizesser@gmail.com} (\href{https://orcid.org/0000}{ORCID})
+\strong{Maintainer}: Luíz Esser \email{luizesser@gmail.com} (\href{https://orcid.org/0000-0003-2982-7223}{ORCID})
 
 Authors:
 \itemize{
-  \item Dayani Baili (\href{https://orcid.org/0000}{ORCID})
-  \item Edivando Couto (\href{https://orcid.org/0000}{ORCID})
-  \item José Hilário Delconte Ferreira (\href{https://orcid.org/0000}{ORCID})
-  \item Reginaldo Ré (\href{https://orcid.org/0000}{ORCID})
-  \item Valéria Batista (\href{https://orcid.org/0000}{ORCID})
+  \item Dayani Baili (\href{https://orcid.org/0000-0002-6954-9902}{ORCID})
+  \item Edivando Couto (\href{https://orcid.org/0000-0003-4264-8449}{ORCID})
+  \item José Hilário Delconte Ferreira (\href{https://orcid.org/0000-0002-7116-2600}{ORCID})
+  \item Reginaldo Ré (\href{https://orcid.org/0000-0001-6452-3466}{ORCID})
+  \item Valéria Batista (\href{https://orcid.org/0000-0002-6574-7338}{ORCID})
 }
 
 }
