@@ -69,7 +69,15 @@
 #' @importFrom dplyr mutate select
 #'
 #' @export
-data_clean <- function(occ, pred = NULL, species = NA, lon = NA, lat = NA, terrestrial = TRUE,
+data_clean <- function(occ, pred = NULL,
+                       species = NA, lon = NA, lat = NA,
+                       capitals = TRUE,
+                       centroids = TRUE,
+                       duplicated = TRUE,
+                       identical = TRUE,
+                       institutions = TRUE,
+                       invalid = TRUE,
+                       terrestrial = TRUE,
                        independent_test = TRUE) {
   if (is_input_sdm(occ)) {
     y <- occ$occurrences
