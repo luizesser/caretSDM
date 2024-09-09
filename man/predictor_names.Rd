@@ -33,7 +33,7 @@ get_predictor_names(x)
 
 \method{get_predictor_names}{input_sdm}(x)
 
-test_variables_names(sa, s2)
+test_variables_names(sa, scen)
 
 find_closest_matches(inputs, valid_inputs)
 

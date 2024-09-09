@@ -10,7 +10,7 @@ add_predictors(sdm_area, pred, variables_selected = NULL, gdal= TRUE)
 get_predictors(i)
 }
 \arguments{
-\item{sdm_area}{A \code{sdm_area} object.}
+\item{sa}{A \code{sdm_area} object.}
 
 \item{pred}{\code{RasterStack}, \code{SpatRaster} or \code{stars} object with predictors data.}
 

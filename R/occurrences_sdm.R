@@ -21,7 +21,7 @@
 #' \code{data.frame}.
 #' @param ... A vector with column names addressing the columns with species names, longitude and
 #' latitude, respectively, in \code{x}.
-#' @param i \code{input_sdm} object.
+#' @param i \code{input_sdm} or \code{occurrences} object.
 #'
 #' @return A \code{occurrences} object.
 #'
@@ -87,6 +87,14 @@ occurrences_sdm.sf <- function(x, independent_test = NULL, p = 0.1, crs = NULL,
   return(occ)
 }
 
+#' @export
+occurrences_sdm.character <- function(x, independent_test = NULL, p = 0.1, crs = NULL,
+                               independent_test_crs = NULL, ...) {
+  x <- read.csv(x)
+  occ <- .occurrences(x, independent_test, p, crs, independent_test_crs, ...)
+  return(occ)
+}
+
 #' @rdname occurrences_sdm
 #' @export
 n_records <- function(i) {
@@ -124,6 +132,20 @@ get_coords <- function(i) {
     sf::st_coordinates() |>
     as.data.frame() |>
     dplyr::select(X, Y)
+  return(res)
+}
+
+#' @rdname occurrences_sdm
+#' @export
+occurrences_as_df <- function(i) {
+  x=i
+  if (is_input_sdm(x)) {
+    y <- x$occurrences
+  } else {
+    y <- x
+  }
+  res <- y$occurrences |>
+    sf_to_df_sdm()
   return(res)
 }
 

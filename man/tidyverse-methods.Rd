@@ -5,6 +5,9 @@
 \alias{select.input_sdm}
 \alias{mutate.sdm_area}
 \alias{mutate.input_sdm}
+\alias{filter.sdm_area}
+\alias{filter.input_sdm}
+\alias{filter.occurrences}
 \title{Tidyverse methods for caretSDM objects}
 \usage{
 select(x, ...)
@@ -14,6 +17,12 @@ select(x, ...)
 \method{mutate}{sdm_area}(x, ...)
 
 \method{mutate}{input_sdm}(x, ...)
+
+\method{filter}{sdm_area}(x, ...)
+
+\method{filter}{input_sdm}(x, ...)
+
+\method{filter}{occurrences}(x, ...)
 }
 \arguments{
 \item{x}{\code{sdm_area} object}

@@ -5,6 +5,7 @@
 \alias{n_records}
 \alias{species_names}
 \alias{get_coords}
+\alias{occurrences_as_df}
 \title{Occurrences Managing}
 \usage{
 occurrences_sdm(x,
@@ -19,6 +20,8 @@ n_records(i)
 species_names(i)
 
 get_coords(i)
+
+occurrences_as_df(i)
 }
 \arguments{
 \item{x}{A \code{data.frame}, \code{tibble} or \code{sf} with species records.}
@@ -38,7 +41,7 @@ and names should be identical to those in \code{x}.}
 \item{...}{A vector with column names addressing the columns with species names, longitude and
 latitude, respectively, in \code{x}.}
 
-\item{i}{\code{input_sdm} object.}
+\item{i}{\code{input_sdm} or \code{occurrences} object.}
 }
 \value{
 A \code{occurrences} object.

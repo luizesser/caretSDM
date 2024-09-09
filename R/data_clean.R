@@ -17,8 +17,14 @@
 #' @param species A \code{character} stating the name of the column with species names in \code{occ} (see details).
 #' @param lon A \code{character} stating the name of the column with longitude in \code{occ} (see details).
 #' @param lat A \code{character} stating the name of the column with latitude in \code{occ} (see details).
-#' @param terrestrial If the species is terrestrial (TRUE), than the function deletes
-#' non-terrestrial coordinates.
+#' @param capitals Boolean to turn on/off the exclusion from countries capitals coordinates (see \code{?cc_cap})
+#' @param centroids Boolean to turn on/off the exclusion from countries centroids coordinates (see \code{?cc_cen})
+#' @param duplicated Boolean to turn on/off the exclusion from duplicated records (see \code{?cc_dupl})
+#' @param identical Boolean to turn on/off the exclusion from records with identical lat/long values (see \code{?cc_equ})
+#' @param institutions Boolean to turn on/off the exclusion from biodiversity institutions coordinates (see \code{?cc_inst})
+#' @param invalid Boolean to turn on/off the exclusion from invalid coordinates (see \code{?cc_val})
+#' @param terrestrial Boolean to turn on/off the exclusion from coordinates falling on sea (see \code{?cc_sea})
+#'
 #' @param independent_test TRUE. If \code{occ} has independent test data, the data cleaning routine
 #' is also applied on it.
 #'
@@ -93,15 +99,13 @@ data_clean <- function(occ, pred = NULL, species = NA, lon = NA, lat = NA, terre
     lat <- cn[which.min(stringdist::stringdist(cn, "latitude"))]
   }
   x <- subset(x, !is.na(lon) | !is.na(lat))
-  x <- CoordinateCleaner::cc_cap(x, lon = lon, lat = lat, species = species)
-  x <- CoordinateCleaner::cc_cen(x, lon = lon, lat = lat, species = species)
-  x <- CoordinateCleaner::cc_dupl(x, lon = lon, lat = lat, species = species)
-  x <- CoordinateCleaner::cc_equ(x, lon = lon, lat = lat)
-  x <- CoordinateCleaner::cc_inst(x, lon = lon, lat = lat, species = species)
-  x <- CoordinateCleaner::cc_val(x, lon = lon, lat = lat)
-  if (terrestrial) {
-    x <- CoordinateCleaner::cc_sea(x, lon = lon, lat = lat)
-  }
+  if (capitals) { x <- CoordinateCleaner::cc_cap(x, lon = lon, lat = lat, species = species) }
+  if (centroids) { x <- CoordinateCleaner::cc_cen(x, lon = lon, lat = lat, species = species) }
+  if (duplicated) { x <- CoordinateCleaner::cc_dupl(x, lon = lon, lat = lat, species = species) }
+  if (identical) { x <- CoordinateCleaner::cc_equ(x, lon = lon, lat = lat) }
+  if (institutions) { x <- CoordinateCleaner::cc_inst(x, lon = lon, lat = lat, species = species) }
+  if (invalid) { x <- CoordinateCleaner::cc_val(x, lon = lon, lat = lat) }
+  if (terrestrial) { x <- CoordinateCleaner::cc_sea(x, lon = lon, lat = lat) }
   if (!is.null(pred)) {
     print("Predictors identified, procceding with grid filter (removing NA and duplicated data).")
     x2 <- sf::st_as_sf(x,

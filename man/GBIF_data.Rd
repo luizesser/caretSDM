@@ -4,12 +4,15 @@
 \alias{GBIF_data}
 \title{Retrieve Species data from GBIF}
 \usage{
-GBIF_data(s)
+GBIF_data(s, file = "", as_df = FALSE, ...)
 }
 \arguments{
 \item{s}{\code{character} vector of species names.}
 
 \item{file}{File to save the output.}
+
+\item{as_df}{Should the output be a \code{dataframe}? Default is \code{FALSE}, returning a
+\code{occurrences} object.}
 
 \item{...}{Arguments to pass on \code{rgbif::occ_data()}.}
 }
@@ -22,7 +25,7 @@ This function is a wrapper to get records from GBIF using \code{rgbif} and retur
 s <- c("Araucaria angustifolia", "Paubrasilia echinata", "Eugenia uniflora")
 
 # Run function:
-data <- GBIF_data(s)
+oc <- GBIF_data(s)
 
 }
 \references{

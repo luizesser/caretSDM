@@ -26,7 +26,7 @@ To obtain models, we will need climatic data and species records. To easily obta
 
 ### Obtaining climatic data
 
-We will first download and import current data, which is used to build the models. `WorldClim_data` function has an argument to set the directory in which you want to save the files. If you don't set it, files will be saved in your working directory (run `getwd()` to find out your working dirrectory) in the folder "input_data/WorldClim_data_current/". If period is set to "future", then it is saved in "input_data/WorldClim_data_future/". We could run this script with a smaller resolution, but as the aim here is to show how the package works, we will use a resolution of 10 arc-minutes, which is very coarse, but quicker to download and run.
+We will first download and import current data, which is used to build the models. `WorldClim_data` function has an argument to set the directory in which you want to save the files. If you don't set it, files will be saved in your working directory (run `getwd()` to find out your working directory) in the folder "input_data/WorldClim_data_current/". If period is set to "future", then it is saved in "input_data/WorldClim_data_future/". We could run this script with a smaller resolution, but as the aim here is to show how the package works, we will use a resolution of 10 arc-minutes, which is very coarse, but quicker to download and run.
 
 ```{r WorldClim_data_current}
 # Download current bioclimatic variables
@@ -58,7 +58,7 @@ A easy way to get species data using `caretSDM` is the function `GBIF_data`, whi
 
 ```{r GBIF_data}
 # Import data from GBIF
-occ <- GBIF_data('Araucaria angustifolia')
+occ <- GBIF_data('Araucaria angustifolia', as_df=T)
 
 # See how the data is formated:
 head(occ)
@@ -128,6 +128,26 @@ This could lead to errors in the future, because models will try to project on d
 
 ```{r add_scenarios}
 # Add scenarios into sdm_area
+sa <- set_predictor_names(sa, c("bio01", 
+                                "bio10", 
+                                "bio11", 
+                                "bio12", 
+                                "bio13", 
+                                "bio14", 
+                                "bio15", 
+                                "bio16", 
+                                "bio17", 
+                                "bio18", 
+                                "bio19", 
+                                "bio02", 
+                                "bio03", 
+                                "bio04", 
+                                "bio05", 
+                                "bio06", 
+                                "bio07", 
+                                "bio08", 
+                                "bio09"))
+
 sa <- add_scenarios(sa, scen)
 sa
 ```
@@ -273,14 +293,14 @@ i
 Now that we have our models, we can make predictions in new scenarios. The function `predict_sdm` incorporates also the prediction of ensembles (`ensembles=TRUE` is standard).
 
 ```{r predict_sdm}
-i <- predict_sdm(i, th = 0.9, ensembles = TRUE)
+i <- predict_sdm(i, th = mean, ensembles = TRUE)
 i
 ```
 
 To generate maps in `caretSDM` we can simply plot the `input_sdm` object using the function `plot_predictions`. This function has a series of arguments to plot specific maps within `i`. You can take a look at `?plot_predictions` to know more.
 
 ```{r plot_predictions}
-plot_predictions(i, scenario = "current")
+plot_predictions(i, ensemble_type = "committee_avg", scenario = "585_10_209")
 ```
 
 The same goes for mapview:

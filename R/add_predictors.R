@@ -4,7 +4,7 @@
 #'
 #' @usage add_predictors(sdm_area, pred, variables_selected = NULL, gdal= TRUE)
 #'
-#' @param sdm_area A \code{sdm_area} object.
+#' @param sa A \code{sdm_area} object.
 #' @param pred \code{RasterStack}, \code{SpatRaster} or \code{stars} object with predictors data.
 #' @param variables_selected \code{character} vector with variables names in \code{pred} to be used
 #' as predictors. If \code{NULL} adds all variables.
@@ -38,10 +38,10 @@
 #' @importFrom tidyr drop_na
 #'
 #' @export
-add_predictors <- function(sdm_area, pred, variables_selected = NULL, gdal= TRUE) {
-  if (!is_sdm_area(sdm_area)) {
+add_predictors <- function(sa, pred, variables_selected = NULL, gdal= TRUE) {
+  if (!is_sdm_area(sa)) {
     cli::cli_abort(c(
-      "x" = "The sdm_area argument must be an instance of class sdm_area."
+      "x" = "The sa argument must be an instance of class sdm_area."
     ))
   }
   assert_cli(
@@ -65,83 +65,87 @@ add_predictors <- function(sdm_area, pred, variables_selected = NULL, gdal= TRUE
     len = 1,
     null.ok = FALSE
   )
-  .check_sdm_area(sdm_area)
+  .check_sdm_area(sa)
   UseMethod("add_predictors", pred)
 }
 
 
 #' @export
-add_predictors.RasterStack <- function(sdm_area, pred, variables_selected = NULL, gdal= TRUE) {
-  pred <- sdm_area  |>
+add_predictors.RasterStack <- function(sa, pred, variables_selected = NULL, gdal= TRUE) {
+  pred <- sa  |>
     .add_predictors(pred, variables_selected, gdal)
 
   return(invisible(pred))
 }
 
 #' @export
-add_predictors.SpatRaster <- function(sdm_area, pred, variables_selected = NULL, gdal= TRUE) {
-  pred <- sdm_area  |>
+add_predictors.SpatRaster <- function(sa, pred, variables_selected = NULL, gdal= TRUE) {
+  pred <- sa  |>
     .add_predictors(pred, variables_selected, gdal)
 
   return(invisible(pred))
 }
 
 #' @export
-add_predictors.character <- function(sdm_area, pred, variables_selected = NULL, gdal= TRUE) {
-  pred <- sdm_area  |>
+add_predictors.character <- function(sa, pred, variables_selected = NULL, gdal= TRUE) {
+  pred <- sa  |>
     .add_predictors(pred, variables_selected, gdal)
 
   return(invisible(pred))
 }
 
 #' @export
-add_predictors.stars <- function(sdm_area, pred, variables_selected = NULL, gdal= TRUE) {
-  pred <- sdm_area  |>
+add_predictors.stars <- function(sa, pred, variables_selected = NULL, gdal= TRUE) {
+  pred <- sa  |>
     .add_predictors(pred, variables_selected, gdal)
 
   return(invisible(pred))
 }
 
 #' @export
-add_predictors.sf <- function(sdm_area, pred, variables_selected = NULL, gdal= TRUE) {
-  pred <- sdm_area  |>
+add_predictors.sf <- function(sa, pred, variables_selected = NULL, gdal= TRUE) {
+  pred <- sa  |>
     .add_predictors(pred, variables_selected, gdal)
 
   return(invisible(pred))
 }
 
 
-.add_predictors <- function(sdm_area, pred, variables_selected = NULL, gdal= TRUE) {
-  #if(sf::st_crs(pred) != sf::st_crs(sdm_area$grid)){
-  #  pred <- st_transform(pred, crs=sf::st_crs(sdm_area$grid))
+.add_predictors <- function(sa, pred, variables_selected = NULL, gdal= TRUE) {
+  #if(sf::st_crs(pred) != sf::st_crs(sa$grid)){
+  #  pred <- st_transform(pred, crs=sf::st_crs(sa$grid))
   #}
-  #pred <- pred[sdm_area$grid]
+  #pred <- pred[sa$grid]
 
-  pred_sdm_area <- pred |>
+  pred_sa <- pred |>
     sdm_area(
-      cell_size = sdm_area$cell_size,
-      crs = sdm_area$grid |> sf::st_crs(),
+      cell_size = sa$cell_size,
+      crs = sa$grid |> sf::st_crs(),
       variables_selected = variables_selected,
       gdal = gdal,
-      crop_by = sdm_area$grid #|> sf::st_bbox()
+      crop_by = sa$grid #|> sf::st_bbox()
     )
-  if (is.null(pred_sdm_area)){
-    return(sdm_area)
+  if (is.null(pred_sa)){
+    return(sa)
   }
 
-
-  grd <- sdm_area$grid |>
+  grd <- sa$grid |>
     dplyr::inner_join(
-      pred_sdm_area$grid |>
+      pred_sa$grid |>
         as.data.frame() |>
         dplyr::select(-geometry),
       dplyr::join_by(cell_id)
     )
 
-  #attr(sf::st_geometry(grd), "bbox") <- sf::st_bbox(sdm_area$grid)
-  sdm_area$grid <- grd
+  var_names <- colnames(grd)
+  num_vars <- grepl("^[[:digit:]]+", grd)
+  if(any(num_vars)){
+    va_names2 <- gsub("^([0-9])", "X\\1", grd)
+    colnames(grd) <- var_names
+  }
+  sa$grid <- grd
 
-  return(sdm_area)
+  return(sa)
 }
 
 #' @rdname add_predictors

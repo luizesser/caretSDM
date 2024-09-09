@@ -70,6 +70,7 @@ pca_predictors <- function(i) {
 
   i$predictors$variable_selection$pca$data <- pred_pca |> select(!get_predictor_names(i))
   i$predictors$variable_selection$pca$summary <- summary(pca_model)
+  i$predictors$variable_selection$pca$model <- pca_model
   i$predictors$variable_selection$pca$selected_variables <- colnames(pca_summary(i)$importance)[1:(sum(pca_summary(i)$importance["Cumulative Proportion",]<0.99)+1)]
 
   i$predictors$grid <- pred_pca
@@ -89,4 +90,17 @@ pca_summary <- function(i){
   assert_class_cli(i$predictors$variable_selection$pca$summary, "summary.prcomp")
 
   return(i$predictors$variable_selection$pca$summary)
+}
+
+#' @rdname pca_predictors
+#' @export
+get_pca_model <- function(i){
+  assert_class_cli(i, "input_sdm")
+  assert_subset_cli("predictors", names(i), empty.ok=F)
+  assert_subset_cli("variable_selection", names(i$predictors), empty.ok=F)
+  assert_subset_cli("pca", names(i$predictors$variable_selection), empty.ok=F)
+  assert_subset_cli("summary", names(i$predictors$variable_selection$pca), empty.ok=F)
+  assert_class_cli(i$predictors$variable_selection$pca$summary, "summary.prcomp")
+
+  return(i$predictors$variable_selection$pca$model)
 }

@@ -34,6 +34,7 @@
 #' @importFrom purrr discard
 #' @importFrom stars st_set_dimensions st_get_dimension_values
 #' @importFrom stringdist stringdist
+#' @importFrom cli cli_abort
 #'
 #' @export
 #' @rdname predictor_names
@@ -208,12 +209,12 @@ get_predictor_names.input_sdm <- function(x) {
 
 #' @rdname predictor_names
 #' @export
-test_variables_names <- function(sa, s2){
+test_variables_names <- function(sa, scen){
   assert_class_cli(sa, "sdm_area")
-  assert_class_cli(s2, "stars")
-  s1_names <- get_predictor_names(sa)
-  s2_names <- sort(stars::st_get_dimension_values(s2, "band"))
-  return(all( s1_names == s2_names ))
+  assert_class_cli(scen, "stars")
+  sa_names <- get_predictor_names(sa)
+  scen_names <- sort(stars::st_get_dimension_values(scen, "band"))
+  return(all( scen_names %in% sa_names ))
 }
 
 #' @rdname predictor_names
@@ -256,7 +257,7 @@ set_variables_names <- function(s1 = NULL, s2 = NULL, new_names = NULL) {
       len_s2 <- length(get_predictor_names(s2))
       len_s1 <- length(stars::st_get_dimension_values(s1, "band"))
       if (!len_s1 == len_s2) {
-        cli_abort("i" = "{.var s1} has {len_s1} variable{?s},
+        cli::cli_abort("i" = "{.var s1} has {len_s1} variable{?s},
                   while {.var s2} has {len_s2} variable{?s}.",
                   "x" = "{.var s1} and {.var s2} should have the same number of variables.")
       }

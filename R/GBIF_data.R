@@ -3,10 +3,12 @@
 #' This function is a wrapper to get records from GBIF using \code{rgbif} and return a
 #' \code{data.frame} ready to be used in caretSDM.
 #'
-#' @usage GBIF_data(s)
+#' @usage GBIF_data(s, file = "", as_df = FALSE, ...)
 #'
 #' @param s \code{character} vector of species names.
 #' @param file File to save the output.
+#' @param as_df Should the output be a \code{dataframe}? Default is \code{FALSE}, returning a
+#' \code{occurrences} object.
 #' @param ... Arguments to pass on \code{rgbif::occ_data()}.
 #'
 #' @references https://www.gbif.org
@@ -19,13 +21,13 @@
 #' s <- c("Araucaria angustifolia", "Paubrasilia echinata", "Eugenia uniflora")
 #'
 #' # Run function:
-#' data <- GBIF_data(s)
+#' oc <- GBIF_data(s)
 #'
 #' @importFrom rgbif occ_data
 #' @importFrom dplyr bind_rows
 #'
 #' @export
-GBIF_data <- function(s, file = "", ...) {
+GBIF_data <- function(s, file = "", as_df=F, ...) {
   if (!file.exists(file)) {
     data <- lapply(s, function(x) {
       y <- rgbif::occ_data(scientificName = x, limit = 100000, hasCoordinate = T, ...)
@@ -61,5 +63,10 @@ GBIF_data <- function(s, file = "", ...) {
     print(paste0("File already exists. Importing from: ", file))
     data <- read.csv(file)
   }
+
+  if(!as_df){
+    data <- occurrences_sdm(data, crs = 4326)
+  }
+
   return(data)
 }

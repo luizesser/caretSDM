@@ -6,6 +6,8 @@
 \alias{write_models}
 \alias{write_gpkg}
 \alias{write_gpkg.sdm_area}
+\alias{write_occurrences}
+\alias{write_grid}
 \title{Write caretSDM data}
 \usage{
 write_ensembles(x, path = "results/ensembles", ext = ".tif")
@@ -17,10 +19,14 @@ write_models(x, path = "results/models")
 write_gpkg(x, file_path, file_name)
 
 \method{write_gpkg}{sdm_area}(x, file_path, file_name)
+
+write_occurrences(x, path = "results/occurrences.csv", grid = FALSE, ...)
+
+write_grid(x, path = "results/grid_study_area.gpkg", ...)
 }
 \arguments{
-\item{x}{Object to be written. Can be of class \code{input_sdm}, \code{predictions} or
-\code{models}.}
+\item{x}{Object to be written. Can be of class \code{input_sdm}, \code{occurrences},
+\code{predictions} or \code{models}.}
 
 \item{path}{A path with filename and the proper extension (see details) or the directory to save
 files in.}

@@ -9,6 +9,7 @@
 #' predictors as a scenario.
 #' @param variables_selected Character vector with variables names in \code{scen} to be used as
 #' predictors. If \code{NULL} adds all variables.
+#' @param stationary Should variables from sdm_area be used in scenarios as stationary variables?
 #'
 #' @return The input \code{sdm_area} object with a new slot called scenarios with \code{scen} data
 #' as a \code{list}, where each slot of the \code{list} is a scenario and each scenario is a
@@ -35,12 +36,12 @@
 #' @importFrom tidyr drop_na
 #'
 #' @export
-add_scenarios <- function(sdm_area, scen = NULL, variables_selected = NULL, ...) {
+add_scenarios <- function(sdm_area, scen = NULL, variables_selected = NULL, stationary = FALSE, ...) {
   UseMethod("add_scenarios", scen)
 }
 
 #' @export
-add_scenarios.NULL <- function(sdm_area, scen = NULL, variables_selected = NULL, ...) {
+add_scenarios.NULL <- function(sdm_area, scen = NULL, variables_selected = NULL, stationary = FALSE, ...) {
   if(is_sdm_area(sdm_area)){
     sa_teste <- sdm_area
     sa_teste$data <- list(current = sa_teste$grid)
@@ -88,24 +89,24 @@ add_scenarios.NULL <- function(sdm_area, scen = NULL, variables_selected = NULL,
 
 #' @export
 add_scenarios.RasterStack <- function(sdm_area, scen, scenarios_names = NULL, pred_as_scen = TRUE,
-                                      variables_selected = NULL, ...) {
+                                      variables_selected = NULL, stationary = FALSE, ...) {
   scen <- stars::st_as_stars(scen)
-  sa <- add_scenarios(sdm_area, scen, scenarios_names, pred_as_scen, variables_selected)
+  sa <- add_scenarios(sdm_area, scen, scenarios_names, pred_as_scen, variables_selected, stationary)
   return(sa)
 }
 
 #' @export
 add_scenarios.SpatRaster <- function(sdm_area, scen, scenarios_names = NULL, pred_as_scen = TRUE,
-                                     variables_selected = NULL, ...) {
+                                     variables_selected = NULL, stationary = FALSE, ...) {
   scen <- stars::st_as_stars(scen)
   names(stars::st_dimensions(scen)) <- c("x", "y", "band")
-  sa <- add_scenarios(sdm_area, scen, scenarios_names, pred_as_scen, variables_selected)
+  sa <- add_scenarios(sdm_area, scen, scenarios_names, pred_as_scen, variables_selected, stationary)
   return(sa)
 }
 
 #' @export
 add_scenarios.stars <- function(sdm_area, scen, scenarios_names = NULL, pred_as_scen = TRUE,
-                                variables_selected = NULL, ...) {
+                                variables_selected = NULL, stationary = FALSE, ...) {
   pres_names <- get_predictor_names(sdm_area)
 
   if ( !test_variables_names(sdm_area, scen) ){
@@ -140,20 +141,38 @@ add_scenarios.stars <- function(sdm_area, scen, scenarios_names = NULL, pred_as_
   #suppressWarnings(scen <- sf::st_crop(scen, grid_t))
 
   l <- list()
-  for (i in 1:length(scen)) {
-    l[[scenarios_names[i]]] <- scen[i] |>
-      aggregate(grid_t, mean) |>
-      sf::st_as_sf() |>
-      sf::st_transform(sf::st_crs(sdm_area$grid)) |>
-      cbind(select(sdm_area$grid, "cell_id")) |>
-      dplyr::select(dplyr::all_of(c("cell_id", variables_selected))) |>
-      tidyr::drop_na()
+  if(stationary) {
+    stationary_vars <- sdm_area$grid |> select(!all_of(variables_selected))
+    for (i in 1:length(scen)) {
+      l[[scenarios_names[i]]] <- scen[i] |>
+        aggregate(grid_t, mean) |>
+        sf::st_as_sf() |>
+        sf::st_transform(sf::st_crs(sdm_area$grid)) |>
+        cbind(select(sdm_area$grid, "cell_id")) |>
+        tidyr::drop_na()
+    }
+
+    if (pred_as_scen) {
+      l[["current"]] <- sdm_area$grid |>
+        dplyr::select(c(cell_id, dplyr::all_of(variables_selected)))
+    }
+  } else {
+    for (i in 1:length(scen)) {
+      l[[scenarios_names[i]]] <- scen[i] |>
+        aggregate(grid_t, mean) |>
+        sf::st_as_sf() |>
+        sf::st_transform(sf::st_crs(sdm_area$grid)) |>
+        cbind(select(sdm_area$grid, "cell_id")) |>
+        dplyr::select(dplyr::all_of(c("cell_id", variables_selected))) |>
+        tidyr::drop_na()
+    }
+
+    if (pred_as_scen) {
+      l[["current"]] <- sdm_area$grid |>
+        dplyr::select(c(cell_id, dplyr::all_of(variables_selected)))
+    }
   }
 
-  if (pred_as_scen) {
-    l[["current"]] <- sdm_area$grid |>
-      dplyr::select(c(cell_id, dplyr::all_of(variables_selected)))
-  }
 
   sa_data$data <- l
   sa_data$grid <- sdm_area$grid |>

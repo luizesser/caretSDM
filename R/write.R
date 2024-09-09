@@ -4,8 +4,8 @@
 #'
 #' @usage write_ensembles(x, path = "results/ensembles", ext = ".tif")
 #'
-#' @param x Object to be written. Can be of class \code{input_sdm}, \code{predictions} or
-#' \code{models}.
+#' @param x Object to be written. Can be of class \code{input_sdm}, \code{occurrences},
+#' \code{predictions} or \code{models}.
 #' @param path A path with filename and the proper extension (see details) or the directory to save
 #' files in.
 #' @param extension How it should be saved?
@@ -14,6 +14,10 @@
 #'
 #' @author Luíz Fernando Esser (luizesser@gmail.com)
 #' https://luizfesser.wordpress.com
+#'
+#' @importFrom sf st_join st_write
+#' @importFrom fs path_file path_dir path
+#' @importFrom cli cli_inform
 #'
 #' @export
 write_ensembles <- function(x, path = "results/ensembles", ext = ".tif") {
@@ -125,6 +129,51 @@ write_gpkg.sdm_area <- function(x, file_path, file_name) {
   x$grid |>
     sf::st_write(
       dsn = saving_local,
+      delete_dsn = TRUE,
+      quiet =TRUE
+    )
+}
+
+#' @rdname write_ensembles
+#' @export
+write_occurrences <- function(x, path = "results/occurrences.csv", grid = FALSE, ...) {
+  if(is_input_sdm(x) & grid){
+    suppressWarnings(dir.create(dirname(path), recursive = T))
+    assert_directory_cli(dirname(path))
+
+    grd <- sf::st_join(x$predictors$grid, x$occurrences$occurrences) |>
+      select(c(cell_id.x, species))
+    colnames(grd) <- c("cell_id", "species", "geometry")
+
+    sf::st_write(grd,
+                 dsn = path,
+                 delete_dsn = TRUE,
+                 quiet =TRUE, ...)
+  } else {
+    if(is_input_sdm(x) & !grid) {
+      x <- x$occurrences
+    }
+    assert_class_cli(x, "occurrences")
+    suppressWarnings(dir.create(dirname(path), recursive = T))
+    assert_directory_cli(dirname(path))
+
+    df <- occurrences_as_df(x)
+    write.csv(df, path, ...)
+  }
+}
+
+#' @rdname write_ensembles
+#' @export
+write_grid <- function(x, path = "results/grid_study_area.gpkg", ...) {
+  if(is_input_sdm(x)){
+    x <- x$predictors
+  }
+  assert_class_cli(x, "sdm_area")
+  suppressWarnings(dir.create(dirname(path), recursive = T))
+  assert_directory_cli(dirname(path))
+  x$grid |>
+    sf::st_write(
+      dsn = path,
       delete_dsn = TRUE,
       quiet =TRUE
     )

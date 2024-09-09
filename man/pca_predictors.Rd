@@ -3,11 +3,14 @@
 \name{pca_predictors}
 \alias{pca_predictors}
 \alias{pca_summary}
+\alias{get_pca_model}
 \title{Predictors as PCA-axis}
 \usage{
 pca_predictors(i)
 
 pca_summary(i)
+
+get_pca_model(i)
 }
 \arguments{
 \item{i}{A \code{input_sdm} object.}

@@ -14,6 +14,8 @@ predictors as a scenario.}
 
 \item{variables_selected}{Character vector with variables names in \code{scen} to be used as
 predictors. If \code{NULL} adds all variables.}
+
+\item{stationary}{Should variables from sdm_area be used in scenarios as stationary variables?}
 }
 \value{
 The input \code{sdm_area} object with a new slot called scenarios with \code{scen} data
