@@ -245,17 +245,64 @@ mapview_predictions(i)
 
 ### writeResults (ensemble as .csv with centroids)\#
 
-### Add future Data
+### Projecting models to future scenarios using chooseGCM
+
+First, we need to use only one time period. Here we use 2090 so the difference between models is more conspicuous. In the same way we are considering the SSP585, which is the more dramatic pathway. The resolution is the lowest to be quicker. The aim here is to maintain all parameters equal, but General Circulation Models (GCMs). In this way we know that the only source of variation comes from them. Note that if you receive a timeout error you can increase timeout value by running , where 600 is the value in seconds that will be enough to download the data.
 
 ```{r WorldClim_data_future}
 # Download future scenarios
 WorldClim_data(path="input_data/WorldClim_data_chooseGCM/",period = "future", ssp = '585', year = '2090', gcm = "all", resolution = 10)
+```
+
+#### Importing and Transforming Data
+
+Now let's import GCMs to R in a list of stacks and name the list with the names of the GCMs.
+
+```{r import_gcms}
+s <- chooseGCM::import_gcms("/Users/luizesser/Documents/GitHub/input_data/WorldClim_data_future_all")
+names(s) <- gsub("_ssp585_10_2090", "", names(s))
+```
+
+In each following function, data will be transformed. To do that, you will always need to provide at least: (1) the list of stacks, (2) the variables you want to use in analysis and (3) the shapefile of your study area. You don't need to previously mask and subset your data, once the functions will perform this task internally for you. Note that the results from these functions are highly sensitive to variables and to study area. In this sense, the decision on what variables should be considered and what is the study area must be carefully made considering biological aspects of the studied group.
+
+```{r study_area}
+study_area <- get_sdm_area(i)
+```
+
+There is the option to run each function in separate to better understand what is happening and to better parameterize each step. However there is a wrapper to help run everything at once and could be an alternative to have a broad perspective. `compare_gcms()` will return a list with a vector called `suggested_gcms` and a Figure called `statistics_gcms`. We suggest that this Figure could also be included as it is in supplementary data from studies using this package./r
+
+```{r}
+res <- chooseGCM::compare_gcms(s, var_names=c("bio01", "bio12"), st_transform(study_area, crs=4326), k = 2)
+res
+```
+
+The aim of this function is to inform the minimum required so users can follow with their workflow in a more straightforward fashion (more on each plot further). If we see the D plot in the Figure, we can infer if the selected GCMs encompass the environmental variety of all GCMs. The focus should be to cover the core environment and not outlier regions on the environmental space. Above that, in plot B, the Monte Carlo permutation between GCMs is presented as a violin plot. Plots A and C are both clusterization methods that can be used to select GCMs. Clusterization will be adapted to the number of clusters `k` designated in the function. Lastly, suggested GCMs were "uk", "ml" and "ac". Those suggestions are the gcms that are closer to the centroid of each K-means cluster, thus they better represent the variation within each cluster.
+
+Now we can download data from WorldClim 2.1 to the selected GCMs:
+
+```{r WorldClim_data_future}
+# Download future scenarios
+WorldClim_data(path="input_data/WorldClim_data_future/",period = "future", year = c('2050', '2090'), ssp = c('585'), gcm = res$suggested_gcms, resolution = 10)
 
 # Import scenarios to R
-scen <- read_stars(list.files("input_data/WorldClim_data_chooseGCM/", full.names = T), normalize_path = F)
+scen <- read_stars(list.files("input_data/WorldClim_data_future/", full.names = T), normalize_path = F)
 
 # See what is inside pred_data
 scen
 ```
 
-### 
+### Add scenarios to the input_sdm
+
+```{r}
+i2 <- add_scenarios(i, scen)
+i2
+```
+
+```{r}
+i <- predict_sdm(i, th = 0.8)
+i
+```
+
+```{r}
+plot_predictions(i, scenario = "current")
+```

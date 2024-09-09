@@ -107,6 +107,9 @@ add_scenarios.SpatRaster <- function(sdm_area, scen, scenarios_names = NULL, pre
 #' @export
 add_scenarios.stars <- function(sdm_area, scen, scenarios_names = NULL, pred_as_scen = TRUE,
                                 variables_selected = NULL, stationary = FALSE, ...) {
+  if(is_input_sdm(sdm_area)){
+    sdm_area <- sdm_area$scenarios
+  }
   pres_names <- get_predictor_names(sdm_area)
 
   if ( !test_variables_names(sdm_area, scen) ){

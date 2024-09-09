@@ -2,9 +2,15 @@
 % Please edit documentation in R/vif_predictors.R
 \name{vif_predictors}
 \alias{vif_predictors}
+\alias{vif_summary}
+\alias{selected_variables}
 \title{Calculate VIF}
 \usage{
 vif_predictors(pred, th = 0.5, maxobservations = 5000, variables_selected = NULL)
+
+vif_summary(i)
+
+selected_variables(i)
 }
 \arguments{
 \item{pred}{A \code{input_sdm} or \code{predictors} object.}

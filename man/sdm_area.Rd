@@ -2,6 +2,7 @@
 % Please edit documentation in R/sdm_area.R
 \name{sdm_area}
 \alias{sdm_area}
+\alias{get_sdm_area}
 \title{Create a \code{sdm_area} object}
 \usage{
 sdm_area(
@@ -12,6 +13,8 @@ sdm_area(
   gdal = TRUE,
   crop_by = NULL
 )
+
+get_sdm_area(i)
 }
 \arguments{
 \item{x}{A shapefile or a raster. Usually a shapefile from \code{sf} class, but rasters from

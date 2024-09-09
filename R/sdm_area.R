@@ -1160,3 +1160,16 @@ print.sdm_area <- function(x) {
   (is.numeric(n) && !.is_float(n))
 }
 
+#' @rdname sdm_area
+#' @export
+get_sdm_area <- function(i) {
+  if( is_input_sdm(i)) {
+    x <- i$predictors
+  }
+  if( is_sdm_area(i)) {
+    x <- i
+  }
+  assert_class_cli(x, "sdm_area")
+  x <- x$grid |> select(c(cell_id))
+  return(x)
+}
