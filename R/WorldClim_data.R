@@ -7,9 +7,9 @@
 #' WorldClim_data(path = NULL,
 #'                period = 'current',
 #'                variable = 'bioc',
-#'                year = '2030',
+#'                year = '2090',
 #'                gcm = 'mi',
-#'                ssp = '126',
+#'                ssp = '585',
 #'                resolution = 10)
 #'
 #' @param path Directory path to save downloads.
@@ -79,7 +79,7 @@
 #'
 #' @export
 
-WorldClim_data <- function(path = NULL, period = "current", variable = "bioc", year = "2030", gcm = "mi", ssp = "126", resolution = 10) {
+WorldClim_data <- function(path = NULL, period = "current", variable = "bioc", year = "2090", gcm = "mi", ssp = "585", resolution = 10) {
   if (!all(period %in% c("current", "future"))) {
     cli::cli_abort(c(
       "x" = "Assertion on {.var period} failed. ",

@@ -24,11 +24,6 @@ predictors data, than \code{pred} is obtained from it.}
 
 \item{lat}{A \code{character} stating the name of the column with latitude in \code{occ} (see details).}
 
-\item{terrestrial}{Boolean to turn on/off the exclusion from coordinates falling on sea (see \code{?cc_sea})}
-
-\item{independent_test}{TRUE. If \code{occ} has independent test data, the data cleaning routine
-is also applied on it.}
-
 \item{capitals}{Boolean to turn on/off the exclusion from countries capitals coordinates (see \code{?cc_cap})}
 
 \item{centroids}{Boolean to turn on/off the exclusion from countries centroids coordinates (see \code{?cc_cen})}
@@ -40,6 +35,11 @@ is also applied on it.}
 \item{institutions}{Boolean to turn on/off the exclusion from biodiversity institutions coordinates (see \code{?cc_inst})}
 
 \item{invalid}{Boolean to turn on/off the exclusion from invalid coordinates (see \code{?cc_val})}
+
+\item{terrestrial}{Boolean to turn on/off the exclusion from coordinates falling on sea (see \code{?cc_sea})}
+
+\item{independent_test}{TRUE. If \code{occ} has independent test data, the data cleaning routine
+is also applied on it.}
 }
 \value{
 A \code{occurrences} object or \code{input_sdm} with new presence data.

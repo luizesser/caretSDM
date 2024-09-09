@@ -7,9 +7,9 @@
 WorldClim_data(path = NULL,
                period = 'current',
                variable = 'bioc',
-               year = '2030',
+               year = '2090',
                gcm = 'mi',
-               ssp = '126',
+               ssp = '585',
                resolution = 10)
 }
 \arguments{

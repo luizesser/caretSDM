@@ -151,13 +151,15 @@ data_clean <- function(occ, pred = NULL,
     x <- sf::st_transform(x, y$crs)
   }
   y$occurrences <- x
-  clean_methods <- c("NAs", "Capitals", "Centroids", "Geographically Duplicated", "Identical Lat/Long", "Institutions", "Invalid")
-  if (terrestrial) {
-    clean_methods <- c(clean_methods, "Non-terrestrial")
-  }
-  if (!is.null(pred)) {
-    clean_methods <- c(clean_methods, "Duplicated Cell (grid)")
-  }
+  clean_methods <- c("NAs")
+  if (capitals) { clean_methods <- c(clean_methods, "Capitals") }
+  if (centroids) { clean_methods <- c(clean_methods, "Centroids") }
+  if (duplicated) { clean_methods <- c(clean_methods, "Geographically Duplicated") }
+  if (identical) { clean_methods <- c(clean_methods, "Identical Lat/Long") }
+  if (institutions) { clean_methods <- c(clean_methods, "Institutions") }
+  if (invalid) { clean_methods <- c(clean_methods, "Invalid") }
+  if (terrestrial) { clean_methods <- c(clean_methods, "Non-terrestrial") }
+  if (!is.null(pred)) { clean_methods <- c(clean_methods, "Duplicated Cell (grid)") }
   y$n_presences <- table(y$occurrences$species)
 
   if ("independent_test" %in% names(y) & independent_test) {
@@ -173,15 +175,13 @@ data_clean <- function(occ, pred = NULL,
     lon <- cn[which.min(stringdist::stringdist(cn, "longitude"))]
     lat <- cn[which.min(stringdist::stringdist(cn, "latitude"))]
     x <- subset(x, !is.na(lon) | !is.na(lat))
-    x <- CoordinateCleaner::cc_cap(x, lon = lon, lat = lat, species = species)
-    x <- CoordinateCleaner::cc_cen(x, lon = lon, lat = lat, species = species)
-    x <- CoordinateCleaner::cc_dupl(x, lon = lon, lat = lat, species = species)
-    x <- CoordinateCleaner::cc_equ(x, lon = lon, lat = lat)
-    x <- CoordinateCleaner::cc_inst(x, lon = lon, lat = lat, species = species)
-    x <- CoordinateCleaner::cc_val(x, lon = lon, lat = lat)
-    if (terrestrial) {
-      x <- CoordinateCleaner::cc_sea(x, lon = lon, lat = lat)
-    }
+    if (capitals) { x <- CoordinateCleaner::cc_cap(x, lon = lon, lat = lat, species = species) }
+    if (centroids) { x <- CoordinateCleaner::cc_cen(x, lon = lon, lat = lat, species = species) }
+    if (duplicated) { x <- CoordinateCleaner::cc_dupl(x, lon = lon, lat = lat, species = species) }
+    if (identical) { x <- CoordinateCleaner::cc_equ(x, lon = lon, lat = lat) }
+    if (institutions) { x <- CoordinateCleaner::cc_inst(x, lon = lon, lat = lat, species = species) }
+    if (invalid) { x <- CoordinateCleaner::cc_val(x, lon = lon, lat = lat) }
+    if (terrestrial) { x <- CoordinateCleaner::cc_sea(x, lon = lon, lat = lat) }
     if (!is.null(pred)) {
       print("Predictors identified, procceding with grid filter (removing NA and duplicated data).")
       x2 <- sf::st_as_sf(x,

@@ -76,7 +76,7 @@ sa
 We can export the grid of the study area as a shape with the `write_grid` function. The function receives the `study_area` object and the file path in which the file should be written.
 
 ```{r export_grid}
-write_grid(sa, "output_data/predictors_data.gpkg")
+write_grid(sa, "results/predictors_data.gpkg")
 ```
 
 We also need to inform which scenarios we will be working with in projections. To start, we will add only the "current" scenario, which is the same data used as predictors.
@@ -158,7 +158,10 @@ In `vif_predictors`, we are able to perform two methods to select variables: sel
 
 ```{r vif_predictors}
 i <- vif_predictors(i, th = 0.5) ### método para presença+pseudoausência
-### Fazer um vif_summary
+vif_summary(i)
+```
+
+```{r}
 i
 ```
 
@@ -240,16 +243,16 @@ The same goes for mapview:
 mapview_predictions(i)
 ```
 
-### writeResults (ensemble as .csv with centroids)\###
+### writeResults (ensemble as .csv with centroids)\#
 
 ### Add future Data
 
 ```{r WorldClim_data_future}
 # Download future scenarios
-WorldClim_data(path="input_data/WorldClim_data_future/",period = "future", year = c('2050', '2090'), ssp = c('245','585'), resolution = 10)
+WorldClim_data(path="input_data/WorldClim_data_chooseGCM/",period = "future", ssp = '585', year = '2090', gcm = "all", resolution = 10)
 
 # Import scenarios to R
-scen <- read_stars(list.files("input_data/WorldClim_data_future/", full.names = T), normalize_path = F)
+scen <- read_stars(list.files("input_data/WorldClim_data_chooseGCM/", full.names = T), normalize_path = F)
 
 # See what is inside pred_data
 scen
