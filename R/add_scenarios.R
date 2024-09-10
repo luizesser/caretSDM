@@ -89,7 +89,7 @@ add_scenarios.NULL <- function(sa, scen = NULL, variables_selected = NULL, stati
 # }
 
 #' @export
-add_scenarios.RasterStack <- function(sa, scen, scenarios_names = NULL, pred_as_scen = TRUE,
+add_scenarios.RasterStack <- function(sa, scen=NULL, scenarios_names = NULL, pred_as_scen = TRUE,
                                       variables_selected = NULL, stationary = NULL, ...) {
   scen <- stars::st_as_stars(scen)
   sa <- add_scenarios(sa, scen, scenarios_names, pred_as_scen, variables_selected, stationary)
@@ -97,7 +97,7 @@ add_scenarios.RasterStack <- function(sa, scen, scenarios_names = NULL, pred_as_
 }
 
 #' @export
-add_scenarios.SpatRaster <- function(sa, scen, scenarios_names = NULL, pred_as_scen = TRUE,
+add_scenarios.SpatRaster <- function(sa, scen=NULL, scenarios_names = NULL, pred_as_scen = TRUE,
                                      variables_selected = NULL, stationary = NULL, ...) {
   scen <- stars::st_as_stars(scen)
   names(stars::st_dimensions(scen)) <- c("x", "y", "band")
@@ -106,7 +106,7 @@ add_scenarios.SpatRaster <- function(sa, scen, scenarios_names = NULL, pred_as_s
 }
 
 #' @export
-add_scenarios.stars <- function(sa, scen, scenarios_names = NULL, pred_as_scen = TRUE,
+add_scenarios.stars <- function(sa, scen=NULL, scenarios_names = NULL, pred_as_scen = TRUE,
                                 variables_selected = NULL, stationary = NULL, ...) {
   if (is_input_sdm(sa)) {
     i2 <- sa

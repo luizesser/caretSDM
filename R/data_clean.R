@@ -3,11 +3,14 @@
 #' Data cleaning wrapper using CoordinateCleaner.
 #'
 #' @usage
-#' data_clean(x,
-#'            pred = NULL,
-#'            species = NA,
-#'            lon = NA,
-#'            lat = NA,
+#' data_clean(occ, pred = NULL,
+#'            species = NA, lon = NA, lat = NA,
+#'            capitals = TRUE,
+#'            centroids = TRUE,
+#'            duplicated = TRUE,
+#'            identical = TRUE,
+#'            institutions = TRUE,
+#'            invalid = TRUE,
 #'            terrestrial = TRUE,
 #'            independent_test = TRUE)
 #'
