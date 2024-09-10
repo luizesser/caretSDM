@@ -138,7 +138,7 @@ add_predictors.sf <- function(sa, pred, variables_selected = NULL, gdal= TRUE) {
     )
 
   var_names <- colnames(grd)
-  num_vars <- grepl("^[[:digit:]]+", grd)
+  num_vars <- grepl("^[[:digit:]]+", names(grd))
   if(any(num_vars)){
     var_names2 <- gsub("^([0-9])", "X\\1", var_names)
     colnames(grd) <- var_names2

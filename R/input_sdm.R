@@ -136,8 +136,11 @@ print.input_sdm <- function(x) {
   }
   if ("scenarios" %in% names(x)) {
     cat("---------  Scenarios  ---------\n")
-    cat("Scenarios Names               :", names(x$scenarios$data), "\n")
     cat("Number of Scenarios           :", length(x$scenarios$data), "\n")
+    cat("Scenarios Names               :", names(x$scenarios$data), "\n")
+    if ("stationary" %in% names(x$scenarios)) {
+      cat("Stationary Variables          :", x$scenarios$stationary, "\n")
+    }
   }
   if ("models" %in% names(x)) {
     cat("-----------  Models  ----------\n")

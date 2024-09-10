@@ -193,6 +193,7 @@ add_scenarios.stars <- function(sa, scen, scenarios_names = NULL, pred_as_scen =
   sa_data$data <- l
   sa_data$grid <- sa$grid |>
     dplyr::select(c(cell_id, dplyr::all_of(variables_selected)))
+  if ( !is.null(stationary) ) { sa_data$stationary <- stationary }
   sa$scenarios <- sa_data
   sa$grid <- sa_data$grid
 
