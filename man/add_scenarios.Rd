@@ -4,10 +4,10 @@
 \alias{add_scenarios}
 \title{Add scenarios to \code{sdm_area}}
 \usage{
-add_scenarios(sdm_area, scen = NULL, variables_selected = NULL)
+add_scenarios(sa, scen = NULL, variables_selected = NULL)
 }
 \arguments{
-\item{sdm_area}{A \code{sdm_area} object.}
+\item{sa}{A \code{sdm_area} object.}
 
 \item{scen}{\code{RasterStack}, \code{SpatRaster} or \code{stars} object. If \code{NULL} adds
 predictors as a scenario.}
@@ -15,7 +15,8 @@ predictors as a scenario.}
 \item{variables_selected}{Character vector with variables names in \code{scen} to be used as
 predictors. If \code{NULL} adds all variables.}
 
-\item{stationary}{Should variables from sdm_area be used in scenarios as stationary variables?}
+\item{stationary}{Names of variables from \code{sa} that should be used in scenarios as
+stationary variables.}
 }
 \value{
 The input \code{sdm_area} object with a new slot called scenarios with \code{scen} data

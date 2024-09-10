@@ -39,6 +39,7 @@ select.sdm_area <- function(x, ...){
       grd <- grd |> dplyr::relocate(cell_id, ...)
       return(grd)
     }, simplify = FALSE, USE.NAMES = TRUE)
+    x$scenarios$grid <- x$scenarios$data[[1]]
   }
 
   return(x)
@@ -70,6 +71,7 @@ select.input_sdm <- function(x, ...){
       grd <- grd |> dplyr::relocate(cell_id, ...)
       return(grd)
     }, simplify = FALSE, USE.NAMES = TRUE)
+    x$scenarios$grid <- x$scenarios$data[[1]]
   }
 
   return(i)

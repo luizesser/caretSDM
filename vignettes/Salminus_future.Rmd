@@ -294,15 +294,19 @@ scen
 ### Add scenarios to the input_sdm
 
 ```{r}
-i2 <- add_scenarios(i, scen)
+i2 <- add_scenarios(i, scen, stationary=c("LENGTH_KM", "DIST_DN_KM", "DIST_UP_KM", "CATCH_SKM", "UPLAND_SKM", "DIS_AV_CMS"))
 i2
 ```
 
 ```{r}
-i <- predict_sdm(i, th = 0.8)
-i
+i2 <- predict_sdm(i2, th = 0.8)
+i2
 ```
 
 ```{r}
-plot_predictions(i, scenario = "current")
+plot_predictions(i2, scenario = "ch_ssp585_10_209")
+```
+
+```{r}
+plot_predictions(i2, scenario = "current")
 ```

@@ -178,6 +178,7 @@ set_predictor_names.sdm_area <- function(x, new_names) {
         dplyr::bind_cols(grd_data) |>
         dplyr::relocate(geometry, .after = last_col())
     }, simplify = FALSE, USE.NAMES = TRUE)
+    x$scenarios$grid <- x$scenarios$data[[1]]
   }
   return(x)
 }
@@ -242,9 +243,9 @@ set_variables_names <- function(s1 = NULL, s2 = NULL, new_names = NULL) {
       len_s2 <- length(stars::st_get_dimension_values(s2, "band"))
       len_s1 <- length(stars::st_get_dimension_values(s1, "band"))
       if (!len_s1 == len_s2) {
-        cli_abort("i" = "{.var s1} has {len_s1} variable{?s},
+        cli::cli_abort(c("i" = "{.var s1} has {len_s1} variable{?s},
                   while {.var s2} has {len_s2} variable{?s}.",
-                  "x" = "{.var s1} and {.var s2} should have the same number of variables.")
+                  "x" = "{.var s1} and {.var s2} should have the same number of variables."))
       }
       if(!all(sort(stars::st_get_dimension_values(s2, "band")) == stars::st_get_dimension_values(s1, "band"))){
         closest_match <- find_closest_matches(stars::st_get_dimension_values(s1, "band"),
@@ -257,9 +258,9 @@ set_variables_names <- function(s1 = NULL, s2 = NULL, new_names = NULL) {
       len_s2 <- length(get_predictor_names(s2))
       len_s1 <- length(stars::st_get_dimension_values(s1, "band"))
       if (!len_s1 == len_s2) {
-        cli::cli_abort("i" = "{.var s1} has {len_s1} variable{?s},
+        cli::cli_abort(c("i" = "{.var s1} has {len_s1} variable{?s},
                   while {.var s2} has {len_s2} variable{?s}.",
-                  "x" = "{.var s1} and {.var s2} should have the same number of variables.")
+                  "x" = "{.var s1} and {.var s2} should have the same number of variables."))
       }
       if(!all(sort(get_predictor_names(s2)) == stars::st_get_dimension_values(s1, "band"))){
         closest_match <- find_closest_matches(stars::st_get_dimension_values(s1, "band"),
