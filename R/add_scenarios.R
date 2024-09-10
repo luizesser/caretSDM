@@ -114,9 +114,9 @@ add_scenarios.stars <- function(sa, scen, scenarios_names = NULL, pred_as_scen =
   }
 
   if (is.null(scenarios_names)) { scenarios_names <- names(scen) }
+  pres_names <- get_predictor_names(sa)
 
   if(!is.null(stationary)){
-    pres_names <- get_predictor_names(sa)
     stationary_grd <- sa$grid |> select(all_of(c("cell_id", stationary)))
     stationary_grd <- sf::st_transform(stationary_grd, sf::st_crs(scen))
     variables_selected <- pres_names[!pres_names %in% stationary]

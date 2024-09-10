@@ -280,7 +280,7 @@ The aim of this function is to inform the minimum required so users can follow w
 
 Now we can download data from WorldClim 2.1 to the selected GCMs:
 
-```{r WorldClim_data_future}
+```{r WorldClim_data_future2}
 # Download future scenarios
 WorldClim_data(path="input_data/WorldClim_data_future/",period = "future", year = c('2050', '2090'), ssp = c('585'), gcm = res$suggested_gcms, resolution = 10)
 
