@@ -111,7 +111,7 @@ oc
 In `caretSDM` we use multiple classes to perform our analysis. Every time we perform a new analysis, objects keep the information of what we did. Ideally, the workflow will have only one object throughout it. The `input_sdm` class is the key class in the workflow, where every function will orbitate. That class puts occurrences, predictors, scenarios, models and predictions together to perform analysis that are only possible when two or more of these classes are available. First, we create the object by informing the occurrences and sdm_area.
 
 ```{r input_sdm}
-i <- input_sdm(oc, sa) ### exportar shape das ocorrências (com a grid)
+i <- input_sdm(oc, sa)
 i
 ```
 
@@ -127,18 +127,12 @@ Or, using mapview:
 mapview_occurrences(i)
 ```
 
-We can also export the grid from study_area with occurrences data:
-
-```{r}
-write_occurrences(i, path = "results/occurrences.gpkg", grid = TRUE)
-```
-
 ### Data cleaning routine
 
 As the first step in our workflow with the `input_sdm` object, we will clean our occurrences data by applying a group of functions from the package `CoordinateCleaner`. In this function, we also provide a way to check for environmental duplicates, by including a predictors object. This function also checks for records in the sea if the species is terrestrial, but note that this can be switched off if the studied species is not terrestrial. The way `caretSDM` works, we can always overwrite the main `input_sdm` object to update it. The function will return a new object with all the previous information and the new information obtained from the `data_clean` function, note that at the end of the Data Cleaning information there is the Duplicated Cell method. This method is only possible when we have both the `occurrence` and `predictors` data.
 
 ```{r data_clean}
-i <- data_clean(i, terrestrial = FALSE) ## colocar todos os ifs para cada teste.
+i <- data_clean(i, capitals = FALSE)
 i
 ```
 
@@ -152,13 +146,30 @@ plot_occurrences(i)
 mapview_occurrences(i)
 ```
 
+We can also export the grid from study_area with occurrences data:
+
+```{r}
+write_occurrences(i, path = "results/occurrences.gpkg", grid = TRUE)
+```
+
+Or we can export the .csv file with coordinates:
+
+```{r}
+write_occurrences(i, path = "results/occurrences.csv")
+```
+
 ### Removing multicolinearity from predictors' data
 
 In `vif_predictors`, we are able to perform two methods to select variables: selecting all area or using the presence records (which is debatable, but implemented). `vif_predictors` allows for a maximum threshold to be informed. The standard is 0.5.
 
 ```{r vif_predictors}
-i <- vif_predictors(i, th = 0.5) ### método para presença+pseudoausência
+i <- vif_predictors(i, th = 0.5) 
 vif_summary(i)
+```
+
+```{r}
+i2 <- pca_predictors(i)
+i2
 ```
 
 ```{r}
@@ -206,8 +217,6 @@ i <- train_sdm(i,
 i
 ```
 
-### Incluir métricas de validação completas
-
 With models built, we can see Partial Dependence Plots (a.k.a., response curves)...
 
 ```{r pdp_sdm}
@@ -218,6 +227,13 @@ pdp_sdm(i)
 
 ```{r varImp_sdm}
 varImp_sdm(i)
+```
+
+A important result is also the validation metrics, which can be assessed using `mean_validation_metrics` function:
+
+```{r}
+get_validation_metrics(i)
+mean_validation_metrics(i)
 ```
 
 ## Post-Processing
@@ -243,15 +259,26 @@ The same goes for mapview:
 mapview_predictions(i)
 ```
 
-### writeResults (ensemble as .csv with centroids)\#
+### 
 
 ### Projecting models to future scenarios using chooseGCM
+
+#### Installing chooseGCM
+
+To install chooseGCM we need devtools to retrieve the package from GitHub in the same way we install caretSDM.
+
+```{r install_chooseGCM}
+install.packages(setdiff("devtools", rownames(installed.packages())))
+devtools::install_github("luizesser/chooseGCM")
+```
 
 First, we need to use only one time period. Here we use 2090 so the difference between models is more conspicuous. In the same way we are considering the SSP585, which is the more dramatic pathway. The resolution is the lowest to be quicker. The aim here is to maintain all parameters equal, but General Circulation Models (GCMs). In this way we know that the only source of variation comes from them. Note that if you receive a timeout error you can increase timeout value by running , where 600 is the value in seconds that will be enough to download the data.
 
 ```{r WorldClim_data_future}
 # Download future scenarios
-WorldClim_data(path="input_data/WorldClim_data_chooseGCM/",period = "future", ssp = '585', year = '2090', gcm = "all", resolution = 10)
+#WorldClim_data(path="input_data/WorldClim_data_chooseGCM/", period = "future", ssp = '585', year = '2090', gcm = "all", resolution = 10)
+WorldClim_data(path="/Users/luizesser/Documents/GitHub/input_data/WorldClim_data_future_all/", period = "future", ssp = '585', year = '2090', gcm = "all", resolution = 10)
+
 ```
 
 #### Importing and Transforming Data
@@ -259,7 +286,8 @@ WorldClim_data(path="input_data/WorldClim_data_chooseGCM/",period = "future", ss
 Now let's import GCMs to R in a list of stacks and name the list with the names of the GCMs.
 
 ```{r import_gcms}
-s <- chooseGCM::import_gcms("/Users/luizesser/Documents/GitHub/input_data/WorldClim_data_future_all")
+#s <- chooseGCM::import_gcms("input_data/WorldClim_data_chooseGCM")
+s <- chooseGCM::import_gcms("/Users/luizesser/Documents/GitHub/input_data/WorldClim_data_future_all/")
 names(s) <- gsub("_ssp585_10_2090", "", names(s))
 ```
 
@@ -269,14 +297,14 @@ In each following function, data will be transformed. To do that, you will alway
 study_area <- get_sdm_area(i)
 ```
 
-There is the option to run each function in separate to better understand what is happening and to better parameterize each step. However there is a wrapper to help run everything at once and could be an alternative to have a broad perspective. `compare_gcms()` will return a list with a vector called `suggested_gcms` and a Figure called `statistics_gcms`. We suggest that this Figure could also be included as it is in supplementary data from studies using this package./r
+There is the option to run each function in separate to better understand what is happening and to better parameterize each step. However there is a wrapper to help run everything at once and could be an alternative to have a broad perspective. `compare_gcms()` will return a list with a vector called `suggested_gcms` and a Figure called `statistics_gcms`. We suggest that this Figure could also be included as it is in supplementary data from studies using this package.
 
 ```{r}
-res <- chooseGCM::compare_gcms(s, var_names=c("bio01", "bio12"), st_transform(study_area, crs=4326), k = 2)
+res <- chooseGCM::compare_gcms(s, var_names=c("bio01", "bio12"), sf::st_transform(study_area, crs=4326), k = 2)
 res
 ```
 
-The aim of this function is to inform the minimum required so users can follow with their workflow in a more straightforward fashion (more on each plot further). If we see the D plot in the Figure, we can infer if the selected GCMs encompass the environmental variety of all GCMs. The focus should be to cover the core environment and not outlier regions on the environmental space. Above that, in plot B, the Monte Carlo permutation between GCMs is presented as a violin plot. Plots A and C are both clusterization methods that can be used to select GCMs. Clusterization will be adapted to the number of clusters `k` designated in the function. Lastly, suggested GCMs were "uk", "ml" and "ac". Those suggestions are the gcms that are closer to the centroid of each K-means cluster, thus they better represent the variation within each cluster.
+The aim of this function is to inform the minimum required so users can follow with their workflow in a more straightforward fashion (more on each plot further). If we see the D plot in the Figure, we can infer if the selected GCMs encompass the environmental variety of all GCMs. The focus should be to cover the core environment and not outlier regions on the environmental space. Above that, in plot B, the Monte Carlo permutation between GCMs is presented as a violin plot. Plots A and C are both clusterization methods that can be used to select GCMs. Clusterization will be adapted to the number of clusters `k` designated in the function. Lastly, suggested GCMs were ch and in. Those suggestions are the gcms that are closer to the centroid of each K-means cluster, thus they better represent the variation within each cluster.
 
 Now we can download data from WorldClim 2.1 to the selected GCMs:
 
@@ -285,7 +313,7 @@ Now we can download data from WorldClim 2.1 to the selected GCMs:
 WorldClim_data(path="input_data/WorldClim_data_future/",period = "future", year = c('2050', '2090'), ssp = c('585'), gcm = res$suggested_gcms, resolution = 10)
 
 # Import scenarios to R
-scen <- read_stars(list.files("input_data/WorldClim_data_future/", full.names = T), normalize_path = F)
+scen <- stars::read_stars(list.files("input_data/WorldClim_data_future/", full.names = T), normalize_path = F)
 
 # See what is inside pred_data
 scen
@@ -309,4 +337,8 @@ plot_predictions(i2, scenario = "ch_ssp585_10_209")
 
 ```{r}
 plot_predictions(i2, scenario = "current")
+```
+
+```{r}
+gcms_ensembles(i2, gcms=res$suggested_gcms)
 ```

@@ -77,7 +77,7 @@
 #' # Train models:
 #' i <- train_sdm(i, algo = c("nnet", "kknn"), variables_selected = "vif", ctrl=ctrl_sdm)
 #'
-#' @importFrom sf st_centroid st_as_sf st_join
+#' @importFrom sf st_centroid st_as_sf st_join st_intersection
 #' @importFrom maxnet maxnet.default.regularization maxnet.formula maxnet
 #' @importFrom dismo bioclim mahal
 #' @importFrom dplyr arrange select filter all_of bind_cols summarise group_by across everything
@@ -88,15 +88,15 @@
 #'
 #' @export
 train_sdm <- function(occ, pred = NULL, algo, ctrl = NULL, variables_selected = NULL, parallel = FALSE, ...) {
-  assert_class_cli(occ, "input_sdm")
+  caretSDM:::assert_class_cli(occ, "input_sdm")
   if (is_input_sdm(occ)) {
     z <- occ$occurrences
     pred <- occ$predictors
   }
-  assert_character_cli(algo)
+  caretSDM:::assert_character_cli(algo)
   if(!is.null(ctrl)){
-    assert_list_cli(ctrl, len=27)
-    assert_names_cli(names(ctrl),
+    caretSDM:::assert_list_cli(ctrl, len=27)
+    caretSDM:::assert_names_cli(names(ctrl),
                      must.include = c("method", "number", "repeats", "search", "p", "initialWindow",
                                       "horizon", "fixedWindow", "skip", "verboseIter", "returnData",
                                       "returnResamp", "savePredictions", "classProbs",
@@ -104,7 +104,7 @@ train_sdm <- function(occ, pred = NULL, algo, ctrl = NULL, variables_selected = 
                                       "sampling", "index", "indexOut", "indexFinal", "timingSamps",
                                       "predictionBounds", "seeds", "adaptive", "trim", "allowParallel"))
   }
-  assert_subset_cli(variables_selected, c(get_predictor_names(pred), "vif", "pca"), empty.ok=T)
+  caretSDM:::assert_subset_cli(variables_selected, c(get_predictor_names(pred), "vif", "pca"), empty.ok=T)
 
   #if (is_predictors(pred)) {
   #  if (is.null(variables_selected)) {
@@ -437,7 +437,7 @@ train_sdm <- function(occ, pred = NULL, algo, ctrl = NULL, variables_selected = 
           dplyr::filter(species == sp) |>
           dplyr::select(dplyr::all_of(selected_vars))
       }
-      suppressWarnings(occ2 <- st_intersection(occ2, pred$grid))
+      suppressWarnings(occ2 <- sf::st_intersection(occ2, pred$grid))
     }
 
     for (i in 1:length(z$pseudoabsences$data[[sp]])) {
@@ -486,8 +486,11 @@ train_sdm <- function(occ, pred = NULL, algo, ctrl = NULL, variables_selected = 
         # m <- list(m)
         #} else {
           m <- lapply(algo, function(a) {
-            caret::train(x, # usar sapply para que o id seja mais organizado
-              df,
+            caret::train(
+              #x, # usar sapply para que o id seja mais organizado
+              #df,
+              df~.,
+              data=cbind(df,x),
               method = a,
               trControl = ctrl
             ) # lapply retorna diferentes valores de tuning (padronizar com seed?)
