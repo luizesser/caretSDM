@@ -280,10 +280,10 @@ write_validation_metrics <- function(x, path = "results", ...) {
   }
   #suppressWarnings(dir.create(path, recursive = T))
   #caretSDM:::assert_directory_cli(dirname(path))
-  spp <- species_names(i)
+  spp <- species_names(x)
   val <- get_validation_metrics(x)
   for (sp in spp) {
     suppressWarnings(dir.create(paste0(path, "/", sp), recursive = T))
-    write.csv(val, paste0(path, "/", sp, "/validation_metrics.csv"))
+    write.csv(val[[sp]], paste0(path, "/", sp, "/validation_metrics.csv"))
   }
 }
