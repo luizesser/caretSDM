@@ -39,14 +39,10 @@ pred <- read_stars(list.files("input_data/WorldClim_data_current/", full.names =
 pred
 ```
 
-### Add future Data ###
-
-
 ### Obtaining species records
 
 A easy way to get species data using `caretSDM` is the function `GBIF_data`, which retrieves species records from GBIF. Understandably, there are other sources of species data available, as well as our own data that can be the result of field work. In this sense, one can import to R it's own data in multiple ways, but be sure that the table will have three columns: species, decimalLongitude and decimalLatitude. `GBIF_data` function retrieves the data ready to be included in caretSDM, thus if you have any doubt on how to format your own data, use `GBIF_data` function to retrieve an example table.
 
-### Entrar com dados próprios ####
 
 ```{r GBIF_data}
 # Import data from GBIF
@@ -231,10 +227,6 @@ i <- train_sdm(i,
 ```{r}
 i
 ```
-
-### Incluir métricas de validação completas #####
-
-
 
 With models built, we can see Partial Dependence Plots (a.k.a., response curves)...
 

@@ -68,3 +68,4 @@ vignettes/input_data/WorldClim_data_future/mi_ssp245_10_2090.tif
 vignettes/input_data/WorldClim_data_future/mi_ssp585_10_2050.tif
 vignettes/input_data/WorldClim_data_future/mi_ssp585_10_2090.tif
 docs
+inst/doc
