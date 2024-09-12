@@ -144,13 +144,23 @@ filter.input_sdm <- function(x, ...){
 filter.occurrences <- function(x, ...){
   oc <- x
   x <- x$occurrences
+  if("cell_id" %in% names(x)){
+    cd <- TRUE
+  }
   grd <- dplyr::filter(x, ...)
   grd_col_names <- colnames(grd)
-  if (!("cell_id" %in% grd_col_names)) {
-    grd[["cell_id"]] <- x$grid[["cell_id"]]
+  if(cd){
+    if (!("cell_id" %in% grd_col_names)) {
+      grd[["cell_id"]] <- oc$grid[["cell_id"]]
+    }
+    grd_col_names2 <- setdiff(grd_col_names, c('cell_id','geometry'))
+    grd <- grd |> dplyr::relocate(cell_id, all_of(grd_col_names2), geometry)
+
+  } else {
+    grd_col_names2 <- setdiff(grd_col_names, c('geometry'))
+    grd <- grd |> dplyr::relocate(all_of(grd_col_names2), geometry)
   }
-  grd_col_names2 <- setdiff(grd_col_names, c('cell_id','geometry'))
-  grd <- grd |> dplyr::relocate(cell_id, all_of(grd_col_names2), geometry)
+
   oc$occurrences <- grd
   oc$spp_names <- table(grd$species) |> names()
   oc$n_presences <- table(grd$species)
