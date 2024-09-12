@@ -1,88 +1,71 @@
 ---
-title: "Salminus_future"
+title: "Multispecies Distribution Modeling with caretSDM"
 author: "Luíz Fernando Esser"
-output: rmarkdown::html_vignette
-vignette: >
-  %\VignetteIndexEntry{Salminus}
-  %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}
+format: html
+editor: visual
 ---
 
-`caretSDM` is a under development R package that uses the powerful `caret` package as the main engine to obtain Species Distribution Models. One of its main attributes is the strong geoprocessing underlying its functions. Here we show how to model species distributions using `caretSDM` through the function `sdm_area` with lines instead of polygons. This is implemented mostly thinking in HydroSHEDS database, which is particularly important for continental aquatic environments modeling. We also show how to avoid multicolinearity using a Variance Inflation Factor (VIF) routine. The aim of this modeling will be to obtain the current distribution of *Salminus brasiliensis*, a economically and ecologically key fish species from Paraná-Paraguay watershed.
+## Introduction
+
+`caretSDM` is a under development R package that uses the powerful `caret` package as the main engine to obtain Species Distribution Models. One of its main attributes is the strong geoprocessing underlying its functions. Here we show how to model species distributions using `caretSDM` through the function `sdm_area` with a polygon. We will also show how to apply a PCA in predictors and scenarios to avoid multicolinearity. The aim of this modeling will be to obtain the distribution of *Araucaria angustifolia*, *Ilex paraguariensis* and *Myrceugenia euosma*, three co-occurring tree species.
 
 First, we need to open our libraries.
 
-```{r open libraries}
+```{r libraries}
 library(caretSDM)
 library(stars) # Package used to manipulate GIS data
 library(dplyr) # Package to improve data handling
 ```
 
-### Pre-Processing
+## Pre-Processing
 
 To obtain models, we will need climatic data and species records. To easily obtain these data, we have two functions: `WorldClim_data` function downloads climatic variables from WorldClim 2.1, a widely used open-source database; in the same way, `GBIF_data` function downloads species records from GBIF, also a widely used open-source database. You can read more about them by running in the console `?GBIF_data` and `?WorldClim_data`.
 
 ### Obtaining species records
 
-A easy way to get species data using `caretSDM` is the function `GBIF_data`, which retrieves species records from GBIF. Understandably, there are other sources of species data available, as well as our own data that can be the result of field work. In this sense, one can import to R it's own data in multiple ways, but be sure that the table will have three columns: species, decimalLongitude and decimalLatitude. `GBIF_data` function retrieves the data ready to be included in caretSDM, thus if you have any doubt on how to format your own data, use `GBIF_data` function to retrieve an example table. Here we will use our own data from directory:
+A easy way to get species data using `caretSDM` is the function `GBIF_data`, which retrieves species records from GBIF. Understandably, there are other sources of species data available, as well as our own data that can be the result of field work. In this sense, one can import to R it's own data in multiple ways, but be sure that the table will have three columns: species, decimalLongitude and decimalLatitude. `GBIF_data` function can retrieve the data ready to be included in caretSDM, thus if you have any doubt on how to format your own data, use `GBIF_data` function with the parameter `as_df = TRUE` to retrieve an example table.
 
-```{r occ_data}
-# Import data
-occ <- occurrences_sdm("input_data/Salminus.csv", crs = 4326)
-occ
+```{r}
+oc <- GBIF_data(c("Araucaria angustifolia", "Ilex paraguariensis", "Myrceugenia euosma"))
 ```
-
-### Defining the study area
-
-A important step on model building in Species Distribution Models, is the definition of accessible area (the M in BAM diagram). This area can be, in Geographical Information Systems terms, as an example, the delimitation of a habitat (polygon) or a river basin network (lines). Another broadly used approach is the use of buffers around presences. As we are working with a fish species, we will use a subset of hydroSHEDS database that is restricted to the Paraná-Paraguay watershed. In `caretSDM` there is a function that groups all the transformations regarding the study area to build and project the models. The `sdm_area` function is this function and is also responsible to check CRSs and create a grid to build models. This grid may seem unpurposed for terrestrial ecologists, but is a key element when modeling continental aquatic environments. `sdm_area` class will also keep the environmental/climatic data (*i.e.* "predictor variables", "covariates", "explanatory variables", "features" or "control variables"). With this class we will perform analysis using only the predictors (such as predictors transformations).
-
-```{r sdm_area}
-# Create a sdm_area object
-sa <- sdm_area('input_data/parana_paraguay.gpkg', cell_size = 25000, crs = 6933, gdal = T)
-sa
-```
-
-An alternative to visualize grid data is the use of mapview:
-
-```{r mapview_grid}
-mapview_grid(sa)
-```
-
-Now that we have a study area, we can assign predictors and scenarios variables to it.
 
 ### Obtaining climatic data
 
-We will first download and import current data, which is used to build and project the models. `WorldClim_data` function has an argument to set the directory in which you want to save the files. If you don't set it, files will be saved in your working directory (run `getwd()` to find out your working dirrectory) in the folder "input_data/WorldClim_data_current/". We could run this script with a smaller resolution, but as the aim here is to show how the package works, we will use a resolution of 10 arc-minutes, which is very coarse, but quicker to download and run.
+We will first download and import current data, which is used to build the models. `WorldClim_data` function has an argument to set the directory in which you want to save the files. If you don't set it, files will be saved in your working directory (run `getwd()` to find out your working directory) in the folder "input_data/WorldClim_data_current/". If period is set to "future", then it is saved in "input_data/WorldClim_data_future/". We could run this script with a smaller resolution, but as the aim here is to show how the package works, we will use a resolution of 10 arc-minutes, which is very coarse, but quicker to download and run.
 
 ```{r WorldClim_data_current}
 # Download current bioclimatic variables
 WorldClim_data(period = "current", resolution = 10)
 
-# Enter bioclimatic variables
+# Import current bioclimatic variables to R
 pred <- read_stars(list.files("input_data/WorldClim_data_current/", full.names = T), along = "band", normalize_path = F)
 
 # See what is inside pred
 pred
 ```
 
-Now we will add predictors to our study area:
+### Defining the study area
 
-```{r add_predictors}
+A important step on model building in Species Distribution Models, is the definition of accessible area (the M in BAM diagram). This area can be, in Geographical Information Systems terms, as an example, the delimitation of a habitat (polygon) or a river basin network (lines). Another broadly used approach is the use of buffers around presences. The buffer size translates the potential distribution capabilities of a species. To educational purposes we will use a simple shape with Parana state boundaries that is available in caretSDM in the `parana` object.
+
+In `caretSDM` there is a function that groups all the transformations regarding the study area to build and project the models. The `sdm_area` function is this function and is also responsible to check CRSs and create a grid to build models. This grid may seem unpurposed for terrestrial ecologists, but is a key element when modeling continental aquatic environments. `sdm_area` class will also keep the environmental/climatic data (*i.e.* "predictor variables", "covariates", "explanatory variables", "features" or "control variables"). With this class we will perform analysis using only the predictors (such as predictors transformations).
+
+```{r}
+# Create a sdm_area object
+sa <- sdm_area(parana, cell_size = 20000, crs = 6933)
+sa
+plot_grid(sa)
+```
+
+Now that we have a study area, we can assign predictor variables and scenarios to it.
+
+```{r add_predictors1}
 # Add predictor variables into sdm_area
 sa <- add_predictors(sa, pred)
 sa
 ```
 
-We can export the grid of the study area as a shape with the `write_grid` function. The function receives the `study_area` object and the file path in which the file should be written.
-
-```{r export_grid}
-write_grid(sa, "results/predictors_data.gpkg")
-```
-
-We also need to inform which scenarios we will be working with in projections. To start, we will add only the "current" scenario, which is the same data used as predictors.
-
-```{r}
-# Add predictors as scenarios:
+```{r add_scenarios}
 sa <- add_scenarios(sa)
 sa
 ```
@@ -91,19 +74,36 @@ Usually, we will need to subset variables that will inform our model. This can b
 
 ```{r select_preds}
 # Select predictors
-sa <- select(sa, c("LENGTH_KM", "DIST_DN_KM", "DIST_UP_KM", "CATCH_SKM", "UPLAND_SKM", "DIS_AV_CMS","X1.tif", "X2.tif", "X3.tif", "X4.tif", "X5.tif", "X6.tif", "X7.tif", "X12.tif", "X13.tif", "X14.tif", "X15.tif"))
-sa <- set_predictor_names(sa, c("LENGTH_KM", "DIST_DN_KM", "DIST_UP_KM", "CATCH_SKM", "UPLAND_SKM", "DIS_AV_CMS","bio01","bio02", "bio03", "bio04", "bio05", "bio06", "bio07", "bio12", "bio13", "bio14", "bio15"))
+sa <- select_predictors(sa, paste0("X", 1:19, ".tif"))
+sa <- set_predictor_names(sa, paste0("bio",1:19))
 sa
+```
+
+```{r}
+write_grid(sa, path = "results/grid_study_area.csv", centroid = TRUE)
+write_grid(sa, path = "results/grid_study_area.gpkg", centroid = TRUE)
+write_grid(sa, path = "results/grid_study_area.shp", centroid = TRUE)
+```
+
+```{r add_predictors}
+mapview_predictors(sa)
 ```
 
 ### Defining the occurrences set in the study area
 
-As `caretSDM` has a strong GIS background, it is necessary to explicitly tell which CRS is your data in. This will assure that every GIS transformation is correct. This step also assigns occurrences into a study area, excluding records outside the study area or with NAs in predictors. `occurrences_sdm` function creates a occurrences class (*i.e.* "response variable", "target" or "label") that will be used in occurrences transformations and functions, as pseudoabsences generation.
+As `caretSDM` has a strong GIS background, it is necessary to explicitly tell which CRS is your data in. This will assure that every GIS transformation is correct. This step also assigns occurrences into a study area, excluding records outside the study area or with NAs in predictors. `occurrences_sdm` function creates a occurrences class (*i.e.* "response variable", "target" or "label") that will be used in occurrences transformations and functions, as pseudoabsences generation. As we used GBIF_data, which
 
 ```{r occurrences_sdm}
 # Join occurrences to the study area
-oc <- join_area(occ, sa)
+oc <- oc |>
+  join_area(sa)
 oc
+```
+
+```{r}
+write_occurrences(i, path = "results/occurrences.csv", grid = FALSE)
+write_occurrences(i, path = "results/occurrences.gpkg", grid = TRUE)
+write_occurrences(i, path = "results/occurrences.shp", grid = TRUE)
 ```
 
 ### The `input_sdm` class
@@ -121,12 +121,6 @@ Now we can visualize `oc` data using plot:
 plot_occurrences(i)
 ```
 
-Or, using mapview:
-
-```{r mapview_occ}
-mapview_occurrences(i)
-```
-
 ### Data cleaning routine
 
 As the first step in our workflow with the `input_sdm` object, we will clean our occurrences data by applying a group of functions from the package `CoordinateCleaner`. In this function, we also provide a way to check for environmental duplicates, by including a predictors object. This function also checks for records in the sea if the species is terrestrial, but note that this can be switched off if the studied species is not terrestrial. The way `caretSDM` works, we can always overwrite the main `input_sdm` object to update it. The function will return a new object with all the previous information and the new information obtained from the `data_clean` function, note that at the end of the Data Cleaning information there is the Duplicated Cell method. This method is only possible when we have both the `occurrence` and `predictors` data.
@@ -136,38 +130,13 @@ i <- data_clean(i, capitals = FALSE)
 i
 ```
 
-Check the difference of occurrences data before applying the data cleaning routine:
-
-```{r}
-plot_occurrences(i)
-```
-
-```{r}
-mapview_occurrences(i)
-```
-
-We can also export the grid from study_area with occurrences data:
-
-```{r}
-write_occurrences(i, path = "results/occurrences.gpkg", grid = TRUE)
-```
-
-Or we can export the .csv file with coordinates:
-
-```{r}
-write_occurrences(i, path = "results/occurrences.csv")
-```
-
 ### Removing multicolinearity from predictors' data
 
 In `vif_predictors`, we are able to perform two methods to select variables: selecting all area or using the presence records (which is debatable, but implemented). `vif_predictors` allows for a maximum threshold to be informed. The standard is 0.5.
 
 ```{r vif_predictors}
-i <- vif_predictors(i, th = 0.5) 
-vif_summary(i)
-```
-
-```{r}
+i <- vif_predictors(i, th = 0.5, 
+                    variables_selected = c("bio1", "bio2", "bio3", "bio4", "bio5", "bio6", "bio7", "bio12", "bio13", "bio14", "bio15")) 
 i
 ```
 
@@ -180,8 +149,6 @@ As we mentioned before, pseudoabsence data will be stored in the `occurrences` o
 i <- pseudoabsences(i, method = "bioclim", variables_selected = "vif") 
 i
 ```
-
-**TIP:** Note that the information regarding the `i` object has increased. Now it includes the information that we performed a Data Cleaning routine, explicitly informing what methods were used, the information regarding VIF routine and the pseudoabsences.
 
 ## Processing
 
@@ -208,28 +175,13 @@ i <- train_sdm(i,
                variables_selected = "vif")
 ```
 
-```{r}
+```{r train_sdm2}
 i
 ```
 
-With models built, we can see Partial Dependence Plots (a.k.a., response curves)...
-
-```{r pdp_sdm}
-pdp_sdm(i)
-pdp_sdm(i, algo = "kknn")
-```
-
-... and the variables importance.
-
-```{r varImp_sdm}
-varImp_sdm(i)
-```
-
-A important result is also the validation metrics, which can be assessed using `mean_validation_metrics` function:
-
 ```{r}
 get_validation_metrics(i)
-mean_validation_metrics(i)
+write_validation_metrics(i, path = "results")
 ```
 
 ## Post-Processing
@@ -239,43 +191,18 @@ mean_validation_metrics(i)
 Now that we have our models, we can make predictions in new scenarios. The function `predict_sdm` incorporates also the prediction of ensembles (`ensembles=TRUE` is standard).
 
 ```{r predict_sdm}
-i <- predict_sdm(i, th = 0.8)
+i <- predict_sdm(i, th = 0.9)
 i
 ```
 
-To generate maps in `caretSDM` we can simply plot the `input_sdm` object using the function `plot_predictions`. This function has a series of arguments to plot specific maps within `i`. You can take a look at `?plot_predictions` to know more.
-
-```{r plot_predictions}
-plot_predictions(i, scenario = "current")
-```
-
-The same goes for mapview:
-
 ```{r}
-mapview_predictions(i)
+write_ensembles(i, path = "results/ensembles", ext = ".tif")
+write_ensembles(i, path = "results/ensembles", ext = ".csv", centroid = TRUE)
 ```
-
-### 
 
 ### Projecting models to future scenarios using chooseGCM
 
-#### Installing chooseGCM
-
-To install chooseGCM we need devtools to retrieve the package from GitHub in the same way we install caretSDM.
-
-```{r install_chooseGCM}
-install.packages(setdiff("devtools", rownames(installed.packages())))
-devtools::install_github("luizesser/chooseGCM")
-```
-
 First, we need to use only one time period. Here we use 2090 so the difference between models is more conspicuous. In the same way we are considering the SSP585, which is the more dramatic pathway. The resolution is the lowest to be quicker. The aim here is to maintain all parameters equal, but General Circulation Models (GCMs). In this way we know that the only source of variation comes from them. Note that if you receive a timeout error you can increase timeout value by running , where 600 is the value in seconds that will be enough to download the data.
-
-```{r WorldClim_data_future}
-# Download future scenarios
-#WorldClim_data(path="input_data/WorldClim_data_chooseGCM/", period = "future", ssp = '585', year = '2090', gcm = "all", resolution = 10)
-WorldClim_data(path="/Users/luizesser/Documents/GitHub/input_data/WorldClim_data_chooseGCM/", period = "future", ssp = '585', year = '2090', gcm = "all", resolution = 10)
-
-```
 
 #### Importing and Transforming Data
 
@@ -289,14 +216,10 @@ names(s) <- gsub("_ssp585_10_2090", "", names(s))
 
 In each following function, data will be transformed. To do that, you will always need to provide at least: (1) the list of stacks, (2) the variables you want to use in analysis and (3) the shapefile of your study area. You don't need to previously mask and subset your data, once the functions will perform this task internally for you. Note that the results from these functions are highly sensitive to variables and to study area. In this sense, the decision on what variables should be considered and what is the study area must be carefully made considering biological aspects of the studied group.
 
-```{r study_area}
-study_area <- get_sdm_area(i)
-```
-
 There is the option to run each function in separate to better understand what is happening and to better parameterize each step. However there is a wrapper to help run everything at once and could be an alternative to have a broad perspective. `compare_gcms()` will return a list with a vector called `suggested_gcms` and a Figure called `statistics_gcms`. We suggest that this Figure could also be included as it is in supplementary data from studies using this package.
 
 ```{r}
-res <- chooseGCM::compare_gcms(s, var_names=c("bio01", "bio12"), sf::st_transform(study_area, crs=4326), k = 4)
+res <- chooseGCM::compare_gcms(s, var_names=c("bio01", "bio12"), sf::st_transform(get_sdm_area(i), crs=4326), k = 2)
 res
 ```
 
@@ -306,8 +229,7 @@ Now we can download data from WorldClim 2.1 to the selected GCMs:
 
 ```{r WorldClim_data_future2}
 # Download future scenarios
-WorldClim_data(path="input_data/WorldClim_data_future/",period = "future", year = c('2050', '2090'), ssp = c('585'), gcm = res$suggested_gcms, resolution = 10)
-
+#WorldClim_data(path="input_data/WorldClim_data_future/",period = "future", year = c('2050', '2090'), ssp = c('585'), gcm = res$suggested_gcms, resolution = 10)
 # Import scenarios to R
 scen <- stars::read_stars(list.files("input_data/WorldClim_data_future/", full.names = T), normalize_path = F)
 
@@ -318,23 +240,29 @@ scen
 ### Add scenarios to the input_sdm
 
 ```{r}
-i2 <- add_scenarios(i, scen, stationary=c("LENGTH_KM", "DIST_DN_KM", "DIST_UP_KM", "CATCH_SKM", "UPLAND_SKM", "DIS_AV_CMS"))
+i2 <- add_scenarios(i, scen)
 i2
 ```
 
 ```{r}
-i2 <- predict_sdm(i2, th = 0.8)
+i2 <- predict_sdm(i2, th = 0.9)
 i2
 ```
 
 ```{r}
-plot_predictions(i2, scenario = "ch_ssp585_10_209")
+# Calculate GCM ensemble
+i3 <- gcms_ensembles(i2, gcms=c("ch", "in"))
+i3
 ```
 
 ```{r}
-plot_predictions(i2, scenario = "in_ssp585_10_209")
+# Plot GCM ensemble:
+plot_predictions(i3, scenario = "_ssp585_10_205")
 ```
 
 ```{r}
-i <- gcms_ensembles(i2, gcms=res$suggested_gcms)
+# Plot GCM ensemble:
+plot_predictions(i3, scenario = "_ssp585_10_209")
 ```
+
+### 

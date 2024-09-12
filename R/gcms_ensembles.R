@@ -10,7 +10,6 @@
 #'
 #' @returns A \code{input_sdm} object with grouped GCMs.
 #'
-#' @details
 #'
 #' @seealso \code{\link{GBIF_data} \link{occurrences} \link{sdm_area} \link{input_sdm}
 #' \link{predictors}}
@@ -37,9 +36,6 @@
 #' # Clean coordinates:
 #' i <- data_clean(i)
 #'
-#' @importFrom stars st_extract st_rasterize
-#' @importFrom stringdist stringdist
-#' @importFrom sf st_as_sf st_crs st_transform st_join
 #' @importFrom dplyr bind_cols
 #'
 #' @export
@@ -55,19 +51,24 @@ gcms_ensembles <- function(i, gcms=NULL) {
 
   scen_names <- names(table(cols)[table(cols)>1])
 
-  l <- sapply(scen_names, function(sc){
-    ysc <- y[,grep(sc, colnames(y))]
-    ysc <- dplyr::bind_cols(ysc)
-    l2 <- list()
-    for (m in emet) {
-      l2[[m]] <- rowMeans(ysc[,grep(m, colnames(ysc))])
+  out <- matrix(nrow=nrow(y), ncol = length(scen_names), dimnames = list(rownames(y), scen_names))
+  l <- list()
+  for(sp in rownames(y)){
+    for(sc in scen_names){
+      ysc <- y[sp, grep(sc, colnames(y))]
+      ysc <- dplyr::bind_cols(ysc)
+      l2 <- list()
+      for (m in emet) {
+        l2[[m]] <- rowMeans(ysc[,grep(m, colnames(ysc))])
+      }
+      l <- append(l,list(data.frame(cell_id=ysc[,1] , dplyr::bind_cols(l2))))
     }
-    l2 <- data.frame(cell_id=ysc[,1] , dplyr::bind_cols(l2))
-  }, simplify=FALSE, USE.NAMES=TRUE)
-
-  for(s in scen_names){
-    y[,s] <- l[[s]]
   }
 
-  return(y)
+  m <- matrix(l, nrow=nrow(y), ncol = length(scen_names), dimnames = list(rownames(y), scen_names), byrow = TRUE)
+  y2 <- cbind(y,m)
+
+  i$predictions$ensembles <- y2
+  return(i)
 }
+

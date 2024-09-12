@@ -182,7 +182,7 @@ plot_predictions <- function(i, spp_name = NULL, scenario = NULL, id = NULL, ens
                              ensemble_type = "mean_occ_prob") {
   assert_class_cli(i, "input_sdm")
   assert_subset_cli(spp_name, species_names(i))
-  assert_subset_cli(scenario, scenarios_names(i))
+  #assert_subset_cli(scenario, scenarios_names(i))
   assert_subset_cli("predictions", names(i))
   return(plot(i$predictions, spp_name, scenario, id, ensemble, ensemble_type))
 }
@@ -190,10 +190,14 @@ plot_predictions <- function(i, spp_name = NULL, scenario = NULL, id = NULL, ens
 #' @exportS3Method base::plot
 plot.predictions <- function(x, spp_name = NULL, scenario = NULL, id = NULL, ensemble = TRUE,
                              ensemble_type = "mean_occ_prob") {
-  valid_spp <- names(x$predictions[[1]])
-  valid_scen <- names(x$predictions)
   ens <- ifelse(ensemble, "ensembles", "predictions")
-  # valid_id
+  valid_spp <- names(x$predictions[[1]])
+  if (ensemble) {
+    valid_scen <- x[[ens]] |> colnames()
+  } else {
+    valid_scen <- names(x$predictions)
+  }
+
   grd <- x$grid
   if (!is.null(scenario)) {
     scenario <- valid_scen[which.min(stringdist::stringdist(scenario, valid_scen))]
@@ -205,8 +209,8 @@ plot.predictions <- function(x, spp_name = NULL, scenario = NULL, id = NULL, ens
   } else {
     spp_name <- valid_spp[1]
   }
-  cell_id <- x[["predictions"]][[scenario]][[spp_name]][[1]]$cell_id
   if (ensemble) {
+    cell_id <- x[[ens]][[spp_name, scenario]][, "cell_id"]
     v <- x[[ens]][[spp_name, scenario]][, ensemble_type]
     grd <- dplyr::filter(grd, grd$cell_id == cell_id)
     grd[grd$cell_id %in% cell_id, "result"] <- v
@@ -221,6 +225,7 @@ plot.predictions <- function(x, spp_name = NULL, scenario = NULL, id = NULL, ens
     }
     subtitle <- paste0("Ensemble type: ", et)
   } else {
+    cell_id <- x[["predictions"]][[scenario]][[spp_name]][[1]]$cell_id
     v <- x[[ens]][[scenario]][[spp_name]][[id]]$presence
     grd <- dplyr::filter(grd, grd$cell_id == cell_id)
     grd[grd$cell_id %in% cell_id, "result"] <- v

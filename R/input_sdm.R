@@ -173,6 +173,7 @@ print.input_sdm <- function(x) {
     cat("--------  Predictions  --------\n")
     cat(
       "Ensembles                     :\n",
+      "   Scenarios                 :", colnames(x$predictions$ensembles), "\n",
       "   Methods                   :", colnames(x$predictions$ensembles[1, 1][[1]])[-1], "\n"
     )
     cat(
@@ -180,5 +181,6 @@ print.input_sdm <- function(x) {
       "   Method                    :", x$predictions$thresholds$method, "\n",
       "   Criteria                  :", x$predictions$thresholds$criteria, "\n"
     )
+
   }
 }

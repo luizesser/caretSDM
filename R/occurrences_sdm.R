@@ -150,6 +150,11 @@ occurrences_as_df <- function(i) {
 }
 
 #' @export
+select_species <- function(oc, sp_names=NULL) {
+  return(oc)
+}
+
+#' @export
 .occurrences <- function(x, independent_test = NULL, p = 0.1, crs = NULL,
                          independent_test_crs = NULL, ...) {
   assert_int_cli(crs, lower = 1024, upper = 32766, null.ok = TRUE)

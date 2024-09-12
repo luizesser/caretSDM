@@ -86,7 +86,7 @@ vif_predictors <- function(pred, area = "all", th = 0.5, maxobservations = 5000,
   #} else
   if (is_sdm_area(x)) {
     if (is.null(variables_selected)) {
-      selected_variables <- predictors(x)
+      variables_selected <- get_predictor_names(x)
     }
     facnum <- function(x) {
       return(as.numeric(as.factor(x)))
@@ -95,7 +95,7 @@ vif_predictors <- function(pred, area = "all", th = 0.5, maxobservations = 5000,
       v <- x$grid |>
         as.data.frame() |>
         dplyr::select(-c("geometry", "cell_id")) |>
-        dplyr::select(dplyr::all_of(selected_variables)) |>
+        dplyr::select(dplyr::all_of(variables_selected)) |>
         dplyr::mutate_if(is.character, facnum) |>
         usdm::vifcor(th = th, size = maxobservations)
     }

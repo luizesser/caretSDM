@@ -3,16 +3,32 @@
 \name{write_ensembles}
 \alias{write_ensembles}
 \alias{write_predictions}
+\alias{write_predictors}
 \alias{write_models}
 \alias{write_gpkg}
 \alias{write_gpkg.sdm_area}
 \alias{write_occurrences}
+\alias{write_pseudoabsences}
+\alias{write_scenarios}
 \alias{write_grid}
+\alias{write_validation_metrics}
 \title{Write caretSDM data}
 \usage{
 write_ensembles(x, path = "results/ensembles", ext = ".tif")
 
-write_predictions(x, path = "results/predictions", ext = ".tif")
+write_predictions(
+  x,
+  path = "results/predictions",
+  ext = ".tif",
+  centroid = FALSE
+)
+
+write_predictors(
+  x,
+  path = "results/predictors",
+  ext = ".tif",
+  centroid = FALSE
+)
 
 write_models(x, path = "results/models")
 
@@ -22,7 +38,13 @@ write_gpkg(x, file_path, file_name)
 
 write_occurrences(x, path = "results/occurrences.csv", grid = FALSE, ...)
 
-write_grid(x, path = "results/grid_study_area.gpkg", ...)
+write_pseudoabsences(x, path = "results/predictors", ext = ".tif", ...)
+
+write_scenarios(x, path = "results/predictors", ext = ".tif", ...)
+
+write_grid(x, path = "results/grid_study_area.gpkg", centroid = FALSE, ...)
+
+write_validation_metrics(x, path = "results", ...)
 }
 \arguments{
 \item{x}{Object to be written. Can be of class \code{input_sdm}, \code{occurrences},
@@ -30,6 +52,8 @@ write_grid(x, path = "results/grid_study_area.gpkg", ...)
 
 \item{path}{A path with filename and the proper extension (see details) or the directory to save
 files in.}
+
+\item{centroid}{Should coordinates for the centroids of each cell be included? Standard is FALSE.}
 
 \item{file_path}{A path to save the \code{sdm_area} GeoPackage file.}
 

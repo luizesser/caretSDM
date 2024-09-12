@@ -69,7 +69,6 @@ add_predictors <- function(sa, pred, variables_selected = NULL, gdal= TRUE) {
   UseMethod("add_predictors", pred)
 }
 
-
 #' @export
 add_predictors.RasterStack <- function(sa, pred, variables_selected = NULL, gdal= TRUE) {
   pred <- sa  |>

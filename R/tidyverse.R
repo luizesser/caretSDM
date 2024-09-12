@@ -2,7 +2,7 @@
 #'
 #' Set of functions to facilitate the use of caretSDM through tidyverse grammatics.
 #'
-#' @usage select(x, ...)
+#' @usage select_predictors(x, ...)
 #'
 #' @param x \code{sdm_area} object
 #' @param ... \code{character} vector with predictors to be selected.
@@ -16,6 +16,12 @@
 #'
 #' @importFrom dplyr select relocate mutate
 #'
+#' @rdname tidyverse-methods
+#' @export
+select_predictors <- function(x, ...) {
+  return(dplyr::select(x, ...))
+}
+
 #' @rdname tidyverse-methods
 #' @export
 select.sdm_area <- function(x, ...){
@@ -128,18 +134,9 @@ filter.sdm_area <- function(x, ...){
 #' @rdname tidyverse-methods
 #' @export
 filter.input_sdm <- function(x, ...){
-  i <- x
-  x <- x$occurences
-  grd <- dplyr::filter(x$occurrences, ...)
-  grd_col_names <- colnames(grd)
-  if (!("cell_id" %in% grd_col_names)) {
-    grd[["cell_id"]] <- x$occurrences[["cell_id"]]
-  }
-  grd_col_names2 <- setdiff(grd_col_names, c('cell_id','geometry'))
-  grd <- grd |> dplyr::relocate(cell_id, all_of(grd_col_names2), geometry)
-  x$occurrences <- grd
-  i$occurrences <- x
-  return(i)
+  oc <- filter(x$occurrences, ...)
+  x$occurrences <- oc
+  return(x)
 }
 
 #' @rdname tidyverse-methods
@@ -154,6 +151,14 @@ filter.occurrences <- function(x, ...){
   }
   grd_col_names2 <- setdiff(grd_col_names, c('cell_id','geometry'))
   grd <- grd |> dplyr::relocate(cell_id, all_of(grd_col_names2), geometry)
-  x$grid <- grd
-  return(i)
+  oc$occurrences <- grd
+  oc$spp_names <- table(grd$species) |> names()
+  oc$n_presences <- table(grd$species)
+  return(oc)
+}
+
+#' @rdname tidyverse-methods
+#' @export
+filter_species <- function(x, spp = NULL, ...) {
+  return(dplyr::filter(x, species %in% spp, ...))
 }
