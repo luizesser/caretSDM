@@ -274,10 +274,7 @@ write_grid <- function(x, path = "results/grid_study_area.gpkg", centroid = FALS
 
 #' @rdname write_ensembles
 #' @export
-write_validation_metrics <- function(x, path = "results", ...) {
-  if(is_input_sdm(x)){
-    x <- x$predictors
-  }
+write_validation_metrics <- function(x, path = "results/validation_metrics", ...) {
   #suppressWarnings(dir.create(path, recursive = T))
   #caretSDM:::assert_directory_cli(dirname(path))
   spp <- species_names(x)
