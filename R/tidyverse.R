@@ -144,6 +144,7 @@ filter.input_sdm <- function(x, ...){
 filter.occurrences <- function(x, ...){
   oc <- x
   x <- x$occurrences
+  cd <- FALSE
   if("cell_id" %in% names(x)){
     cd <- TRUE
   }
