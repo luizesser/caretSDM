@@ -16,8 +16,6 @@ First, we need to open our libraries.
 library(caretSDM)
 library(stars) # Package used to manipulate GIS data
 library(dplyr) # Package to improve data handling
-#library(progressr) # Package to show progress bars
-#progressr::handlers(global = TRUE)
 ```
 
 ## Pre-Processing
@@ -252,22 +250,7 @@ With the occurrences and predictors data put together, we can pass to the modeli
 
 Note that, when you are using an algorithm for the first time, caret will ask you to install the relevant packages to properly run the algorithm.
 
-```{r train_sdm, eval=TRUE, include=FALSE}
-ctrl_sdm <- caret::trainControl(method = "repeatedcv", 
-                                number = 4, 
-                                repeats = 10, 
-                                classProbs = TRUE,
-                                returnResamp = "all",
-                                summaryFunction = summary_sdm,
-                                savePredictions = "all")
-
-i <- train_sdm(i, 
-               algo = c("svmLinear2", "mda", "nnet", "kknn"), 
-               crtl=ctrl_sdm, 
-               variables_selected = "pca")
-```
-
-```{r train_sdm2, eval=FALSE, include=TRUE}
+```{r train_sdm2, echo=FALSE}
 ctrl_sdm <- caret::trainControl(method = "repeatedcv", 
                                 number = 4, 
                                 repeats = 10, 
