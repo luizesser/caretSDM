@@ -10,8 +10,8 @@ editor: visual
 ```{r}
 library(caretSDM)
 
-sa <- sdm_area('vignettes/input_data/parana_paraguay.gpkg', cell_size = 25000, crs = 6933, gdal = T) |>
-  add_predictors(stars::read_stars(list.files("vignettes/input_data/WorldClim_data_current/", full.names = T),
+sa <- sdm_area('input_data/parana_paraguay.gpkg', cell_size = 25000, crs = 6933, gdal = T) |>
+  add_predictors(stars::read_stars(list.files("input_data/WorldClim_data_current/", full.names = T),
                                    along = "band",
                                    normalize_path = F)) |>
   add_scenarios() |>
@@ -22,7 +22,7 @@ sa <- sdm_area('vignettes/input_data/parana_paraguay.gpkg', cell_size = 25000, c
                             "DIS_AV_CMS","bio01","bio02", "bio03", "bio04", "bio05", "bio06",
                             "bio07", "bio12", "bio13", "bio14", "bio15"))
 
-oc <- occurrences_sdm("vignettes/input_data/Salminus.csv", crs = 4326) |>
+oc <- occurrences_sdm("input_data/Salminus.csv", crs = 4326) |>
   join_area(sa)
 
 i <- input_sdm(oc, sa) |>
