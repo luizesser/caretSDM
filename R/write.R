@@ -191,11 +191,11 @@ write_occurrences <- function(x, path = "results/occurrences.csv", grid = FALSE,
     grd <- sf::st_join(x$predictors$grid, x$occurrences$occurrences) |>
       dplyr::select(c(cell_id.x, species))
     colnames(grd) <- c("cell_id", "species", "geometry")
-    df <- sf_to_df_sdm(grd)
-    df$values <- rep(1, nrow(df))
-    df$species <- ifelse(is.na(df$species), "delete", df$species[])
+    #df <- sf_to_df_sdm(grd)
+    #df$values <- rep(1, nrow(df))
+    #df$species <- ifelse(is.na(df$species), "delete", df$species[])
 
-    tidyr::pivot_wider(df, names_from = species, values_from = values)
+    #tidyr::pivot_wider(df, names_from = species, values_from = values)
     sf::st_write(grd,
                  dsn = path,
                  delete_dsn = TRUE,

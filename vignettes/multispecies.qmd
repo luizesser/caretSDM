@@ -100,12 +100,6 @@ oc <- oc |>
 oc
 ```
 
-```{r}
-write_occurrences(i, path = "results/occurrences.csv", grid = FALSE)
-write_occurrences(i, path = "results/occurrences.gpkg", grid = TRUE)
-write_occurrences(i, path = "results/occurrences.shp", grid = TRUE)
-```
-
 ### The `input_sdm` class
 
 In `caretSDM` we use multiple classes to perform our analysis. Every time we perform a new analysis, objects keep the information of what we did. Ideally, the workflow will have only one object throughout it. The `input_sdm` class is the key class in the workflow, where every function will orbitate. That class puts occurrences, predictors, scenarios, models and predictions together to perform analysis that are only possible when two or more of these classes are available. First, we create the object by informing the occurrences and sdm_area.
@@ -113,6 +107,12 @@ In `caretSDM` we use multiple classes to perform our analysis. Every time we per
 ```{r input_sdm}
 i <- input_sdm(oc, sa)
 i
+```
+
+```{r}
+write_occurrences(i, path = "results/occurrences.csv", grid = FALSE)
+write_occurrences(i, path = "results/occurrences.gpkg", grid = TRUE)
+write_occurrences(i, path = "results/occurrences.shp", grid = TRUE)
 ```
 
 Now we can visualize `oc` data using plot:
