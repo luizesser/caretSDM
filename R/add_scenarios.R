@@ -113,6 +113,8 @@ add_scenarios.stars <- function(sa, scen=NULL, scenarios_names = NULL, pred_as_s
     sa <- sa$scenarios
   }
 
+  add_sc <- ifelse(length(sa$data)>1, TRUE, FALSE)
+
   if (is.null(scenarios_names)) { scenarios_names <- names(scen) }
   pres_names <- get_predictor_names(sa)
 
@@ -142,7 +144,12 @@ add_scenarios.stars <- function(sa, scen=NULL, scenarios_names = NULL, pred_as_s
 
     sa_data <- sa
 
-    sa_data$data <- l
+    if(add_sc){
+      sa_data$data <- c(sa$data,l)
+    } else {
+      sa_data$data <- l
+    }
+
     sa_data$grid <- l[["current"]]
     i2$scenarios <- sa_data
     return(i2)
@@ -172,7 +179,6 @@ add_scenarios.stars <- function(sa, scen=NULL, scenarios_names = NULL, pred_as_s
   }
 
   grid_t <- sf::st_transform(sa$grid, sf::st_crs(scen))
-  #suppressWarnings(scen <- sf::st_crop(scen, grid_t))
 
   l <- list()
   for (i in 1:length(scen)) {
@@ -190,7 +196,13 @@ add_scenarios.stars <- function(sa, scen=NULL, scenarios_names = NULL, pred_as_s
       dplyr::select(c(cell_id, dplyr::all_of(variables_selected)))
   }
 
-  sa_data$data <- l # =i$scenarios$data
+  if(add_sc){
+    sa_data$data <- c(sa$data,l)
+  } else {
+    sa_data$data <- l
+  }
+
+  #sa_data$data <- l # =i$scenarios$data
   sa_data$grid <- sa$grid |>
     dplyr::select(c(cell_id, dplyr::all_of(variables_selected)))
   if ( !is.null(stationary) ) { sa_data$stationary <- stationary }
