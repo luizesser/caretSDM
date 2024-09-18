@@ -13,6 +13,6 @@
       Number of Predictors          : 2 
       Predictors Names              : bio01, bio12 
       ---------  Scenarios  ---------
-      Scenarios Names               : ssp126_2030 ssp126_2090 ssp585_2030 ssp585_2090 current 
       Number of Scenarios           : 5 
+      Scenarios Names               : ssp126_2030 ssp126_2090 ssp585_2030 ssp585_2090 current 
 

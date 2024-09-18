@@ -37,4 +37,21 @@ algo <- c(
   # Others
   "null", "JRip", "msaenet", "OneR", "PART", "PRIM", "xgbLinear"
   )
+
+algo <- c(
+  # SVM
+  "svmRadial",
+  # Discriminant
+  "fda", "mda",
+  # Neural Networks
+  "nnet", "mlp", "rbf",
+  # Neighbors
+  "knn",
+  # Naive Bayes
+  "naive_bayes",
+  # Tree-based
+  "rf", "ctree","gbm",  "rpart",
+  # Regression
+  "earth", "glm"
+  )
 ```

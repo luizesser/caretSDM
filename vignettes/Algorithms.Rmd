@@ -1,16 +1,11 @@
 ---
-title: "Concatenate functions in caretSDM"
+title: "Algorithms"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{compact_caretSDM}
-  %\VignetteEncoding{UTF-8}
+  %\VignetteIndexEntry{Algorithms}
   %\VignetteEngine{knitr::rmarkdown}
-editor_options: 
-  markdown: 
-    wrap: 72
+  %\VignetteEncoding{UTF-8}
 ---
-
-## 
 
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
@@ -19,7 +14,9 @@ knitr::opts_chunk$set(
 )
 ```
 
-```{r}
+## Testing algorithms for SDMs
+
+```{r preparing_data}
 library(caretSDM)
 sa <- sdm_area('input_data/parana_paraguay.gpkg', 
                cell_size = 25000, 
@@ -30,23 +27,26 @@ sa <- sdm_area('input_data/parana_paraguay.gpkg',
                                    along = "band", 
                                    normalize_path = F)) |> 
   add_scenarios() |> 
-  select_predictors(c("LENGTH_KM", "DIST_DN_KM", "DIST_UP_KM", "CATCH_SKM", 
+  dplyr::select(c("LENGTH_KM", "DIST_DN_KM", "DIST_UP_KM", "CATCH_SKM", 
                   "UPLAND_SKM", "DIS_AV_CMS","ORD_STRA","X1.tif", "X2.tif", "X3.tif",
                   "X4.tif", "X5.tif", "X6.tif", "X7.tif", "X12.tif", 
                   "X13.tif", "X14.tif", "X15.tif")) |> 
   set_predictor_names(c("LENGTH_KM", "DIST_DN_KM", "DIST_UP_KM", "CATCH_SKM",
-                        "UPLAND_SKM", "DIS_AV_CMS","ORD_STRA","bio01","bio02", "bio03", 
-                        "bio04", "bio05", "bio06", "bio07", "bio12", "bio13", 
-                        "bio14", "bio15"))
-sa <- readRDS("")
+                        "UPLAND_SKM", "DIS_AV_CMS","ORD_STRA",
+                        "bio01","bio02", "bio03", "bio04", "bio05", "bio06", 
+                        "bio07", "bio12", "bio13", "bio14", "bio15"))
+
 oc <- occurrences_sdm("input_data/Salminus.csv", crs = 4326) |> 
   join_area(sa)
 
+```
+
+```{r knn}
 i <- input_sdm(oc, sa) |> 
   data_clean() |> 
   vif_predictors() |> 
   pseudoabsences(method = "bioclim", variables_selected = "vif") |> 
-  train_sdm(algo = c("svmPoly","naive_bayes", "kknn", "nnet", "mda"), 
+  train_sdm(algo = c("svmPoly","naive_bayes", "kknn", "nnet", "mda", ), 
             crtl = caret::trainControl(method = "repeatedcv", 
                                        number = 4, 
                                        repeats = 10, 
@@ -54,6 +54,9 @@ i <- input_sdm(oc, sa) |>
                                        returnResamp = "all", 
                                        summaryFunction = summary_sdm, 
                                        savePredictions = "all"), 
-            variables_selected = "vif") |> 
-  predict_sdm(th = 0.8)
+            variables_selected = "vif")
+```
+
+```{r}
+
 ```

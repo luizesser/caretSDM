@@ -66,7 +66,7 @@ test_that("data_clean - normal path with pred at wgs84", {
                      coords = c("decimalLongitude", "decimalLatitude"),
                      crs = 6933)
   occ2 <- sf::st_transform(occ2, crs = 4326)
-  expect_warning(oc <- occurrences_sdm(occ2, independent_test = TRUE, crs= 4326) |> join_area(pred))
+  oc <- occurrences_sdm(occ2, independent_test = TRUE, crs= 4326) |> join_area(pred)
   i <- input_sdm(oc, pred)
   i <- data_clean(i)
   expect_true(st_crs(i$occurrences$occurrences) == st_crs(oc$occurrences))

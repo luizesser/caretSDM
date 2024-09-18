@@ -17,8 +17,8 @@
       Number of Predictors          : 2 
       Predictors Names              : bio01, bio12 
       ---------  Scenarios  ---------
-      Scenarios Names               : current 
       Number of Scenarios           : 1 
+      Scenarios Names               : current 
       -----------  Models  ----------
       Algorithms Names              : svmLinear2 mda nnet kknn 
       Variables Names               : bio01 bio12 
@@ -55,8 +55,8 @@
       PCA-transformed variables     : DONE 
       Cummulative proportion (0.99) : PC1 
       ---------  Scenarios  ---------
-      Scenarios Names               : current 
       Number of Scenarios           : 1 
+      Scenarios Names               : current 
       -----------  Models  ----------
       Algorithms Names              : svmLinear2 mda nnet kknn 
       Variables Names               : PC1 
@@ -93,8 +93,8 @@
       PCA-transformed variables     : DONE 
       Cummulative proportion (0.99) : PC1 
       ---------  Scenarios  ---------
-      Scenarios Names               : current 
       Number of Scenarios           : 1 
+      Scenarios Names               : current 
       -----------  Models  ----------
       Algorithms Names              : svmLinear2 mda nnet kknn 
       Variables Names               : PC1 
@@ -132,8 +132,8 @@
       Threshold                     : 0.5
       Selected Variables (VIF)      : bio01, prod 
       ---------  Scenarios  ---------
-      Scenarios Names               : current 
       Number of Scenarios           : 1 
+      Scenarios Names               : current 
       -----------  Models  ----------
       Algorithms Names              : svmLinear2 mda nnet kknn 
       Variables Names               : bio01 prod 
@@ -168,8 +168,8 @@
       Number of Predictors          : 2 
       Predictors Names              : bio01, bio12 
       ---------  Scenarios  ---------
-      Scenarios Names               : current 
       Number of Scenarios           : 1 
+      Scenarios Names               : current 
       -----------  Models  ----------
       Algorithms Names              : svmLinear2 mda nnet kknn 
       Variables Names               : bio01 bio12 

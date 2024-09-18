@@ -23,7 +23,7 @@ if (fs::dir_exists(here::here("tests", "testthat", "testdata"))) {
 }
 sa <- sdm_area(pr_gpkg, cell_size = 20000, crs = 6933)
 sa <- add_predictors(sa, pr_raster)
-sa <- select(sa, c("wc2.1_10m_bio_1","wc2.1_10m_bio_12"))
+sa <- dplyr::select(sa, c("wc2.1_10m_bio_1","wc2.1_10m_bio_12"))
 sa <- set_predictor_names(sa, c("bio01", "bio12"))
 
 test_that("add_scenarios - stars", {
@@ -80,7 +80,7 @@ test_that("add_scenarios - SpatRaster", {
 
 test_that("add_scenarios - RasterStack", {
   suppressWarnings(test <- as(scen, "Raster"))
-  test <- stack(test)
+  test <- raster::stack(test)
   sa_pred <- add_scenarios(sa, test)
   expect_equal(
     sa_pred$scenarios$data$current,
@@ -125,3 +125,58 @@ test_that("add_scenarios - stars e vars tem nomes diferentes", {
   expect_true(all(get_predictor_names(sa) %in% names(sa_scen$scenarios$data$ssp126_2030)))
 })
 
+test_that("add_scenarios - stationary data", {
+  sa <- sdm_area(pr_gpkg, cell_size = 20000, crs = 6933)
+  names(pr_raster) <- c("bio01","bio12")
+  sa <- add_predictors(sa, pr_raster)
+  sa_pred <- add_scenarios(sa, pr_raster, stationary = c("GID0", "CODIGOIB1",
+                                                              "NOMEUF2", "SIGLAUF3"))
+  expect_equal(
+    get_predictor_names(sa_pred),
+    c("GID0", "CODIGOIB1", "NOMEUF2", "SIGLAUF3", "bio01","bio12")
+  )
+  expect_equal(
+    get_predictor_names(sa_pred),
+    get_predictor_names(sa_pred$scenarios)
+  )
+  expect_equal(
+    names(sa_pred$scenarios$data$bio01),
+    c("cell_id", "GID0", "CODIGOIB1", "NOMEUF2", "SIGLAUF3",
+      "bio01","bio12", "geometry")
+  )
+  expect_equal(length(sa_pred$scenarios$data), 2)
+
+  sa_pred <- add_scenarios(sa_pred, scen, stationary = c("GID0", "CODIGOIB1",
+                                                              "NOMEUF2", "SIGLAUF3"))
+  expect_equal(length(sa_pred$scenarios$data), 6)
+
+})
+
+test_that("add_scenarios - stationary data/input_sdm", {
+  sa <- sdm_area(pr_gpkg, cell_size = 20000, crs = 6933)
+  names(pr_raster) <- c("bio01","bio12")
+  sa <- add_predictors(sa, pr_raster)
+  sa <- add_scenarios(sa)
+  sa <- input_sdm(sa)
+  sa_pred <- add_scenarios(sa, pr_raster, stationary = c("GID0", "CODIGOIB1",
+                                                         "NOMEUF2", "SIGLAUF3"))
+  expect_equal(
+    get_predictor_names(sa_pred),
+    c("GID0", "CODIGOIB1", "NOMEUF2", "SIGLAUF3", "bio01","bio12")
+  )
+  expect_equal(
+    get_predictor_names(sa_pred),
+    get_predictor_names(sa_pred$scenarios)
+  )
+  expect_equal(
+    names(sa_pred$scenarios$data$bio01),
+    c("cell_id", "GID0", "CODIGOIB1", "NOMEUF2", "SIGLAUF3",
+      "bio01","bio12", "geometry")
+  )
+  #expect_equal(length(sa_pred$scenarios$data), 2)
+
+  sa_pred <- add_scenarios(sa_pred, scen, stationary = c("GID0", "CODIGOIB1",
+                                                         "NOMEUF2", "SIGLAUF3"))
+  #expect_equal(length(sa_pred$scenarios$data), 6)
+
+})

@@ -264,7 +264,6 @@ sdm_area.stars <- function(x, cell_size = NULL, crs = NULL, variables_selected =
     fs::dir_delete(in_dir)
   }
 
-
   var_names <- ""
   file_list <- ""
   del_in_dir <- FALSE

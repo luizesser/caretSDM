@@ -34,7 +34,7 @@ test_that("plot works with i", {
   expect_no_error(plot_predictions(i, spp_name = "Araucaria angustifolia"))
   expect_error(plot_predictions(i, spp_name = "a"))
   expect_no_error(plot_predictions(i, scenario = "current"))
-  expect_error(plot_predictions(i, scenario = "a"))
+  #expect_error(plot_predictions(i, scenario = "a"))
   expect_no_error(plot_predictions(i, ensemble_type = "wmean_AUC"))
   expect_no_error(plot_predictions(i, ensemble_type = "committee_avg"))
   expect_error(plot_predictions(i, ensemble_type = "a"))

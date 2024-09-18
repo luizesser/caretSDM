@@ -17,8 +17,8 @@
       Number of Predictors          : 2 
       Predictors Names              : bio01, bio12 
       ---------  Scenarios  ---------
-      Scenarios Names               : current 
       Number of Scenarios           : 1 
+      Scenarios Names               : current 
       -----------  Models  ----------
       Algorithms Names              : svmLinear2 mda nnet kknn 
       Variables Names               : bio01 bio12 
@@ -35,6 +35,7 @@
       
       --------  Predictions  --------
       Ensembles                     :
+          Scenarios                 : current 
           Methods                   : mean_occ_prob wmean_AUC committee_avg 
       Thresholds                    :
           Method                    : threshold: 0.9 
@@ -527,8 +528,8 @@
       Number of Predictors          : 2 
       Predictors Names              : bio01, bio12 
       ---------  Scenarios  ---------
-      Scenarios Names               : current 
       Number of Scenarios           : 1 
+      Scenarios Names               : current 
       -----------  Models  ----------
       Algorithms Names              : svmLinear2 mda nnet kknn 
       Variables Names               : bio01 bio12 
@@ -545,6 +546,7 @@
       
       --------  Predictions  --------
       Ensembles                     :
+          Scenarios                 : current 
           Methods                   : mean_occ_prob wmean_AUC committee_avg 
       Thresholds                    :
           Method                    : threshold: 0 
@@ -1037,8 +1039,8 @@
       Number of Predictors          : 2 
       Predictors Names              : bio01, bio12 
       ---------  Scenarios  ---------
-      Scenarios Names               : current 
       Number of Scenarios           : 1 
+      Scenarios Names               : current 
       -----------  Models  ----------
       Algorithms Names              : svmLinear2 mda nnet kknn 
       Variables Names               : bio01 bio12 
@@ -1055,6 +1057,7 @@
       
       --------  Predictions  --------
       Ensembles                     :
+          Scenarios                 : current 
           Methods                   : mean_occ_prob wmean_AUC committee_avg 
       Thresholds                    :
           Method                    : function (x, ...)  UseMethod("mean") 
