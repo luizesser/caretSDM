@@ -157,26 +157,26 @@ test_that("add_scenarios - stationary data/input_sdm", {
   names(pr_raster) <- c("bio01","bio12")
   sa <- add_predictors(sa, pr_raster)
   sa <- add_scenarios(sa)
-  sa <- input_sdm(sa)
-  sa_pred <- add_scenarios(sa, pr_raster, stationary = c("GID0", "CODIGOIB1",
+  i <- input_sdm(sa)
+  i_pred <- add_scenarios(i, pr_raster, stationary = c("GID0", "CODIGOIB1",
                                                          "NOMEUF2", "SIGLAUF3"))
   expect_equal(
-    get_predictor_names(sa_pred),
+    get_predictor_names(i_pred),
     c("GID0", "CODIGOIB1", "NOMEUF2", "SIGLAUF3", "bio01","bio12")
   )
   expect_equal(
-    get_predictor_names(sa_pred),
-    get_predictor_names(sa_pred$scenarios)
+    get_predictor_names(i_pred),
+    get_predictor_names(i_pred$scenarios)
   )
   expect_equal(
-    names(sa_pred$scenarios$data$bio01),
+    names(i_pred$scenarios$data$bio01),
     c("cell_id", "GID0", "CODIGOIB1", "NOMEUF2", "SIGLAUF3",
       "bio01","bio12", "geometry")
   )
-  #expect_equal(length(sa_pred$scenarios$data), 2)
+  expect_equal(length(i_pred$scenarios$data), 2)
 
-  sa_pred <- add_scenarios(sa_pred, scen, stationary = c("GID0", "CODIGOIB1",
+  i_pred <- add_scenarios(i_pred, scen, stationary = c("GID0", "CODIGOIB1",
                                                          "NOMEUF2", "SIGLAUF3"))
-  #expect_equal(length(sa_pred$scenarios$data), 6)
+  expect_equal(length(i_pred$scenarios$data), 6)
 
 })

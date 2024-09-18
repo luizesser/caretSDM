@@ -110,10 +110,13 @@ add_scenarios.stars <- function(sa, scen=NULL, scenarios_names = NULL, pred_as_s
                                 variables_selected = NULL, stationary = NULL, ...) {
   if (is_input_sdm(sa)) {
     i2 <- sa
-    sa <- sa$scenarios
+    sa <- i2$scenarios
+    add_sc <- ifelse(length(sa$data)>0, TRUE, FALSE)
+  } else if ( is_sdm_area(sa) ) {
+    add_sc <- ifelse(length(sa$scenarios$data)>0, TRUE, FALSE)
+
   }
 
-  add_sc <- ifelse(length(sa$scenarios$data)>1, TRUE, FALSE)
 
   if (is.null(scenarios_names)) { scenarios_names <- names(scen) }
   pres_names <- get_predictor_names(sa)
