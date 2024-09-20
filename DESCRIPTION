@@ -42,6 +42,7 @@ Imports:
     mapview,
     maxnet,
     mda,
+    naivebayes,
     nnet,
     parallelly,
     pdp,

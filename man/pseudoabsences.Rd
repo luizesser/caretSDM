@@ -22,9 +22,9 @@ pseudoabsence_method(i)
 pseudoabsence_data(i)
 }
 \arguments{
-\item{occ}{A \code{occurrences} or \code{input_sdm} object.}
+\item{occ}{A \code{occurrences_sdm} or \code{input_sdm} object.}
 
-\item{pred}{A \code{predictors} object. If \code{NULL} and \code{occ} is a \code{input_sdm},
+\item{pred}{A \code{sdm_area} object. If \code{NULL} and \code{occ} is a \code{input_sdm},
 \code{pred} will be retrieved from \code{occ}.}
 
 \item{method}{Method to create pseudoabsences. One of: "random", "bioclim" or "mahal.dist".}
@@ -42,7 +42,7 @@ Only used when method is not "random".}
 \item{i}{A \code{input_sdm} object.}
 }
 \value{
-A \code{occurrences} or \code{input_sdm} object with pseudoabsence data.
+A \code{occurrences_sdm} or \code{input_sdm} object with pseudoabsence data.
 }
 \description{
 This function obtains pseudoabsences given a set of predictors.
@@ -91,7 +91,7 @@ i <- pseudoabsence(i, method="bioclim", variables_selected = "vif")
 
 }
 \seealso{
-\code{link{input_sdm} \link{sdm_area} \link{occurrences} \link{predictors}}
+\code{link{input_sdm} \link{sdm_area} \link{occurrences_sdm}}
 }
 \author{
 Luíz Fernando Esser (luizesser@gmail.com)

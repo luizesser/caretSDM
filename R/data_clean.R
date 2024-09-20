@@ -14,8 +14,8 @@
 #'            terrestrial = TRUE,
 #'            independent_test = TRUE)
 #'
-#' @param occ A \code{occurrences} object or \code{input_sdm}.
-#' @param pred A \code{predictors} object. If \code{occ} is a \code{input_sdm} object with
+#' @param occ A \code{occurrences_sdm} object or \code{input_sdm}.
+#' @param pred A \code{sdm_area} object. If \code{occ} is a \code{input_sdm} object with
 #' predictors data, than \code{pred} is obtained from it.
 #' @param species A \code{character} stating the name of the column with species names in \code{occ} (see details).
 #' @param lon A \code{character} stating the name of the column with longitude in \code{occ} (see details).
@@ -31,7 +31,7 @@
 #' @param independent_test TRUE. If \code{occ} has independent test data, the data cleaning routine
 #' is also applied on it.
 #'
-#' @returns A \code{occurrences} object or \code{input_sdm} with new presence data.
+#' @returns A \code{occurrences_sdm} object or \code{input_sdm} with new presence data.
 #'
 #' @details
 #' If the user does not used \code{GBIF_data} function to obtain species records, the function may
@@ -40,7 +40,7 @@
 #' \code{lat} so the use can explicitly inform which columns should be used. If they remain as NA
 #' (standard) the function will try to guess which columns are the correct one.
 #'
-#' @seealso \code{\link{GBIF_data} \link{occurrences} \link{sdm_area} \link{input_sdm}
+#' @seealso \code{\link{GBIF_data} \link{occurrences_sdm} \link{sdm_area} \link{input_sdm}
 #' \link{predictors}}
 #'
 #' @author Luíz Fernando Esser (luizesser@gmail.com)

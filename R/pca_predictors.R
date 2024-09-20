@@ -9,7 +9,7 @@
 #' @return \code{input_sdm} object with variables from both \code{predictors} and \code{scenarios}
 #' transformed in PCA-axis.
 #'
-#' @seealso \code{\link{vif_sdm} \link{sdm_area} \link{add_scenarios} \link{add_predictors}}
+#' @seealso \code{\link{vif_predictors} \link{sdm_area} \link{add_scenarios} \link{add_predictors}}
 #'
 #' @author Luíz Fernando Esser (luizesser@gmail.com)
 #' https://luizfesser.wordpress.com

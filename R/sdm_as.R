@@ -118,7 +118,7 @@ sdm_as_stars <- function(x, what = NULL, spp = NULL, scen = NULL, id = NULL, ens
       grd <- x$predictors$grid
       v <- get_ensembles(x)[[spp, scen]][, c("cell_id", ens)]
       result <- stars::st_as_stars(merge(grd, v, by = "cell_id"))
-      result <- select(result, c("cell_id", ens))
+      result <- dplyr::select(result, all_of(c("cell_id", ens)))
       return(result)
     }
   }
@@ -208,7 +208,7 @@ sdm_as_terra <- function(x, what = NULL, spp = NULL, scen = NULL, id = NULL, ens
       what <- "scenarios"
     }
   }
-  if (class(x) == "input_sdm") {
+  if (is_input_sdm(x)) {
     if (what == "scenarios") {
       if (is.null(scen)) {
         scen <- names(x$scenarios$data)[1]

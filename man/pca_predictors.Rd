@@ -46,7 +46,7 @@ i <- pca_predictors(i)
 
 }
 \seealso{
-\code{\link{vif_sdm} \link{sdm_area} \link{add_scenarios} \link{add_predictors}}
+\code{\link{vif_predictors} \link{sdm_area} \link{add_scenarios} \link{add_predictors}}
 }
 \author{
 Luíz Fernando Esser (luizesser@gmail.com)

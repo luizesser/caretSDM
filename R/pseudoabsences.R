@@ -11,8 +11,8 @@
 #'                variables_selected = NULL,
 #'                th = 0)
 #'
-#' @param occ A \code{occurrences} or \code{input_sdm} object.
-#' @param pred A \code{predictors} object. If \code{NULL} and \code{occ} is a \code{input_sdm},
+#' @param occ A \code{occurrences_sdm} or \code{input_sdm} object.
+#' @param pred A \code{sdm_area} object. If \code{NULL} and \code{occ} is a \code{input_sdm},
 #' \code{pred} will be retrieved from \code{occ}.
 #' @param method Method to create pseudoabsences. One of: "random", "bioclim" or "mahal.dist".
 #' @param n_set \code{numeric}. Number of datasets of pseudoabsence to create.
@@ -23,7 +23,7 @@
 #' @param th \code{numeric} Threshold to be applied in bioclim/mahal.dist projections. See details.
 #' @param i A \code{input_sdm} object.
 #'
-#' @returns A \code{occurrences} or \code{input_sdm} object with pseudoabsence data.
+#' @returns A \code{occurrences_sdm} or \code{input_sdm} object with pseudoabsence data.
 #'
 #' @details
 #' \code{pseudoabsences} is used in the SDM workflow to obtain pseudoabsences, a step necessary for
@@ -42,7 +42,7 @@
 #' \code{pseudoabsence_data} returns a \code{list} of species names. Each species name will have a
 #' \code{list}s with pseudoabsences data from class \code{sf}.
 #'
-#' @seealso \code{link{input_sdm} \link{sdm_area} \link{occurrences} \link{predictors}}
+#' @seealso \code{link{input_sdm} \link{sdm_area} \link{occurrences_sdm}}
 #'
 #' @author Luíz Fernando Esser (luizesser@gmail.com)
 #' https://luizfesser.wordpress.com
@@ -72,24 +72,25 @@
 #' # Pseudoabsence generation:
 #' i <- pseudoabsence(i, method="bioclim", variables_selected = "vif")
 #'
-#' @importFrom sf st_centroid st_as_sf st_crs st_transform st_intersection
+#' @importFrom sf st_as_sf st_crs st_transform st_intersection
 #' @importFrom dplyr select all_of filter
 #' @importFrom stars st_extract
 #' @importFrom dismo bioclim predict
+#' @importFrom cli cli_abort
 #'
 #' @export
 pseudoabsences <- function(occ, pred = NULL, method = "random", n_set = 10, n_pa = NULL, variables_selected = NULL, th = 0) {
-  assert_class_cli(occ, "input_sdm")
+  caretSDM:::assert_class_cli(occ, "input_sdm")
   if (is_input_sdm(occ)) {
     y <- occ$occurrences
     pred <- occ$predictors
   }
-  assert_class_cli(pred, "sdm_area")
-  assert_choice_cli(method, c("random", "bioclim", "mahal.dist"))
-  assert_int_cli(n_set)
-  assert_int_cli(n_pa, null.ok = TRUE)
-  assert_numeric_cli(th, len=1, null.ok=FALSE, upper=1, lower=0, any.missing=FALSE)
-  assert_subset_cli(variables_selected, c(get_predictor_names(pred), "vif", "pca"), empty.ok=T)
+  caretSDM:::assert_class_cli(pred, "sdm_area")
+  caretSDM:::assert_choice_cli(method, c("random", "bioclim", "mahal.dist"))
+  caretSDM:::assert_int_cli(n_set)
+  caretSDM:::assert_int_cli(n_pa, null.ok = TRUE)
+  caretSDM:::assert_numeric_cli(th, len=1, null.ok=FALSE, upper=1, lower=0, any.missing=FALSE)
+  caretSDM:::assert_subset_cli(variables_selected, c(get_predictor_names(pred), "vif", "pca"), empty.ok=T)
 
   if (!is.null(y$pseudoabsences)) {
     warning("Previous pseudoabsence element on Occurrences object was overwrited.", call. = F)
@@ -110,11 +111,9 @@ pseudoabsences <- function(occ, pred = NULL, method = "random", n_set = 10, n_pa
   if (is_sdm_area(pred)) {
     if (is.null(variables_selected)) {
       selected_vars <- get_predictor_names(pred)
-      cat("Using all variables available: ", selected_vars)
     } else if (any(variables_selected %in% get_predictor_names(pred))) {
       p_names <- get_predictor_names(pred)
       selected_vars <- p_names[p_names %in% variables_selected]
-      cat("Using given variables: ", selected_vars)
     } else if (variables_selected == "vif"){
       selected_vars <- pred$variable_selection$vif$selected_variables
     } else if (variables_selected == "pca"){
@@ -155,14 +154,14 @@ pseudoabsences <- function(occ, pred = NULL, method = "random", n_set = 10, n_pa
     pa <- .pseudoabsences(y, l, method, n_set, n_pa)
   }
   if (method == "bioclim") {
-    if (class(occ) == "input_sdm") {
+    if (is_input_sdm(occ)) {
       l <- sapply(y$spp_names, function(sp) {
         if(sf::st_crs(y$occurrences) != sf::st_crs(df)){
            sf_occ <- sf::st_transform(y$occurrences, crs = sf::st_crs(df))
         } else {
           sf_occ <- y$occurrences
         }
-        occ2 <- sf::st_intersection(sf_occ, df)
+        suppressWarnings(occ2 <- sf::st_intersection(sf_occ, df))
         model <- dismo::bioclim(x = dplyr::select(as.data.frame(occ2), dplyr::all_of(selected_vars)))
         p <- dismo::predict(model, as.data.frame(df))
         p[p[] > th] <- NA
@@ -170,8 +169,7 @@ pseudoabsences <- function(occ, pred = NULL, method = "random", n_set = 10, n_pa
         p <- p[!is.na(p$pred), ]
         l <- list()
         if (nrow(p) == 0) {
-          print(paste0("bioclim envelope for ", sp, " covered all the study area. Change th argument or change the method."))
-          stop()
+          cli::cli_abort(c("bioclim envelope for ", sp, " covered all the study area. Change th argument or change the method."))
         } else {
           for (j in 1:n_set) {
             if (n_pa[sp] < length(p$cell_id)) {
@@ -189,7 +187,7 @@ pseudoabsences <- function(occ, pred = NULL, method = "random", n_set = 10, n_pa
     pa <- .pseudoabsences(y, l, method, n_set, n_pa)
   }
   if (method == "mahal.dist") {
-    if (class(occ) == "input_sdm") {
+    if (is_input_sdm(occ)) {
       l <- sapply(y$spp_names, function(sp) {
         occ2 <- df[df$cell_id %in% y$occurrences[y$occurrences$species == sp, ]$cell_id, ]
         model <- dismo::mahal(x = select(as.data.frame(occ2), all_of(selected_vars)))
@@ -199,8 +197,7 @@ pseudoabsences <- function(occ, pred = NULL, method = "random", n_set = 10, n_pa
         p <- p[!is.na(p$pred), ]
         l <- list()
         if (nrow(p) == 0) {
-          print(paste0("bioclim envelope for ", sp, " covered all the study area. Change th argument or change the method."))
-          stop()
+          cli::cli_abort(c("bioclim envelope for ", sp, " covered all the study area. Change th argument or change the method."))
         } else {
           for (j in 1:n_set) {
             if (n_pa[sp] < length(p$cell_id)) {

@@ -5,7 +5,7 @@
 \alias{get_predictors}
 \title{Add predictors to \code{sdm_area}}
 \usage{
-add_predictors(sdm_area, pred, variables_selected = NULL, gdal= TRUE)
+add_predictors(sa, pred, variables_selected = NULL, gdal = TRUE)
 
 get_predictors(i)
 }

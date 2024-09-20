@@ -5,6 +5,7 @@
 #' @usage vif_predictors(pred, th = 0.5, maxobservations = 5000, variables_selected = NULL)
 #'
 #' @param pred A \code{input_sdm} or \code{predictors} object.
+#' @param area Character. Which area should be used in vif selection? Standard is \code{"all"}.
 #' @param th Threshold to be applied in VIF routine.
 #' @param maxobservations Max observations to use to calculate the VIF.
 #' @param variables_selected If there is a subset of predictors that should be used in this
@@ -12,7 +13,7 @@
 #'
 #' @return A \code{input_sdm} or \code{predictors} object with VIF data.
 #'
-#' @seealso \code{\link{usdm::vifcor}\link{predictors_names}}
+#' @seealso \code{\link{usdm::vifcor} \link{get_predictor_names}}
 #'
 #' @author Luíz Fernando Esser (luizesser@gmail.com)
 #' https://luizfesser.wordpress.com

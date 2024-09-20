@@ -16,9 +16,9 @@ data_clean(occ, pred = NULL,
            independent_test = TRUE)
 }
 \arguments{
-\item{occ}{A \code{occurrences} object or \code{input_sdm}.}
+\item{occ}{A \code{occurrences_sdm} object or \code{input_sdm}.}
 
-\item{pred}{A \code{predictors} object. If \code{occ} is a \code{input_sdm} object with
+\item{pred}{A \code{sdm_area} object. If \code{occ} is a \code{input_sdm} object with
 predictors data, than \code{pred} is obtained from it.}
 
 \item{species}{A \code{character} stating the name of the column with species names in \code{occ} (see details).}
@@ -45,7 +45,7 @@ predictors data, than \code{pred} is obtained from it.}
 is also applied on it.}
 }
 \value{
-A \code{occurrences} object or \code{input_sdm} with new presence data.
+A \code{occurrences_sdm} object or \code{input_sdm} with new presence data.
 }
 \description{
 Data cleaning wrapper using CoordinateCleaner.
@@ -78,7 +78,7 @@ i <- data_clean(i)
 
 }
 \seealso{
-\code{\link{GBIF_data} \link{occurrences} \link{sdm_area} \link{input_sdm}
+\code{\link{GBIF_data} \link{occurrences_sdm} \link{sdm_area} \link{input_sdm}
 \link{predictors}}
 }
 \author{

@@ -15,6 +15,8 @@ selected_variables(i)
 \arguments{
 \item{pred}{A \code{input_sdm} or \code{predictors} object.}
 
+\item{area}{Character. Which area should be used in vif selection? Standard is \code{"all"}.}
+
 \item{th}{Threshold to be applied in VIF routine.}
 
 \item{maxobservations}{Max observations to use to calculate the VIF.}
@@ -52,7 +54,7 @@ i <- vif_predictors(i)
 
 }
 \seealso{
-\code{\link{usdm::vifcor}\link{predictors_names}}
+\code{\link{usdm::vifcor} \link{get_predictor_names}}
 }
 \author{
 Luíz Fernando Esser (luizesser@gmail.com)

@@ -27,10 +27,10 @@
 #'
 #' @export
 plot_occurrences <- function(i, spp_name = NULL, pa = TRUE) {
-  assert_subset_cli(class(i), c("occurrences", "input_sdm"))
-  assert_subset_cli(spp_name, species_names(i))
-  assert_logical_cli(pa)
-  assert_subset_cli("occurrences", names(i))
+  caretSDM:::assert_subset_cli(class(i), c("occurrences", "input_sdm"))
+  caretSDM:::assert_subset_cli(spp_name, species_names(i))
+  caretSDM:::assert_logical_cli(pa)
+  caretSDM:::assert_subset_cli("occurrences", names(i))
   if(is_input_sdm(i)){
       return(plot(i$occurrences, spp_name, pa))
   } else if (is_occurrences(i)){
@@ -70,7 +70,7 @@ plot.occurrences <- function(x, spp_name = NULL, pa = TRUE) {
 #' @rdname plot_occurrences
 #' @export
 plot_grid <- function(i) {
-  assert_subset_cli(class(i), c("sdm_area", "input_sdm"))
+  caretSDM:::assert_subset_cli(class(i), c("sdm_area", "input_sdm"))
   if(is_input_sdm(i)){
     i <- i$predictors
   }
@@ -80,8 +80,8 @@ plot_grid <- function(i) {
 #' @rdname plot_occurrences
 #' @export
 plot_predictors <- function(i, variables_selected = NULL) {
-  assert_subset_cli(class(i), c("sdm_area", "input_sdm"))
-  assert_subset_cli(variables_selected, c(get_predictor_names(i), "vif", "pca"))
+  caretSDM:::assert_subset_cli(class(i), c("sdm_area", "input_sdm"))
+  caretSDM:::assert_subset_cli(variables_selected, c(get_predictor_names(i), "vif", "pca"))
   if (is_input_sdm(i)){
     return(plot(i$predictors, variables_selected, scenario="predictors"))
   } else if (is_sdm_area(i)) {
@@ -92,10 +92,10 @@ plot_predictors <- function(i, variables_selected = NULL) {
 #' @rdname plot_occurrences
 #' @export
 plot_scenarios <- function(i, variables_selected = NULL, scenario = NULL) {
-  assert_subset_cli(class(i), c("sdm_area", "input_sdm"))
-  assert_subset_cli(variables_selected, c(get_predictor_names(i), "vif", "pca"))
-  assert_subset_cli(scenario, scenarios_names(i))
-  assert_subset_cli("predictors", names(i))
+  caretSDM:::assert_subset_cli(class(i), c("sdm_area", "input_sdm"))
+  caretSDM:::assert_subset_cli(variables_selected, c(get_predictor_names(i), "vif", "pca"))
+  caretSDM:::assert_subset_cli(scenario, scenarios_names(i))
+  caretSDM:::assert_subset_cli("predictors", names(i))
   return(plot(i$scenarios, variables_selected, scenario))
 }
 
@@ -130,7 +130,7 @@ plot.sdm_area <- function(x, variables_selected = NULL, scenario = NULL) {
 
  if(scenario=="predictors"){
     st <- x$grid |> dplyr::select(all_of(variables_selected))
-    teste <- tidyr::pivot_longer(st, variables_selected)
+    teste <- tidyr::pivot_longer(st, all_of(variables_selected))
 
     tmp <- ggplot2::ggplot(teste) +
       ggplot2::facet_grid(. ~ name) +
@@ -153,7 +153,7 @@ plot.sdm_area <- function(x, variables_selected = NULL, scenario = NULL) {
       scenario <- scenarios_names(x)[1]
     }
     st <- x$data[[scenario]] |> dplyr::select(all_of(variables_selected))
-    teste <- tidyr::pivot_longer(st, variables_selected)
+    teste <- tidyr::pivot_longer(st, all_of(variables_selected))
 
     tmp <- ggplot2::ggplot(teste) +
       ggplot2::facet_grid(. ~ name) +
@@ -180,10 +180,10 @@ plot.sdm_area <- function(x, variables_selected = NULL, scenario = NULL) {
 #' @export
 plot_predictions <- function(i, spp_name = NULL, scenario = NULL, id = NULL, ensemble = TRUE,
                              ensemble_type = "mean_occ_prob") {
-  assert_class_cli(i, "input_sdm")
-  assert_subset_cli(spp_name, species_names(i))
-  #assert_subset_cli(scenario, scenarios_names(i))
-  assert_subset_cli("predictions", names(i))
+  caretSDM:::assert_class_cli(i, "input_sdm")
+  caretSDM:::assert_subset_cli(spp_name, species_names(i))
+  #caretSDM:::assert_subset_cli(scenario, scenarios_names(i))
+  caretSDM:::assert_subset_cli("predictions", names(i))
   return(plot(i$predictions, spp_name, scenario, id, ensemble, ensemble_type))
 }
 
@@ -253,7 +253,7 @@ plot.predictions <- function(x, spp_name = NULL, scenario = NULL, id = NULL, ens
 #' @rdname plot_occurrences
 #' @export
 mapview_grid <- function(i) {
-  assert_subset_cli(class(i), c("sdm_area", "input_sdm"))
+  caretSDM:::assert_subset_cli(class(i), c("sdm_area", "input_sdm"))
 
   if(is_input_sdm(i)) {
     x <- i$predictors
@@ -269,10 +269,10 @@ mapview_grid <- function(i) {
 #' @rdname plot_occurrences
 #' @export
 mapview_occurrences <- function(i, spp_name = NULL, pa = TRUE) {
-  assert_subset_cli(class(i), c("occurrences", "input_sdm"))
-  assert_subset_cli(spp_name, species_names(i))
-  assert_logical_cli(pa)
-  assert_subset_cli("occurrences", names(i))
+  caretSDM:::assert_subset_cli(class(i), c("occurrences", "input_sdm"))
+  caretSDM:::assert_subset_cli(spp_name, species_names(i))
+  caretSDM:::assert_logical_cli(pa)
+  caretSDM:::assert_subset_cli("occurrences", names(i))
 
   if(is_input_sdm(i)) {
     x <- i$occurrences
@@ -295,8 +295,8 @@ mapview_occurrences <- function(i, spp_name = NULL, pa = TRUE) {
 #' @rdname plot_occurrences
 #' @export
 mapview_predictors <- function(i, variables_selected = NULL) {
-  assert_subset_cli(class(i), c("input_sdm", "sdm_area"))
-  assert_subset_cli(variables_selected, c(get_predictor_names(i), "vif", "pca"))
+  caretSDM:::assert_subset_cli(class(i), c("input_sdm", "sdm_area"))
+  caretSDM:::assert_subset_cli(variables_selected, c(get_predictor_names(i), "vif", "pca"))
 
   if(is_input_sdm(i)){
     x <- i$predictors
@@ -319,9 +319,9 @@ mapview_predictors <- function(i, variables_selected = NULL) {
 #' @rdname plot_occurrences
 #' @export
 mapview_scenarios <- function(i, variables_selected = NULL, scenario = NULL) {
-  assert_subset_cli(class(i), c("input_sdm", "sdm_area"))
-  assert_subset_cli(variables_selected, c(get_predictor_names(i), "vif", "pca"))
-  assert_subset_cli(scenario, scenarios_names(i))
+  caretSDM:::assert_subset_cli(class(i), c("input_sdm", "sdm_area"))
+  caretSDM:::assert_subset_cli(variables_selected, c(get_predictor_names(i), "vif", "pca"))
+  caretSDM:::assert_subset_cli(scenario, scenarios_names(i))
 
   if(is_input_sdm(i)){
     x <- i$predictors
@@ -347,7 +347,7 @@ mapview_scenarios <- function(i, variables_selected = NULL, scenario = NULL) {
 #' @rdname plot_occurrences
 #' @export
 mapview_predictions <- function(i, spp_name = NULL, scenario = NULL, id = NULL, ensemble = TRUE, ensemble_type = "mean_occ_prob") {
-  assert_class_cli(i, "input_sdm")
+  caretSDM:::assert_class_cli(i, "input_sdm")
 
   x <- i$predictions
   valid_spp <- names(x$predictions[[1]])
@@ -379,7 +379,7 @@ mapview_predictions <- function(i, spp_name = NULL, scenario = NULL, id = NULL, 
 
 #' @exportS3Method base::plot
 plot.input_sdm <- function(i) {
-  assert_class_cli(i, "input_sdm")
+  caretSDM:::assert_class_cli(i, "input_sdm")
   if ("predictions" %in% names(i)) {
     return(plot_predictions(i))
   }

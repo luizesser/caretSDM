@@ -7,9 +7,7 @@
 input_sdm(...)
 }
 \arguments{
-\item{...}{Data to be used in SDMs. Can be a \code{occurrences}, a \code{predictors}, a
-\code{scenarios}, and/or a \code{sdm_area} object. Ideally, \code{occurrences} and
-\code{sdm_area} are used.}
+\item{...}{Data to be used in SDMs. Can be a \code{occurrences} and/or a \code{sdm_area} object.}
 }
 \value{
 A \code{input_sdm} object containing:
@@ -47,7 +45,7 @@ i <- input_sdm(oc, sa)
 
 }
 \seealso{
-\code{\link{occurrences} \link{predictors} \link{scenarios} \link{sdm_area}}
+\code{\link{occurrences_sdm} \link{sdm_area}}
 }
 \author{
 Luíz Fernando Esser (luizesser@gmail.com)

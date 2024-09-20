@@ -7,7 +7,8 @@
 #'           pred = NULL,
 #'           algo,
 #'           ctrl = NULL,
-#'           variables_selected = NULL)
+#'           variables_selected = NULL,
+#'           parallel = FALSE)
 #'
 #' @param occ A \code{occurrences} or a \code{input_sdm} object.
 #' @param pred A \code{predictors object}. If \code{occ} is a \code{input_sdm} object, then
@@ -18,6 +19,7 @@
 #' @param ctrl A \code{trainControl} object to be used to build models. See \code{\link{trainControl}}.
 #' @param variables_selected A \code{vector} of variables to be used as predictors. If \code{NULL},
 #' predictors names from \code{pred} will be used. Can also be a selection method (e.g. 'vif').
+#' @param parallel Should a paralelization method be used (not yet implemented)?
 #' @param i A \code{models} or a \code{input_sdm} object.
 #'
 #' @return A \code{models} or a \code{input_sdm} object.
@@ -119,16 +121,12 @@ train_sdm <- function(occ, pred = NULL, algo, ctrl = NULL, variables_selected = 
   if (is_sdm_area(pred)) {
     if (is.null(variables_selected)) {
       selected_vars <- get_predictor_names(pred)
-      cat("Using all variables available: ", selected_vars)
     } else if (any(variables_selected %in% get_predictor_names(pred))) {
       selected_vars <- get_predictor_names(pred)[get_predictor_names(pred) %in% variables_selected]
-      cat("Using given variables: ", selected_vars)
     } else if (variables_selected == "vif"){
       selected_vars <- pred$variable_selection$vif$selected_variables
-      print(cat("Using variables selected by ", variables_selected, ": ", selected_vars))
     } else if (variables_selected == "pca"){
       selected_vars <- pred$variable_selection$pca$selected_variables
-      print(cat("Using variables selected by ", variables_selected, ": ", selected_vars))
     }
   }
 

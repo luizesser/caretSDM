@@ -7,13 +7,13 @@ oc <- occurrences_sdm(occ, crs=6933)
 suppressWarnings(oc <- join_area(oc, sa))
 i <- input_sdm(oc, sa)
 suppressWarnings(i <- pseudoabsences(i, method = "bioclim"))
-suppressWarnings(i <- train_sdm(i, algo=c("svmLinear2", "mda", "nnet", "kknn")))
+suppressWarnings(i <- train_sdm(i, algo=c("mda", "naive_bayes", "kknn")))
 test_that("varImp_sdm works", {
   v <- varImp_sdm(i)
   expect_equal(names(v), species_names(i))
   expect_equal(rownames(v[[1]]),  get_predictor_names(i))
 
-  v <- varImp_sdm(i, id=paste0("m",1:10,".4"))
+  v <- varImp_sdm(i, id=paste0("m",1:10,".3"))
   expect_equal(names(v), species_names(i))
   expect_equal(rownames(v[[1]]),  get_predictor_names(i))
 

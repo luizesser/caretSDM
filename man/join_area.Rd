@@ -4,8 +4,7 @@
 \alias{join_area}
 \title{Join Area}
 \usage{
-join_area(occ,
-           pred = NULL)
+join_area(occ, pred)
 }
 \arguments{
 \item{occ}{A \code{occurrences} object or \code{input_sdm}.}
@@ -39,7 +38,7 @@ oc <- occurrences_sdm(occ, crs = 6933) |> join_area(sa)
 
 }
 \seealso{
-\code{\link{occurrences} \link{sdm_area} \link{input_sdm}
+\code{\link{occurrences_sdm} \link{sdm_area} \link{input_sdm}
 \link{pseudoabsences}}
 }
 \author{

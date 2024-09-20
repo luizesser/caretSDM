@@ -2,7 +2,8 @@
 #'
 #' This function includes scenarios in the \code{sdm_area} object.
 #'
-#' @usage add_scenarios(sa, scen = NULL, variables_selected = NULL)
+#' @usage add_scenarios(sa, scen = NULL, scenarios_names = NULL, pred_as_scen = TRUE,
+#'                      variables_selected = NULL, stationary = NULL, ...)
 #'
 #' @param sa A \code{sdm_area} object.
 #' @param scen \code{RasterStack}, \code{SpatRaster} or \code{stars} object. If \code{NULL} adds
@@ -16,7 +17,7 @@
 #' as a \code{list}, where each slot of the \code{list} is a scenario and each scenario is a
 #' \code{sf}.
 #'
-#' @seealso \code{\link{sdm_area} \link{scenarios}}
+#' @seealso \code{\link{sdm_area} \link{input_sdm}}
 #'
 #' @author Luíz Fernando Esser (luizesser@gmail.com)
 #' https://luizfesser.wordpress.com
@@ -35,14 +36,17 @@
 #' @importFrom sf st_transform st_crs st_as_sf st_crop st_join
 #' @importFrom dplyr select all_of
 #' @importFrom tidyr drop_na
+#' @importFrom cli cli_progress_along
 #'
 #' @export
-add_scenarios <- function(sa, scen = NULL, variables_selected = NULL, stationary = NULL, ...) {
+add_scenarios <- function(sa, scen = NULL, scenarios_names = NULL, pred_as_scen = TRUE,
+                          variables_selected = NULL, stationary = NULL, ...) {
   UseMethod("add_scenarios", scen)
 }
 
 #' @export
-add_scenarios.NULL <- function(sa, scen = NULL, variables_selected = NULL, stationary = NULL, ...) {
+add_scenarios.NULL <- function(sa, scen = NULL, scenarios_names = NULL, pred_as_scen = TRUE,
+                               variables_selected = NULL, stationary = NULL, ...) {
   if(is_sdm_area(sa)){
     sa_teste <- sa
     sa_teste$data <- list(current = sa_teste$grid)
@@ -117,7 +121,6 @@ add_scenarios.stars <- function(sa, scen=NULL, scenarios_names = NULL, pred_as_s
 
   }
 
-
   if (is.null(scenarios_names)) { scenarios_names <- names(scen) }
   pres_names <- get_predictor_names(sa)
 
@@ -125,9 +128,16 @@ add_scenarios.stars <- function(sa, scen=NULL, scenarios_names = NULL, pred_as_s
     stationary_grd <- sa$grid |> dplyr::select(all_of(c("cell_id", stationary)))
     stationary_grd <- sf::st_transform(stationary_grd, sf::st_crs(scen))
     variables_selected <- pres_names[!pres_names %in% stationary]
+    missing_vars <- variables_selected[!variables_selected %in% stars::st_get_dimension_values(scen, "band")]
+    if(length(missing_vars > 0)) {
+      len <- length(missing_vars)
+      cli::cli_abort(c("{.var scen} does not have all variables from {.var variables_selected}:",
+                  "x" = "There {?is/are} {len} variables missing from {.var scen}.",
+                  "i" = "Check for: {missing_vars}"))
+    }
     scen <- scen[, , , variables_selected]
     l <- list()
-    for (i in 1:length(scen)) {
+    for (i in cli::cli_progress_along(1:length(scen), "Reescaling data")) {
       l[[scenarios_names[i]]]  <- scen[i] |>
         aggregate(stationary_grd, mean) |>
         sf::st_as_sf() |>
@@ -163,7 +173,7 @@ add_scenarios.stars <- function(sa, scen=NULL, scenarios_names = NULL, pred_as_s
     scen <- scen[, , , variables_selected]
 
     l <- list()
-    for (i in 1:length(scen)) {
+    for (i in cli::cli_progress_along(1:length(scen), "Reescaling data")) {
       l[[scenarios_names[i]]]  <- scen[i] |>
         aggregate(stationary_grd, mean) |>
         sf::st_as_sf() |>

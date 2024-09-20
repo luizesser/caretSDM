@@ -2,7 +2,7 @@
 #'
 #' This function exports caretSDM data.
 #'
-#' @usage write_ensembles(x, path = "results/ensembles", ext = ".tif")
+#' @usage write_ensembles(x, path = "results/ensembles", ext = ".tif", centroid = FALSE)
 #'
 #' @param x Object to be written. Can be of class \code{input_sdm}, \code{occurrences},
 #' \code{predictions} or \code{models}.
@@ -24,7 +24,7 @@
 #'
 #' @export
 write_ensembles <- function(x, path = "results/ensembles", ext = ".tif", centroid = FALSE) {
-  if (class(x) == "input_sdm") {
+  if (is_input_sdm(x)) {
     y <- x$predictions
   } else {
     y <- x
@@ -63,7 +63,7 @@ write_ensembles <- function(x, path = "results/ensembles", ext = ".tif", centroi
 #' @rdname write_ensembles
 #' @export
 write_predictions <- function(x, path = "results/predictions", ext = ".tif", centroid = FALSE) {
-  if (class(x) == "input_sdm") {
+  if (is_input_sdm(x)) {
     y <- x$predictions
   } else {
     y <- x
@@ -102,7 +102,7 @@ write_predictions <- function(x, path = "results/predictions", ext = ".tif", cen
 #' @rdname write_ensembles
 #' @export
 write_predictors <- function(x, path = "results/predictors", ext = ".tif", centroid = FALSE) {
-  if (class(x) == "input_sdm") {
+  if (is_input_sdm(x)) {
     y <- x$predictors
   } else {
     y <- x
@@ -131,7 +131,7 @@ write_predictors <- function(x, path = "results/predictors", ext = ".tif", centr
 #' @rdname write_ensembles
 #' @export
 write_models <- function(x, path = "results/models") {
-  if (class(x) == "input_sdm") {
+  if (is_input_sdm(x)) {
     y <- x$models
   } else {
     y <- x

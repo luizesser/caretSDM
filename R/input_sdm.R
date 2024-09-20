@@ -2,9 +2,7 @@
 #'
 #' This function creates a new \code{input_sdm} object.
 #'
-#' @param ... Data to be used in SDMs. Can be a \code{occurrences}, a \code{predictors}, a
-#' \code{scenarios}, and/or a \code{sdm_area} object. Ideally, \code{occurrences} and
-#' \code{sdm_area} are used.
+#' @param ... Data to be used in SDMs. Can be a \code{occurrences} and/or a \code{sdm_area} object.
 #'
 #' @returns A \code{input_sdm} object containing:
 #'    \item{grid}{\code{sf} with \code{POLYGON} geometry representing the grid for the study area.}
@@ -20,7 +18,7 @@
 #' detecting their classes.
 #' The returned object is used throughout the whole workflow to apply functions.
 #'
-#' @seealso \code{\link{occurrences} \link{predictors} \link{scenarios} \link{sdm_area}}
+#' @seealso \code{\link{occurrences_sdm} \link{sdm_area}}
 #'
 #' @author Luíz Fernando Esser (luizesser@gmail.com)
 #' https://luizfesser.wordpress.com
@@ -144,7 +142,7 @@ print.input_sdm <- function(x) {
   }
   if ("models" %in% names(x)) {
     cat("-----------  Models  ----------\n")
-    if (class(x$models$algorithms) == "list") {
+    if (is.list(x$models$algorithms)) {
       cat("Algorithms Names              : Stacked Ensemble\n")
       for (j in 1:length(x$models$algorithms)) {
         cat("   Layer ", j, ": ", x$models$algorithms[[j]], "\n")

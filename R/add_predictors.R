@@ -2,7 +2,7 @@
 #'
 #' This function includes new predictors to the \code{sdm_area} object.
 #'
-#' @usage add_predictors(sdm_area, pred, variables_selected = NULL, gdal= TRUE)
+#' @usage add_predictors(sa, pred, variables_selected = NULL, gdal = TRUE)
 #'
 #' @param sa A \code{sdm_area} object.
 #' @param pred \code{RasterStack}, \code{SpatRaster} or \code{stars} object with predictors data.

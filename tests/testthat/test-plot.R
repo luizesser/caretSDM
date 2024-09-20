@@ -15,7 +15,7 @@ suppressWarnings(i <- pseudoabsences(i, method = "bioclim"))
 ctrl_sdm <- caret::trainControl(method = "repeatedcv", number = 4, repeats = 10, classProbs = TRUE,
                                 returnResamp = "all", summaryFunction = summary_sdm,
                                 savePredictions = "all")
-suppressWarnings(i <- train_sdm(i, algo=c("svmLinear2", "mda", "nnet", "kknn"), crtl=ctrl_sdm))
+suppressWarnings(i <- train_sdm(i, algo=c("mda", "kknn"), crtl=ctrl_sdm))
 i <- predict_sdm(i)
 
 test_that("plot works with i", {

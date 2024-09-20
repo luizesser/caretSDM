@@ -174,7 +174,8 @@ test_that("add_scenarios - stationary data/input_sdm", {
       "bio01","bio12", "geometry")
   )
   expect_equal(length(i_pred$scenarios$data), 2)
-
+  expect_error(add_scenarios(i_pred, scen, stationary = c("GID0", "CODIGOIB1",
+                                                          "NOMEUF2")))
   i_pred <- add_scenarios(i_pred, scen, stationary = c("GID0", "CODIGOIB1",
                                                          "NOMEUF2", "SIGLAUF3"))
   expect_equal(length(i_pred$scenarios$data), 6)

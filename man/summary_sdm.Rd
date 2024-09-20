@@ -12,6 +12,8 @@ summary_sdm(data, lev = NULL, model = NULL)
 \item{lev}{A \code{character} vector of factors levels for the response.}
 
 \item{model}{Models names taken from \code{train} object.}
+
+\item{custom_fun}{A custom function to be applied in models (not yet implemented).}
 }
 \value{
 A \code{input_sdm} or a \code{predictions} object.

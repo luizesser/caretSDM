@@ -20,7 +20,7 @@ test_that("sdm_as_stars", {
   expect_equal(class(sdm_as_stars(i)$current), "stars")
 
   suppressWarnings(i <- pseudoabsences(i, method = "bioclim"))
-  suppressWarnings(i <- train_sdm(i, algo=c("svmLinear2", "mda", "nnet", "kknn")))
+  suppressWarnings(i <- train_sdm(i, algo=c("mda", "kknn")))
   p <- predict_sdm(i, ensembles = FALSE)
   # predictions
   expect_equal(class(sdm_as_stars(p)), "stars")

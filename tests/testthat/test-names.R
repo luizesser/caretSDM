@@ -4,7 +4,7 @@ if (fs::dir_exists(here::here("tests", "testthat", "testdata"))) {
   pr_gpkg <- here::here("tests", "testthat", "testdata", "parana.gpkg") |>
     sf::st_read(quiet = TRUE)
 } else {
-  pr_tif <- test_path("testdata", "ES.csv", "parana.tiff") |>
+  pr_tif <- test_path("testdata", "parana.tiff") |>
     stars::read_stars(quiet = TRUE)
   pr_gpkg <- test_path("testdata","parana.gpkg") |>
     sf::st_read(quiet = TRUE)

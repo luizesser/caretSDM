@@ -238,7 +238,7 @@ set_variables_names <- function(s1 = NULL, s2 = NULL, new_names = NULL) {
   assert_class_cli(s1, "stars")
   if(is.null(new_names)) {
     assert_subset_cli(class(s2), c("stars", "sdm_area"))
-    if(class(s2) == "stars") {
+    if(is(s2, "stars")) {
       assert_class_cli(s2, "stars")
       len_s2 <- length(stars::st_get_dimension_values(s2, "band"))
       len_s1 <- length(stars::st_get_dimension_values(s1, "band"))
@@ -254,7 +254,7 @@ set_variables_names <- function(s1 = NULL, s2 = NULL, new_names = NULL) {
         s1 <- stars::st_set_dimensions(s1, "band", values = closest_match$s2_names)
       }
     }
-    if(class(s2) == "sdm_area") {
+    if(is_sdm_area(s2)) {
       len_s2 <- length(get_predictor_names(s2))
       len_s1 <- length(stars::st_get_dimension_values(s1, "band"))
       if (!len_s1 == len_s2) {

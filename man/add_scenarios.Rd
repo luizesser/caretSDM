@@ -4,7 +4,8 @@
 \alias{add_scenarios}
 \title{Add scenarios to \code{sdm_area}}
 \usage{
-add_scenarios(sa, scen = NULL, variables_selected = NULL)
+add_scenarios(sa, scen = NULL, scenarios_names = NULL, pred_as_scen = TRUE,
+                     variables_selected = NULL, stationary = NULL, ...)
 }
 \arguments{
 \item{sa}{A \code{sdm_area} object.}
@@ -38,7 +39,7 @@ sa <- add_scenarios(sa)
 
 }
 \seealso{
-\code{\link{sdm_area} \link{scenarios}}
+\code{\link{sdm_area} \link{input_sdm}}
 }
 \author{
 Luíz Fernando Esser (luizesser@gmail.com)

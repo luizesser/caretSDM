@@ -35,7 +35,7 @@ This functions returns a boolean to check caretSDM object classes.
 }
 \examples{
 # Create sdm_area object:
-sa <- sdm_area(parana, cell_size = 25000, epsg = 6933)
+sa <- sdm_area(parana, cell_size = 25000, crs = 6933)
 
 is_sdm_area(sa)
 

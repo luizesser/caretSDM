@@ -13,7 +13,8 @@ train_sdm(occ,
           pred = NULL,
           algo,
           ctrl = NULL,
-          variables_selected = NULL)
+          variables_selected = NULL,
+          parallel = FALSE)
 
 get_tune_length(i)
 
@@ -39,6 +40,8 @@ also implemented, but they are only available to run alone, with no other algori
 
 \item{variables_selected}{A \code{vector} of variables to be used as predictors. If \code{NULL},
 predictors names from \code{pred} will be used. Can also be a selection method (e.g. 'vif').}
+
+\item{parallel}{Should a paralelization method be used (not yet implemented)?}
 
 \item{i}{A \code{models} or a \code{input_sdm} object.}
 }

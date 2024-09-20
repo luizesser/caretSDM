@@ -2,15 +2,18 @@
 title: "Concatenate functions in caretSDM"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{compact_caretSDM}
+  %\VignetteIndexEntry{Concatenate functions in caretSDM}
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown}
 editor_options: 
   markdown: 
-    wrap: 72
+    wrap: 80
 ---
 
-## 
+In caretSDM we always use one central object through out the framework. This
+allows us to concatenate functions, which can be very useful when running SDMs
+for the first couple of times. Here we provide a functioning way to easily run
+your framework with only three objects.
 
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
@@ -19,8 +22,11 @@ knitr::opts_chunk$set(
 )
 ```
 
-```{r}
+```{r, results="hide"}
+# Open library
 library(caretSDM)
+
+# Build sdm_area object
 sa <- sdm_area('input_data/parana_paraguay.gpkg', 
                cell_size = 25000, 
                crs = 6933, 
@@ -38,22 +44,28 @@ sa <- sdm_area('input_data/parana_paraguay.gpkg',
                         "UPLAND_SKM", "DIS_AV_CMS","ORD_STRA","bio01","bio02", "bio03", 
                         "bio04", "bio05", "bio06", "bio07", "bio12", "bio13", 
                         "bio14", "bio15"))
-sa <- readRDS("")
+
+# Build occurrences_sdm object
 oc <- occurrences_sdm("input_data/Salminus.csv", crs = 4326) |> 
   join_area(sa)
 
+# Merge sdm_area and occurrences_sdm and perform pre-processing, processing and projecting.
 i <- input_sdm(oc, sa) |> 
   data_clean() |> 
   vif_predictors() |> 
   pseudoabsences(method = "bioclim", variables_selected = "vif") |> 
-  train_sdm(algo = c("svmPoly","naive_bayes", "kknn", "nnet", "mda"), 
+  train_sdm(algo = c("mda", "naive_bayes", "kknn"), 
             crtl = caret::trainControl(method = "repeatedcv", 
                                        number = 4, 
-                                       repeats = 10, 
+                                       repeats = 1, 
                                        classProbs = TRUE, 
                                        returnResamp = "all", 
                                        summaryFunction = summary_sdm, 
                                        savePredictions = "all"), 
             variables_selected = "vif") |> 
   predict_sdm(th = 0.8)
+```
+
+```{r}
+i
 ```

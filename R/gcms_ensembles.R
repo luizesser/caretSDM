@@ -3,7 +3,7 @@
 #' An ensembling method to group different GCMs into one SSP scenario
 #'
 #' @usage
-#' ensemble_gcms(i, gcms = NULL)
+#' gcms_ensembles(i, gcms = NULL)
 #'
 #' @param i A \code{input_sdm} object.
 #' @param gcms GCM codes in \code{scenarios_names(i)} to group scenarios.
@@ -11,7 +11,7 @@
 #' @returns A \code{input_sdm} object with grouped GCMs.
 #'
 #'
-#' @seealso \code{\link{GBIF_data} \link{occurrences} \link{sdm_area} \link{input_sdm}
+#' @seealso \code{\link{GBIF_data} \link{occurrences_sdm} \link{sdm_area} \link{input_sdm}
 #' \link{predictors}}
 #'
 #' @author Luíz Fernando Esser (luizesser@gmail.com)

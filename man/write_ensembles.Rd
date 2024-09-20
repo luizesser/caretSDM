@@ -14,7 +14,7 @@
 \alias{write_validation_metrics}
 \title{Write caretSDM data}
 \usage{
-write_ensembles(x, path = "results/ensembles", ext = ".tif")
+write_ensembles(x, path = "results/ensembles", ext = ".tif", centroid = FALSE)
 
 write_predictions(
   x,
@@ -44,7 +44,7 @@ write_scenarios(x, path = "results/predictors", ext = ".tif", ...)
 
 write_grid(x, path = "results/grid_study_area.gpkg", centroid = FALSE, ...)
 
-write_validation_metrics(x, path = "results", ...)
+write_validation_metrics(x, path = "results/validation_metrics", ...)
 }
 \arguments{
 \item{x}{Object to be written. Can be of class \code{input_sdm}, \code{occurrences},

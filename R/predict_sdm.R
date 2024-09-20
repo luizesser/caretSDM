@@ -8,7 +8,9 @@
 #'             metric = "ROC",
 #'             th = 0.9,
 #'             tp = "prob",
-#'             ensembles = TRUE)
+#'             ensembles = TRUE,
+#'             file = NULL,
+#'             add.current = TRUE)
 #'
 #' @param m A \code{input_sdm} or a \code{models} object.
 #' @param scen A \code{scenarios} object or \code{NULL}. If \code{NULL} and \code{m} is a
@@ -20,6 +22,9 @@
 #' @param ensembles Boolean. Should ensembles be calculated? If \code{TRUE} a series of ensembles
 #' are obtained. See details.
 #' @param i A \code{input_sdm} or a \code{predictions} object.
+#' @param file File to sabe predictions.
+#' @param add.current If current scenario is not available, predictors will be used as the current
+#' scenario.
 #'
 #' @returns A \code{input_sdm} or a \code{predictions} object.
 #'
@@ -103,7 +108,7 @@ predict_sdm <- function(m, scen = NULL, metric = "ROC", th = 0.9, tp = "prob", f
 }
 
 #' @export
-predict_sdm.sdm_area <- function(m, scen, metric = "ROC", th = 0.9, tp = "prob", file = NULL, ensembles = TRUE) {
+predict_sdm.sdm_area <- function(m, scen, metric = "ROC", th = 0.9, tp = "prob", file = NULL, ensembles = TRUE, add.current = TRUE) {
   if (is_input_sdm(m)) {
     y <- m$models
     scen <- m$scenarios

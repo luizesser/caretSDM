@@ -11,6 +11,7 @@ if (fs::dir_exists(here::here("tests", "testthat", "testdata"))) {
   pr_shp <-
     here::here("tests", "testthat", "testdata", "parana.shp") |>
     sf::st_read(quiet = TRUE)
+  pr_file <- here::here("tests", "testthat", "testdata", "parana.tiff")
 } else {
   pr_stars <- test_path("testdata", "parana.tiff") |>
     stars::read_stars(quiet = TRUE)
@@ -20,6 +21,8 @@ if (fs::dir_exists(here::here("tests", "testthat", "testdata"))) {
     sf::st_read(quiet = TRUE)
   pr_shp <- test_path("testdata", "parana.shp") |>
     sf::st_read(quiet = TRUE)
+  pr_file <- test_path("testdata", "parana.tiff")
+
 }
 sa <- sdm_area(pr_gpkg, cell_size = 10000, crs = 6933)
 
@@ -125,7 +128,7 @@ test_that("get_predictors - input_sdm", {
 })
 
 test_that("add_predictors - character input", {
-  sa_pred <- add_predictors(sa, here::here("tests", "testthat", "testdata", "parana.tiff"))
+  sa_pred <- add_predictors(sa, pr_file)
   sa_pred2 <- add_predictors(sa, pr_raster)
   expect_equal(sa_pred$grid, sa_pred2$grid)
 })

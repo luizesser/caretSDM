@@ -27,7 +27,7 @@
 #' @importFrom dplyr bind_rows
 #'
 #' @export
-GBIF_data <- function(s, file = "", as_df=F, ...) {
+GBIF_data <- function(s, file = "", as_df = FALSE, ...) {
   if (!file.exists(file)) {
     data <- lapply(s, function(x) {
       y <- rgbif::occ_data(scientificName = x, limit = 100000, hasCoordinate = T, ...)

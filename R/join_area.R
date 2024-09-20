@@ -2,9 +2,7 @@
 #'
 #' Join cell_id data from sdm_area to a occurrences
 #'
-#' @usage
-#' join_area(occ,
-#'            pred = NULL)
+#' @usage join_area(occ, pred)
 #'
 #' @param occ A \code{occurrences} object or \code{input_sdm}.
 #' @param pred A \code{sdm_area} object to retrieve cell_id from.
@@ -17,7 +15,7 @@
 #' CRS from both \code{occ} and \code{pred} are equal, otherwise the CRS of \code{pred} is used to
 #' convert \code{occ}.
 #'
-#' @seealso \code{\link{occurrences} \link{sdm_area} \link{input_sdm}
+#' @seealso \code{\link{occurrences_sdm} \link{sdm_area} \link{input_sdm}
 #' \link{pseudoabsences}}
 #'
 #' @author Luíz Fernando Esser (luizesser@gmail.com)

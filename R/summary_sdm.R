@@ -9,6 +9,7 @@
 #' @param data A \code{data.frame} with observed and predicted values.
 #' @param lev A \code{character} vector of factors levels for the response.
 #' @param model Models names taken from \code{train} object.
+#' @param custom_fun A custom function to be applied in models (not yet implemented).
 #'
 #' @returns A \code{input_sdm} or a \code{predictions} object.
 #'

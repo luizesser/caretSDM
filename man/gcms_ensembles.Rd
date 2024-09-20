@@ -4,7 +4,7 @@
 \alias{gcms_ensembles}
 \title{Ensemble GCMs into one scenario}
 \usage{
-ensemble_gcms(i, gcms = NULL)
+gcms_ensembles(i, gcms = NULL)
 }
 \arguments{
 \item{i}{A \code{input_sdm} object.}
@@ -38,7 +38,7 @@ i <- data_clean(i)
 
 }
 \seealso{
-\code{\link{GBIF_data} \link{occurrences} \link{sdm_area} \link{input_sdm}
+\code{\link{GBIF_data} \link{occurrences_sdm} \link{sdm_area} \link{input_sdm}
 \link{predictors}}
 }
 \author{

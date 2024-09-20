@@ -13,7 +13,9 @@ predict_sdm(m,
             metric = "ROC",
             th = 0.9,
             tp = "prob",
-            ensembles = TRUE)
+            ensembles = TRUE,
+            file = NULL,
+            add.current = TRUE)
 
 scenarios_names(i)
 
@@ -36,8 +38,13 @@ Default is ROC. See \code{?mean_validation_metrics} for the metrics available.}
 
 \item{tp}{Type of output to be retrieved. See details.}
 
+\item{file}{File to sabe predictions.}
+
 \item{ensembles}{Boolean. Should ensembles be calculated? If \code{TRUE} a series of ensembles
 are obtained. See details.}
+
+\item{add.current}{If current scenario is not available, predictors will be used as the current
+scenario.}
 
 \item{i}{A \code{input_sdm} or a \code{predictions} object.}
 }

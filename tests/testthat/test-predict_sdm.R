@@ -18,7 +18,7 @@ suppressWarnings(i <- pseudoabsences(i, method = "bioclim"))
 test_that("predict_sdm - no model", {
   expect_error(predict_sdm(i))
 })
-suppressWarnings(i <- train_sdm(i, algo=c("svmLinear2", "mda", "nnet", "kknn")))
+suppressWarnings(i <- train_sdm(i, algo=c( "mda", "naive_bayes", "kknn")))
 
 test_that("predict_sdm - errors", {
   expect_error(predict_sdm(i, th=1))
