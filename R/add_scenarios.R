@@ -118,7 +118,6 @@ add_scenarios.stars <- function(sa, scen=NULL, scenarios_names = NULL, pred_as_s
     add_sc <- ifelse(length(sa$data)>0, TRUE, FALSE)
   } else if ( is_sdm_area(sa) ) {
     add_sc <- ifelse(length(sa$scenarios$data)>0, TRUE, FALSE)
-
   }
 
   if (is.null(scenarios_names)) { scenarios_names <- names(scen) }
@@ -198,7 +197,7 @@ add_scenarios.stars <- function(sa, scen=NULL, scenarios_names = NULL, pred_as_s
       sa_data$data <- l
     }
 
-    sa_data$grid <- l[["current"]]
+    sa_data$grid <- sa$grid
     sa$scenarios <- sa_data
     return(sa)
 

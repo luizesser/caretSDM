@@ -35,7 +35,7 @@ write_ensembles <- function(x, path = "results/ensembles", ext = ".tif", centroi
   spp <- rownames(y$ensembles)
   grd <- y$grid
   if(centroid){
-    cent <- sf::st_coordinates(sf::st_centroid(grd))
+    suppressWarnings(cent <- sf::st_coordinates(sf::st_centroid(grd)))
     colnames(cent) <- c("x_centroid", "y_centroid")
     grd <- cbind(grd, cent)
   }
@@ -43,6 +43,7 @@ write_ensembles <- function(x, path = "results/ensembles", ext = ".tif", centroi
     for (sc in scen) {
       v <- y[["ensembles"]][[sp, sc]]
       if (is.data.frame(v)) {
+
         result <- merge(grd, v, by = "cell_id")
         if (!dir.exists(paste0(path, "/", sp))) {
           dir.create(paste0(path, "/", sp), recursive = T)
