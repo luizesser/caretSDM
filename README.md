@@ -1,6 +1,8 @@
 # caretSDM
 Luíz Fernando Esser
 
+# caretSDM <a href="https://luizesser.github.io/caretSDM/"><img src="man/figures/logo.jpeg" align="right" height="139" alt="caretSDM website" /></a>
+
 `caretSDM` is a under development R package that uses the powerful
 `caret` package as the main engine to obtain Species Distribution
 Models. As `caret` is a packaged turned to build machine learning
@@ -43,8 +45,6 @@ wrong, try to take a look at those objects or the vignettes:
 *Vignettes*
 
 - `Araucaria` is the main vignette for terrestrial species modeling.
-
-<!-- -->
 
 - `Salminus` is the main vignette for continental aquatic species
   modeling.

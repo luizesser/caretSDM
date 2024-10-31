@@ -1,0 +1,52 @@
+---
+title: "Structure"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Structure}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(caretSDM)
+```
+
+The structure of caretSDM objects are:
+
+```{r sdm_area}
+sa <- list(grid = sf_object,
+           cell_size = numeric,
+           scenarios = list(grid = sf_object,
+                            cell_size = numeric,
+                            data = list(current = sf_current,
+                                        scen1 = sf_scen1,
+                                        scen2 = sf_Scen2)))
+
+oc <- list(occurrences = sf_object,
+           spp_names = character,
+           n_presences = table,
+           crs = integer)
+
+i <- list(occurrences = list(occurrences = sf_object,
+                             spp_names = character,
+                             n_presences = table,
+                             crs = integer,
+                             data_cleaning = character,
+                             pseudoabsences = list(data = list(sp1 = list(pa1, pa2),
+                                                               sp2 = list(pa1, pa2)),
+                                                   method = character,
+                                                   n_set = numeric,
+                                                   n_pa = table)),
+          predictors = list(),
+          scenarios = list(),
+          models = list(),
+          predictions = list()
+          )
+```
