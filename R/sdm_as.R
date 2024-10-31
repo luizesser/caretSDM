@@ -254,7 +254,7 @@ sdm_as_terra <- function(x, what = NULL, spp = NULL, scen = NULL, id = NULL, ens
       }
       grd <- x$predictors$grid
       v <- x$predictions$ensembles[[spp, scen]][, c("cell_id", ens)]
-      result <- terra::rast(as(stars::st_rasterize(sf::st_as_sf(dplyr::select(sf::st_as_stars(merge(grd, v, by = "cell_id")), -"cell_id"))), "Raster"))
+      result <- terra::rast(as(stars::st_rasterize(sf::st_as_sf(dplyr::select(stars::st_as_stars(merge(grd, v, by = "cell_id")), -"cell_id"))), "Raster"))
       return(result)
     }
   }
