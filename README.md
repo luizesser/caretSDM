@@ -1,7 +1,7 @@
 # caretSDM
 Luíz Fernando Esser
 
-# caretSDM <a href="https://luizesser.github.io/caretSDM/"><img src="man/figures/logo.jpeg" align="right" height="139" alt="caretSDM website" /></a>
+# caretSDM <a href="https://luizesser.github.io/caretSDM/"><img src="man/figures/logo.png" align="right" height="85" alt="caretSDM website" /></a>
 
 `caretSDM` is a under development R package that uses the powerful
 `caret` package as the main engine to obtain Species Distribution
