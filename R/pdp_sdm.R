@@ -11,6 +11,8 @@
 #' (standard) all algorithms are mixed.
 #' @param variables_selected If there is a subset of predictors that should be ploted in this, it
 #' can be informed using this parameter.
+#' @param mean.only Boolean. Should only the mean curve be plotted or a curve to each run should be
+#' included? Standard is FALSE.
 #'
 #' @return A plot (for \code{pdp_sdm}) or a data.frame (for \code{get_pdp_sdm}) with PDP values.
 #'
@@ -42,7 +44,7 @@
 #' i <- vif_predictors(i)
 #'
 #' # Pseudoabsence generation:
-#' i <- pseudoabsence(i, method="bioclim", variables_selected = "vif")
+#' i <- pseudoabsences(i, method="bioclim", variables_selected = "vif")
 #'
 #' # Custom trainControl:
 #' ctrl_sdm <- caret::trainControl(method = "repeatedcv", number = 4, repeats = 10, classProbs = TRUE,
@@ -61,7 +63,7 @@
 #' @importFrom ggplot2 ggplot aes geom_ribbon geom_smooth facet_wrap labs theme_minimal
 #'
 #' @export
-pdp_sdm <- function(i, spp = NULL, algo = NULL, variables_selected = NULL) {
+pdp_sdm <- function(i, spp = NULL, algo = NULL, variables_selected = NULL, mean.only = F) {
   assert_class_cli(i, "input_sdm")
   assert_subset_cli(algo, algorithms_used(i))
   assert_subset_cli(spp, species_names(i))
@@ -72,7 +74,7 @@ pdp_sdm <- function(i, spp = NULL, algo = NULL, variables_selected = NULL) {
   if(is.null(variables_selected)){ variables_selected <- i$models$predictors }
 
   l <- get_pdp_sdm(i, spp, algo, variables_selected)
-  l2 <- bind_rows(l)
+  l2 <- dplyr::bind_rows(l)
 
   #summary_stats <- l2 |>
   #  dplyr::group_by(value, variable) |>
@@ -80,15 +82,18 @@ pdp_sdm <- function(i, spp = NULL, algo = NULL, variables_selected = NULL) {
   #                   min_value = min(yhat, na.rm = TRUE),
   #                   max_value = max(yhat, na.rm = TRUE))
 
-  x <- ggplot2::ggplot(data = group_by(l2,variable), ggplot2::aes(x = value, y = yhat, group = id)) +
+  x <- ggplot2::ggplot(data = dplyr::group_by(l2,variable), ggplot2::aes(x = value, y = yhat, group = id)) +
     ggplot2::facet_wrap(~ variable, scales = "free_x")+
-    ggplot2::geom_line(alpha=0.2) +
     ggplot2::geom_smooth(ggplot2::aes(x = value, y = yhat, group=variable), color = "blue",
                          linewidth = 1.2) +
     ggplot2::labs(title = "Partial Dependence Plot",
                   x = "",
                   y = "Probability of Occurrence") +
     ggplot2::theme_minimal()
+
+  if(!mean.only) {
+    x <- x + ggplot2::geom_line(alpha=0.2)
+  }
 
   return(x)
 }
