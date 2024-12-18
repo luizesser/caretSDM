@@ -6,6 +6,8 @@
 \alias{caretSDM-package}
 \title{caretSDM: A package for building Species Distribution Modeling in R using caret.}
 \description{
+\if{html}{\figure{logo.png}{options: style='float: right' alt='logo' width='120'}}
+
 This package is intended to help modelers to build Species Distribution Modeling (SDMs) using a machine learning approach. The package uses caret as a underlying package to build and project models.
 }
 \seealso{

@@ -20,6 +20,9 @@ get_pdp_sdm(i, spp = NULL, algo = NULL, variables_selected = NULL)
 
 \item{variables_selected}{If there is a subset of predictors that should be ploted in this, it
 can be informed using this parameter.}
+
+\item{mean.only}{Boolean. Should only the mean curve be plotted or a curve to each run should be
+included? Standard is FALSE.}
 }
 \value{
 A plot (for \code{pdp_sdm}) or a data.frame (for \code{get_pdp_sdm}) with PDP values.
@@ -50,7 +53,7 @@ i <- data_clean(i)
 i <- vif_predictors(i)
 
 # Pseudoabsence generation:
-i <- pseudoabsence(i, method="bioclim", variables_selected = "vif")
+i <- pseudoabsences(i, method="bioclim", variables_selected = "vif")
 
 # Custom trainControl:
 ctrl_sdm <- caret::trainControl(method = "repeatedcv", number = 4, repeats = 10, classProbs = TRUE,
