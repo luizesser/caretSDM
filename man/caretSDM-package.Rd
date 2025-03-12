@@ -23,7 +23,7 @@ Useful links:
 
 Authors:
 \itemize{
-  \item Dayani Baili (\href{https://orcid.org/0000-0002-6954-9902}{ORCID})
+  \item Dayani Bailly (\href{https://orcid.org/0000-0002-6954-9902}{ORCID})
   \item Edivando Couto (\href{https://orcid.org/0000-0003-4264-8449}{ORCID})
   \item José Hilário Delconte Ferreira (\href{https://orcid.org/0000-0002-7116-2600}{ORCID})
   \item Reginaldo Ré (\href{https://orcid.org/0000-0001-6452-3466}{ORCID})

@@ -63,7 +63,7 @@
 #' @importFrom ggplot2 ggplot aes geom_ribbon geom_smooth facet_wrap labs theme_minimal
 #'
 #' @export
-pdp_sdm <- function(i, spp = NULL, algo = NULL, variables_selected = NULL, mean.only = F) {
+pdp_sdm <- function(i, spp = NULL, algo = NULL, variables_selected = NULL, mean.only = FALSE) {
   assert_class_cli(i, "input_sdm")
   assert_subset_cli(algo, algorithms_used(i))
   assert_subset_cli(spp, species_names(i))
@@ -75,12 +75,6 @@ pdp_sdm <- function(i, spp = NULL, algo = NULL, variables_selected = NULL, mean.
 
   l <- get_pdp_sdm(i, spp, algo, variables_selected)
   l2 <- dplyr::bind_rows(l)
-
-  #summary_stats <- l2 |>
-  #  dplyr::group_by(value, variable) |>
-  #  dplyr::summarise(mean_value = mean(yhat, na.rm = TRUE),
-  #                   min_value = min(yhat, na.rm = TRUE),
-  #                   max_value = max(yhat, na.rm = TRUE))
 
   x <- ggplot2::ggplot(data = dplyr::group_by(l2,variable), ggplot2::aes(x = value, y = yhat, group = id)) +
     ggplot2::facet_wrap(~ variable, scales = "free_x")+
@@ -117,7 +111,7 @@ get_pdp_sdm <- function(i, spp = NULL, algo = NULL, variables_selected = NULL){
     n <- names(m[[spp]])[grep(paste0("\\.",y,"$"), names(m[[spp]]))]
     l <- list()
     for(v in variables_selected){
-      l1 <- lapply(m[[spp]][n], function(x){pdp::partial(x, pred.var = v, plot = F, prob = T)})
+      l1 <- lapply(m[[spp]][n], function(x){pdp::partial(x, pred.var = v, plot = FALSE, prob = TRUE)})
       l[[v]] <- dplyr::bind_rows(l1, .id="id")
     }
     df <- dplyr::bind_rows(l)

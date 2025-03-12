@@ -19,6 +19,7 @@
 #' @param ctrl A \code{trainControl} object to be used to build models. See \code{\link{trainControl}}.
 #' @param variables_selected A \code{vector} of variables to be used as predictors. If \code{NULL},
 #' predictors names from \code{pred} will be used. Can also be a selection method (e.g. 'vif').
+#' @param ... Additional arguments to be passed to \code{caret::train} function.
 #' @param parallel Should a paralelization method be used (not yet implemented)?
 #' @param i A \code{models} or a \code{input_sdm} object.
 #'
@@ -490,7 +491,8 @@ train_sdm <- function(occ, pred = NULL, algo, ctrl = NULL, variables_selected = 
               df~.,
               data=cbind(df,x),
               method = a,
-              trControl = ctrl
+              trControl = ctrl,
+              ...
             ) # lapply retorna diferentes valores de tuning (padronizar com seed?)
           })
         #}

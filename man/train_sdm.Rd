@@ -43,6 +43,8 @@ predictors names from \code{pred} will be used. Can also be a selection method (
 
 \item{parallel}{Should a paralelization method be used (not yet implemented)?}
 
+\item{...}{Additional arguments to be passed to \code{caret::train} function.}
+
 \item{i}{A \code{models} or a \code{input_sdm} object.}
 }
 \value{
