@@ -148,10 +148,10 @@ WorldClim_data <- function(path = NULL, period = "current", variable = "bioc", y
           resolution,
           res, "_bio.zip"
         ),
-        httr::write_disk(paste0("current_", resolution, res, ".zip"))
+        httr::write_disk(paste0(path, "/current_", resolution, res, ".zip"))
       )
       unzip(
-        zipfile = paste0("current_", resolution, res, ".zip"),
+        zipfile = paste0(path, "/current_", resolution, res, ".zip"),
         exdir = path
       )
     } else {

@@ -112,6 +112,7 @@ add_scenarios.SpatRaster <- function(sa, scen=NULL, scenarios_names = NULL, pred
 #' @export
 add_scenarios.stars <- function(sa, scen=NULL, scenarios_names = NULL, pred_as_scen = TRUE,
                                 variables_selected = NULL, stationary = NULL, ...) {
+  # stationary assertion must include an empty vector. Empty vector must be changed to NULL.
   if (is_input_sdm(sa)) {
     i2 <- sa
     sa <- i2$scenarios
