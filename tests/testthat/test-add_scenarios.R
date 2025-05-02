@@ -181,3 +181,4 @@ test_that("add_scenarios - stationary data/input_sdm", {
   expect_equal(length(i_pred$scenarios$data), 6)
 
 })
+

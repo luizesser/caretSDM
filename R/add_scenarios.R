@@ -114,8 +114,14 @@ add_scenarios.stars <- function(sa, scen=NULL, scenarios_names = NULL, pred_as_s
                                 variables_selected = NULL, stationary = NULL, ...) {
   # stationary assertion must include an empty vector. Empty vector must be changed to NULL.
   if (is_input_sdm(sa)) {
-    i2 <- sa
-    sa <- i2$scenarios
+    if("scenarios" %in% names(sa)){      # NEM SEMPRE TEM $scenarios: Precisa verificar.
+        i2 <- sa
+        sa <- i2$scenarios
+      } else {
+        sa <- add_scenarios(sa)
+        i2 <- sa
+        sa <- i2$scenarios
+      }
     add_sc <- ifelse(length(sa$data)>0, TRUE, FALSE)
   } else if ( is_sdm_area(sa) ) {
     add_sc <- ifelse(length(sa$scenarios$data)>0, TRUE, FALSE)

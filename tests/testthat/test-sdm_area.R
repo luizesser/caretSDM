@@ -7,6 +7,8 @@ if (fs::dir_exists(here::here("tests", "testthat", "testdata"))) {
     sf::st_read(quiet = TRUE)
   amazon_shp <-  here::here("tests", "testthat", "testdata", "AmazonHydroRivers4.shp") |>
     sf::st_read(quiet = TRUE)
+  l <-  here::here("tests", "testthat", "testdata", "ne_10m_rivers_lake_centerlines.shp") |>
+    sf::st_read(quiet = TRUE)
 } else {
   pr_tif <- test_path("testdata", "parana.tiff") |>
     stars::read_stars(quiet = TRUE)
@@ -15,6 +17,8 @@ if (fs::dir_exists(here::here("tests", "testthat", "testdata"))) {
   pr_shp <- test_path("testdata","parana.shp")|>
     sf::st_read(quiet = TRUE)
   amazon_shp <-  test_path("testdata", "AmazonHydroRivers4.shp") |>
+    sf::st_read(quiet = TRUE)
+  l <-  test_path("testdata", "ne_10m_rivers_lake_centerlines.shp") |>
     sf::st_read(quiet = TRUE)
 }
 
@@ -35,14 +39,16 @@ test_that("sdm_area - sf/predictors", {
   expect_equal(predictors(sa), c("cell_id.1", "CODIGOIB1", "NOMEUF2"))
   expect_true("cell_id" %in% colnames(sa$grid))
   expect_true("geometry" %in% colnames(sa$grid))
-})
+  expect_equal(as.character(unique(st_geometry_type(sa$grid))), "POLYGON")
 
+})
 
 test_that("sdm_area - sf/predictors no variables selected", {
   sa <- sdm_area(pr_gpkg, cell_size = 1, variables_selected = list())
   expect_equal(predictors(sa), character(0))
   expect_true("cell_id" %in% colnames(sa$grid))
   expect_true("geometry" %in% colnames(sa$grid))
+  expect_equal(as.character(unique(st_geometry_type(sa$grid))), "POLYGON")
 })
 
 test_that("sdm_area - sf/predictors no variables selected", {
@@ -52,6 +58,7 @@ test_that("sdm_area - sf/predictors no variables selected", {
   expect_equal(predictors(sa), c("CODIGOIB1", "NOMEUF2"))
   expect_true("cell_id" %in% colnames(sa$grid))
   expect_true("geometry" %in% colnames(sa$grid))
+  expect_equal(as.character(unique(st_geometry_type(sa$grid))), "POLYGON")
 })
 
 ## Test sf
@@ -66,6 +73,7 @@ test_that("sdm_area - sf/predictors lines instead of polygons", {
   ))
   expect_true("cell_id" %in% colnames(sa$grid))
   expect_true("geometry" %in% colnames(sa$grid))
+  expect_equal(as.character(unique(st_geometry_type(sa$grid))), "POLYGON")
 })
 
 test_that("sdm_area - sf/grid-bbox", {
@@ -87,6 +95,7 @@ test_that("sdm_area - stars_proxy", {
   expect_equal(sf::st_crs(sa$grid), sf::st_crs(pr_shp))
   expect_true("cell_id" %in% colnames(sa$grid))
   expect_true("geometry" %in% colnames(sa$grid))
+  expect_equal(as.character(unique(st_geometry_type(sa$grid))), "POLYGON")
 })
 
 test_that("sdm_area - sf/cellsize", {
@@ -97,6 +106,7 @@ test_that("sdm_area - sf/cellsize", {
 test_that("sdm_area - sf/grid", {
   sa <- sdm_area(pr_gpkg, cell_size = 1)
   expect_equal(class(sa$grid)[1], "sf")
+  expect_equal(as.character(unique(st_geometry_type(sa$grid))), "POLYGON")
 })
 
 test_that("sdm_area - sf/grid erro", {
@@ -128,6 +138,7 @@ test_that("sdm_area - sf/no-epsg", {
 test_that("sdm_area - stars/epsg", {
   sa <- sdm_area(pr_gpkg, cell_size = 100000, crs = 6933)
   expect_true(sf::st_crs(sa$grid) == sf::st_crs(6933))
+  expect_equal(as.character(unique(st_geometry_type(sa$grid))), "POLYGON")
 })
 
 ## Test stars
@@ -143,6 +154,7 @@ test_that("sdm_area - stars/predictors choosing some vars", {
   expect_equal(predictors(sa), c("bio1", "bio12"))
   expect_true("cell_id" %in% colnames(sa$grid))
   expect_true("geometry" %in% colnames(sa$grid))
+  expect_equal(as.character(unique(st_geometry_type(sa$grid))), "POLYGON")
 })
 
 test_that("sdm_area - stars/predictors chossing some vars using list", {
@@ -150,6 +162,7 @@ test_that("sdm_area - stars/predictors chossing some vars using list", {
   expect_equal(predictors(sa), c("wc2.1_10m_bio_1"))
   expect_true("cell_id" %in% colnames(sa$grid))
   expect_true("geometry" %in% colnames(sa$grid))
+  expect_equal(as.character(unique(st_geometry_type(sa$grid))), "POLYGON")
 })
 
 test_that("sdm_area - stars/grid-bbox", {
@@ -208,6 +221,7 @@ test_that("sdm_area - character/stars", {
   }
 
   expect_equal(class(sa$grid)[1], "sf")
+  expect_equal(as.character(unique(st_geometry_type(sa$grid))), "POLYGON")
 })
 
 test_that("sdm_area - character/error", {
@@ -226,6 +240,7 @@ test_that("sdm_area - stack/raster", {
   expect_equal(class(sa$grid)[1], "sf")
   expect_true("cell_id" %in% colnames(sa$grid))
   expect_true("geometry" %in% colnames(sa$grid))
+  expect_equal(as.character(unique(st_geometry_type(sa$grid))), "POLYGON")
 })
 
 test_that("sdm_area - stack/terra", {
@@ -240,6 +255,7 @@ test_that("sdm_area - stack/terra", {
   expect_equal(class(sa$grid)[1], "sf")
   expect_true("cell_id" %in% colnames(sa$grid))
   expect_true("geometry" %in% colnames(sa$grid))
+  expect_equal(as.character(unique(st_geometry_type(sa$grid))), "POLYGON")
 })
 
 test_that("sdm_area - print", {
@@ -271,6 +287,7 @@ test_that("sdm_area - GEOMTYPE - sf", {
   expect_equal(as.character(unique(sf::st_geometry_type(sa$grid))), "POLYGON")
   expect_true("cell_id" %in% colnames(sa$grid))
   expect_true("geometry" %in% colnames(sa$grid))
+  expect_equal(as.character(unique(st_geometry_type(sa$grid))), "POLYGON")
 })
 
 test_that("sdm_area - GEOMTYPE - stars", {
@@ -284,6 +301,7 @@ test_that("sdm_area - GEOMTYPE - stars", {
   expect_equal(as.character(unique(sf::st_geometry_type(sa$grid))), "POLYGON")
   expect_true("cell_id" %in% colnames(sa$grid))
   expect_true("geometry" %in% colnames(sa$grid))
+  expect_equal(as.character(unique(st_geometry_type(sa$grid))), "POLYGON")
 })
 
 
@@ -394,3 +412,13 @@ test_that("sdm_area - stars+gdal=F areas do not intersect", {
   expect_warning(sdm_area(pr_tif, cell_size = 50000, crs=6933, crop_by = am, gdal=F))
 })
 
+# test lines
+test_that("sdm_area - lines", {
+  sa <- sdm_area(l, cell_size = 5, lines_as_sdm_area = TRUE)
+  expect_true("cell_id" %in% colnames(sa$grid))
+  expect_true("geometry" %in% colnames(sa$grid))
+  expect_equal(class(sa$cell_size), "numeric")
+  expect_equal(sf::st_crs(sa$grid), sf::st_crs(l))
+  expect_equal(class(sa$grid)[1], "sf")
+  expect_equal(as.character(unique(st_geometry_type(sa$grid))), "LINESTRING")
+})

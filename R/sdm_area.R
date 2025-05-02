@@ -34,11 +34,12 @@
 #'
 #' @importFrom stars st_as_stars read_stars write_stars st_dimensions
 #' @importFrom sf st_crs st_read st_bbox st_as_sf gdal_utils st_crop st_make_valid st_transform
-#' st_write st_as_sf st_intersects st_length st_intersection st_join st_area sf_extSoftVersion
-#' st_geometry_type st_as_sfc st_centroid st_geometry
+#' st_write st_intersects st_length st_intersection st_join st_area sf_extSoftVersion
+#' st_geometry_type st_as_sfc st_centroid st_geometry st_drop_geometry st_cast
+#' st_collection_extract st_nearest_feature
 #' @importFrom cli cli_abort cli_inform cli_warn
 #' @importFrom dplyr setdiff select all_of any_of join_by relocate mutate arrange desc filter
-#' group_by reframe across inner_join join_by distinct
+#' group_by reframe across inner_join join_by distinct n rename row_number
 #' @importFrom checkmate test_class makeAssertCollection test_list
 #' @importFrom tidyr drop_na
 #' @importFrom fs path dir_exists dir_delete dir_create dir_ls path_file path_ext_remove
@@ -49,10 +50,11 @@
 #' @importFrom glue glue
 #' @importFrom furrr future_map2
 #' @importFrom stringr str_replace_all str_replace
+#' @importFrom lwgeom st_split
 #'
 #' @export
 sdm_area <- function(x, cell_size = NULL, crs = NULL, variables_selected = NULL, gdal = TRUE,
-                     crop_by = NULL) {
+                     crop_by = NULL, lines_as_sdm_area = FALSE) {
   assert_cli(
     check_int_cli(
       crs,
@@ -69,7 +71,7 @@ sdm_area <- function(x, cell_size = NULL, crs = NULL, variables_selected = NULL,
   assert_number_cli(
     cell_size,
     na.ok = FALSE,
-    null.ok = FALSE,
+    null.ok = TRUE,
     lower = 0
   )
 
@@ -144,7 +146,7 @@ sdm_area.SpatRaster <- function(x, cell_size = NULL, crs = NULL, variables_selec
 
 #' @export
 sdm_area.character <- function(x, cell_size = NULL, crs = NULL, variables_selected = NULL,
-                               gdal= TRUE, crop_by = NULL) {
+                               gdal= TRUE, crop_by = NULL, lines_as_sdm_area = FALSE) {
   xs <- tryCatch(
     sf::st_read(x, quiet = TRUE),
     error = function(e) NA
@@ -171,19 +173,20 @@ sdm_area.character <- function(x, cell_size = NULL, crs = NULL, variables_select
       cli::cli_abort(c("x" = "Files not found."))
     }
   }
-  sa <- sdm_area(xs, cell_size, crs, variables_selected, gdal, crop_by)
+  sa <- sdm_area(xs, cell_size, crs, variables_selected, gdal, crop_by, lines_as_sdm_area)
   return(invisible(sa))
 }
 
 #' @export
 sdm_area.stars <- function(x, cell_size = NULL, crs = NULL, variables_selected = NULL, gdal= TRUE,
-                           crop_by = NULL) {
-  #if (length(names(x)) > 1) {
-  #  cli::cli_abort(c(
-  #    "x" = "x has more than 1 attribute:",
-  #    "i" = "Try to change attributes to bands using merge()?"
-  #  ))
-  #}
+                           crop_by = NULL, lines_as_sdm_area = FALSE) {
+  assert_number_cli(
+    cell_size,
+    na.ok = FALSE,
+    null.ok = FALSE,
+    lower = 0
+  )
+
   x_var <- x |>
     .try_split() |>
     .adjust_cell_id_name(variables_selected)
@@ -256,7 +259,6 @@ sdm_area.stars <- function(x, cell_size = NULL, crs = NULL, variables_selected =
   }
   return(invisible(sa))
 }
-
 
 .sdm_area_from_stars_using_gdal <- function(x, cell_size = NULL, crs = NULL, crop_by = NULL) {
   in_dir <- fs::path(tempdir(), Sys.time() |> as.integer() |> as.character(), "in_dir")
@@ -449,19 +451,21 @@ sdm_area.stars <- function(x, cell_size = NULL, crs = NULL, variables_selected =
 
 #' @export
 sdm_area.sf <- function(x, cell_size = NULL, crs = NULL, variables_selected = NULL, gdal= TRUE,
-                        crop_by = NULL) {
+                        crop_by = NULL, lines_as_sdm_area = FALSE) {
   assert_class_cli(
     sf::st_crs(x),
     classes = "crs",
     null.ok = FALSE,
     .var.name = "x"
   )
+
   assert_number_cli(
     cell_size,
     na.ok = FALSE,
     null.ok = FALSE,
     lower = 0
   )
+
   if (is.null(crs)) {
     crs <- sf::st_crs(x)
   } else {
@@ -536,6 +540,12 @@ sdm_area.sf <- function(x, cell_size = NULL, crs = NULL, variables_selected = NU
         dplyr::select(dplyr::all_of(var_names_final)),
       cell_size = cell_size
     )
+  }
+
+  if (lines_as_sdm_area) {
+    l$grid <- .attribute_bioclim_to_rivers(x, l$grid) |>
+        dplyr::select(dplyr::all_of(var_names_final)) |>
+        dplyr::mutate(cell_id = dplyr::row_number())
   }
 
   sa <- .sdm_area(l)
@@ -790,6 +800,127 @@ sdm_area.sf <- function(x, cell_size = NULL, crs = NULL, variables_selected = NU
   return(grd)
 }
 
+.attribute_bioclim_to_rivers <- function(rivers_sf, grid_sf) {
+  # Check if inputs are sf objects
+  if (!all(inherits(rivers_sf, "sf"), inherits(grid_sf, "sf"))) {
+    stop("Both inputs must be sf objects")
+  }
+
+  # Ensure CRS are identical
+  if (sf::st_crs(rivers_sf) != sf::st_crs(grid_sf)) {
+    message("Transforming grid to match rivers CRS")
+    grid_sf <- sf::st_transform(grid_sf, sf::st_crs(rivers_sf))
+  }
+
+  # Check for overlaps
+  if (!any(lengths(sf::st_intersects(rivers_sf, grid_sf)) > 0)) {
+    stop("No overlaps between rivers and grid")
+  }
+  rivers_sf <- rivers_sf[grid_sf,]
+
+  # Get only bioclimatic columns (exclude geometry)
+  bioclim_cols <- setdiff(names(grid_sf), c("geometry", "grid_id"))
+
+  # Function to process each river feature
+  process_river_feature <- function(river_feature, grid) {
+    # Convert to single part if it's a multilinestring
+    if (sf::st_geometry_type(river_feature) == "MULTILINESTRING") {
+      suppressWarnings(river_lines <- sf::st_cast(river_feature, "LINESTRING"))
+      river_lines <- river_lines |>
+        dplyr::mutate(original_id = 1:dplyr::n())
+    } else {
+      river_lines <- river_feature |>
+        dplyr::mutate(original_id = 1)
+    }
+
+    # Process each line segment
+    result <- lapply(1:nrow(river_lines), function(i) {
+      line <- river_lines[i, ]
+
+      # Find intersecting grid cells
+      intersects <- sf::st_intersects(line, grid, sparse = FALSE)[1, ]
+      if (!any(intersects)) return(NULL)
+
+      intersecting_grids <- grid[intersects, ]
+
+      # Split line by grid boundaries
+      if (nrow(intersecting_grids) > 1) {
+        # Create union of all grid boundaries
+        #grid_bounds <- st_union(st_geometry(intersecting_grids))
+
+        # Split line by grid boundaries
+        suppressWarnings(split_lines <- lwgeom::st_split(sf::st_geometry(line), intersecting_grids) |>
+          sf::st_collection_extract("LINESTRING") |>
+          sf::st_as_sf() |>
+          dplyr::rename(geometry = x))
+
+        # For each split segment, find which grid cell it's in
+        segs_with_bioclim <- lapply(1:nrow(split_lines), function(j) {
+          seg <- split_lines[j, ]
+
+          # Find which grid cell contains this segment (using centroid if needed)
+          seg_centroid <- sf::st_centroid(seg)
+          grid_index <- sf::st_intersects(seg_centroid, intersecting_grids, sparse = FALSE)[1, ]
+          if(!any(grid_index)) {
+            # If centroid doesn't work, try the nearest from centroid
+            grid_index <- sf::st_nearest_feature(seg_centroid, intersecting_grids)
+          }
+
+          if (!any(grid_index)) return(NULL)
+
+          # Get bioclimatic data
+          bioclim_data <- sf::st_drop_geometry(intersecting_grids[grid_index, bioclim_cols, drop = FALSE])
+
+          # Combine with original river attributes
+          river_attrs <- sf::st_drop_geometry(line) |>
+            dplyr::select(-original_id)
+
+          # Create new sf object for this segment
+          seg_result <- cbind(river_attrs, bioclim_data, seg) |>
+            sf::st_as_sf()
+
+          return(seg_result)
+        })
+
+        # Combine all segments
+        x <- do.call(rbind, segs_with_bioclim)
+        return(x)
+      } else {
+        # Only one grid cell - just add bioclim data
+        bioclim_data <- sf::st_drop_geometry(intersecting_grids[, bioclim_cols, drop = FALSE])
+        river_attrs <- sf::st_drop_geometry(line) |>
+          dplyr::select(-original_id)
+        if(nrow(bioclim_data) > 1) {
+          warning("Multiple grid cells found for a single line segment. Taking the first one.")
+          bioclim_data <- bioclim_data[1, ]
+        }
+        x <- cbind(river_attrs, bioclim_data, sf::st_geometry(line)) |>
+          sf::st_as_sf()
+        return(x)
+      }
+    })
+
+    # Combine results for all lines in this feature
+    x <- do.call(rbind, result)
+    return(x)
+  }
+
+  # Process all river features
+  final_result <- lapply(1:nrow(rivers_sf), function(i) {
+    process_river_feature(rivers_sf[i, ], grid_sf)
+  })
+
+  # Combine all results
+  final_sf <- do.call(rbind, final_result)
+
+  # Clean up geometry column name if needed
+  if (!inherits(final_sf, "sf")) {
+    final_sf <- sf::st_as_sf(final_sf)
+  }
+
+  return(final_sf)
+}
+
 #' @export
 .sdm_area <- function(x) {
   sa <- structure(
@@ -901,7 +1032,7 @@ print.sdm_area <- function(x) {
 
   # Next check is only executed if no errors are
   # To improve performance found up to this line.
-  if (error_collection$isEmpty()){
+  if (error_collection$isEmpty() & "POLYGON" %in% st_geometry_type(x$grid)){
     polygon_area <- x$cell_size * x$cell_size
     invalid_row <- x$grid$geometry |>
       purrr::detect_index(

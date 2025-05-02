@@ -11,7 +11,8 @@ sdm_area(
   crs = NULL,
   variables_selected = NULL,
   gdal = TRUE,
-  crop_by = NULL
+  crop_by = NULL,
+  lines_as_sdm_area = FALSE
 )
 
 get_sdm_area(i)

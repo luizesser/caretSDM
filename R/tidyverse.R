@@ -148,6 +148,7 @@ filter.occurrences <- function(x, ...){
   if("cell_id" %in% names(x)){
     cd <- TRUE
   }
+  #x <- sf_to_df_sdm(x)
   grd <- dplyr::filter(x, ...)
   grd_col_names <- colnames(grd)
   if(cd){
@@ -171,5 +172,34 @@ filter.occurrences <- function(x, ...){
 #' @rdname tidyverse-methods
 #' @export
 filter_species <- function(x, spp = NULL, ...) {
-  return(dplyr::filter(x, species %in% spp, ...))
+  if (is.null(spp)) {
+    cli::cli_abort(c("No species selected."))
+  }
+
+  if ("occurrences" %in% names(x)) {
+    x$occurrences$occurrences <- filter(x$occurrences$occurrences, species %in% spp, ...)
+    x$occurrences$spp_names <- spp
+    x$occurrences$n_presences <- x$occurrences$n_presences[spp]
+    if ("pseudoabsences" %in% names(x$occurrences)) {
+      x$occurrences$pseudoabsences$n_pa <- x$occurrences$pseudoabsences$n_pa[spp]
+      x$occurrences$pseudoabsences$data <- x$occurrences$pseudoabsences$data[spp]
+    }
+  }
+
+  if ("models" %in% names(x)) {
+    x$models$validation$metrics <- x$models$validation$metrics[spp]
+    x$models$models <- x$models$models[spp]
+  }
+
+  if ("predictions" %in% names(x)) {
+    x$predictions$thresholds$values <- x$predictions$thresholds$values[spp]
+    x$predictions$ensembles <- subset(x$predictions$ensembles, rownames(x$predictions$ensembles) %in% spp)
+    x$predictions$models$validation$metrics <- x$predictions$models$validation$metrics[spp]
+    x$predictions$models$models <- x$predictions$models$models[spp]
+    for (j in 1:length(x$predictions$predictions)){
+      x$predictions$predictions[[j]] <- x$predictions$predictions[[j]][spp]
+    }
+  }
+
+  return(x)
 }
