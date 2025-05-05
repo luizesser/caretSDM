@@ -6,6 +6,7 @@
 \alias{species_names}
 \alias{get_coords}
 \alias{occurrences_as_df}
+\alias{add_occurrences}
 \title{Occurrences Managing}
 \usage{
 occurrences_sdm(x,
@@ -22,6 +23,8 @@ species_names(i)
 get_coords(i)
 
 occurrences_as_df(i)
+
+add_occurrences(oc1, oc2)
 }
 \arguments{
 \item{x}{A \code{data.frame}, \code{tibble} or \code{sf} with species records.}
@@ -58,6 +61,9 @@ it is only necessary a species column.
 \code{species_names} return the species names.
 
 \code{get_coords} return a \code{data.frame} with coordinates of species records.
+
+\code{add_occurrences} return a \code{occurrences}. This function sums two \code{occurrences} objects.
+It can also sum a \code{occurrences} object with a \code{data.frame} object.
 }
 \examples{
 # Create sdm_area object:

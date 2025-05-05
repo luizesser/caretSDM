@@ -35,6 +35,9 @@
 #'
 #' \code{get_coords} return a \code{data.frame} with coordinates of species records.
 #'
+#' \code{add_occurrences} return a \code{occurrences}. This function sums two \code{occurrences} objects.
+#' It can also sum a \code{occurrences} object with a \code{data.frame} object.
+#'
 #' @seealso \code{\link{input_sdm} \link{GBIF_data} \link{occ}}
 #'
 #' @author Luíz Fernando Esser (luizesser@gmail.com)
@@ -146,6 +149,21 @@ occurrences_as_df <- function(i) {
   }
   res <- y$occurrences |>
     sf_to_df_sdm()
+  return(res)
+}
+
+#' @rdname occurrences_sdm
+#' @export
+add_occurrences <- function(oc1, oc2) {
+  assert_class_cli(oc1, "occurrences")
+  if(is.data.frame(oc2)){
+    oc2 <- .occurrences(oc2)
+  }
+  assert_class_cli(oc2, "occurrences")
+  oc1_st <- oc1$occurrences
+  oc2_st <- oc2$occurrences
+  x <- rbind(oc1_st, oc2_st)
+  res <- occurrences_sdm(x)
   return(res)
 }
 
@@ -307,8 +325,8 @@ print.occurrences <- function(x) {
   cat("        caretSDM       \n")
   cat(".......................\n")
   cat("Class                 : occurrences\n")
-  cat("Species Names         :", x$spp_names, "\n")
-  cat("Number of presences   :", x$n_presences, "\n")
+  cat("Species Names         :", sort(x$spp_names), "\n")
+  cat("Number of presences   :", x$n_presences[sort(x$spp_names)], "\n")
   if (!is.null(x$independent_test)) {
     cat("Independent Test      : TRUE (number of records = ", nrow(x$independent_test), ")\n")
   }
