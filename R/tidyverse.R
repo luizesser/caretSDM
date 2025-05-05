@@ -14,7 +14,7 @@
 #' # Include predictors:
 #' sa <- add_predictors(sa, bioc) |> dplyr::select(c("bio01", "bio12"))
 #'
-#' @importFrom dplyr select relocate mutate
+#' @importFrom dplyr select relocate mutate filter
 #'
 #' @rdname tidyverse-methods
 #' @export
@@ -176,28 +176,37 @@ filter_species <- function(x, spp = NULL, ...) {
     cli::cli_abort(c("No species selected."))
   }
 
-  if ("occurrences" %in% names(x)) {
-    x$occurrences$occurrences <- filter(x$occurrences$occurrences, species %in% spp, ...)
-    x$occurrences$spp_names <- spp
-    x$occurrences$n_presences <- x$occurrences$n_presences[spp]
-    if ("pseudoabsences" %in% names(x$occurrences)) {
-      x$occurrences$pseudoabsences$n_pa <- x$occurrences$pseudoabsences$n_pa[spp]
-      x$occurrences$pseudoabsences$data <- x$occurrences$pseudoabsences$data[spp]
+  if(is_input_sdm(x)){
+    if ("occurrences" %in% names(x)) {
+      x$occurrences$occurrences <- dplyr::filter(x$occurrences$occurrences, species %in% spp, ...)
+      x$occurrences$spp_names <- spp
+      x$occurrences$n_presences <- x$occurrences$n_presences[spp]
+      if ("pseudoabsences" %in% names(x$occurrences)) {
+        x$occurrences$pseudoabsences$n_pa <- x$occurrences$pseudoabsences$n_pa[spp]
+        x$occurrences$pseudoabsences$data <- x$occurrences$pseudoabsences$data[spp]
+      }
+    }
+
+    if ("models" %in% names(x)) {
+      x$models$validation$metrics <- x$models$validation$metrics[spp]
+      x$models$models <- x$models$models[spp]
+    }
+
+    if ("predictions" %in% names(x)) {
+      x$predictions$thresholds$values <- x$predictions$thresholds$values[spp]
+      x$predictions$ensembles <- subset(x$predictions$ensembles, rownames(x$predictions$ensembles) %in% spp)
+      x$predictions$models$validation$metrics <- x$predictions$models$validation$metrics[spp]
+      x$predictions$models$models <- x$predictions$models$models[spp]
+      for (j in 1:length(x$predictions$predictions)){
+        x$predictions$predictions[[j]] <- x$predictions$predictions[[j]][spp]
+      }
     }
   }
-
-  if ("models" %in% names(x)) {
-    x$models$validation$metrics <- x$models$validation$metrics[spp]
-    x$models$models <- x$models$models[spp]
-  }
-
-  if ("predictions" %in% names(x)) {
-    x$predictions$thresholds$values <- x$predictions$thresholds$values[spp]
-    x$predictions$ensembles <- subset(x$predictions$ensembles, rownames(x$predictions$ensembles) %in% spp)
-    x$predictions$models$validation$metrics <- x$predictions$models$validation$metrics[spp]
-    x$predictions$models$models <- x$predictions$models$models[spp]
-    for (j in 1:length(x$predictions$predictions)){
-      x$predictions$predictions[[j]] <- x$predictions$predictions[[j]][spp]
+  if(is_occurrences(x)){
+    if ("occurrences" %in% names(x)) {
+      x$occurrences <- dplyr::filter(x$occurrences, species %in% spp)
+      x$spp_names <- spp
+      x$n_presences <- x$n_presences[spp]
     }
   }
 

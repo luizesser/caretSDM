@@ -28,6 +28,28 @@
 #'
 #' @export
 GBIF_data <- function(s, file = "", as_df = FALSE, ...) {
+  assert_logical_cli(
+    as_df,
+    any.missing = FALSE,
+    all.missing = FALSE,
+    len = 1,
+    null.ok = FALSE
+  )
+
+  assert_vector_cli(
+    s,
+    any.missing = FALSE,
+    all.missing = FALSE,
+    min.len = 1,
+    null.ok = FALSE,
+    unique = TRUE
+  )
+
+  assert_file_cli(
+    file,
+    extension = c("csv")
+  )
+
   if (!file.exists(file)) {
     data <- lapply(s, function(x) {
       y <- rgbif::occ_data(scientificName = x, limit = 100000, hasCoordinate = T, ...)

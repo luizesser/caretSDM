@@ -82,6 +82,18 @@ data_clean <- function(occ, pred = NULL,
                        invalid = TRUE,
                        terrestrial = TRUE,
                        independent_test = TRUE) {
+
+  assert_logical_cli(capitals, any.missing = FALSE,   all.missing = FALSE, len = 1, null.ok = FALSE)
+  assert_logical_cli(centroids, any.missing = FALSE, all.missing = FALSE, len = 1, null.ok = FALSE)
+  assert_logical_cli(duplicated, any.missing = FALSE, all.missing = FALSE, len = 1, null.ok = FALSE)
+  assert_logical_cli(identical, any.missing = FALSE, all.missing = FALSE, len = 1, null.ok = FALSE)
+  assert_logical_cli(institutions, any.missing = FALSE, all.missing = FALSE, len = 1, null.ok = FALSE)
+  assert_logical_cli(invalid, any.missing = FALSE, all.missing = FALSE, len = 1, null.ok = FALSE)
+  assert_logical_cli(terrestrial, any.missing = FALSE, all.missing = FALSE, len = 1, null.ok = FALSE)
+  assert_logical_cli(independent_test, any.missing = FALSE, all.missing = FALSE, len = 1, null.ok = FALSE)
+  assert_class_cli(occ, c("occurrences", "input_sdm"), null.ok = FALSE)
+  if(!is.null(pred)){assert_class_cli(pred, c("sdm_area"), null.ok = TRUE)}
+
   if (is_input_sdm(occ)) {
     y <- occ$occurrences
     if (is.null(pred)) {
