@@ -39,6 +39,7 @@ Imports:
     gtools,
     httr,
     kknn,
+    lwgeom,
     mapview,
     maxnet,
     mda,
