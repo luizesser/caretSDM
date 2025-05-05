@@ -91,7 +91,8 @@ data_clean <- function(occ, pred = NULL,
   assert_logical_cli(invalid, any.missing = FALSE, all.missing = FALSE, len = 1, null.ok = FALSE)
   assert_logical_cli(terrestrial, any.missing = FALSE, all.missing = FALSE, len = 1, null.ok = FALSE)
   assert_logical_cli(independent_test, any.missing = FALSE, all.missing = FALSE, len = 1, null.ok = FALSE)
-  assert_class_cli(occ, c("occurrences", "input_sdm"), null.ok = FALSE)
+  assert_cli(assert_class_cli(occ, "occurrences", null.ok = FALSE),
+             assert_class_cli(occ, "input_sdm", null.ok = FALSE))
   if(!is.null(pred)){assert_class_cli(pred, c("sdm_area"), null.ok = TRUE)}
 
   if (is_input_sdm(occ)) {
