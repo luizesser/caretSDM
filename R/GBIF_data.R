@@ -45,11 +45,6 @@ GBIF_data <- function(s, file = "", as_df = FALSE, ...) {
     unique = TRUE
   )
 
-  assert_file_cli(
-    file,
-    extension = c("csv")
-  )
-
   if (!file.exists(file)) {
     data <- lapply(s, function(x) {
       y <- rgbif::occ_data(scientificName = x, limit = 100000, hasCoordinate = T, ...)

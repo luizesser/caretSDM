@@ -190,17 +190,6 @@ assert_file_exists_cli <- function(x, ..., .var.name = vname(x), add = NULL){
   ))
 }
 
-assert_file_cli <- function(x, ..., .var.name = vname(x), add = NULL){
-  return(invisible(
-    make_assertion(
-      x,
-      checkmate::check_file(x, ...),
-      .var.name,
-      add
-    )
-  ))
-}
-
 assert_choice_cli <- function(x, ..., .var.name = vname(x), add = NULL){
   return(invisible(
     make_assertion(
