@@ -12,6 +12,8 @@
 #' predictors. If \code{NULL} adds all variables.
 #' @param stationary Names of variables from \code{sa} that should be used in scenarios as
 #' stationary variables.
+#' @param scenarios_names Character vector with names of scenarios.
+#' @param pred_as_scen Logical. If \code{TRUE} adds the current predictors as a scenario.
 #'
 #' @return The input \code{sdm_area} object with a new slot called scenarios with \code{scen} data
 #' as a \code{list}, where each slot of the \code{list} is a scenario and each scenario is a
@@ -117,11 +119,11 @@ add_scenarios.stars <- function(sa, scen=NULL, scenarios_names = NULL, pred_as_s
     if("scenarios" %in% names(sa)){      # NEM SEMPRE TEM $scenarios: Precisa verificar.
         i2 <- sa
         sa <- i2$scenarios
-      } else {
+    } else {
         sa <- add_scenarios(sa)
         i2 <- sa
         sa <- i2$scenarios
-      }
+    }
     add_sc <- ifelse(length(sa$data)>0, TRUE, FALSE)
   } else if ( is_sdm_area(sa) ) {
     add_sc <- ifelse(length(sa$scenarios$data)>0, TRUE, FALSE)
@@ -277,11 +279,17 @@ add_scenarios.stars <- function(sa, scen=NULL, scenarios_names = NULL, pred_as_s
     }
 
     return(sa)
-
   }
-
-
 }
 
-
-### add_scenario.sdm_area
+#' @rdname add_scenarios
+#' @export
+select_scenarios <- function(i, scenarios_names = NULL) {
+  if (is.null(scenarios_names)) {
+    cli::cli_abort(c("{.var scenarios} must be a character vector with the names of the scenarios."))
+  }
+  if (is_input_sdm(i) | is_sdm_area(i)) {
+    i$scenarios$data <- i$scenarios$data[scenarios_names]
+  }
+  return(i)
+}
