@@ -25,7 +25,7 @@
 #' sa <- add_predictors(sa, bioc) |> dplyr::select(c("bio01", "bio12"))
 #'
 #' # Include scenarios:
-#' sa <- add_scenarios(sa)
+#' sa <- add_scenarios(sa, scen)
 #'
 #' # Create occurrences:
 #' oc <- occurrences_sdm(occ, crs = 6933) |> join_area(sa)
@@ -35,6 +35,26 @@
 #'
 #' # Clean coordinates:
 #' i <- data_clean(i)
+#'
+#' # VIF calculation:
+#' i <- vif_predictors(i)
+#'
+#' # Pseudoabsence generation:
+#' i <- pseudoabsences(i, method="bioclim", variables_selected = "vif")
+#'
+#' # Custom trainControl:
+#' ctrl_sdm <- caret::trainControl(method = "repeatedcv", number = 4, repeats = 10, classProbs = TRUE,
+#' returnResamp = "all", summaryFunction = summary_sdm, savePredictions = "all")
+#'
+#' # Train models:
+#' i <- train_sdm(i, algo = c("nnet", "kknn"), variables_selected = "vif", ctrl=ctrl_sdm)
+#'
+#' # Predict models:
+#' i  <- predict_sdm(i)
+#'
+#' # Ensemble GCMs:
+#' i <- gcms_ensembles(i, gcms = c("CanESM5", "MIROC6"))
+#' i
 #'
 #' @importFrom dplyr bind_cols
 #'

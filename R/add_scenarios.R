@@ -285,11 +285,28 @@ add_scenarios.stars <- function(sa, scen=NULL, scenarios_names = NULL, pred_as_s
 #' @rdname add_scenarios
 #' @export
 select_scenarios <- function(i, scenarios_names = NULL) {
-  if (is.null(scenarios_names)) {
-    cli::cli_abort(c("{.var scenarios} must be a character vector with the names of the scenarios."))
-  }
+  caretSDM:::assert_subset_cli(scenarios_names, scenarios_names(i), empty.ok = FALSE)
   if (is_input_sdm(i) | is_sdm_area(i)) {
     i$scenarios$data <- i$scenarios$data[scenarios_names]
+  }
+  return(i)
+}
+
+#' @rdname add_scenarios
+#' @export
+set_scenarios_names <- function(i, scenarios_names = NULL) {
+  assert_class_cli(scenarios_names, "character")
+  if(!length(scenarios_names) == length(scenarios_names(i))){
+    cli::cli_abort(c("Length of {.var scenarios_names} must be equal to the number of scenarios in {.var i}.",
+                     "x" = "Length of {.var scenarios_names}: {length(scenarios_names)}",
+                     "i" = "Number of scenarios in {.var i}: {length(scenarios_names(i))}"))
+  }
+  if (is_input_sdm(i) | is_sdm_area(i)) {
+    if("scenarios" %in% names(i)){names(i$scenarios$data) <- scenarios_names}
+    if("predictions" %in% names(i)){
+      names(i$predictions$predictions) <- scenarios_names
+      colnames(i$predictions$ensembles) <- scenarios_names
+    }
   }
   return(i)
 }

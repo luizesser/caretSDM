@@ -69,7 +69,8 @@ write_predictions <- function(x, path = "results/predictions", ext = ".tif", cen
   } else {
     y <- x
   }
-  ext_sf <- c("bna", "csv", "e00", "gdb", "geojson", "gml", "gmt", "gpkg", "gps", "gtm", "gxt", "jml", "map", "mdb", "nc", "ods", "osm", "pbf", "shp", "sqlite", "vdv", "xls", "xlsx")
+  ext_sf <- c(".bna", ".csv", ".e00", ".gdb", ".geojson", ".gml", ".gmt", ".gpkg", ".gps", ".gtm", ".gxt", ".jml",
+              ".map", ".mdb", ".nc", ".ods", ".osm", ".pbf", ".shp", ".sqlite", ".vdv", ".xls", ".xlsx")
   scen <- names(y$predictions)
   spp <- names(y$predictions[[1]])
   grd <- y$grid

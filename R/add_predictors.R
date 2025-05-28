@@ -38,7 +38,7 @@
 #' @importFrom tidyr drop_na
 #'
 #' @export
-add_predictors <- function(sa, pred, variables_selected = NULL, gdal= TRUE) {
+add_predictors <- function(sa, pred, variables_selected = NULL, gdal = TRUE) {
   if (!is_sdm_area(sa)) {
     cli::cli_abort(c(
       "x" = "The sa argument must be an instance of class sdm_area."
@@ -70,7 +70,7 @@ add_predictors <- function(sa, pred, variables_selected = NULL, gdal= TRUE) {
 }
 
 #' @export
-add_predictors.RasterStack <- function(sa, pred, variables_selected = NULL, gdal= TRUE) {
+add_predictors.RasterStack <- function(sa, pred, variables_selected = NULL, gdal = TRUE) {
   pred <- sa  |>
     .add_predictors(pred, variables_selected, gdal)
 
@@ -78,7 +78,7 @@ add_predictors.RasterStack <- function(sa, pred, variables_selected = NULL, gdal
 }
 
 #' @export
-add_predictors.SpatRaster <- function(sa, pred, variables_selected = NULL, gdal= TRUE) {
+add_predictors.SpatRaster <- function(sa, pred, variables_selected = NULL, gdal = TRUE) {
   pred <- sa  |>
     .add_predictors(pred, variables_selected, gdal)
 
@@ -86,7 +86,7 @@ add_predictors.SpatRaster <- function(sa, pred, variables_selected = NULL, gdal=
 }
 
 #' @export
-add_predictors.character <- function(sa, pred, variables_selected = NULL, gdal= TRUE) {
+add_predictors.character <- function(sa, pred, variables_selected = NULL, gdal = TRUE) {
   pred <- sa  |>
     .add_predictors(pred, variables_selected, gdal)
 
@@ -94,7 +94,7 @@ add_predictors.character <- function(sa, pred, variables_selected = NULL, gdal= 
 }
 
 #' @export
-add_predictors.stars <- function(sa, pred, variables_selected = NULL, gdal= TRUE) {
+add_predictors.stars <- function(sa, pred, variables_selected = NULL, gdal = TRUE) {
   pred <- sa  |>
     .add_predictors(pred, variables_selected, gdal)
 
@@ -102,7 +102,7 @@ add_predictors.stars <- function(sa, pred, variables_selected = NULL, gdal= TRUE
 }
 
 #' @export
-add_predictors.sf <- function(sa, pred, variables_selected = NULL, gdal= TRUE) {
+add_predictors.sf <- function(sa, pred, variables_selected = NULL, gdal = TRUE) {
   pred <- sa  |>
     .add_predictors(pred, variables_selected, gdal)
 
@@ -110,7 +110,7 @@ add_predictors.sf <- function(sa, pred, variables_selected = NULL, gdal= TRUE) {
 }
 
 
-.add_predictors <- function(sa, pred, variables_selected = NULL, gdal= TRUE) {
+.add_predictors <- function(sa, pred, variables_selected = NULL, gdal = TRUE) {
   #if(sf::st_crs(pred) != sf::st_crs(sa$grid)){
   #  pred <- st_transform(pred, crs=sf::st_crs(sa$grid))
   #}
