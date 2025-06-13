@@ -1,8 +1,8 @@
 set.seed(1)
 sa <- sdm_area(parana, 0.1)
 sa <- add_predictors(sa, bioc)
-sa <- select(sa, c("bio01", "bio12"))
-sa <- sa |> mutate(div=bio01/bio12, prod=bio01*bio12, sub=bio12-bio01, soma=bio01+bio12)
+sa <- select(sa, c("bio1", "bio12"))
+sa <- sa |> mutate(div=bio1/bio12, prod=bio1*bio12, sub=bio12-bio1, soma=bio1+bio12)
 sa <- add_scenarios(sa)
 oc <- occurrences_sdm(occ, crs=6933)
 suppressWarnings(oc <- join_area(oc, sa))
@@ -11,19 +11,19 @@ i_pca <- pca_predictors(i)
 i_pca <- pseudoabsences(i_pca, method = "bioclim", variables_selected = "pca")
 suppressWarnings(i_vif <- vif_predictors(i))
 i_vif <- pseudoabsences(i_vif, method = "bioclim", variables_selected = "vif")
-i <- pseudoabsences(i, method = "bioclim", variables_selected=c("bio01", "bio12"))
+i <- pseudoabsences(i, method = "bioclim", variables_selected=c("bio1", "bio12"))
 
 test_that("train_sdm", {
   suppressWarnings(i2 <- train_sdm(i,
                                    algo=c("kknn", "mda", "naive_bayes"),
-                                   variables_selected = c("bio01", "bio12")))
+                                   variables_selected = c("bio1", "bio12")))
   expect_true("models" %in% names(i2))
   expect_equal(10, get_tune_length(i2))
   expect_equal(c("kknn", "mda", "naive_bayes"), algorithms_used(i2))
   expect_equal(c("kknn", "mda", "naive_bayes"),
                unique(get_validation_metrics(i2)[[1]][,"algo"]))
   expect_true(all(c("algo", "ROC") %in% colnames(get_validation_metrics(i2)[[1]])))
-  expect_true(all(c("bio01", "bio12") %in%
+  expect_true(all(c("bio1", "bio12") %in%
                     colnames(i2$models$models$`Araucaria angustifolia`$m1.1$trainingData)))
   expect_snapshot(i2)
 })
@@ -74,14 +74,14 @@ test_that("train_sdm - vif", {
 
 test_that("train_sdm - selecting vars", {
   suppressWarnings(i2 <- train_sdm(i, algo=c("naive_bayes", "mda", "kknn"),
-                                  variables_selected=c("bio01", "bio12")))
+                                  variables_selected=c("bio1", "bio12")))
   expect_true("models" %in% names(i2))
   expect_equal(10, get_tune_length(i2))
   expect_equal(c("naive_bayes", "mda", "kknn"), algorithms_used(i2))
   expect_equal(c("kknn", "mda", "naive_bayes"),
                unique(get_validation_metrics(i2)[[1]][,"algo"]))
   expect_true(all(c("algo", "ROC") %in% colnames(get_validation_metrics(i2)[[1]])))
-  expect_true(all(c("bio01", "bio12") %in%
+  expect_true(all(c("bio1", "bio12") %in%
                     colnames(i2$models$models$`Araucaria angustifolia`$m1.1$trainingData)))
   expect_snapshot(i2)
 })

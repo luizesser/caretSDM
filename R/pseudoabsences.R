@@ -161,7 +161,11 @@ pseudoabsences <- function(occ, pred = NULL, method = "random", n_set = 10, n_pa
         } else {
           sf_occ <- y$occurrences
         }
-        suppressWarnings(occ2 <- sf::st_intersection(sf_occ, df))
+        if(unique(st_geometry_type(df)) == "LINESTRING") {
+          occ2 <- df[df$cell_id %in% sf_occ$cell_id,]
+        } else {
+          suppressWarnings(occ2 <- sf::st_intersection(sf_occ, df))
+        }
         model <- dismo::bioclim(x = dplyr::select(as.data.frame(occ2), dplyr::all_of(selected_vars)))
         p <- dismo::predict(model, as.data.frame(df))
         p[p[] > th] <- NA

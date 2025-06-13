@@ -2,16 +2,26 @@
 % Please edit documentation in R/add_scenarios.R
 \name{add_scenarios}
 \alias{add_scenarios}
+\alias{select_scenarios}
+\alias{set_scenarios_names}
 \title{Add scenarios to \code{sdm_area}}
 \usage{
 add_scenarios(sa, scen = NULL, scenarios_names = NULL, pred_as_scen = TRUE,
                      variables_selected = NULL, stationary = NULL, ...)
+
+select_scenarios(i, scenarios_names = NULL)
+
+set_scenarios_names(i, scenarios_names = NULL)
 }
 \arguments{
 \item{sa}{A \code{sdm_area} object.}
 
 \item{scen}{\code{RasterStack}, \code{SpatRaster} or \code{stars} object. If \code{NULL} adds
 predictors as a scenario.}
+
+\item{scenarios_names}{Character vector with names of scenarios.}
+
+\item{pred_as_scen}{Logical. If \code{TRUE} adds the current predictors as a scenario.}
 
 \item{variables_selected}{Character vector with variables names in \code{scen} to be used as
 predictors. If \code{NULL} adds all variables.}

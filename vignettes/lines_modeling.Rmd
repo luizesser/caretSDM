@@ -1,0 +1,68 @@
+---
+title: "lines_modeling"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{lines_modeling}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(caretSDM)
+start_time <- Sys.time()
+set.seed(1)
+```
+
+```{r caretSDM_Workflow}
+# Create sdm_area object:
+sa <- sdm_area(rivs, cell_size=25000, crs = 6933, lines_as_sdm_area = TRUE)
+
+# Include predictors:
+sa <- add_predictors(sa, bioc)
+
+# Include scenarios:
+sa <- add_scenarios(sa, scen, stationary = c("LENGTH_KM", "DIST_DN_KM"))
+
+# Create occurrences:
+oc <- occurrences_sdm(salm, crs = 6933) |> join_area(sa)
+
+# Create input_sdm:
+i <- input_sdm(oc, sa)
+
+# Clean coordinates:
+i <- data_clean(i)
+
+# VIF calculation:
+i <- vif_predictors(i)
+
+# Pseudoabsence generation:
+i <- pseudoabsences(i, method="bioclim", variables_selected = "vif")
+
+# Custom trainControl:
+ctrl_sdm <- caret::trainControl(method = "repeatedcv", 
+                                number = 4, 
+                                repeats = 1, 
+                                classProbs = TRUE,
+                                returnResamp = "all", 
+                                summaryFunction = summary_sdm, 
+                                savePredictions = "all")
+
+# Train models:
+i <- train_sdm(i, algo = c("nnet", "naive_bayes", "kknn"), variables_selected = "vif", ctrl=ctrl_sdm)
+
+# Predict models:
+i  <- predict_sdm(i)
+
+#' # Ensemble GCMs:
+i <- gcms_ensembles(i, gcms = c("ca", "mi"))
+i
+end_time <- Sys.time()
+end_time - start_time
+```

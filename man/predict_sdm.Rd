@@ -100,7 +100,7 @@ i <- data_clean(i)
 i <- vif_predictors(i)
 
 # Pseudoabsence generation:
-i <- pseudoabsence(i, method="bioclim", variables_selected = "vif")
+i <- pseudoabsences(i, method="bioclim", variables_selected = "vif")
 
 # Custom trainControl:
 ctrl_sdm <- caret::trainControl(method = "repeatedcv", number = 4, repeats = 10, classProbs = TRUE,

@@ -33,11 +33,11 @@
                 caretSDM         
       ...........................
       Class                     : sdm_area
-      Extent                    : -5274583 -3300323 -4624583 -2700323 (xmin, xmax, ymin, ymax)
+      Extent                    : -5371070 -3380515 -4521070 -2680515 (xmin, xmax, ymin, ymax)
       CRS                       : WGS 84 / NSIDC EASE- 
       Resolution                : (50000, 50000) (x, y)
-      Number of Predictors      : 2 
-      Predictors Names          : bio01, bio12 
+      Number of Predictors      : 3 
+      Predictors Names          : bio1, bio4, bio12 
 
 # sdm_area - sdm_area para ser detectado
 
@@ -47,22 +47,22 @@
 # sdm_area - sdm_area para ser detectado com parametros diferentes
 
     Code
-      expect_equal(.detect_sdm_area(sa$grid, 30000, 5388), sa)
+      expect_equal(.detect_sdm_area(sa$grid, 30000, 5839), sa)
     Condition
       Warning:
       ! A sdm_area object was detected but some parameters are different. Please check it!
       i The cell size of the polygon of the row 1 of the grid is different from the cell_size.
-      i Detected CRS (WGS 84 / NSIDC EASE-) is different from informed one (EPSG:5388).
+      i Detected CRS (WGS 84 / NSIDC EASE-) is different from informed one (EPSG:5839).
 
 # sdm_area - sdm_area para ser detectado com avisos
 
     Code
-      expect_equal(sa2 <- sdm_area(sa$grid, cell_size = 40000, crs = 5388), sa)
+      expect_equal(sa2 <- sdm_area(sa$grid, cell_size = 40000, crs = 5839), sa)
     Condition
       Warning:
       ! A sdm_area object was detected but some parameters are different. Please check it!
       i The cell size of the polygon of the row 1 of the grid is different from the cell_size.
-      i Detected CRS (WGS 84 / NSIDC EASE-) is different from informed one (EPSG:5388).
+      i Detected CRS (WGS 84 / NSIDC EASE-) is different from informed one (EPSG:5839).
 
 # sdm_area - sf+gdal=F
 

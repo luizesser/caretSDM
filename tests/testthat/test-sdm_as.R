@@ -1,7 +1,7 @@
 test_that("sdm_as_stars", {
   sa <- sdm_area(parana, 0.1)
   sa <- add_predictors(sa, bioc)
-  sa <- select(sa, c("bio01", "bio12"))
+  sa <- select(sa, c("bio1", "bio12"))
 
   expect_null(sdm_as_stars(sa))
   expect_null(sdm_as_terra(sa))

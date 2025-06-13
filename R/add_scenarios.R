@@ -173,22 +173,42 @@ add_scenarios.stars <- function(sa, scen=NULL, scenarios_names = NULL, pred_as_s
     i2$scenarios <- sa_data
     return(i2)
 
-  } else if ( !is.null(stationary) & !exists("i2")) {
-
+  } else if ( !is.null(stationary) & !exists("i2") ) {
     stationary_grd <- sa$grid |> dplyr::select(all_of(c("cell_id", stationary)))
-    stationary_grd <- sf::st_transform(stationary_grd, sf::st_crs(scen))
     variables_selected <- pres_names[!pres_names %in% stationary]
     scen <- scen[, , , variables_selected]
 
     l <- list()
-    for (i in cli::cli_progress_along(1:length(scen), "Reescaling data")) {
-      l[[scenarios_names[i]]]  <- scen[i] |>
-        aggregate(stationary_grd, mean) |>
-        sf::st_as_sf() |>
-        cbind(stationary_grd) |>
-        sf::st_transform(sf::st_crs(sa$grid)) |>
-        tidyr::drop_na() |>
-        dplyr::select(dplyr::all_of(c("cell_id", pres_names, "geometry")))
+    if(unique(st_geometry_type(sa$grid)) == "LINESTRING") {
+      for (i in cli::cli_progress_along(1:length(scen), "Reescaling data")) {
+        scen_area <- scen[i] |>
+          sdm_area(
+            cell_size = sa$cell_size,
+            crs = stationary_grd |> sf::st_crs(),
+            variables_selected = variables_selected,
+            gdal = TRUE,
+            crop_by = stationary_grd
+          )
+
+        l[[scenarios_names[i]]]  <- scen_area$grid |>
+          dplyr::select(-"cell_id") |>
+          aggregate(stationary_grd, mean) |>
+          sf::st_cast("LINESTRING") |>
+          cbind(stationary_grd) |>
+          dplyr::select(-"geometry.1") |>
+          dplyr::relocate(c("cell_id", variables_selected, stationary, "geometry"))
+      }
+    } else {
+      stationary_grd <- sf::st_transform(stationary_grd, sf::st_crs(scen))
+      for (i in cli::cli_progress_along(1:length(scen), "Reescaling data")) {
+        l[[scenarios_names[i]]]  <- scen[i] |>
+          aggregate(stationary_grd, mean) |>
+          sf::st_as_sf() |>
+          cbind(stationary_grd) |>
+          sf::st_transform(sf::st_crs(sa$grid)) |>
+          tidyr::drop_na() |>
+          dplyr::select(dplyr::all_of(c("cell_id", pres_names, "geometry")))
+      }
     }
 
     sa_data <- sa
@@ -233,24 +253,46 @@ add_scenarios.stars <- function(sa, scen=NULL, scenarios_names = NULL, pred_as_s
       scen <- scen[, , , variables_selected]
     } else {
       variables_selected <- get_predictor_names(sa)
+      if(!all(variables_selected %in% st_get_dimension_values(scen, "band"))) {
+        variables_selected <- st_get_dimension_values(scen, "band")[st_get_dimension_values(scen, "band") %in% variables_selected]
+        cli::cli_warn(c("Some variables in {.var variables_selected} are not present in {.var scen}.",
+                        "i" = "Using only variables present in {.var scen}: {variables_selected}"))
+      }
     }
 
-    grid_t <- sf::st_transform(sa$grid, sf::st_crs(scen))
+    #grid_t <- sf::st_transform(sa$grid, sf::st_crs(scen))
+    grid_t <- sa$grid
 
     l <- list()
-    for (i in 1:length(scen)) {
-      scen2 <- scen[i] |>
-        aggregate(grid_t, mean) |>
-        sf::st_as_sf() |>
-        sf::st_transform(sf::st_crs(sa$grid))
-      if(is.null(stationary)){
-        scen2 <- cbind(scen2, dplyr::select(sa$grid, "cell_id"))
-      } else {
-        scen2 <- cbind(scen2, dplyr::select(sa$grid, "cell_id", stationary))
+    if(unique(st_geometry_type(grid_t)) == "LINESTRING") {
+      for (i in cli::cli_progress_along(1:length(scen), "Reescaling data")) {
+        scen_area <- scen[i] |>
+          sdm_area(
+            cell_size = sa$cell_size,
+            crs = grid_t |> sf::st_crs(),
+            variables_selected = variables_selected,
+            gdal = TRUE,
+            crop_by = grid_t
+          )
+
+        l[[scenarios_names[i]]]  <- scen_area$grid |>
+          dplyr::select(-"cell_id") |>
+          aggregate(grid_t, mean) |>
+          sf::st_cast("LINESTRING") |>
+          cbind(grid_t) |>
+          dplyr::select(c("cell_id", variables_selected, "geometry"))
       }
-      l[[scenarios_names[i]]] <-  scen2 |>
-        dplyr::select(c("cell_id", dplyr::all_of(variables_selected))) |>
-        tidyr::drop_na()
+    } else {
+      grid_t <- st_transform(grid_t, sf::st_crs(scen))
+      for (i in cli::cli_progress_along(1:length(scen), "Reescaling data")) {
+        l[[scenarios_names[i]]]  <- scen[i] |>
+          aggregate(grid_t, mean) |>
+          sf::st_as_sf() |>
+          cbind(grid_t) |>
+          sf::st_transform(sf::st_crs(sa$grid)) |>
+          tidyr::drop_na() |>
+          dplyr::select(dplyr::all_of(c("cell_id", variables_selected, "geometry")))
+      }
     }
 
     if (pred_as_scen) {

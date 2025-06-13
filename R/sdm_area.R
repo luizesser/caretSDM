@@ -120,6 +120,7 @@ sdm_area <- function(x, cell_size = NULL, crs = NULL, variables_selected = NULL,
           c(
             "x" = "The CRS of crop_by must be equal to CRS of parameter crs."
           ))
+        #crop_by <- sf::st_transform(crop_by, crs)
       }
     }
   }
@@ -225,6 +226,23 @@ sdm_area.stars <- function(x, cell_size = NULL, crs = NULL, variables_selected =
     cli_abort(c("x" = "crs is invalid."))
   }
 
+  #if (!is.null(crop_by)) {
+  #  crop_by <- sf::st_transform(crop_by, crs)
+  #  x <- sf::st_transform(x, crs)
+  #  suppressWarnings(
+  #    tmp_x <- x |>
+  #      sf::st_crop(crop_by) # Maybe: sf::st_crop(crop_by |> sf::st_bbox())
+  #  )
+  #  if (nrow(tmp_x) > 0) {
+  #    x <- tmp_x
+  #  } else {
+  #    cli::cli_warn(c(
+  #      "!" = "crop_by not applied.",
+  #      "i" = "The area of crop_by does not intersects with area of x."
+  #    ))
+  #  }
+  #}
+
   if (.is_gdal_installed() && gdal){
     cli::cli_inform(c(
       "!" = "Making grid over the study area is an expensive task. Please, be patient!",
@@ -307,7 +325,6 @@ sdm_area.stars <- function(x, cell_size = NULL, crs = NULL, variables_selected =
       purrr::map_chr(\(x) x) |> unname()
   }
 
-
   out_dir <- fs::path(tempdir(), Sys.time() |> as.integer() |> as.character(), "out_dir")
   if (fs::dir_exists(out_dir)) {
     fs::dir_delete(out_dir)
@@ -382,7 +399,6 @@ sdm_area.stars <- function(x, cell_size = NULL, crs = NULL, variables_selected =
   if(is.null(crop_by)){
     grd_bbox <- sf::st_bbox(grd)
   }
-
 
   grd <- grd |>
     tidyr::drop_na() |>
@@ -492,7 +508,7 @@ sdm_area.sf <- function(x, cell_size = NULL, crs = NULL, variables_selected = NU
   if (!is.null(crop_by)) {
     suppressWarnings(
       tmp_x <- x |>
-        sf::st_crop(crop_by |> sf::st_bbox())
+        sf::st_crop(crop_by) # Previously: sf::st_crop(crop_by |> sf::st_bbox())
     )
     if (nrow(tmp_x) > 0) {
       x <- tmp_x
@@ -719,7 +735,7 @@ sdm_area.sf <- function(x, cell_size = NULL, crs = NULL, variables_selected = NU
 }
 
 .sdm_area_from_sf_using_stars <- function(x, cell_size = NULL, crs = NULL) {
-  bbox <- st_bbox(x)
+  bbox <- sf::st_bbox(x)
   n_col <- ((bbox$xmax - bbox$xmin) / cell_size) |> unname() |> ceiling()
   n_row <- ((bbox$ymax - bbox$ymin) / cell_size) |> unname() |> ceiling()
 
@@ -727,7 +743,7 @@ sdm_area.sf <- function(x, cell_size = NULL, crs = NULL, variables_selected = NU
     .make_full_grid(cell_size)
 
   grd_geometry <- grd |>
-    select(cell_id)
+    dplyr::select(cell_id)
 
   has_num_cols <-
     (Filter(is.numeric, x) |>
@@ -767,7 +783,8 @@ sdm_area.sf <- function(x, cell_size = NULL, crs = NULL, variables_selected = NU
               dplyr::mutate(..weighting_factor = as.numeric(weighting_factor_calc_func(geometry))) |>
               dplyr::arrange(dplyr::desc(..weighting_factor))
           )
-        }
+        },
+        .options = furrr::furrr_options(seed = TRUE)
       ) |>
       purrr::list_rbind() |>
       tidyr::drop_na() |>

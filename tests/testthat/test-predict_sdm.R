@@ -1,7 +1,7 @@
 set.seed(1)
 sa <- sdm_area(parana, 0.1)
 sa <- add_predictors(sa, bioc)
-sa <- select(sa, c("bio01", "bio12"))
+sa <- select(sa, c("bio1", "bio12"))
 sa <- add_scenarios(sa)
 test_that("scenarios_names - sa", {
   expect_equal(names(sa$scenarios$data), scenarios_names(sa))
@@ -47,7 +47,7 @@ test_that("predict_sdm", {
                names(p$models$models$`Araucaria angustifolia`)))
   expect_true(all(pred$current$`Araucaria angustifolia`$m1.1$cell_id %in%
                     p$predictors$grid$cell_id))
-  expect_equal(c("cell_id", "bio01", "bio12", "presence", "pseudoabsence", "geometry"),
+  expect_equal(c("cell_id", "bio1", "bio12", "presence", "pseudoabsence", "geometry"),
                colnames(pred$current$`Araucaria angustifolia`$m1.1))
   expect_true(unique(st_geometry_type(pred$current$`Araucaria angustifolia`$m1.1)) == "POLYGON")
   expect_equal(st_crs(pred$current$`Araucaria angustifolia`$m1.1),
@@ -76,7 +76,7 @@ test_that("predict_sdm - th 0", {
                names(p$models$models$`Araucaria angustifolia`))
   expect_true(all(pred$current$`Araucaria angustifolia`$m1.1$cell_id %in%
                     p$predictors$grid$cell_id))
-  expect_equal(c("cell_id", "bio01", "bio12", "presence", "pseudoabsence", "geometry"),
+  expect_equal(c("cell_id", "bio1", "bio12", "presence", "pseudoabsence", "geometry"),
                colnames(pred$current$`Araucaria angustifolia`$m1.1))
   expect_true(unique(st_geometry_type(pred$current$`Araucaria angustifolia`$m1.1)) == "POLYGON")
   expect_equal(st_crs(pred$current$`Araucaria angustifolia`$m1.1),
@@ -105,7 +105,7 @@ test_that("predict_sdm - th function", {
                names(p$models$models$`Araucaria angustifolia`)))
   expect_true(all(pred$current$`Araucaria angustifolia`$m1.2$cell_id %in%
                     p$predictors$grid$cell_id))
-  expect_equal(c("cell_id", "bio01", "bio12", "presence", "pseudoabsence", "geometry"),
+  expect_equal(c("cell_id", "bio1", "bio12", "presence", "pseudoabsence", "geometry"),
                colnames(pred$current$`Araucaria angustifolia`$m1.2))
   expect_true(unique(st_geometry_type(pred$current$`Araucaria angustifolia`$m1.2)) == "POLYGON")
   expect_equal(st_crs(pred$current$`Araucaria angustifolia`$m1.2),
@@ -136,7 +136,7 @@ test_that("test ensembles", {
   i2 <- i
   i2$scenarios$data$teste <- i2$scenarios$data$current
   i2$scenarios$data$teste$bio12 <- i2$scenarios$data$teste$bio12*0
-  i2$scenarios$data$teste$bio01 <- i2$scenarios$data$teste$bio01*0
+  i2$scenarios$data$teste$bio1 <- i2$scenarios$data$teste$bio1*0
 
   p <- predict_sdm(i2, th=mean)
   e <- get_ensembles(p)
@@ -156,9 +156,6 @@ test_that("test ensembles", {
   expect_false(any(is.nan(e[,"current"][[1]][,2])))
   expect_false(any(is.nan(e[,"current"][[1]][,3])))
   expect_false(any(is.nan(e[,"current"][[1]][,4])))
-
-
-
 
 })
 

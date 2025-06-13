@@ -80,14 +80,12 @@ test_that("add_predictors - sf", {
   )
 })
 
-
 test_that("add_predictors - rasterStack não usando sdm_area", {
   expect_snapshot(
     sa_pred <- add_predictors(pr_raster, pr_raster),
     error = TRUE
   )
 })
-
 
 test_that("add_predictors - lista de variáveis invalida", {
   expect_snapshot(
@@ -132,7 +130,6 @@ test_that("add_predictors - character input", {
   sa_pred2 <- add_predictors(sa, pr_raster)
   expect_equal(sa_pred$grid, sa_pred2$grid)
 })
-
 
 #Novos testes
 test_that("add_predictors - correção do tidyr::drop_na: drop_na modifica o bbox buff+gdal", {

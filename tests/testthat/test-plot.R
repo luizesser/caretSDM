@@ -1,6 +1,6 @@
 set.seed(1)
 sa <- sdm_area(parana, 0.1)
-sa <- add_predictors(sa, bioc) |> dplyr::select(c("bio01", "bio12"))
+sa <- add_predictors(sa, bioc) |> dplyr::select(c("bio1", "bio12"))
 sa <- add_scenarios(sa)
 suppressWarnings(oc <- occurrences_sdm(occ, crs=6933) |> join_area(sa))
 test_that("plot works with i", {

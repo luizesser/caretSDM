@@ -58,10 +58,22 @@ join_area <- function(occ, pred) {
   }
 
   v1 <- nrow(oc)
-  oc <- oc |>
-    sf::st_join(dplyr::select(pd, "cell_id")) |>
-    dplyr::relocate("cell_id") |>
-    na.omit()
+
+  if(unique(st_geometry_type(pd)) == "LINESTRING") {
+    # Find nearest features
+    nearest <- st_nearest_feature(oc, select(pd, "cell_id"))
+    cell_id <- pd[nearest, "cell_id"]
+    oc <- cbind(oc, cell_id)|>
+      dplyr::relocate("cell_id") |>
+      dplyr::select(-"geometry.1")
+
+  } else {
+    oc <- oc |>
+      sf::st_join(dplyr::select(pd, "cell_id")) |>
+      dplyr::relocate("cell_id") |>
+      na.omit()
+  }
+
   v2 <- v1-nrow(oc)
 
   if(v2 > 0){

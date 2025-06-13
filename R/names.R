@@ -231,6 +231,67 @@ find_closest_matches <- function(inputs, valid_inputs) {
   df <- data.frame(s1_names=inputs, s2_names=closest_matches)
   return(df)
 }
+#find_closest_matches <- function(inputs, valid_inputs) {
+#  # Initialize results
+#  min_len <- min(length(inputs), length(valid_inputs))
+#  matched_inputs <- character(length(min_len))
+#  matched_values <- character(length(min_len))
+#  distances <- numeric(length(min_len))
+#
+#  # Track which valid inputs have been matched
+#  matched_valid <- logical(length(valid_inputs))
+#  names(matched_valid) <- valid_inputs
+#
+#  shorter_index <- which.min(c(length(inputs), length(valid_inputs)))
+#  shorter <- get(ifelse(shorter_index == 1, "inputs", "valid_inputs"))
+#  longer <- get(ifelse(shorter_index != 1, "inputs", "valid_inputs"))
+#
+#  for (i in seq_along(shorter)) {
+#    input <- shorter[i]
+#
+#    # Calculate distances to all valid inputs (excluding already matched ones)
+#    available_valid <- longer[!matched_valid]
+#    if (length(available_valid) == 0) {
+#      # No valid inputs left → assign NA
+#      matched_inputs[i] <- input
+#      matched_values[i] <- NA
+#      distances[i] <- NA
+#      next
+#    }
+#
+#    current_distances <- stringdist::stringdist(input, available_valid, method = "jw")
+#    closest_index <- which.min(current_distances)
+#    best_match <- available_valid[closest_index]
+#    best_distance <- current_distances[closest_index]
+#    stop_test <- length(current_distances[current_distances == best_distance])
+#    if (stop_test > 1) {
+#      warning(paste0("Not able to match variables from different sources"))
+#      stop()
+#    }
+#    # Record the match
+#    matched_inputs[i] <- input
+#    matched_values[i] <- best_match
+#    distances[i] <- best_distance
+#
+#    # Mark this valid input as matched
+#    matched_valid[best_match] <- TRUE
+#  }
+#
+#  # Create the result dataframe
+#  result_df <- data.frame(
+#    s1_names = matched_inputs,
+#    s2_names = matched_values,
+#    distance = distances,
+#    stringsAsFactors = FALSE
+#  )
+#
+#  return(result_df)
+#}
+#
+#inputs <- c( "bio01", "bio02", "bio03", "bio04", "bio05", "bio06", "bio07", "bio08", "bio09", "bio10",
+#             "bio11", "bio12", "bio13", "bio14", "bio15", "bio16", "bio17", "bio18", "bio19")
+#valid_inputs <- c("bio01", "bio02", "bio03", "bio04", "bio05", "bio06", "bio07", "bio08", "bio09", "bio10", "bio11", "bio12", "bio13", "bio14", "bio15")
+
 
 #' @rdname predictor_names
 #' @export

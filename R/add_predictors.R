@@ -34,7 +34,7 @@
 #'
 #' @importFrom cli cli_abort
 #' @importFrom dplyr inner_join join_by select
-#' @importFrom sf st_crs st_bbox
+#' @importFrom sf st_crs st_bbox st_intersection st_cast
 #' @importFrom tidyr drop_na
 #'
 #' @export
@@ -128,13 +128,21 @@ add_predictors.sf <- function(sa, pred, variables_selected = NULL, gdal = TRUE) 
     return(sa)
   }
 
-  grd <- sa$grid |>
-    dplyr::inner_join(
-      pred_sa$grid |>
-        as.data.frame() |>
-        dplyr::select(-geometry),
-      dplyr::join_by(cell_id)
-    )
+
+  if(unique(st_geometry_type(sa$grid)) == "LINESTRING") {
+    grd <- sa$grid |>
+      sf::st_intersection(dplyr::select(pred_sa$grid, -cell_id)) |>
+      sf::st_cast("LINESTRING")
+    grd$cell_id <- 1:nrow(grd)
+  } else {
+    grd <- sa$grid |>
+      dplyr::inner_join(
+        pred_sa$grid |>
+          as.data.frame() |>
+          dplyr::select(-geometry),
+        dplyr::join_by(cell_id)
+      )
+  }
 
   var_names <- colnames(grd)
   num_vars <- grepl("^[[:digit:]]+", names(grd))

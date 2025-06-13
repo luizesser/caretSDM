@@ -91,10 +91,7 @@ data_clean <- function(occ, pred = NULL,
   assert_logical_cli(invalid, any.missing = FALSE, all.missing = FALSE, len = 1, null.ok = FALSE)
   assert_logical_cli(terrestrial, any.missing = FALSE, all.missing = FALSE, len = 1, null.ok = FALSE)
   assert_logical_cli(independent_test, any.missing = FALSE, all.missing = FALSE, len = 1, null.ok = FALSE)
-  #assert_cli(assert_class_cli(occ, "occurrences", null.ok = FALSE),
-  #           assert_class_cli(occ, "input_sdm", null.ok = FALSE))
   if(!is.null(pred)){assert_class_cli(pred, c("sdm_area"), null.ok = TRUE)}
-
   if (is_input_sdm(occ)) {
     y <- occ$occurrences
     if (is.null(pred)) {
@@ -102,6 +99,10 @@ data_clean <- function(occ, pred = NULL,
     }
   } else {
     y <- occ
+  }
+  if("cell_id" %in% names(y$occurrences)) {
+    message("Cell_ids identified, removing duplicated cell_id.")
+    y$occurrences <- y$occurrences[!duplicated(y$occurrences$cell_id),]
   }
   if(sf::st_crs(y) !=4326){
     sf_t <- sf::st_transform(y$occurrences, 4326)
@@ -130,22 +131,21 @@ data_clean <- function(occ, pred = NULL,
   if (institutions) { x <- CoordinateCleaner::cc_inst(x, lon = lon, lat = lat, species = species) }
   if (invalid) { x <- CoordinateCleaner::cc_val(x, lon = lon, lat = lat) }
   if (terrestrial) { x <- CoordinateCleaner::cc_sea(x, lon = lon, lat = lat) }
-  if (!is.null(pred)) {
-    print("Predictors identified, procceding with grid filter (removing NA and duplicated data).")
+
+  if(!is.null(pred)){
+    not_line <- unique(st_geometry_type(pred$grid)) != "LINESTRING"
+  } else {
+    not_line <- FALSE
+  }
+
+  if (not_line) {
+    message("Predictors identified, procceding with grid filter (removing NA and duplicated data).")
     x2 <- sf::st_as_sf(x,
-      coords = c(lon, lat),
-      crs = 4326)
+                       coords = c(lon, lat),
+                       crs = 4326)
     if (sf::st_crs(x2) != sf::st_crs(pred$grid)) {
       x2 <- sf::st_transform(x2, crs = sf::st_crs(pred$grid))
     }
-    #if (is_predictors(pred)) {
-    #  preds <- stars::st_rasterize(sf::st_as_sf(pred$grid))
-    #  x2 <- sf::st_transform(x2, crs = sf::st_crs(preds))
-    #  teste <- cbind(stars::st_extract(preds, x2), x2$species)
-    #  x <- na.omit(teste[!duplicated(select(as.data.frame(teste), -"geometry")), ])
-    #  colnames(x) <- c("cell_id", "species", "geometry")
-    #  x <- select(x, c("species"))
-    #} else
     if (is_sdm_area(pred)) {
       teste <- pred$grid |>
         stars::st_rasterize() |>
@@ -157,6 +157,7 @@ data_clean <- function(occ, pred = NULL,
         duplicated()
       x <- teste[!dup_rows, c("cell_id","species", "geometry")]
     }
+
   }
   if(is.data.frame(x)){
     x <- sf::st_as_sf(x,
@@ -166,6 +167,14 @@ data_clean <- function(occ, pred = NULL,
   if(sf::st_crs(x) != sf::st_crs(y$crs)){
     x <- sf::st_transform(x, y$crs)
   }
+  if(!"cell_id" %in% names(x) & !is.null(pred)) {
+    nearest <- st_nearest_feature(x, select(pred$grid, "cell_id"))
+    cell_id <- pred$grid[nearest, "cell_id"]
+    x <- cbind(x, cell_id)|> # or cbind(cell_id, x)?
+      dplyr::relocate("cell_id") |>
+      dplyr::select(-"geometry.1")
+  }
+
   y$occurrences <- x
   clean_methods <- c("NAs")
   if (capitals) { clean_methods <- c(clean_methods, "Capitals") }
@@ -199,21 +208,13 @@ data_clean <- function(occ, pred = NULL,
     if (invalid) { x <- CoordinateCleaner::cc_val(x, lon = lon, lat = lat) }
     if (terrestrial) { x <- CoordinateCleaner::cc_sea(x, lon = lon, lat = lat) }
     if (!is.null(pred)) {
-      print("Predictors identified, procceding with grid filter (removing NA and duplicated data).")
+      message("Predictors identified, procceding with grid filter (removing NA and duplicated data).")
       x2 <- sf::st_as_sf(x,
                          coords = c(lon, lat),
                          crs = 4326)
       if (sf::st_crs(x2) != sf::st_crs(pred$grid)) {
         x2 <- sf::st_transform(x2, crs = sf::st_crs(pred$grid))
       }
-      #if (is_predictors(pred)) {
-      #  preds <- stars::st_rasterize(sf::st_as_sf(pred$grid))
-      #  x2 <- sf::st_transform(x2, crs = sf::st_crs(preds))
-      #  teste <- cbind(stars::st_extract(preds, x2), x2$species)
-      #  x <- na.omit(teste[!duplicated(select(as.data.frame(teste), -"geometry")), ])
-      #  colnames(x) <- c("cell_id", "species", "geometry")
-      #  x <- select(x, c("species"))
-      #} else
       if (is_sdm_area(pred)) {
         teste <- pred$grid |>
           stars::st_rasterize() |>

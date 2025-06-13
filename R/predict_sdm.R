@@ -79,7 +79,7 @@
 #' i <- vif_predictors(i)
 #'
 #' # Pseudoabsence generation:
-#' i <- pseudoabsence(i, method="bioclim", variables_selected = "vif")
+#' i <- pseudoabsences(i, method="bioclim", variables_selected = "vif")
 #'
 #' # Custom trainControl:
 #' ctrl_sdm <- caret::trainControl(method = "repeatedcv", number = 4, repeats = 10, classProbs = TRUE,
@@ -156,7 +156,7 @@ predict_sdm.sdm_area <- function(m, scen, metric = "ROC", th = 0.9, tp = "prob",
       na.omit() |>
       dplyr::select(dplyr::all_of(c(m$models$predictors, "cell_id")))
     p[[i]] <- sapply(m1, function(m2) {
-      p2 <- predict(m2, newdata = x, type = tp) # maybe newdata=na.omit(x), but this could cause trouble in cell_id
+      suppressWarnings(p2 <- predict(m2, newdata = x, type = tp)) # maybe newdata=na.omit(x), but this could cause trouble in cell_id
       cell_id <- scen$data[[i]] |>
         na.omit()
       p2 <- sapply(p2, function(z) {

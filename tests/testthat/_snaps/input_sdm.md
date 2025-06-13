@@ -11,8 +11,8 @@
       Number of presences           : 417 
       --------  Predictors  ---------
       Number of Predictors          : 2 
-      Predictors Names              : bio01, bio12 
+      Predictors Names              : bio1, bio12 
       ---------  Scenarios  ---------
       Number of Scenarios           : 5 
-      Scenarios Names               : ssp126_2030 ssp126_2090 ssp585_2030 ssp585_2090 current 
+      Scenarios Names               : ca_ssp245_2090 ca_ssp585_2090 mi_ssp245_2090 mi_ssp585_2090 current 
 

@@ -331,7 +331,7 @@ test_that("sdm_area - sdm_area para ser detectado com parametros diferentes", {
   sa <- sdm_area(pr_gpkg, cell_size = 50000, crs = 6933)
   expect_snapshot(
     expect_equal(
-      .detect_sdm_area(sa$grid, 30000, 5388),
+      .detect_sdm_area(sa$grid, 30000, 5839),
       sa
     )
   )
@@ -356,7 +356,7 @@ test_that("sdm_area - sdm_area para ser detectado com avisos", {
   sa <- sdm_area(pr_gpkg, cell_size = 50000, crs = 6933)
   expect_snapshot(
     expect_equal(
-      sa2 <- sdm_area(sa$grid, cell_size = 40000, crs = 5388),
+      sa2 <- sdm_area(sa$grid, cell_size = 40000, crs = 5839),
       sa
     )
   )

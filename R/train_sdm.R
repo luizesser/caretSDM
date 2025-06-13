@@ -107,7 +107,7 @@ train_sdm <- function(occ, pred = NULL, algo, ctrl = NULL, variables_selected = 
                                       "sampling", "index", "indexOut", "indexFinal", "timingSamps",
                                       "predictionBounds", "seeds", "adaptive", "trim", "allowParallel"))
   }
-  caretSDM:::assert_subset_cli(variables_selected, c(get_predictor_names(pred), "vif", "pca"), empty.ok=T)
+  caretSDM:::assert_subset_cli(variables_selected, c(get_predictor_names(pred), "vif", "pca"), empty.ok = TRUE)
 
   #if (is_predictors(pred)) {
   #  if (is.null(variables_selected)) {
@@ -425,18 +425,25 @@ train_sdm <- function(occ, pred = NULL, algo, ctrl = NULL, variables_selected = 
     #  occ2 <- dplyr::select(occ2, dplyr::all_of(selected_vars))
     #} else
     if (is_sdm_area(pred)) {
-      if(sf::st_crs(z$occurrences) != sf::st_crs(pred$grid)){
-        occ2 <- sf::st_transform(z$occurrences, crs = sf::st_crs(pred$grid)) |>
-          sf::st_join(pred$grid) |>
-          dplyr::filter(species == sp) |>
-          dplyr::select(dplyr::all_of(selected_vars))
+      if(unique(st_geometry_type(pred$grid)) == "LINESTRING") {
+        df <- pred$grid |>
+          dplyr::select(dplyr::all_of(c("cell_id", selected_vars)))
+        sp_ids <- z$occurrences[z$occurrences$species == sp,]
+        occ2 <- df[df$cell_id %in% sp_ids$cell_id,]
       } else {
-        occ2 <- z$occurrences |>
-          sf::st_join(pred$grid) |>
-          dplyr::filter(species == sp) |>
-          dplyr::select(dplyr::all_of(selected_vars))
+        if(sf::st_crs(z$occurrences) != sf::st_crs(pred$grid)){
+          occ2 <- sf::st_transform(z$occurrences, crs = sf::st_crs(pred$grid)) |>
+            sf::st_join(pred$grid) |>
+            dplyr::filter(species == sp) |>
+            dplyr::select(dplyr::all_of(selected_vars))
+        } else {
+          occ2 <- z$occurrences |>
+            sf::st_join(pred$grid) |>
+            dplyr::filter(species == sp) |>
+            dplyr::select(dplyr::all_of(selected_vars))
+        }
+        suppressWarnings(occ2 <- sf::st_intersection(occ2, pred$grid))
       }
-      suppressWarnings(occ2 <- sf::st_intersection(occ2, pred$grid))
     }
 
     for (i in 1:length(z$pseudoabsences$data[[sp]])) {
@@ -560,7 +567,6 @@ train_sdm <- function(occ, pred = NULL, algo, ctrl = NULL, variables_selected = 
   return(models)
 }
 
-
 #' @rdname train_sdm
 #' @export
 get_tune_length <- function(i) {
@@ -625,6 +631,27 @@ mean_validation_metrics <- function(i) {
   }, simplify = FALSE, USE.NAMES = TRUE)
   return(res)
 }
+
+#custom_data_partition <- function(i, fun = blockCV, ...) {
+#  caretSDM:::assert_class_cli(i, "input_sdm")
+#  if (is_input_sdm(i)) {
+#    z <- i$occurrences
+#    pred <- i$predictors
+#  }
+#
+#  res <- fun()
+#  return(res)
+#}
+#blockCV <- function(i, ...) {
+#  caretSDM:::assert_class_cli(i, "input_sdm")
+#  if (is_input_sdm(i)) {
+#    z <- i$occurrences
+#    pred <- i$predictors
+#  }
+#
+#  res <- fun()
+#  return(res)
+#}
 
 #' @export
 .models <- function(x) {

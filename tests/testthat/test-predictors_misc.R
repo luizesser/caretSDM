@@ -4,7 +4,7 @@ test_that("predictors misc - predictors_names", {
   suppressWarnings(sa_pred <- add_predictors(sa, pred))
   expect_equal(
     predictors(sa_pred),
-    c("GID0", "CODIGOIB1", "NOMEUF2", "SIGLAUF3", "bio01", "bio12")
+    c("GID0", "CODIGOIB1", "NOMEUF2", "SIGLAUF3", "bio1", "bio4", "bio12")
   )
 })
 

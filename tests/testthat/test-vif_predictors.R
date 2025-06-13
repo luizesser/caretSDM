@@ -1,8 +1,8 @@
 test_that("vif_predictors - normal path", {
   sa <- sdm_area(parana, 1)
   sa <- add_predictors(sa, bioc)
-  sa <- select(sa, c("bio01", "bio12"))
-  sa <- sa |> mutate(div=bio01/bio12, prod=bio01*bio12, sub=bio12-bio01, soma=bio01+bio12)
+  sa <- dplyr::select(sa, c("bio1", "bio12"))
+  sa <- sa |> dplyr::mutate(div=bio1/bio12, prod=bio1*bio12, sub=bio12-bio1, soma=bio1+bio12)
   oc <- occurrences_sdm(occ, crs=6933)
   expect_warning(oc <- join_area(oc, sa))
   i <- input_sdm(oc, sa)
@@ -17,8 +17,8 @@ test_that("vif_predictors - normal path", {
 test_that("vif_predictors - normal path", {
   sa <- sdm_area(parana, 1)
   sa <- add_predictors(sa, bioc)
-  sa <- select(sa, c("bio01", "bio12"))
-  sa <- sa |> mutate(div=bio01/bio12, prod=bio01*bio12, sub=bio12-bio01, soma=bio01+bio12)
+  sa <- dplyr::select(sa, c("bio1", "bio12"))
+  sa <- sa |> dplyr::mutate(div=bio1/bio12, prod=bio1*bio12, sub=bio12-bio1, soma=bio1+bio12)
   oc <- occurrences_sdm(occ, crs=6933)
   expect_warning(oc <- join_area(oc, sa))
   i <- input_sdm(oc, sa)

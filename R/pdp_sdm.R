@@ -111,7 +111,7 @@ get_pdp_sdm <- function(i, spp = NULL, algo = NULL, variables_selected = NULL){
     n <- names(m[[spp]])[grep(paste0("\\.",y,"$"), names(m[[spp]]))]
     l <- list()
     for(v in variables_selected){
-      l1 <- lapply(m[[spp]][n], function(x){pdp::partial(x, pred.var = v, plot = FALSE, prob = TRUE)})
+      suppressWarnings(l1 <- lapply(m[[spp]][n], function(x){pdp::partial(x, pred.var = v, plot = FALSE, prob = TRUE)}))
       l[[v]] <- dplyr::bind_rows(l1, .id="id")
     }
     df <- dplyr::bind_rows(l)
