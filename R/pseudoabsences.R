@@ -52,10 +52,10 @@
 #' sa <- sdm_area(parana, cell_size = 25000, crs = 6933)
 #'
 #' # Include predictors:
-#' sa <- add_predictors(sa, bioc) |> dplyr::select(c("bio01", "bio12"))
+#' sa <- add_predictors(sa, bioc) |> dplyr::select(c("bio1", "bio4", "bio12"))
 #'
 #' # Include scenarios:
-#' sa <- add_scenarios(sa)
+#' sa <- add_scenarios(sa, scen)
 #'
 #' # Create occurrences:
 #' oc <- occurrences_sdm(occ, crs = 6933) |> join_area(sa)
@@ -70,44 +70,35 @@
 #' i <- vif_predictors(i)
 #'
 #' # Pseudoabsence generation:
-#' i <- pseudoabsence(i, method="bioclim", variables_selected = "vif")
+#' i <- pseudoabsences(i, method="bioclim", variables_selected = "vif")
 #'
-#' @importFrom sf st_as_sf st_crs st_transform st_intersection
+#' @importFrom sf st_as_sf st_crs st_transform st_intersection st_geometry_type
 #' @importFrom dplyr select all_of filter
 #' @importFrom stars st_extract
 #' @importFrom dismo bioclim predict
-#' @importFrom cli cli_abort
+#' @importFrom cli cli_abort cli_warn
 #'
 #' @export
 pseudoabsences <- function(occ, pred = NULL, method = "random", n_set = 10, n_pa = NULL, variables_selected = NULL, th = 0) {
-  caretSDM:::assert_class_cli(occ, "input_sdm")
+  assert_class_cli(occ, "input_sdm")
   if (is_input_sdm(occ)) {
     y <- occ$occurrences
     pred <- occ$predictors
   }
-  caretSDM:::assert_class_cli(pred, "sdm_area")
-  caretSDM:::assert_choice_cli(method, c("random", "bioclim", "mahal.dist"))
-  caretSDM:::assert_int_cli(n_set)
-  caretSDM:::assert_int_cli(n_pa, null.ok = TRUE)
-  caretSDM:::assert_numeric_cli(th, len=1, null.ok=FALSE, upper=1, lower=0, any.missing=FALSE)
-  caretSDM:::assert_subset_cli(variables_selected, c(get_predictor_names(pred), "vif", "pca"), empty.ok=T)
+  assert_class_cli(pred, "sdm_area")
+  assert_choice_cli(method, c("random", "bioclim", "mahal.dist"))
+  assert_int_cli(n_set)
+  assert_int_cli(n_pa, null.ok = TRUE)
+  assert_numeric_cli(th, len=1, null.ok=FALSE, upper=1, lower=0, any.missing=FALSE)
+  assert_subset_cli(variables_selected, c(get_predictor_names(pred), "vif", "pca"), empty.ok=T)
 
   if (!is.null(y$pseudoabsences)) {
-    warning("Previous pseudoabsence element on Occurrences object was overwrited.", call. = F)
+    cli::cli_warn("Previous pseudoabsence element on Occurrences object was overwrited.", call. = F)
   }
   if (is.null(n_pa)) {
     n_pa <- y$n_presences
   }
-  #if (is_predictors(pred)) {
-  #  if (is.null(variables_selected)) {
-  #    selected_vars <- pred$predictors_names
-  #    cat("Using all variables available: ", selected_vars)
-  #  }
-  #  if (any(variables_selected %in% pred$predictors_names)) {
-  #    selected_vars <- pred$predictors_names[pred$predictors_names %in% variables_selected]
-  #    cat("Using given variables: ", selected_vars)
-  #  }
-  #} else
+
   if (is_sdm_area(pred)) {
     if (is.null(variables_selected)) {
       selected_vars <- get_predictor_names(pred)
@@ -121,18 +112,6 @@ pseudoabsences <- function(occ, pred = NULL, method = "random", n_set = 10, n_pa
     }
   }
 
-  #if (length(variables_selected) == 1) {
-  #  if (length(pred$variable_selection[attributes(pred$variable_selection)$names %in% variables_selected]) == 0) {
-  #    print(paste0("Variable selection method not detected."))
-  #    stop()
-  #  }
-  #  selected_vars <- unlist(pred$variable_selection[attributes(pred$variable_selection)$names %in% variables_selected], rec = F)[[paste0(variables_selected, ".selected_variables")]]
-  #  cat("Using variables selected by ", variables_selected, ": ", selected_vars)
-  #}
-  #if (is_predictors(pred)) {
-  #  suppressWarnings(df <- sf::st_centroid(sf::st_as_sf(dplyr::filter(na.omit(pred$data), band %in% selected_vars))))
-  #  df <- dplyr::select(cbind(pred$grid, df), -"geometry.1")
-  #} else
   if (is_sdm_area(pred)) {
     df <- pred$grid |>
       dplyr::select(dplyr::all_of(c("cell_id", selected_vars)))
@@ -161,7 +140,7 @@ pseudoabsences <- function(occ, pred = NULL, method = "random", n_set = 10, n_pa
         } else {
           sf_occ <- y$occurrences
         }
-        if(unique(st_geometry_type(df)) == "LINESTRING") {
+        if(unique(sf::st_geometry_type(df)) == "LINESTRING") {
           occ2 <- df[df$cell_id %in% sf_occ$cell_id,]
         } else {
           suppressWarnings(occ2 <- sf::st_intersection(sf_occ, df))

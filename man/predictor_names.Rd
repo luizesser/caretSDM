@@ -11,15 +11,14 @@
 \alias{get_predictor_names.sdm_area}
 \alias{get_predictor_names.input_sdm}
 \alias{test_variables_names}
-\alias{find_closest_matches}
 \alias{set_variables_names}
 \title{Predictors Names Managing}
 \usage{
 predictors(x)
 
-\method{predictors}{sdm_area}(x, ...)
+\method{predictors}{sdm_area}(x)
 
-\method{predictors}{input_sdm}(x, ...)
+\method{predictors}{input_sdm}(x)
 
 set_predictor_names(x, new_names)
 
@@ -35,17 +34,28 @@ get_predictor_names(x)
 
 test_variables_names(sa, scen)
 
-find_closest_matches(inputs, valid_inputs)
-
 set_variables_names(s1 = NULL, s2 = NULL, new_names = NULL)
 }
 \arguments{
 \item{x}{A \code{sdm_area} or \code{input_sdm} object to get/set predictors names.}
 
-\item{new_names}{\code{character} vector from size \code{length(get_predictor_names(x))}}
+\item{new_names}{A \code{character} vector from size \code{length(get_predictor_names(x))}}
+
+\item{sa}{A \code{sdm_area} object.}
+
+\item{scen}{A \code{stars} object with scenarios.}
+
+\item{s1}{A \code{stars} object with scenarios.}
+
+\item{s2}{A \code{stars} object with scenarios or a \code{sdm_area} object.}
 }
 \value{
-A \code{character} vector with predictors names.
+\code{predictors} and \code{get_predictor_names} return a \code{character} vector with
+predictors names.
+\code{test_variables_names} returns a logical informing if all variables are equal in both
+objects (TRUE) or not (FALSE).
+\code{set_variables_names} returns the \code{s1} object with new names provided by \code{s2} or
+\code{new_names}.
 }
 \description{
 This function manage predictors names in \code{sdm_area} objects.
@@ -54,13 +64,17 @@ This function manage predictors names in \code{sdm_area} objects.
 This functions is available so users can modify predictors names to better represent them. Use
 carefully to avoid giving wrong names to the predictors. Useful to make sure the predictors names
 are equal the names in scenarios.
+\code{test_variables_names} Tests if variables in a \code{stars} object (\code{scen} argument)
+matches the given \code{sdm_area} object (\code{sa} argument).
+\code{set_variables_names} will set \code{s1} object variables names as the \code{s2} object
+variables names OR assign new names to it.
 }
 \examples{
 # Create sdm_area object:
 sa <- sdm_area(parana, cell_size = 25000, crs = 6933)
 
 # Include predictors:
-sa <- add_predictors(sa, bioc) |> dplyr::select(c("bio01", "bio12"))
+sa <- add_predictors(sa, bioc)
 
 # Check predictors' names:
 get_predictor_names(sa)

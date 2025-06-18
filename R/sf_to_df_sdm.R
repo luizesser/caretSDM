@@ -5,7 +5,7 @@
 #' @importFrom sf st_coordinates
 #'
 #' @export
-sf_to_df_sdm <- function(occ_sf) {
+.sf_to_df_sdm <- function(occ_sf) {
   assert_class_cli(occ_sf, "sf")
   df <- occ_sf |>
     sf::st_coordinates() |>

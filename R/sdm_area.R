@@ -2,7 +2,10 @@
 #'
 #' This function creates a new \code{sdm_area} object.
 #'
-#' @param x A shapefile or a raster. Usually a shapefile from \code{sf} class, but rasters from
+#' @usage sdm_area(x, cell_size = NULL, crs = NULL, variables_selected = NULL,
+#'                 gdal = TRUE, crop_by = NULL, lines_as_sdm_area = FALSE)
+#'
+#' @param x A shape or a raster. Usually a shape from \code{sf} class, but rasters from
 #' \code{stars}, \code{rasterStack} or \code{SpatRaster} class are also allowed.
 #' @param cell_size \code{numeric}. The cell size to be used in models.
 #' @param crs \code{numeric}. Indicates which EPSG should the output grid be in. If \code{NULL},
@@ -10,13 +13,17 @@
 #' @param variables_selected A \code{character} vector with variables in \code{x} to be used in models.
 #' If \code{NULL} (standard), all variables in \code{x} are used.
 #' @param gdal Boolean. Force the use or not of GDAL when available. See details.
-#' @param crop_by A shapefile from \code{sf} to crop \code{x}.
+#' @param crop_by A shape from \code{sf} to crop \code{x}.
+#' @param lines_as_sdm_area Boolean. If \code{x} is a \code{sf} with LINESTRING geometry, it can be used
+#' to model species distribution in lines and not grid cells.
+#' @param i A \code{sdm_area} or a \code{input_sdm} object.
 #'
 #' @details
 #' The function returns a \code{sdm_area} object with a grid built upon the \code{x} parameter.
 #' There are two ways to make the grid and resample the variables in \code{sdm_area}: with and
 #' without gdal. As standard, if gdal is available in you machine it will be used (\code{gdal = TRUE}),
 #' otherwise sf/stars will be used.
+#' \code{get_sdm_area} will return the grid built by \code{sdm_area}.
 #'
 #' @returns A \code{sdm_area} object containing:
 #'    \item{grid}{\code{sf} with \code{POLYGON} geometry representing the grid for the study area.}
@@ -30,7 +37,10 @@
 #'
 #' @examples
 #' # Create sdm_area object:
-#' sa <- sdm_area(parana, cell_size = 25000, crs = 6933)
+#' sa_area <- sdm_area(parana, cell_size = 25000, crs = 6933)
+#'
+#' # Create sdm_area using lines:
+#' sa_rivers <- sdm_area(rivs, cell_size = 25000, crs = 6933, lines_as_sdm_area = TRUE)
 #'
 #' @importFrom stars st_as_stars read_stars write_stars st_dimensions
 #' @importFrom sf st_crs st_read st_bbox st_as_sf gdal_utils st_crop st_make_valid st_transform
@@ -39,7 +49,7 @@
 #' st_collection_extract st_nearest_feature
 #' @importFrom cli cli_abort cli_inform cli_warn
 #' @importFrom dplyr setdiff select all_of any_of join_by relocate mutate arrange desc filter
-#' group_by reframe across inner_join join_by distinct n rename row_number
+#' group_by reframe across inner_join join_by distinct n rename row_number where
 #' @importFrom checkmate test_class makeAssertCollection test_list
 #' @importFrom tidyr drop_na
 #' @importFrom fs path dir_exists dir_delete dir_create dir_ls path_file path_ext_remove
@@ -51,10 +61,15 @@
 #' @importFrom furrr future_map2
 #' @importFrom stringr str_replace_all str_replace
 #' @importFrom lwgeom st_split
+#' @importFrom stats setNames
+#' @importFrom methods as
+#' @importFrom utils file_test
+#'
+#' @global original_id ..weighting_factor
 #'
 #' @export
-sdm_area <- function(x, cell_size = NULL, crs = NULL, variables_selected = NULL, gdal = TRUE,
-                     crop_by = NULL, lines_as_sdm_area = FALSE) {
+sdm_area <- function(x, cell_size = NULL, crs = NULL, variables_selected = NULL,
+                     gdal = TRUE, crop_by = NULL, lines_as_sdm_area = FALSE) {
   assert_cli(
     check_int_cli(
       crs,
@@ -120,7 +135,6 @@ sdm_area <- function(x, cell_size = NULL, crs = NULL, variables_selected = NULL,
           c(
             "x" = "The CRS of crop_by must be equal to CRS of parameter crs."
           ))
-        #crop_by <- sf::st_transform(crop_by, crs)
       }
     }
   }
@@ -130,7 +144,7 @@ sdm_area <- function(x, cell_size = NULL, crs = NULL, variables_selected = NULL,
 
 #' @export
 sdm_area.RasterStack <- function(x, cell_size = NULL, crs = NULL, variables_selected = NULL,
-                                 gdal= TRUE, crop_by = NULL) {
+                                 gdal= TRUE, crop_by = NULL, lines_as_sdm_area = FALSE) {
   xs <- stars::st_as_stars(x)
   sa <- sdm_area(xs, cell_size, crs, variables_selected, gdal, crop_by)
   return(invisible(sa))
@@ -138,7 +152,7 @@ sdm_area.RasterStack <- function(x, cell_size = NULL, crs = NULL, variables_sele
 
 #' @export
 sdm_area.SpatRaster <- function(x, cell_size = NULL, crs = NULL, variables_selected = NULL,
-                                gdal= TRUE, crop_by = NULL) {
+                                gdal= TRUE, crop_by = NULL, lines_as_sdm_area = FALSE) {
   xs <- stars::st_as_stars(x)
   names(stars::st_dimensions(xs)) <- c("x", "y", "band")
   sa <- sdm_area(xs, cell_size, crs, variables_selected, gdal, crop_by)
@@ -154,7 +168,7 @@ sdm_area.character <- function(x, cell_size = NULL, crs = NULL, variables_select
   )
   if (length(xs) == 1) {
     if (is.na(xs)) {
-      if (file_test("-d", x)) {
+      if (utils::file_test("-d", x)) {
         x <- x |> fs::dir_ls(type = "file")
       }
       xs <- tryCatch(
@@ -179,8 +193,8 @@ sdm_area.character <- function(x, cell_size = NULL, crs = NULL, variables_select
 }
 
 #' @export
-sdm_area.stars <- function(x, cell_size = NULL, crs = NULL, variables_selected = NULL, gdal= TRUE,
-                           crop_by = NULL, lines_as_sdm_area = FALSE) {
+sdm_area.stars <- function(x, cell_size = NULL, crs = NULL, variables_selected = NULL,
+                           gdal= TRUE, crop_by = NULL, lines_as_sdm_area = FALSE) {
   assert_number_cli(
     cell_size,
     na.ok = FALSE,
@@ -225,23 +239,6 @@ sdm_area.stars <- function(x, cell_size = NULL, crs = NULL, variables_selected =
   if (is.na(crs) || is.na(crs$input)){
     cli_abort(c("x" = "crs is invalid."))
   }
-
-  #if (!is.null(crop_by)) {
-  #  crop_by <- sf::st_transform(crop_by, crs)
-  #  x <- sf::st_transform(x, crs)
-  #  suppressWarnings(
-  #    tmp_x <- x |>
-  #      sf::st_crop(crop_by) # Maybe: sf::st_crop(crop_by |> sf::st_bbox())
-  #  )
-  #  if (nrow(tmp_x) > 0) {
-  #    x <- tmp_x
-  #  } else {
-  #    cli::cli_warn(c(
-  #      "!" = "crop_by not applied.",
-  #      "i" = "The area of crop_by does not intersects with area of x."
-  #    ))
-  #  }
-  #}
 
   if (.is_gdal_installed() && gdal){
     cli::cli_inform(c(
@@ -360,7 +357,7 @@ sdm_area.stars <- function(x, cell_size = NULL, crs = NULL, variables_selected =
           if (!is.null(crop_by)){
             options <- c(
               options,
-              "-te", c(sf::st_bbox(crop_by) |> as("vector"))
+              "-te", c(sf::st_bbox(crop_by) |> methods::as("vector"))
             )
           }
           sf::gdal_utils(
@@ -387,7 +384,7 @@ sdm_area.stars <- function(x, cell_size = NULL, crs = NULL, variables_selected =
   grd <- out_dir |>
     list.files(full.names = T) |>
     stars::read_stars(normalize_path = F) |>
-    setNames(var_names)
+    stats::setNames(var_names)
 
   n_col <- attr(grd, "dimensions")[["x"]]$to
   n_row <- attr(grd, "dimensions")[["y"]]$to
@@ -441,33 +438,12 @@ sdm_area.stars <- function(x, cell_size = NULL, crs = NULL, variables_selected =
     .adjust_bbox(cell_size) |>
     .sdm_area_from_sf_using_stars(cell_size, crs)
 
-  # grd <- x |>
-  #   sf::st_make_grid(cellsize = cell_size) |>
-  #   sf::st_as_sf() |>
-  #   dplyr::mutate(cell_id = dplyr::row_number()) |>
-  #   sf::st_join(sf::st_as_sf(x), left = FALSE)
-  #
-  # suppressWarnings(
-  #   grd <- grd |>
-  #     as.data.frame() |>
-  #     dplyr::select(-x) |>
-  #     dplyr::group_by(cell_id) |>
-  #     dplyr::summarise_all(mean) |>
-  #     dplyr::left_join(
-  #       grd |>
-  #         dplyr::select(cell_id, x) |> unique(),
-  #       by = dplyr::join_by(cell_id)
-  #     ) |>
-  #     dplyr::rename(geometry = x) |>
-  #     sf::st_as_sf()
-  # )
-
   return(grd)
 }
 
 #' @export
-sdm_area.sf <- function(x, cell_size = NULL, crs = NULL, variables_selected = NULL, gdal= TRUE,
-                        crop_by = NULL, lines_as_sdm_area = FALSE) {
+sdm_area.sf <- function(x, cell_size = NULL, crs = NULL, variables_selected = NULL,
+                        gdal= TRUE, crop_by = NULL, lines_as_sdm_area = FALSE) {
   assert_class_cli(
     sf::st_crs(x),
     classes = "crs",
@@ -508,7 +484,7 @@ sdm_area.sf <- function(x, cell_size = NULL, crs = NULL, variables_selected = NU
   if (!is.null(crop_by)) {
     suppressWarnings(
       tmp_x <- x |>
-        sf::st_crop(crop_by) # Previously: sf::st_crop(crop_by |> sf::st_bbox())
+        sf::st_crop(crop_by)
     )
     if (nrow(tmp_x) > 0) {
       x <- tmp_x
@@ -625,7 +601,7 @@ sdm_area.sf <- function(x, cell_size = NULL, crs = NULL, variables_selected = NU
                 "-at",
                 "-a", var_name,
                 #"-t_srs", crs$wkt, # output file SRS
-                "-te", c(sf::st_bbox(x) |> as("vector")),
+                "-te", c(sf::st_bbox(x) |> methods::as("vector")),
                 #"-r", "average",
                 "-co", "BIGTIFF=YES",
                 "-co", "COMPRESS=LZW",
@@ -706,7 +682,7 @@ sdm_area.sf <- function(x, cell_size = NULL, crs = NULL, variables_selected = NU
 
   grd <- fs::dir_ls(out_dir_warp, type = "file") |>
     stars::read_stars(normalize_path = F) |>
-    setNames(
+    stats::setNames(
       fs::dir_ls(out_dir, type = "file") |>
         fs::path_file() |>
         fs::path_ext_remove()
@@ -756,7 +732,7 @@ sdm_area.sf <- function(x, cell_size = NULL, crs = NULL, variables_selected = NU
   if (has_num_cols) {
     int_list <- grd |>
       sf::st_intersects(x) |>
-      setNames(seq(1, nrow(grd))) |>
+      stats::setNames(seq(1, nrow(grd))) |>
       purrr::compact()
 
     if (is_linestring) {
@@ -804,9 +780,9 @@ sdm_area.sf <- function(x, cell_size = NULL, crs = NULL, variables_selected = NU
       select(-geometry) |>
       dplyr::group_by(cell_id) |>
       dplyr::reframe(
-        dplyr::across(where(.is_float), ~ weighted.mean(.x, w=..weighting_factor, na.rm = TRUE)),
-        dplyr::across(where(.is_integer), ~ median(.x, na.rm = TRUE)),
-        dplyr::across(where(is.character), ~ .x[[1]])
+        dplyr::across(dplyr::where(.is_float), ~ weighted.mean(.x, w=..weighting_factor, na.rm = TRUE)),
+        dplyr::across(dplyr::where(.is_integer), ~ median(.x, na.rm = TRUE)),
+        dplyr::across(dplyr::where(is.character), ~ .x[[1]])
       ) |>
       dplyr::distinct() |>
       dplyr::select(-..weighting_factor)
@@ -908,7 +884,7 @@ sdm_area.sf <- function(x, cell_size = NULL, crs = NULL, variables_selected = NU
         river_attrs <- sf::st_drop_geometry(line) |>
           dplyr::select(-original_id)
         if(nrow(bioclim_data) > 1) {
-          warning("Multiple grid cells found for a single line segment. Taking the first one.")
+          cli::cli_warn("Multiple grid cells found for a single line segment. Taking the first one.")
           bioclim_data <- bioclim_data[1, ]
         }
         x <- cbind(river_attrs, bioclim_data, sf::st_geometry(line)) |>
@@ -949,29 +925,6 @@ sdm_area.sf <- function(x, cell_size = NULL, crs = NULL, variables_selected = NU
   )
   .check_sdm_area(sa)
   return(sa)
-}
-
-#' @exportS3Method base::print
-print.sdm_area <- function(x) {
-  .check_sdm_area(x)
-  cat("          caretSDM         \n")
-  cat("...........................\n")
-  cat("Class                     : sdm_area\n")
-  cat("Extent                    :", sf::st_bbox(x$grid), "(xmin, xmax, ymin, ymax)\n")
-  cat("CRS                       :", substr(sf::st_crs(x$grid)$input, 1, 20), "\n")
-  cat("Resolution                :", paste0("(", x$cell_size, ", ", x$cell_size, ")"), "(x, y)\n")
-  predictors_sdm <- predictors(x)
-  if (length(predictors_sdm)>0) {
-    cat("Number of Predictors      :", length(predictors_sdm), "\n")
-    cat(cat("Predictors Names          : "), cat(predictors_sdm, sep = ", "),
-        "\n")
-  }
-  scen_names <- scenarios_names(x)
-  if (length(scen_names)>0) {
-    cat("Number of Scenarios      :", length(scen_names), "\n")
-    cat(cat("Scenarios Names          : "), cat(scen_names, sep = ", "),
-        "\n")
-  }
 }
 
 .check_sdm_area <- function(x) {
@@ -1227,7 +1180,7 @@ print.sdm_area <- function(x) {
       dy = cell_size,
       values = seq(1, n_row * n_col)
     ) |>
-    setNames("cell_id")
+    stats::setNames("cell_id")
   attr(grd, "dimensions")[[2]]$delta <- (-cell_size)
 
   grd <- grd |>
@@ -1256,7 +1209,7 @@ print.sdm_area <- function(x) {
 
   centroid <- (bbox |> sf::st_as_sfc() |> sf::st_centroid())[[1]] |>
     as.list() |>
-    setNames(c("x", "y"))
+    stats::setNames(c("x", "y"))
 
   n_col <- ((bbox$xmax - bbox$xmin) / cell_size) |> ceiling()
   n_row <- ((bbox$ymax - bbox$ymin) / cell_size) |> ceiling()
@@ -1294,7 +1247,7 @@ print.sdm_area <- function(x) {
 .adjust_geom_col <- function(x = NULL) {
   geom_name <- attr(x, "sf_column")
   x <- x |>
-    setNames(names(x) |> stringr::str_replace(geom_name, "geometry"))
+    stats::setNames(names(x) |> stringr::str_replace(geom_name, "geometry"))
   sf::st_geometry(x) <- "geometry"
   return(x)
 }
@@ -1319,4 +1272,29 @@ get_sdm_area <- function(i) {
   assert_class_cli(x, "sdm_area")
   x <- x$grid |> select(c(cell_id))
   return(x)
+}
+
+
+#' @exportS3Method base::print
+print.sdm_area <- function(x, ...) {
+  .check_sdm_area(x)
+  cat("          caretSDM         \n")
+  cat("...........................\n")
+  cat("Class                     : sdm_area\n")
+  cat("Extent                    :", sf::st_bbox(x$grid), "(xmin, xmax, ymin, ymax)\n")
+  cat("CRS                       :", substr(sf::st_crs(x$grid)$input, 1, 20), "\n")
+  cat("Resolution                :", paste0("(", x$cell_size, ", ", x$cell_size, ")"), "(x, y)\n")
+  predictors_sdm <- predictors(x)
+  if (length(predictors_sdm)>0) {
+    cat("Number of Predictors      :", length(predictors_sdm), "\n")
+    cat(cat("Predictors Names          : "), cat(predictors_sdm, sep = ", "),
+        "\n")
+  }
+  scen_names <- scenarios_names(x)
+  if (length(scen_names)>0) {
+    cat("Number of Scenarios      :", length(scen_names), "\n")
+    cat(cat("Scenarios Names          : "), cat(scen_names, sep = ", "),
+        "\n")
+  }
+  invisible(x)
 }

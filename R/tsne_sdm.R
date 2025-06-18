@@ -7,9 +7,9 @@
 #' @param occ A \code{occurrences} or \code{input_sdm} object.
 #' @param pred A \code{predictors} object. If \code{occ} is of class \code{input_sdm}, then
 #' \code{pred} is retrieved from it.
-#' @param selected_vars Variable to be used in t-SNE. It can also be 'vif', if previously calculated.
+#' @param variables_selected Variable to be used in t-SNE. It can also be 'vif', if previously calculated.
 #'
-#' @return A plot to each pseudoabsence dataset in the form of a list.
+#' @return A list of plots, where each plot is a tSNE for a given pseudoabsence dataset.
 #'
 #' @author Luíz Fernando Esser (luizesser@gmail.com)
 #' https://luizfesser.wordpress.com
@@ -19,6 +19,8 @@
 #' @importFrom Rtsne Rtsne
 #' @importFrom dplyr select filter all_of
 #' @importFrom sf st_as_sf
+#'
+#' @global V1 V2
 #'
 #' @export
 tsne_sdm <- function(occ, pred = NULL, variables_selected = NULL) {

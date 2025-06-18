@@ -1,6 +1,6 @@
 #' Presence data cleaning routine
 #'
-#' Data cleaning wrapper using CoordinateCleaner.
+#' Data cleaning wrapper using CoordinateCleaner package.
 #'
 #' @usage
 #' data_clean(occ, pred = NULL,
@@ -28,10 +28,10 @@
 #' @param invalid Boolean to turn on/off the exclusion from invalid coordinates (see \code{?cc_val})
 #' @param terrestrial Boolean to turn on/off the exclusion from coordinates falling on sea (see \code{?cc_sea})
 #'
-#' @param independent_test TRUE. If \code{occ} has independent test data, the data cleaning routine
+#' @param independent_test Boolean. If \code{occ} has independent test data, the data cleaning routine
 #' is also applied on it.
 #'
-#' @returns A \code{occurrences_sdm} object or \code{input_sdm} with new presence data.
+#' @returns A \code{occurrences_sdm} object or \code{input_sdm} with cleaned presence data.
 #'
 #' @details
 #' If the user does not used \code{GBIF_data} function to obtain species records, the function may
@@ -51,10 +51,10 @@
 #' sa <- sdm_area(parana, cell_size = 25000, crs = 6933)
 #'
 #' # Include predictors:
-#' sa <- add_predictors(sa, bioc) |> dplyr::select(c("bio01", "bio12"))
+#' sa <- add_predictors(sa, bioc) |> dplyr::select(c("bio1", "bio4", "bio12"))
 #'
 #' # Include scenarios:
-#' sa <- add_scenarios(sa)
+#' sa <- add_scenarios(sa, scen)
 #'
 #' # Create occurrences:
 #' oc <- occurrences_sdm(occ, crs = 6933) |> join_area(sa)
@@ -68,7 +68,7 @@
 #' @importFrom CoordinateCleaner cc_cap cc_cen cc_dupl cc_equ cc_inst cc_val cc_sea
 #' @importFrom stars st_extract st_rasterize
 #' @importFrom stringdist stringdist
-#' @importFrom sf st_as_sf st_crs st_transform st_join
+#' @importFrom sf st_as_sf st_crs st_transform st_join st_geometry_type
 #' @importFrom dplyr mutate select
 #'
 #' @export
@@ -106,9 +106,9 @@ data_clean <- function(occ, pred = NULL,
   }
   if(sf::st_crs(y) !=4326){
     sf_t <- sf::st_transform(y$occurrences, 4326)
-    x <- sf_to_df_sdm(sf_t)
+    x <- .sf_to_df_sdm(sf_t)
   } else {
-    x <- sf_to_df_sdm(y$occurrences)
+    x <- .sf_to_df_sdm(y$occurrences)
   }
 
   if (is.na(species)) {
@@ -133,7 +133,7 @@ data_clean <- function(occ, pred = NULL,
   if (terrestrial) { x <- CoordinateCleaner::cc_sea(x, lon = lon, lat = lat) }
 
   if(!is.null(pred)){
-    not_line <- unique(st_geometry_type(pred$grid)) != "LINESTRING"
+    not_line <- unique(sf::st_geometry_type(pred$grid)) != "LINESTRING"
   } else {
     not_line <- FALSE
   }
@@ -191,9 +191,9 @@ data_clean <- function(occ, pred = NULL,
     x <- y$independent_test
     if(as.character(st_crs(x))[1] != "EPSG:4326"){
       sf_t <- sf::st_transform(x, 4326)
-      x <- sf_to_df_sdm(sf_t)
+      x <- .sf_to_df_sdm(sf_t)
     } else {
-      x <- sf_to_df_sdm(x)
+      x <- .sf_to_df_sdm(x)
     }
     cn <- colnames(x)
     species <- cn[which.min(stringdist::stringdist(cn, "species"))]

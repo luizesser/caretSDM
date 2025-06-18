@@ -16,13 +16,17 @@ GBIF_data(s, file = "", as_df = FALSE, ...)
 
 \item{...}{Arguments to pass on \code{rgbif::occ_data()}.}
 }
+\value{
+A \code{data.frame} with species occurrences data, or an \code{occurrences} object if
+\code{as_df = FALSE}.
+}
 \description{
 This function is a wrapper to get records from GBIF using \code{rgbif} and return a
 \code{data.frame} ready to be used in caretSDM.
 }
 \examples{
 # Select species names:
-s <- c("Araucaria angustifolia", "Paubrasilia echinata", "Eugenia uniflora")
+s <- c("Araucaria angustifolia", "Salminus brasiliensis")
 
 # Run function:
 oc <- GBIF_data(s)

@@ -11,6 +11,9 @@
 #' \code{occurrences} object.
 #' @param ... Arguments to pass on \code{rgbif::occ_data()}.
 #'
+#' @returns A \code{data.frame} with species occurrences data, or an \code{occurrences} object if
+#' \code{as_df = FALSE}.
+#'
 #' @references https://www.gbif.org
 #'
 #' @author Luíz Fernando Esser (luizesser@gmail.com)
@@ -18,13 +21,15 @@
 #'
 #' @examples
 #' # Select species names:
-#' s <- c("Araucaria angustifolia", "Paubrasilia echinata", "Eugenia uniflora")
+#' s <- c("Araucaria angustifolia", "Salminus brasiliensis")
 #'
 #' # Run function:
 #' oc <- GBIF_data(s)
 #'
 #' @importFrom rgbif occ_data
 #' @importFrom dplyr bind_rows
+#' @importFrom stats na.omit
+#' @importFrom utils head write.csv read.csv
 #'
 #' @export
 GBIF_data <- function(s, file = "", as_df = FALSE, ...) {
@@ -47,12 +52,12 @@ GBIF_data <- function(s, file = "", as_df = FALSE, ...) {
 
   if (!file.exists(file)) {
     data <- lapply(s, function(x) {
-      y <- rgbif::occ_data(scientificName = x, limit = 100000, hasCoordinate = T, ...)
+      y <- rgbif::occ_data(scientificName = x, limit = 100000, hasCoordinate = TRUE, ...)
       if ("decimalLatitude" %in% names(y$data)) {
         y <- y$data[, c("species", "decimalLongitude", "decimalLatitude")]
         return(y)
       } else {
-        print(paste0("Species with zero records found: ", s[ids %in% x]))
+        print(paste0("Species with zero records found"))
         y <- NULL
         return(y)
       }
@@ -68,17 +73,18 @@ GBIF_data <- function(s, file = "", as_df = FALSE, ...) {
     })
 
     data <- dplyr::bind_rows(data)
-    data <- na.omit(data)
+    data <- stats::na.omit(data)
 
     if (!file == "") {
       if (grepl("/", file)) {
-        dir.create(paste(head(unlist(strsplit(file, "/")), -1), collapse = "/"), recursive = T)
+        dir.create(paste(utils::head(unlist(strsplit(file, "/")), -1), collapse = "/"),
+                   recursive = TRUE)
       }
-      write.csv(data, file, row.names = FALSE)
+      utils::write.csv(data, file, row.names = FALSE)
     }
   } else {
     print(paste0("File already exists. Importing from: ", file))
-    data <- read.csv(file)
+    data <- utils::read.csv(file)
   }
 
   if(!as_df){

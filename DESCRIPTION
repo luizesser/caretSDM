@@ -1,7 +1,7 @@
 Type: Package
 Package: caretSDM
-Title: Build Species Distribution Modeling using caret.
-Version: 1.0.7
+Title: Build Species Distribution Modeling using Caret
+Version: 1.1.0
 Authors@R: c(
     person("Dayani", "Bailly", role = "aut",
            comment = c(ORCID = "0000-0002-6954-9902")),
@@ -13,12 +13,12 @@ Authors@R: c(
            comment = c(ORCID = "0000-0001-6452-3466")),
     person("Valéria", "Batista", role = "aut",
            comment = c(ORCID = "0000-0002-6574-7338")),
-    person("Luíz", "Esser", , "luizesser@gmail.com", role = c("aut", "cre"),
+    person("Luíz Fernando", "Esser", , "luizesser@gmail.com", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0003-2982-7223")))
 Maintainer: Luíz Fernando Esser <luizesser@gmail.com>
 Description: Use machine learning algorithms and advanced geoprocessing tools to
-    build Species Distribution Modeling (SDMs) in a extensible and modern fashion.n 
-License: MIT
+    build Species Distribution Modeling (SDMs) in a extensible and modern fashion. 
+License: MIT + file LICENSE
 BugReports: https://github.com/luizesser/caretSDM/issues
 Imports:
     caret,
@@ -28,7 +28,6 @@ Imports:
     data.table,
     dismo,
     dplyr,
-    e1071,
     fs,
     furrr,
     future,
@@ -37,13 +36,9 @@ Imports:
     glue,
     gtools,
     httr,
-    kknn,
     lwgeom,
     mapview,
-    maxnet,
-    mda,
-    naivebayes,
-    nnet,
+    methods,
     parallelly,
     pdp,
     pROC,
@@ -54,15 +49,26 @@ Imports:
     Rtsne,
     sf,
     stars,
+    stats,
     stringdist,
     stringr,
     terra,
     tidyr,
-    usdm
+    usdm,
+    utils
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.3.2
 Suggests: 
+    e1071,
+    kknn,
+    mda,
+    naivebayes,
+    nnet,
+    here,
+    tibble,
+    withr,
+    roxyglobals,
     covr,
     knitr,
     rmarkdown,

@@ -4,11 +4,11 @@
 \name{caretSDM-package}
 \alias{caretSDM}
 \alias{caretSDM-package}
-\title{caretSDM: Build Species Distribution Modeling using caret.}
+\title{caretSDM: Build Species Distribution Modeling using Caret}
 \description{
 \if{html}{\figure{logo.png}{options: style='float: right' alt='logo' width='120'}}
 
-Use machine learning algorithms and advanced geoprocessing tools to build Species Distribution Modeling (SDMs) in a extensible and modern fashion.n
+Use machine learning algorithms and advanced geoprocessing tools to build Species Distribution Modeling (SDMs) in a extensible and modern fashion.
 }
 \seealso{
 Useful links:
@@ -19,7 +19,7 @@ Useful links:
 
 }
 \author{
-\strong{Maintainer}: Luíz Esser \email{luizesser@gmail.com} (\href{https://orcid.org/0000-0003-2982-7223}{ORCID})
+\strong{Maintainer}: Luíz Fernando Esser \email{luizesser@gmail.com} (\href{https://orcid.org/0000-0003-2982-7223}{ORCID})
 
 Authors:
 \itemize{

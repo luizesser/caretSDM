@@ -18,10 +18,10 @@
 #' sa <- sdm_area(parana, cell_size = 25000, crs = 6933)
 #'
 #' # Include predictors:
-#' sa <- add_predictors(sa, bioc) |> dplyr::select(c("bio01", "bio12"))
+#' sa <- add_predictors(sa, bioc) |> dplyr::select(c("bio1", "bio4", "bio12"))
 #'
 #' # Include scenarios:
-#' sa <- add_scenarios(sa)
+#' sa <- add_scenarios(sa, scen)
 #'
 #' # Create occurrences:
 #' oc <- occurrences_sdm(occ, crs = 6933) |> join_area(sa)
@@ -36,20 +36,27 @@
 #' i <- vif_predictors(i)
 #'
 #' # Pseudoabsence generation:
-#' i <- pseudoabsence(i, method="bioclim", variables_selected = "vif")
+#' i <- pseudoabsences(i, method="bioclim", variables_selected = "vif")
 #'
 #' # Custom trainControl:
-#' ctrl_sdm <- caret::trainControl(method = "repeatedcv", number = 4, repeats = 10, classProbs = TRUE,
-#' returnResamp = "all", summaryFunction = summary_sdm, savePredictions = "all")
+#' ctrl_sdm <- caret::trainControl(method = "repeatedcv",
+#'                                 number = 4,
+#'                                 repeats = 1,
+#'                                 classProbs = TRUE,
+#'                                 returnResamp = "all",
+#'                                 summaryFunction = summary_sdm,
+#'                                 savePredictions = "all")
 #'
 #' # Train models:
-#' i <- train_sdm(i, algo = c("nnet", "kknn"), variables_selected = "vif", ctrl=ctrl_sdm)
+#' i <- train_sdm(i, algo = c("naive_bayes", "kknn"), variables_selected = "vif", ctrl=ctrl_sdm) |>
+#' suppressWarnings()
 #'
 #' # Variable importance:
 #' varImp_sdm(i)
 #'
 #' @importFrom caret varImp
 #' @importFrom dplyr select bind_cols
+#' @importFrom stats sd
 #'
 #' @export
 varImp_sdm <- function(m, id = NULL, ...) {
@@ -75,7 +82,7 @@ varImp_sdm <- function(m, id = NULL, ...) {
       }
     }, simplify = FALSE, USE.NAMES = TRUE)
     suppressMessages(l <- dplyr::bind_cols(l))
-    df <- data.frame(mean = apply(l, 1, mean), sd = apply(l, 1, sd))
+    df <- data.frame(mean = apply(l, 1, mean), sd = apply(l, 1, stats::sd))
   }, simplify = FALSE, USE.NAMES = TRUE)
   return(s)
 }

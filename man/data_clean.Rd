@@ -41,14 +41,14 @@ predictors data, than \code{pred} is obtained from it.}
 
 \item{terrestrial}{Boolean to turn on/off the exclusion from coordinates falling on sea (see \code{?cc_sea})}
 
-\item{independent_test}{TRUE. If \code{occ} has independent test data, the data cleaning routine
+\item{independent_test}{Boolean. If \code{occ} has independent test data, the data cleaning routine
 is also applied on it.}
 }
 \value{
-A \code{occurrences_sdm} object or \code{input_sdm} with new presence data.
+A \code{occurrences_sdm} object or \code{input_sdm} with cleaned presence data.
 }
 \description{
-Data cleaning wrapper using CoordinateCleaner.
+Data cleaning wrapper using CoordinateCleaner package.
 }
 \details{
 If the user does not used \code{GBIF_data} function to obtain species records, the function may
@@ -62,10 +62,10 @@ information. In this regard, we implemented the parameters \code{species}, \code
 sa <- sdm_area(parana, cell_size = 25000, crs = 6933)
 
 # Include predictors:
-sa <- add_predictors(sa, bioc) |> dplyr::select(c("bio01", "bio12"))
+sa <- add_predictors(sa, bioc) |> dplyr::select(c("bio1", "bio4", "bio12"))
 
 # Include scenarios:
-sa <- add_scenarios(sa)
+sa <- add_scenarios(sa, scen)
 
 # Create occurrences:
 oc <- occurrences_sdm(occ, crs = 6933) |> join_area(sa)

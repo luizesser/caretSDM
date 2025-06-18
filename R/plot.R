@@ -1,13 +1,25 @@
-#' S3 Methods for plot
+#' S3 Methods for plot and mapview
 #'
 #' This function creates different plots depending on the input.
 #'
 #' @usage
 #' plot_occurrences(i, spp_name = NULL, pa = TRUE)
 #'
-#' @param i Object to be plotted.
+#' @param i Object to be plotted. Can be a \code{input_sdm}, but also \code{occurrences} or \code{sdm_area}.
+#' @param spp_name A character with species to be plotted. If NULL, the first species is plotted.
+#' @param pa Boolean. Should pseudoabsences be plotted together? (not implemented yet.)
+#' @param variables_selected A character vector with names of variables to be plotted.
+#' @param scenario description
+#' @param id The id of models to be plotted (only used when \code{ensemble = FALSE}). Possible values
+#' are row names of get_validation_metrics(i).
+#' @param ensemble Boolean. Should the ensemble be plotted (TRUE)? Otherwise a prediction will be plotted
+#' @param ensemble_type Character of the type of ensemble to be plotted. One of: "mean_occ_prob",
+#' "wmean_AUC" or "committee_avg"
 #'
-#' @return A predictors object.
+#' @details We implemented a bestiary of plots to help visualizing the process and results. If you
+#' are not familiar with mapview, consider using it to better visualize maps.
+#'
+#' @return The plot or mapview desired.
 #'
 #' @seealso \code{\link{WorldClim_data}}
 #'
@@ -18,19 +30,21 @@
 #' @importFrom mapview mapview
 #' @importFrom ggplot2 ggplot geom_sf aes scale_fill_viridis_c xlab ylab ggtitle theme_minimal unit
 #' @importFrom ggspatial annotation_scale north_arrow_fancy_orienteering annotation_north_arrow
-#' @importFrom dplyr filter
+#' @importFrom dplyr filter select
 #' @importFrom gtools mixedsort
 #' @importFrom data.table rbindlist
 #' @importFrom stringdist stringdist
-#' @importFrom sf st_as_sf
+#' @importFrom sf st_as_sf st_geometry_type
 #' @importFrom tidyr pivot_longer
+#'
+#' @global species result value
 #'
 #' @export
 plot_occurrences <- function(i, spp_name = NULL, pa = TRUE) {
-  caretSDM:::assert_subset_cli(class(i), c("occurrences", "input_sdm"))
-  caretSDM:::assert_subset_cli(spp_name, species_names(i))
-  caretSDM:::assert_logical_cli(pa)
-  caretSDM:::assert_subset_cli("occurrences", names(i))
+  assert_subset_cli(class(i), c("occurrences", "input_sdm"))
+  assert_subset_cli(spp_name, species_names(i))
+  assert_logical_cli(pa)
+  assert_subset_cli("occurrences", names(i))
   if(is_input_sdm(i)){
       return(plot(i$occurrences, spp_name, pa))
   } else if (is_occurrences(i)){
@@ -39,7 +53,7 @@ plot_occurrences <- function(i, spp_name = NULL, pa = TRUE) {
 }
 
 #' @exportS3Method base::plot
-plot.occurrences <- function(x, spp_name = NULL, pa = TRUE) {
+plot.occurrences <- function(x, spp_name = NULL, pa = TRUE, ...) {
   grd <- x$occurrences
   valid_spp <- species_names(x)
   if (!is.null(spp_name)) {
@@ -70,7 +84,7 @@ plot.occurrences <- function(x, spp_name = NULL, pa = TRUE) {
 #' @rdname plot_occurrences
 #' @export
 plot_grid <- function(i) {
-  caretSDM:::assert_subset_cli(class(i), c("sdm_area", "input_sdm"))
+  assert_subset_cli(class(i), c("sdm_area", "input_sdm"))
   if(is_input_sdm(i)){
     i <- i$predictors
   }
@@ -80,8 +94,8 @@ plot_grid <- function(i) {
 #' @rdname plot_occurrences
 #' @export
 plot_predictors <- function(i, variables_selected = NULL) {
-  caretSDM:::assert_subset_cli(class(i), c("sdm_area", "input_sdm"))
-  caretSDM:::assert_subset_cli(variables_selected, c(get_predictor_names(i), "vif", "pca"))
+  assert_subset_cli(class(i), c("sdm_area", "input_sdm"))
+  assert_subset_cli(variables_selected, c(get_predictor_names(i), "vif", "pca"))
   if (is_input_sdm(i)){
     return(plot(i$predictors, variables_selected, scenario="predictors"))
   } else if (is_sdm_area(i)) {
@@ -92,22 +106,28 @@ plot_predictors <- function(i, variables_selected = NULL) {
 #' @rdname plot_occurrences
 #' @export
 plot_scenarios <- function(i, variables_selected = NULL, scenario = NULL) {
-  caretSDM:::assert_subset_cli(class(i), c("sdm_area", "input_sdm"))
-  caretSDM:::assert_subset_cli(variables_selected, c(get_predictor_names(i), "vif", "pca"))
-  caretSDM:::assert_subset_cli(scenario, scenarios_names(i))
-  caretSDM:::assert_subset_cli("predictors", names(i))
+  assert_subset_cli(class(i), c("sdm_area", "input_sdm"))
+  assert_subset_cli(variables_selected, c(get_predictor_names(i), "vif", "pca"))
+  assert_subset_cli(scenario, scenarios_names(i))
+  assert_subset_cli("predictors", names(i))
   return(plot(i$scenarios, variables_selected, scenario))
 }
 
 #' @exportS3Method base::plot
-plot.sdm_area <- function(x, variables_selected = NULL, scenario = NULL) {
+plot.sdm_area <- function(x, variables_selected = NULL, scenario = NULL, ...) {
   if(scenario=="grid"){
-    tmp <- ggplot2::ggplot(x$grid) +
-      ggplot2::geom_sf(data=x$grid, ggplot2::aes(fill = cell_id)) +
-      ggplot2::scale_fill_viridis_c() +
+    tmp <- ggplot2::ggplot(x$grid)
+    if(!unique(sf::st_geometry_type(x$grid)) == "LINESTRING"){
+      tmp <- tmp + ggplot2::geom_sf(data=x$grid, ggplot2::aes(fill = cell_id)) +
+        ggplot2::scale_fill_viridis_c()
+    } else {
+      tmp <- tmp + ggplot2::geom_sf(data=x$grid, ggplot2::aes(color = cell_id)) +
+        ggplot2::scale_colour_viridis_c()
+    }
+    tmp <- tmp +
       ggplot2::xlab("Longitude") +
       ggplot2::ylab("Latitude") +
-      ggplot2::ggtitle("Grid built using study_area()") +
+      ggplot2::ggtitle("Grid built using sdm_area()") +
       ggplot2::theme_minimal() +
       ggspatial::annotation_north_arrow(
         height = ggplot2::unit(1, "cm"),
@@ -180,16 +200,15 @@ plot.sdm_area <- function(x, variables_selected = NULL, scenario = NULL) {
 #' @export
 plot_predictions <- function(i, spp_name = NULL, scenario = NULL, id = NULL, ensemble = TRUE,
                              ensemble_type = "mean_occ_prob") {
-  caretSDM:::assert_class_cli(i, "input_sdm")
-  caretSDM:::assert_subset_cli(spp_name, species_names(i))
-  #caretSDM:::assert_subset_cli(scenario, scenarios_names(i))
-  caretSDM:::assert_subset_cli("predictions", names(i))
+  assert_class_cli(i, "input_sdm")
+  assert_subset_cli(spp_name, species_names(i))
+  assert_subset_cli("predictions", names(i))
   return(plot(i$predictions, spp_name, scenario, id, ensemble, ensemble_type))
 }
 
 #' @exportS3Method base::plot
 plot.predictions <- function(x, spp_name = NULL, scenario = NULL, id = NULL, ensemble = TRUE,
-                             ensemble_type = "mean_occ_prob") {
+                             ensemble_type = "mean_occ_prob", ...) {
   ens <- ifelse(ensemble, "ensembles", "predictions")
   valid_spp <- names(x$predictions[[1]])
   if (ensemble) {
@@ -231,9 +250,15 @@ plot.predictions <- function(x, spp_name = NULL, scenario = NULL, id = NULL, ens
     grd[grd$cell_id %in% cell_id, "result"] <- v
     subtitle <- NULL
   }
-  p <- ggplot2::ggplot() +
-    ggplot2::geom_sf(data = grd, ggplot2::aes(fill = result)) +
-    ggplot2::scale_fill_viridis_c(name = paste0("Occurrence\n Probability"), limits = c(0, 1)) +
+  p <- ggplot2::ggplot()
+  if(!unique(sf::st_geometry_type(grd)) == "LINESTRING"){
+    p <- p + ggplot2::geom_sf(data = grd, ggplot2::aes(fill = result)) +
+      ggplot2::scale_fill_viridis_c(name = paste0("Occurrence\n Probability"), limits = c(0, 1))
+  } else {
+    p <- p + ggplot2::geom_sf(data = grd, ggplot2::aes(color = result)) +
+      ggplot2::scale_colour_viridis_c(name = paste0("Occurrence\n Probability"), limits = c(0, 1))
+  }
+  p <- p +
     ggplot2::xlab("Longitude") +
     ggplot2::ylab("Latitude") +
     ggplot2::ggtitle(paste0(spp_name, " distribution in the ", scenario, " scenario"), subtitle = subtitle) +
@@ -253,7 +278,7 @@ plot.predictions <- function(x, spp_name = NULL, scenario = NULL, id = NULL, ens
 #' @rdname plot_occurrences
 #' @export
 mapview_grid <- function(i) {
-  caretSDM:::assert_subset_cli(class(i), c("sdm_area", "input_sdm"))
+  assert_subset_cli(class(i), c("sdm_area", "input_sdm"))
 
   if(is_input_sdm(i)) {
     x <- i$predictors
@@ -269,10 +294,10 @@ mapview_grid <- function(i) {
 #' @rdname plot_occurrences
 #' @export
 mapview_occurrences <- function(i, spp_name = NULL, pa = TRUE) {
-  caretSDM:::assert_subset_cli(class(i), c("occurrences", "input_sdm"))
-  caretSDM:::assert_subset_cli(spp_name, species_names(i))
-  caretSDM:::assert_logical_cli(pa)
-  caretSDM:::assert_subset_cli("occurrences", names(i))
+  assert_subset_cli(class(i), c("occurrences", "input_sdm"))
+  assert_subset_cli(spp_name, species_names(i))
+  assert_logical_cli(pa)
+  assert_subset_cli("occurrences", names(i))
 
   if(is_input_sdm(i)) {
     x <- i$occurrences
@@ -295,8 +320,8 @@ mapview_occurrences <- function(i, spp_name = NULL, pa = TRUE) {
 #' @rdname plot_occurrences
 #' @export
 mapview_predictors <- function(i, variables_selected = NULL) {
-  caretSDM:::assert_subset_cli(class(i), c("input_sdm", "sdm_area"))
-  caretSDM:::assert_subset_cli(variables_selected, c(get_predictor_names(i), "vif", "pca"))
+  assert_subset_cli(class(i), c("input_sdm", "sdm_area"))
+  assert_subset_cli(variables_selected, c(get_predictor_names(i), "vif", "pca"))
 
   if(is_input_sdm(i)){
     x <- i$predictors
@@ -319,9 +344,9 @@ mapview_predictors <- function(i, variables_selected = NULL) {
 #' @rdname plot_occurrences
 #' @export
 mapview_scenarios <- function(i, variables_selected = NULL, scenario = NULL) {
-  caretSDM:::assert_subset_cli(class(i), c("input_sdm", "sdm_area"))
-  caretSDM:::assert_subset_cli(variables_selected, c(get_predictor_names(i), "vif", "pca"))
-  caretSDM:::assert_subset_cli(scenario, scenarios_names(i))
+  assert_subset_cli(class(i), c("input_sdm", "sdm_area"))
+  assert_subset_cli(variables_selected, c(get_predictor_names(i), "vif", "pca"))
+  assert_subset_cli(scenario, scenarios_names(i))
 
   if(is_input_sdm(i)){
     x <- i$predictors
@@ -347,7 +372,7 @@ mapview_scenarios <- function(i, variables_selected = NULL, scenario = NULL) {
 #' @rdname plot_occurrences
 #' @export
 mapview_predictions <- function(i, spp_name = NULL, scenario = NULL, id = NULL, ensemble = TRUE, ensemble_type = "mean_occ_prob") {
-  caretSDM:::assert_class_cli(i, "input_sdm")
+  assert_class_cli(i, "input_sdm")
 
   x <- i$predictions
   valid_spp <- names(x$predictions[[1]])
@@ -378,8 +403,9 @@ mapview_predictions <- function(i, spp_name = NULL, scenario = NULL, id = NULL, 
 }
 
 #' @exportS3Method base::plot
-plot.input_sdm <- function(i) {
-  caretSDM:::assert_class_cli(i, "input_sdm")
+plot.input_sdm <- function(x, ...) {
+  i <- x
+  assert_class_cli(i, "input_sdm")
   if ("predictions" %in% names(i)) {
     return(plot_predictions(i))
   }

@@ -11,7 +11,7 @@
 \alias{mapview_predictors}
 \alias{mapview_scenarios}
 \alias{mapview_predictions}
-\title{S3 Methods for plot}
+\title{S3 Methods for plot and mapview}
 \usage{
 plot_occurrences(i, spp_name = NULL, pa = TRUE)
 
@@ -48,13 +48,33 @@ mapview_predictions(
 )
 }
 \arguments{
-\item{i}{Object to be plotted.}
+\item{i}{Object to be plotted. Can be a \code{input_sdm}, but also \code{occurrences} or \code{sdm_area}.}
+
+\item{spp_name}{A character with species to be plotted. If NULL, the first species is plotted.}
+
+\item{pa}{Boolean. Should pseudoabsences be plotted together? (not implemented yet.)}
+
+\item{variables_selected}{A character vector with names of variables to be plotted.}
+
+\item{scenario}{description}
+
+\item{id}{The id of models to be plotted (only used when \code{ensemble = FALSE}). Possible values
+are row names of get_validation_metrics(i).}
+
+\item{ensemble}{Boolean. Should the ensemble be plotted (TRUE)? Otherwise a prediction will be plotted}
+
+\item{ensemble_type}{Character of the type of ensemble to be plotted. One of: "mean_occ_prob",
+"wmean_AUC" or "committee_avg"}
 }
 \value{
-A predictors object.
+The plot or mapview desired.
 }
 \description{
 This function creates different plots depending on the input.
+}
+\details{
+We implemented a bestiary of plots to help visualizing the process and results. If you
+are not familiar with mapview, consider using it to better visualize maps.
 }
 \seealso{
 \code{\link{WorldClim_data}}

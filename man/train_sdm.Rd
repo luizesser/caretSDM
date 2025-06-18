@@ -14,7 +14,8 @@ train_sdm(occ,
           algo,
           ctrl = NULL,
           variables_selected = NULL,
-          parallel = FALSE)
+          parallel = FALSE,
+          ...)
 
 get_tune_length(i)
 
@@ -33,10 +34,10 @@ mean_validation_metrics(i)
 \code{pred} is obtained from it.}
 
 \item{algo}{A \code{character} vector. Algorithms to be used. For a complete list see
-(https://topepo.github.io/caret/available-models.html). 'maxent', 'mahal.dist' and 'bioclim' are
-also implemented, but they are only available to run alone, with no other algorithm together.}
+(https://topepo.github.io/caret/available-models.html) or in caretSDM::algorithms.}
 
-\item{ctrl}{A \code{trainControl} object to be used to build models. See \code{\link{trainControl}}.}
+\item{ctrl}{A \code{trainControl} object to be used to build models. See
+\code{\link{trainControl}}.}
 
 \item{variables_selected}{A \code{vector} of variables to be used as predictors. If \code{NULL},
 predictors names from \code{pred} will be used. Can also be a selection method (e.g. 'vif').}
@@ -76,10 +77,10 @@ summarizing values for ROC, Sensitivity, Specificity and TSS to each of the algo
 sa <- sdm_area(parana, cell_size = 25000, crs = 6933)
 
 # Include predictors:
-sa <- add_predictors(sa, bioc) |> dplyr::select(c("bio01", "bio12"))
+sa <- add_predictors(sa, bioc) |> dplyr::select(c("bio1", "bio4", "bio12"))
 
 # Include scenarios:
-sa <- add_scenarios(sa)
+sa <- add_scenarios(sa, scen)
 
 # Create occurrences:
 oc <- occurrences_sdm(occ, crs = 6933) |> join_area(sa)
@@ -94,14 +95,20 @@ i <- data_clean(i)
 i <- vif_predictors(i)
 
 # Pseudoabsence generation:
-i <- pseudoabsence(i, method="bioclim", variables_selected = "vif")
+i <- pseudoabsences(i, method="bioclim", variables_selected = "vif")
 
 # Custom trainControl:
-ctrl_sdm <- caret::trainControl(method = "repeatedcv", number = 4, repeats = 10, classProbs = TRUE,
-returnResamp = "all", summaryFunction = summary_sdm, savePredictions = "all")
+ctrl_sdm <- caret::trainControl(method = "repeatedcv",
+                                number = 4,
+                                repeats = 1,
+                                classProbs = TRUE,
+                                returnResamp = "all",
+                                summaryFunction = summary_sdm,
+                                savePredictions = "all")
 
 # Train models:
-i <- train_sdm(i, algo = c("nnet", "kknn"), variables_selected = "vif", ctrl=ctrl_sdm)
+i <- train_sdm(i, algo = c("naive_bayes", "kknn"), variables_selected = "vif", ctrl=ctrl_sdm) |>
+suppressWarnings()
 
 }
 \seealso{

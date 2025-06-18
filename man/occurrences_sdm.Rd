@@ -45,6 +45,10 @@ and names should be identical to those in \code{x}.}
 latitude, respectively, in \code{x}.}
 
 \item{i}{\code{input_sdm} or \code{occurrences} object.}
+
+\item{oc1}{A \code{occurrences} object to be summed with.}
+
+\item{oc2}{A \code{occurrences} object to be summed with.}
 }
 \value{
 A \code{occurrences} object.
@@ -55,26 +59,14 @@ This function creates and manage \code{occurrences} objects.
 \details{
 \code{x} must have three columns: species, decimalLongitude and decimalLatitude. When \code{sf}
 it is only necessary a species column.
-
 \code{n_records} return the number of presence records to each species.
-
 \code{species_names} return the species names.
-
 \code{get_coords} return a \code{data.frame} with coordinates of species records.
-
 \code{add_occurrences} return a \code{occurrences}. This function sums two \code{occurrences} objects.
 It can also sum a \code{occurrences} object with a \code{data.frame} object.
+\code{occurrences_as_df} returns a \code{data.frame} with species names and coordinates.
 }
 \examples{
-# Create sdm_area object:
-sa <- sdm_area(parana, cell_size = 25000, crs = 6933)
-
-# Include predictors:
-sa <- add_predictors(sa, bioc) |> dplyr::select(c("bio01", "bio12"))
-
-# Include scenarios:
-sa <- add_scenarios(sa)
-
 # Create occurrences:
 oc <- occurrences_sdm(occ, crs = 6933)
 

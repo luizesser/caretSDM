@@ -17,6 +17,7 @@ test_that("data_clean - normal path with sdm_area", {
 })
 
 test_that("data_clean - normal path with pred", {
+  set.seed(1)
   pred <- sdm_area(bioc, cell_size = 1)
   expect_warning(oc <- occurrences_sdm(occ, independent_test = TRUE, crs= 6933) |> join_area(pred))
   i <- input_sdm(oc, pred)

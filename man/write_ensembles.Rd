@@ -38,13 +38,18 @@ write_gpkg(x, file_path, file_name)
 
 write_occurrences(x, path = "results/occurrences.csv", grid = FALSE, ...)
 
-write_pseudoabsences(x, path = "results/predictors", ext = ".tif", ...)
+write_pseudoabsences(
+  x,
+  path = "results/pseudoabsences",
+  ext = ".csv",
+  centroid = FALSE
+)
 
-write_scenarios(x, path = "results/predictors", ext = ".tif", ...)
+write_scenarios(x, path = "results/predictors", ext = ".tif")
 
-write_grid(x, path = "results/grid_study_area.gpkg", centroid = FALSE, ...)
+write_grid(x, path = "results/grid_study_area.gpkg", centroid = FALSE)
 
-write_validation_metrics(x, path = "results/validation_metrics", ...)
+write_validation_metrics(x, path = "results/validation_metrics")
 }
 \arguments{
 \item{x}{Object to be written. Can be of class \code{input_sdm}, \code{occurrences},
@@ -53,16 +58,26 @@ write_validation_metrics(x, path = "results/validation_metrics", ...)
 \item{path}{A path with filename and the proper extension (see details) or the directory to save
 files in.}
 
+\item{ext}{How it should be saved?}
+
 \item{centroid}{Should coordinates for the centroids of each cell be included? Standard is FALSE.}
 
 \item{file_path}{A path to save the \code{sdm_area} GeoPackage file.}
 
 \item{file_name}{The name of the \code{sdm_area} GeoPackage file to be saved without extension.}
 
-\item{extension}{How it should be saved?}
+\item{grid}{Boolean. Return a grid.}
+
+\item{...}{Arguments to pass to \code{sf::st_write} or \code{write.csv}.}
 }
 \description{
 This function exports caretSDM data.
+}
+\details{
+\code{ext} can be set accordingly to the desired output. Possible values are .tif and .asc for rasters,
+.csv for for a spreadsheet, but also  one of: c("bna", "csv", "e00", "gdb", "geojson", "gml", "gmt", "gpkg", "gps",
+"gtm", "gxt", "jml", "map", "mdb", "nc", "ods", "osm", "pbf", "shp", "sqlite", "vdv", "xls", "xlsx").
+\code{path} ideally shoulf only provide the folder.
 }
 \author{
 Luíz Fernando Esser (luizesser@gmail.com)

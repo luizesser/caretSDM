@@ -12,7 +12,8 @@ get_predictors(i)
 \arguments{
 \item{sa}{A \code{sdm_area} object.}
 
-\item{pred}{\code{RasterStack}, \code{SpatRaster} or \code{stars} object with predictors data.}
+\item{pred}{\code{RasterStack}, \code{SpatRaster}, \code{stars} or \code{sf} object with predictors
+data.}
 
 \item{variables_selected}{\code{character} vector with variables names in \code{pred} to be used
 as predictors. If \code{NULL} adds all variables.}
@@ -22,14 +23,15 @@ as predictors. If \code{NULL} adds all variables.}
 \item{i}{\code{input_sdm} or \code{sdm_area} object to retrieve data from.}
 }
 \value{
-The same input \code{sdm_area} object is returned including the \code{pred} data binded
-to the previous \code{grid}.
+For \code{add_predictors} the same input \code{sdm_area} object is returned including the
+\code{pred} data binded to the previous \code{grid}.
+\code{get_predictors} retrieves the grid from the \code{i} object.
 }
 \description{
 This function includes new predictors to the \code{sdm_area} object.
 }
 \details{
-The function returns a \code{sdm_area} object with a grid built upon the \code{x} parameter.
+\code{add_predictors} returns a \code{sdm_area} object with a grid built upon the \code{x} parameter.
 There are two ways to make the grid and resample the variables in \code{sdm_area}: with and
 without gdal. As standard, if gdal is available in you machine it will be used (\code{gdal = TRUE}),
 otherwise sf/stars will be used.
@@ -41,11 +43,14 @@ sa <- sdm_area(parana, cell_size = 25000, crs = 6933)
 # Include predictors:
 sa <- add_predictors(sa, bioc)
 
+# Retrieve predictors data:
+get_predictors(sa)
+
 }
 \seealso{
 \code{\link{sdm_area} \link{predictors} \link{bioc}}
 }
 \author{
 Luíz Fernando Esser (luizesser@gmail.com) and Reginaldo Ré.
-\link{https://luizfesser.wordpress.com}
+https://luizfesser.wordpress.com
 }

@@ -5,7 +5,7 @@
 #' @param spp Boolean. Search for species column?
 #' @return Vector of column names that correspond to the species, longitude and latitude columns.
 #' @export
-find_columns <- function(df, col_names = NULL, spp = TRUE) {
+.find_columns <- function(df, col_names = NULL, spp = TRUE) {
   assert_data_frame_cli(df)
   if (!is.null(col_names)) {
     assert_character_cli(col_names, min.len = 2, max.len = 3)

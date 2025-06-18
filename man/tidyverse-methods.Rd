@@ -14,26 +14,34 @@
 \usage{
 select_predictors(x, ...)
 
-\method{select}{sdm_area}(x, ...)
+\method{select}{sdm_area}(.data, ...)
 
-\method{select}{input_sdm}(x, ...)
+\method{select}{input_sdm}(.data, ...)
 
-\method{mutate}{sdm_area}(x, ...)
+\method{mutate}{sdm_area}(.data, ...)
 
-\method{mutate}{input_sdm}(x, ...)
+\method{mutate}{input_sdm}(.data, ...)
 
-\method{filter}{sdm_area}(x, ...)
+\method{filter}{sdm_area}(.data, ..., .by, .preserve)
 
-\method{filter}{input_sdm}(x, ...)
+\method{filter}{input_sdm}(.data, ..., .by, .preserve)
 
-\method{filter}{occurrences}(x, ...)
+\method{filter}{occurrences}(.data, ..., .by, .preserve)
 
 filter_species(x, spp = NULL, ...)
 }
 \arguments{
-\item{x}{\code{sdm_area} object}
+\item{x}{\code{sdm_area} or \code{input_sdm} object.}
 
-\item{...}{\code{character} vector with predictors to be selected.}
+\item{...}{\code{character} arguments to pass to the given function.}
+
+\item{.data}{Data to pass to tidyr function.}
+
+\item{.by}{See ?dplyr::filter.}
+
+\item{.preserve}{See ?dplyr::filter.}
+
+\item{spp}{Species to be filtered.}
 }
 \description{
 Set of functions to facilitate the use of caretSDM through tidyverse grammatics.
@@ -43,6 +51,6 @@ Set of functions to facilitate the use of caretSDM through tidyverse grammatics.
 sa <- sdm_area(parana, cell_size = 25000, crs = 6933)
 
 # Include predictors:
-sa <- add_predictors(sa, bioc) |> dplyr::select(c("bio01", "bio12"))
+sa <- add_predictors(sa, bioc) |> dplyr::select(c("bio1", "bio4", "bio12"))
 
 }

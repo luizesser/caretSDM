@@ -5,7 +5,7 @@
 \alias{get_pdp_sdm}
 \title{Model Response to Variables}
 \usage{
-pdp_sdm(i, spp = NULL, algo = NULL, variables_selected = NULL)
+pdp_sdm(i, spp = NULL, algo = NULL, variables_selected = NULL, mean.only = FALSE)
 
 get_pdp_sdm(i, spp = NULL, algo = NULL, variables_selected = NULL)
 }
@@ -18,7 +18,7 @@ get_pdp_sdm(i, spp = NULL, algo = NULL, variables_selected = NULL)
 \item{algo}{A \code{character} containing the algorithm to obtain the PDP. If \code{NULL}
 (standard) all algorithms are mixed.}
 
-\item{variables_selected}{If there is a subset of predictors that should be ploted in this, it
+\item{variables_selected}{A \code{character}. If there is a subset of predictors that should be ploted in this, it
 can be informed using this parameter.}
 
 \item{mean.only}{Boolean. Should only the mean curve be plotted or a curve to each run should be
@@ -35,10 +35,10 @@ Obtain the Partial Dependence Plots (PDP) to each variable.
 sa <- sdm_area(parana, cell_size = 25000, crs = 6933)
 
 # Include predictors:
-sa <- add_predictors(sa, bioc) |> dplyr::select(c("bio01", "bio12"))
+sa <- add_predictors(sa, bioc) |> dplyr::select(c("bio1", "bio4", "bio12"))
 
 # Include scenarios:
-sa <- add_scenarios(sa)
+sa <- add_scenarios(sa, scen)
 
 # Create occurrences:
 oc <- occurrences_sdm(occ, crs = 6933) |> join_area(sa)
@@ -56,11 +56,16 @@ i <- vif_predictors(i)
 i <- pseudoabsences(i, method="bioclim", variables_selected = "vif")
 
 # Custom trainControl:
-ctrl_sdm <- caret::trainControl(method = "repeatedcv", number = 4, repeats = 10, classProbs = TRUE,
-returnResamp = "all", summaryFunction = summary_sdm, savePredictions = "all")
+ctrl_sdm <- caret::trainControl(method = "repeatedcv",
+                                number = 4,
+                                repeats = 1,
+                                classProbs = TRUE,
+                                returnResamp = "all",
+                                summaryFunction = summary_sdm,
+                                savePredictions = "all")
 
 # Train models:
-i <- train_sdm(i, algo = c("nnet", "kknn"), variables_selected = "vif", ctrl=ctrl_sdm)
+i <- train_sdm(i, algo = c("naive_bayes", "kknn"), variables_selected = "vif", ctrl=ctrl_sdm)
 
 # PDP plots:
 pdp_sdm(i)

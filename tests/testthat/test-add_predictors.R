@@ -88,7 +88,7 @@ test_that("add_predictors - rasterStack não usando sdm_area", {
 })
 
 test_that("add_predictors - lista de variáveis invalida", {
-  expect_snapshot(
+  expect_error(
     sa_pred <- add_predictors(sa, pr_raster, list("foo"))
   )
 })
@@ -108,7 +108,6 @@ test_that("add_predictors - stack/terra", {
       "wc2.1_10m_bio_12"
     )
   )
-
 })
 
 test_that("add_predictors, but there is no overlap", {

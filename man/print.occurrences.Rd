@@ -4,7 +4,12 @@
 \alias{print.occurrences}
 \title{Print method for occurrences}
 \usage{
-\method{print}{occurrences}(x)
+\method{print}{occurrences}(x, ...)
+}
+\arguments{
+\item{x}{occurrences object}
+
+\item{...}{passed to other methods}
 }
 \description{
 Print method for occurrences

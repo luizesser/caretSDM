@@ -8,10 +8,18 @@
 #' \code{predictions} or \code{models}.
 #' @param path A path with filename and the proper extension (see details) or the directory to save
 #' files in.
-#' @param extension How it should be saved?
+#' @param ext How it should be saved?
+#' @param centroid Should coordinates for the centroids of each cell be included? Standard is FALSE.
 #' @param file_path A path to save the \code{sdm_area} GeoPackage file.
 #' @param file_name The name of the \code{sdm_area} GeoPackage file to be saved without extension.
-#' @param centroid Should coordinates for the centroids of each cell be included? Standard is FALSE.
+#' @param grid Boolean. Return a grid.
+#' @param ... Arguments to pass to \code{sf::st_write} or \code{write.csv}.
+#'
+#' @details
+#' \code{ext} can be set accordingly to the desired output. Possible values are .tif and .asc for rasters,
+#' .csv for for a spreadsheet, but also  one of: c("bna", "csv", "e00", "gdb", "geojson", "gml", "gmt", "gpkg", "gps",
+#' "gtm", "gxt", "jml", "map", "mdb", "nc", "ods", "osm", "pbf", "shp", "sqlite", "vdv", "xls", "xlsx").
+#' \code{path} ideally shoulf only provide the folder.
 #'
 #' @author Luíz Fernando Esser (luizesser@gmail.com)
 #' https://luizfesser.wordpress.com
@@ -21,6 +29,9 @@
 #' @importFrom fs path_file path_dir path
 #' @importFrom cli cli_inform
 #' @importFrom dplyr select
+#' @importFrom utils write.csv
+#'
+#' @global cell_id.x species sp sc geometry
 #'
 #' @export
 write_ensembles <- function(x, path = "results/ensembles", ext = ".tif", centroid = FALSE) {
@@ -29,8 +40,8 @@ write_ensembles <- function(x, path = "results/ensembles", ext = ".tif", centroi
   } else {
     y <- x
   }
-  ext_sf <- c("bna", "csv", "e00", "gdb", "geojson", "gml", "gmt", "gpkg", "gps", "gtm", "gxt", "jml",
-              "map", "mdb", "nc", "ods", "osm", "pbf", "shp", "sqlite", "vdv", "xls", "xlsx")
+  ext_sf <- c(".bna", ".csv", ".e00", ".gdb", ".geojson", ".gml", ".gmt", ".gpkg", ".gps", ".gtm", ".gxt", ".jml",
+              ".map", ".mdb", ".nc", ".ods", ".osm", ".pbf", ".shp", ".sqlite", ".vdv", ".xls", ".xlsx")
   scen <- colnames(y$ensembles)
   spp <- rownames(y$ensembles)
   grd <- y$grid
@@ -46,7 +57,7 @@ write_ensembles <- function(x, path = "results/ensembles", ext = ".tif", centroi
 
         result <- merge(grd, v, by = "cell_id")
         if (!dir.exists(paste0(path, "/", sp))) {
-          dir.create(paste0(path, "/", sp), recursive = T)
+          dir.create(paste0(path, "/", sp), recursive = TRUE)
         }
         if (ext == ".tif" | ext == ".asc") {
           result <- merge(st_rasterize(result))
@@ -54,7 +65,7 @@ write_ensembles <- function(x, path = "results/ensembles", ext = ".tif", centroi
         } else if (ext %in% ext_sf) {
           sf::st_write(result, paste0(path, "/", sp, "/", sc, ext))
         } else if (ext == ".csv") {
-          write.csv(result, paste0(path, "/", sp, "/", sc, ".csv"))
+          utils::write.csv(result, paste0(path, "/", sp, "/", sc, ".csv"))
         }
       }
     }
@@ -83,10 +94,10 @@ write_predictions <- function(x, path = "results/predictions", ext = ".tif", cen
     for (sc in scen) {
       cell_id <- y[["predictions"]][[sc]][[sp]][[1]]$cell_id
       for (id in names(y$predictions[[sc]][[sp]])) {
-        v <- select(y$predictions[[sc]][[sp]][[id]], -"pseudoabsence")
+        v <- dplyr::select(y$predictions[[sc]][[sp]][[id]], -"pseudoabsence")
         result <- merge(grd, v, by = "cell_id")
         if (!dir.exists(paste0(path, "/", sp))) {
-          dir.create(paste0(path, "/", sp), recursive = T)
+          dir.create(paste0(path, "/", sp), recursive = TRUE)
         }
         if (ext == ".tif" | ext == ".asc") {
           result <- merge(st_rasterize(result))
@@ -94,7 +105,7 @@ write_predictions <- function(x, path = "results/predictions", ext = ".tif", cen
         } else if (ext %in% ext_sf) {
           sf::st_write(result, paste0(path, "/", sp, "/", sc, ext))
         } else if (ext == ".csv") {
-          write.csv(result, paste0(path, "/", sp, "/", sc, ".csv"))
+          utils::write.csv(result, paste0(path, "/", sp, "/", sc, ".csv"))
         }
       }
     }
@@ -109,8 +120,8 @@ write_predictors <- function(x, path = "results/predictors", ext = ".tif", centr
   } else {
     y <- x
   }
-  ext_sf <- c("bna", "csv", "e00", "gdb", "geojson", "gml", "gmt", "gpkg", "gps", "gtm", "gxt",
-              "jml", "map", "mdb", "nc", "ods", "osm", "pbf", "shp", "sqlite", "vdv", "xls", "xlsx")
+  ext_sf <- c(".bna", ".csv", ".e00", ".gdb", ".geojson", ".gml", ".gmt", ".gpkg", ".gps", ".gtm", ".gxt", ".jml",
+              ".map", ".mdb", ".nc", ".ods", ".osm", ".pbf", ".shp", ".sqlite", ".vdv", ".xls", ".xlsx")
   grd <- y$grid
   if(centroid){
     cent <- sf::st_coordinates(sf::st_centroid(grd))
@@ -118,7 +129,7 @@ write_predictors <- function(x, path = "results/predictors", ext = ".tif", centr
     grd2 <- cbind(grd, cent)
   }
   if (!dir.exists(paste0(path, "/", sp))) {
-    dir.create(paste0(path, "/", sp), recursive = T)
+    dir.create(paste0(path, "/", sp), recursive = TRUE)
   }
   if (ext == ".tif" | ext == ".asc") {
     result <- merge(st_rasterize(result))
@@ -126,7 +137,7 @@ write_predictors <- function(x, path = "results/predictors", ext = ".tif", centr
   } else if (ext %in% ext_sf) {
     sf::st_write(result, paste0(path, "/", sp, "/", sc, ext))
   } else if (ext == ".csv") {
-    write.csv(result, paste0(path, "/", sp, "/", sc, ".csv"))
+    utils::write.csv(result, paste0(path, "/", sp, "/", sc, ".csv"))
   }
 }
 
@@ -141,7 +152,7 @@ write_models <- function(x, path = "results/models") {
   spp <- names(y$models)
   for (sp in spp) {
     if (!dir.exists(paste0(path, "/", sp))) {
-      dir.create(paste0(path, "/", sp), recursive = T)
+      dir.create(paste0(path, "/", sp), recursive = TRUE)
     }
     saveRDS(y$models[[sp]], paste0(path, "/", sp, "/models.rds"))
   }
@@ -187,18 +198,13 @@ write_gpkg.sdm_area <- function(x, file_path, file_name) {
 #' @export
 write_occurrences <- function(x, path = "results/occurrences.csv", grid = FALSE, ...) {
   if(is_input_sdm(x) & grid){
-    suppressWarnings(dir.create(dirname(path), recursive = T))
+    suppressWarnings(dir.create(dirname(path), recursive = TRUE))
     assert_directory_cli(dirname(path))
 
     grd <- sf::st_join(x$predictors$grid, x$occurrences$occurrences) |>
       dplyr::select(c(cell_id.x, species))
     colnames(grd) <- c("cell_id", "species", "geometry")
-    #df <- sf_to_df_sdm(grd)
-    #df$values <- rep(1, nrow(df))
-    #df$species <- ifelse(is.na(df$species), "delete", df$species[])
-
-    #tidyr::pivot_wider(df, names_from = species, values_from = values)
-    sf::st_write(grd,
+        sf::st_write(grd,
                  dsn = path,
                  delete_dsn = TRUE,
                  quiet =TRUE, ...)
@@ -211,53 +217,57 @@ write_occurrences <- function(x, path = "results/occurrences.csv", grid = FALSE,
     assert_directory_cli(dirname(path))
 
     df <- occurrences_as_df(x)
-    write.csv(df, path, ...)
+    utils::write.csv(df, path, ...)
   }
 }
 
 #' @rdname write_ensembles
 #' @export
-write_pseudoabsences <- function(x, path = "results/predictors", ext = ".tif", ...) {
-  grid <- ifelse(ext == ".tif", TRUE, FALSE)
-  if(is_input_sdm(x) & grid){
-    suppressWarnings(dir.create(dirname(path), recursive = T))
-    assert_directory_cli(dirname(path))
-
-    grd <- sf::st_join(x$predictors$grid, x$occurrences$occurrences) |>
-      select(c(cell_id.x, species))
-    colnames(grd) <- c("cell_id", "species", "geometry")
-
-    sf::st_write(grd,
-                 dsn = path,
-                 delete_dsn = TRUE,
-                 quiet =TRUE, ...)
-  } else {
-    if(is_input_sdm(x) & !grid) {
-      x <- x$occurrences
+write_pseudoabsences <- function(x, path = "results/pseudoabsences", ext = ".csv", centroid = FALSE) {
+  y <- pseudoabsence_data(x)
+  ext_sf <- c(".bna", ".csv", ".e00", ".gdb", ".geojson", ".gml", ".gmt", ".gpkg", ".gps", ".gtm", ".gxt", ".jml",
+              ".map", ".mdb", ".nc", ".ods", ".osm", ".pbf", ".shp", ".sqlite", ".vdv", ".xls", ".xlsx")
+  spp <- species_names(x)
+  grd <- get_sdm_area(x)
+  if(centroid){
+    suppressWarnings(cent <- sf::st_coordinates(sf::st_centroid(grd)))
+    colnames(cent) <- c("x_centroid", "y_centroid")
+    grd <- cbind(grd, cent)
+  }
+  for (sp in spp) {
+    v <- y[[sp]]
+    for (n in 1:length(v)) {
+      v2 <- v[[n]] |> as.data.frame() |> dplyr::select(-geometry)
+      result <- merge(grd, as.data.frame(v2), by = "cell_id")
+      if (!dir.exists(paste0(path, "/", sp))) {
+        dir.create(paste0(path, "/", sp), recursive = TRUE)
+      }
+      if (ext == ".tif" | ext == ".asc") {
+        result <- merge(st_rasterize(result))
+        stars::write_stars(result, paste0(path, "/", sp, "/pseudoabsences_", n, ext))
+      } else if (ext %in% ext_sf) {
+        sf::st_write(result, paste0(path, "/", sp, "/pseudoabsences_", n, ext))
+      } else if (ext == ".csv") {
+        utils::write.csv(result, paste0(path, "/", sp, "/pseudoabsences_", n, ".csv"))
+      }
     }
-    assert_class_cli(x, "occurrences")
-    suppressWarnings(dir.create(dirname(path), recursive = T))
-    assert_directory_cli(dirname(path))
-
-    df <- occurrences_as_df(x)
-    write.csv(df, path, ...)
   }
 }
 
 #' @rdname write_ensembles
 #' @export
-write_scenarios <- function(x, path = "results/predictors", ext = ".tif", ...) {
+write_scenarios <- function(x, path = "results/predictors", ext = ".tif") {
 
 }
 
 #' @rdname write_ensembles
 #' @export
-write_grid <- function(x, path = "results/grid_study_area.gpkg", centroid = FALSE, ...) {
+write_grid <- function(x, path = "results/grid_study_area.gpkg", centroid = FALSE) {
   if(is_input_sdm(x)){
     x <- x$predictors
   }
   assert_class_cli(x, "sdm_area")
-  suppressWarnings(dir.create(dirname(path), recursive = T))
+  suppressWarnings(dir.create(dirname(path), recursive = TRUE))
   assert_directory_cli(dirname(path))
 
   grd <- x$grid
@@ -276,13 +286,11 @@ write_grid <- function(x, path = "results/grid_study_area.gpkg", centroid = FALS
 
 #' @rdname write_ensembles
 #' @export
-write_validation_metrics <- function(x, path = "results/validation_metrics", ...) {
-  #suppressWarnings(dir.create(path, recursive = T))
-  #caretSDM:::assert_directory_cli(dirname(path))
+write_validation_metrics <- function(x, path = "results/validation_metrics") {
   spp <- species_names(x)
   val <- get_validation_metrics(x)
   for (sp in spp) {
-    suppressWarnings(dir.create(paste0(path, "/", sp), recursive = T))
-    write.csv(val[[sp]], paste0(path, "/", sp, "/validation_metrics.csv"))
+    suppressWarnings(dir.create(paste0(path, "/", sp), recursive = TRUE))
+    utils::write.csv(val[[sp]], paste0(path, "/", sp, "/validation_metrics.csv"))
   }
 }

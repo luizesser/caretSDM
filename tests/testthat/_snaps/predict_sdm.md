@@ -37,7 +37,7 @@
           Scenarios                 : current 
           Methods                   : mean_occ_prob wmean_AUC committee_avg 
       Thresholds                    :
-          Method                    : threshold: 0.9 
+          Method                    : threshold 
           Criteria                  : 0.9 
 
 ---
@@ -51,7 +51,7 @@
       Ensembles         :
                Methods  : mean_occ_prob wmean_AUC committee_avg 
       Thresholds        :
-               Method   : threshold: 0.9 
+               Method   : threshold 
                Criteria : 0.9 
                Metrics  :
       $`Araucaria angustifolia`
@@ -437,7 +437,7 @@
           Scenarios                 : current 
           Methods                   : mean_occ_prob wmean_AUC committee_avg 
       Thresholds                    :
-          Method                    : threshold: 0 
+          Method                    : threshold 
           Criteria                  : 0 
 
 ---
@@ -451,7 +451,7 @@
       Ensembles         :
                Methods  : mean_occ_prob wmean_AUC committee_avg 
       Thresholds        :
-               Method   : threshold: 0 
+               Method   : threshold 
                Criteria : 0 
                Metrics  :
       $`Araucaria angustifolia`

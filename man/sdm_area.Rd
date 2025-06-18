@@ -5,20 +5,13 @@
 \alias{get_sdm_area}
 \title{Create a \code{sdm_area} object}
 \usage{
-sdm_area(
-  x,
-  cell_size = NULL,
-  crs = NULL,
-  variables_selected = NULL,
-  gdal = TRUE,
-  crop_by = NULL,
-  lines_as_sdm_area = FALSE
-)
+sdm_area(x, cell_size = NULL, crs = NULL, variables_selected = NULL,
+                gdal = TRUE, crop_by = NULL, lines_as_sdm_area = FALSE)
 
 get_sdm_area(i)
 }
 \arguments{
-\item{x}{A shapefile or a raster. Usually a shapefile from \code{sf} class, but rasters from
+\item{x}{A shape or a raster. Usually a shape from \code{sf} class, but rasters from
 \code{stars}, \code{rasterStack} or \code{SpatRaster} class are also allowed.}
 
 \item{cell_size}{\code{numeric}. The cell size to be used in models.}
@@ -31,7 +24,12 @@ If \code{NULL} (standard), all variables in \code{x} are used.}
 
 \item{gdal}{Boolean. Force the use or not of GDAL when available. See details.}
 
-\item{crop_by}{A shapefile from \code{sf} to crop \code{x}.}
+\item{crop_by}{A shape from \code{sf} to crop \code{x}.}
+
+\item{lines_as_sdm_area}{Boolean. If \code{x} is a \code{sf} with LINESTRING geometry, it can be used
+to model species distribution in lines and not grid cells.}
+
+\item{i}{A \code{sdm_area} or a \code{input_sdm} object.}
 }
 \value{
 A \code{sdm_area} object containing:
@@ -47,10 +45,14 @@ The function returns a \code{sdm_area} object with a grid built upon the \code{x
 There are two ways to make the grid and resample the variables in \code{sdm_area}: with and
 without gdal. As standard, if gdal is available in you machine it will be used (\code{gdal = TRUE}),
 otherwise sf/stars will be used.
+\code{get_sdm_area} will return the grid built by \code{sdm_area}.
 }
 \examples{
 # Create sdm_area object:
-sa <- sdm_area(parana, cell_size = 25000, crs = 6933)
+sa_area <- sdm_area(parana, cell_size = 25000, crs = 6933)
+
+# Create sdm_area using lines:
+sa_rivers <- sdm_area(rivs, cell_size = 25000, crs = 6933, lines_as_sdm_area = TRUE)
 
 }
 \seealso{

@@ -80,7 +80,8 @@ test_that("add_scenarios - SpatRaster", {
 })
 
 test_that("add_scenarios - RasterStack", {
-  suppressWarnings(test <- as(scen, "Raster"))
+  #suppressWarnings(test <- as(na.omit(scen), "Raster"))
+  suppressWarnings(test <- stars:::st_as_raster(scen, "SpatRaster") |> raster::stack())
   test <- raster::stack(test)
   sa_pred <- add_scenarios(sa, test)
   expect_equal(

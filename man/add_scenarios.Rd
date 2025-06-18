@@ -2,19 +2,25 @@
 % Please edit documentation in R/add_scenarios.R
 \name{add_scenarios}
 \alias{add_scenarios}
-\alias{select_scenarios}
 \alias{set_scenarios_names}
+\alias{scenarios_names}
+\alias{get_scenarios_data}
+\alias{select_scenarios}
 \title{Add scenarios to \code{sdm_area}}
 \usage{
 add_scenarios(sa, scen = NULL, scenarios_names = NULL, pred_as_scen = TRUE,
-                     variables_selected = NULL, stationary = NULL, ...)
-
-select_scenarios(i, scenarios_names = NULL)
+                     variables_selected = NULL, stationary = NULL)
 
 set_scenarios_names(i, scenarios_names = NULL)
+
+scenarios_names(i)
+
+get_scenarios_data(i)
+
+select_scenarios(i, scenarios_names = NULL)
 }
 \arguments{
-\item{sa}{A \code{sdm_area} object.}
+\item{sa}{A \code{sdm_area} or \code{input_sdm} object.}
 
 \item{scen}{\code{RasterStack}, \code{SpatRaster} or \code{stars} object. If \code{NULL} adds
 predictors as a scenario.}
@@ -24,28 +30,62 @@ predictors as a scenario.}
 \item{pred_as_scen}{Logical. If \code{TRUE} adds the current predictors as a scenario.}
 
 \item{variables_selected}{Character vector with variables names in \code{scen} to be used as
-predictors. If \code{NULL} adds all variables.}
+variables. If \code{NULL} adds all variables.}
 
 \item{stationary}{Names of variables from \code{sa} that should be used in scenarios as
 stationary variables.}
+
+\item{i}{A \code{sdm_area} or \code{input_sdm} object.}
 }
 \value{
-The input \code{sdm_area} object with a new slot called scenarios with \code{scen} data
-as a \code{list}, where each slot of the \code{list} is a scenario and each scenario is a
-\code{sf}.
+\code{add_scenarios} returns the input \code{sdm_area} or \code{input_sdm} object with a
+new slot called scenarios with \code{scen} data as a \code{list}, where each slot of the
+\code{list} holds a scenario and each scenario is a \code{sf} object.
+\code{set_scenarios_names} sets new names for scenarios in \code{sdm_area}/\code{input_sdm}
+object.
+\code{scenarios_names} returns scenarios' names.
+\code{get_scenarios_data} retrieves scenarios data as a \code{list} of \code{sf} objects.
+\code{select_scenarios} selects scenarios from \code{sdm_area}/\code{input_sdm} object.
 }
 \description{
 This function includes scenarios in the \code{sdm_area} object.
+}
+\details{
+The function \code{add_scenarios} adds scenarios to the \code{sdm_area} or \code{input_sdm}
+object. If \code{scen} has variables that are not present as predictors the function will use
+only variables present in both objects. \code{stationary} variables are those that don't change
+through the scenarios. It is useful for hidrological variables in fish habitat modeling, for
+example (see examples below). When adding multiple scenarios in multiple runs, the function will
+always add a new "current" scenario. To avoid that, set \code{pred_as_scen = FALSE}.
 }
 \examples{
 # Create sdm_area object:
 sa <- sdm_area(parana, cell_size = 25000, crs = 6933)
 
 # Include predictors:
-sa <- add_predictors(sa, bioc) |> dplyr::select(c("bio01", "bio12"))
+sa <- add_predictors(sa, bioc)
 
 # Include scenarios:
-sa <- add_scenarios(sa)
+sa <- add_scenarios(sa, scen)
+
+# Set scenarios names:
+sa <- set_scenarios_names(sa, scenarios_names = c("future_1", "future_2", "future_3", "future_4",
+"current"))
+scenarios_names(sa)
+
+# Get scenarios data:
+scenarios_grid <- get_scenarios_data(sa)
+scenarios_grid
+
+# Select scenarios:
+sa <- select_scenarios(sa, scenarios_names = c("future_1", "future_2"))
+sa
+
+# Setting stationary variables in scenarios:
+sa <- sdm_area(rivs, cell_size=25000, crs = 6933, lines_as_sdm_area = TRUE) |>
+  add_predictors(bioc) |>
+  add_scenarios(scen, stationary = c("LENGTH_KM", "DIST_DN_KM"))
+sa
 
 }
 \seealso{

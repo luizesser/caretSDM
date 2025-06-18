@@ -5,25 +5,27 @@
 #' @usage add_predictors(sa, pred, variables_selected = NULL, gdal = TRUE)
 #'
 #' @param sa A \code{sdm_area} object.
-#' @param pred \code{RasterStack}, \code{SpatRaster} or \code{stars} object with predictors data.
+#' @param pred \code{RasterStack}, \code{SpatRaster}, \code{stars} or \code{sf} object with predictors
+#' data.
 #' @param variables_selected \code{character} vector with variables names in \code{pred} to be used
 #' as predictors. If \code{NULL} adds all variables.
 #' @param gdal Boolean. Force the use or not of GDAL when available. See details.
 #' @param i \code{input_sdm} or \code{sdm_area} object to retrieve data from.
 #'
 #' @details
-#' The function returns a \code{sdm_area} object with a grid built upon the \code{x} parameter.
+#' \code{add_predictors} returns a \code{sdm_area} object with a grid built upon the \code{x} parameter.
 #' There are two ways to make the grid and resample the variables in \code{sdm_area}: with and
 #' without gdal. As standard, if gdal is available in you machine it will be used (\code{gdal = TRUE}),
 #' otherwise sf/stars will be used.
 #'
-#' @returns The same input \code{sdm_area} object is returned including the \code{pred} data binded
-#' to the previous \code{grid}.
+#' @returns For \code{add_predictors} the same input \code{sdm_area} object is returned including the
+#' \code{pred} data binded to the previous \code{grid}.
+#' \code{get_predictors} retrieves the grid from the \code{i} object.
 #'
 #' @seealso \code{\link{sdm_area} \link{predictors} \link{bioc}}
 #'
 #' @author Luíz Fernando Esser (luizesser@gmail.com) and Reginaldo Ré.
-#' \link{https://luizfesser.wordpress.com}
+#' https://luizfesser.wordpress.com
 #'
 #' @examples
 #' # Create sdm_area object:
@@ -32,10 +34,15 @@
 #' # Include predictors:
 #' sa <- add_predictors(sa, bioc)
 #'
+#' # Retrieve predictors data:
+#' get_predictors(sa)
+#'
 #' @importFrom cli cli_abort
 #' @importFrom dplyr inner_join join_by select
 #' @importFrom sf st_crs st_bbox st_intersection st_cast
 #' @importFrom tidyr drop_na
+#'
+#' @global cell_id geometry
 #'
 #' @export
 add_predictors <- function(sa, pred, variables_selected = NULL, gdal = TRUE) {
@@ -50,12 +57,6 @@ add_predictors <- function(sa, pred, variables_selected = NULL, gdal = TRUE) {
       unique = TRUE,
       null.ok = TRUE,
       len = 1
-    ),
-    check_list_cli(
-      variables_selected,
-      types = "character",
-      null.ok = TRUE,
-      min.len = 1
     )
   )
   assert_logical_cli(
@@ -111,18 +112,13 @@ add_predictors.sf <- function(sa, pred, variables_selected = NULL, gdal = TRUE) 
 
 
 .add_predictors <- function(sa, pred, variables_selected = NULL, gdal = TRUE) {
-  #if(sf::st_crs(pred) != sf::st_crs(sa$grid)){
-  #  pred <- st_transform(pred, crs=sf::st_crs(sa$grid))
-  #}
-  #pred <- pred[sa$grid]
-
   pred_sa <- pred |>
     sdm_area(
       cell_size = sa$cell_size,
       crs = sa$grid |> sf::st_crs(),
       variables_selected = variables_selected,
       gdal = gdal,
-      crop_by = sa$grid #|> sf::st_bbox()
+      crop_by = sa$grid
     )
   if (is.null(pred_sa)){
     return(sa)

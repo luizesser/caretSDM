@@ -26,17 +26,18 @@
 #' sa <- sdm_area(parana, cell_size = 25000, crs = 6933)
 #'
 #' # Include predictors:
-#' sa <- add_predictors(sa, bioc) |> dplyr::select(c("bio01", "bio12"))
+#' sa <- add_predictors(sa, bioc) |> dplyr::select(c("bio1", "bio4", "bio12"))
 #'
 #' # Include scenarios:
-#' sa <- add_scenarios(sa)
+#' sa <- add_scenarios(sa, scen)
 #'
 #' # Create occurrences:
 #' oc <- occurrences_sdm(occ, crs = 6933) |> join_area(sa)
 #'
-#' @importFrom sf st_crs st_transform st_join
+#' @importFrom sf st_crs st_transform st_join st_geometry_type st_nearest_feature
 #' @importFrom dplyr select relocate
 #' @importFrom cli cli_abort cli_warn
+#' @importFrom stats na.omit
 #'
 #' @export
 join_area <- function(occ, pred) {
@@ -46,7 +47,7 @@ join_area <- function(occ, pred) {
   pd <- pred$grid
 
   if("cell_id" %in% names(oc)){
-    cli_warn(c(
+    cli::cli_warn(c(
       "occurrence data already has a 'cell_id' column.",
       "i" = "Deleting current cell_id and applying a new cell_id."
     ))
@@ -59,9 +60,9 @@ join_area <- function(occ, pred) {
 
   v1 <- nrow(oc)
 
-  if(unique(st_geometry_type(pd)) == "LINESTRING") {
+  if(unique(sf::st_geometry_type(pd)) == "LINESTRING") {
     # Find nearest features
-    nearest <- st_nearest_feature(oc, select(pd, "cell_id"))
+    nearest <- sf::st_nearest_feature(oc, dplyr::select(pd, "cell_id"))
     cell_id <- pd[nearest, "cell_id"]
     oc <- cbind(oc, cell_id)|>
       dplyr::relocate("cell_id") |>
@@ -71,13 +72,13 @@ join_area <- function(occ, pred) {
     oc <- oc |>
       sf::st_join(dplyr::select(pd, "cell_id")) |>
       dplyr::relocate("cell_id") |>
-      na.omit()
+      stats::na.omit()
   }
 
   v2 <- v1-nrow(oc)
 
   if(v2 > 0){
-    cli_warn(c("Some records from {.var occ} do not fall in {.var pred}.",
+    cli::cli_warn(c("Some records from {.var occ} do not fall in {.var pred}.",
                "i" = "{v2} elements from {.var occ} were excluded.",
                "i" = "If this seems too much, check how {.var occ} and {.var pred} intersect."
                ))
@@ -85,7 +86,7 @@ join_area <- function(occ, pred) {
 
   len <- length(unique(oc$cell_id))
   if(len <= 1) {
-    cli_abort(c(
+    cli::cli_abort(c(
       "occurrence data has {len} cell_id value{?s}.",
       "x" = "{.var occ} and {.var pred} probably do not overlap."
     ))

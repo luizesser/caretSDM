@@ -1,6 +1,6 @@
 #' Create buffer around occurrences
 #'
-#' Obtain the Partial Dependence Plots (PDP) to each variable.
+#' Create buffer around records in \code{occ_data} to be used as study area
 #'
 #' @usage buffer_sdm(occ_data, size = NULL, crs = NULL)
 #'
@@ -8,9 +8,9 @@
 #' Usually the output from \code{GBIF_data}.
 #' @param size \code{numeric}. The distance between the record and the margin of the buffer (i.e.
 #' buffer radius).
-#' @param crs \code{numeric}. Indicates which EPSG it the occ_data in.
+#' @param crs \code{numeric}. Indicates which EPSG it the \code{occ_data} in.
 #'
-#' @return A buffer around occ_data records.
+#' @return A \code{sf} buffer around \code{occ_data} records.
 #'
 #' @seealso \code{\link{GBIF_data}}
 #'
@@ -29,7 +29,7 @@ buffer_sdm <- function(occ_data, size = NULL, crs = NULL) {
   assert_class_cli(size, "numeric")
   assert_class_cli(crs, "numeric")
 
-  cnames <- find_columns(occ_data)
+  cnames <- .find_columns(occ_data)
   if(length(cnames)>2){
     cnames <- cnames[c(2,3)]
   }

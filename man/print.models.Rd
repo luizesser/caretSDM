@@ -2,10 +2,15 @@
 % Please edit documentation in R/train_sdm.R
 \name{print.models}
 \alias{print.models}
-\title{Print method for predictors}
+\title{Print method for models}
 \usage{
-\method{print}{models}(x)
+\method{print}{models}(x, ...)
+}
+\arguments{
+\item{x}{models object}
+
+\item{...}{passed to other methods}
 }
 \description{
-Print method for predictors
+Print method for models
 }

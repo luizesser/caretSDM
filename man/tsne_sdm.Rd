@@ -12,10 +12,10 @@ tsne_sdm(occ, pred = NULL, variables_selected = NULL)
 \item{pred}{A \code{predictors} object. If \code{occ} is of class \code{input_sdm}, then
 \code{pred} is retrieved from it.}
 
-\item{selected_vars}{Variable to be used in t-SNE. It can also be 'vif', if previously calculated.}
+\item{variables_selected}{Variable to be used in t-SNE. It can also be 'vif', if previously calculated.}
 }
 \value{
-A plot to each pseudoabsence dataset in the form of a list.
+A list of plots, where each plot is a tSNE for a given pseudoabsence dataset.
 }
 \description{
 This function calculates tSNE with presences and pseudoabsences data and returns a list of plots.

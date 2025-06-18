@@ -4,17 +4,25 @@
 #'
 #' @usage select_predictors(x, ...)
 #'
-#' @param x \code{sdm_area} object
-#' @param ... \code{character} vector with predictors to be selected.
+#' @param x \code{sdm_area} or \code{input_sdm} object.
+#' @param spp Species to be filtered.
+#' @param ... \code{character} arguments to pass to the given function.
+#' @param .data Data to pass to tidyr function.
+#' @param .by See ?dplyr::filter.
+#' @param .preserve See ?dplyr::filter.
+#'
 #'
 #' @examples
+
 #' # Create sdm_area object:
 #' sa <- sdm_area(parana, cell_size = 25000, crs = 6933)
 #'
 #' # Include predictors:
-#' sa <- add_predictors(sa, bioc) |> dplyr::select(c("bio01", "bio12"))
+#' sa <- add_predictors(sa, bioc) |> dplyr::select(c("bio1", "bio4", "bio12"))
 #'
 #' @importFrom dplyr select relocate mutate filter
+#'
+#' @global species
 #'
 #' @rdname tidyverse-methods
 #' @export
@@ -24,7 +32,8 @@ select_predictors <- function(x, ...) {
 
 #' @rdname tidyverse-methods
 #' @export
-select.sdm_area <- function(x, ...){
+select.sdm_area <- function(.data, ...){
+  x <- .data
   .check_sdm_area(x)
   grd <- dplyr::select(x$grid, ...)
   grd_col_names <- colnames(grd)
@@ -53,7 +62,8 @@ select.sdm_area <- function(x, ...){
 
 #' @rdname tidyverse-methods
 #' @export
-select.input_sdm <- function(x, ...){
+select.input_sdm <- function(.data, ...){
+  x <- .data
   i <- x
   x <- x$predictors
   .check_sdm_area(x)
@@ -85,7 +95,8 @@ select.input_sdm <- function(x, ...){
 
 #' @rdname tidyverse-methods
 #' @export
-mutate.sdm_area <- function(x, ...){
+mutate.sdm_area <- function(.data, ...){
+  x <- .data
   .check_sdm_area(x)
   grd <- dplyr::mutate(x$grid, ...)
   grd_col_names <- colnames(grd)
@@ -100,7 +111,8 @@ mutate.sdm_area <- function(x, ...){
 
 #' @rdname tidyverse-methods
 #' @export
-mutate.input_sdm <- function(x, ...){
+mutate.input_sdm <- function(.data, ...){
+  x <- .data
   i <- x
   x <- x$predictors
   .check_sdm_area(x)
@@ -118,7 +130,8 @@ mutate.input_sdm <- function(x, ...){
 
 #' @rdname tidyverse-methods
 #' @export
-filter.sdm_area <- function(x, ...){
+filter.sdm_area <- function(.data, ..., .by, .preserve){
+  x <- .data
   .check_sdm_area(x)
   grd <- dplyr::filter(x$grid, ...)
   grd_col_names <- colnames(grd)
@@ -133,7 +146,8 @@ filter.sdm_area <- function(x, ...){
 
 #' @rdname tidyverse-methods
 #' @export
-filter.input_sdm <- function(x, ...){
+filter.input_sdm <- function(.data, ..., .by, .preserve){
+  x <- .data
   oc <- filter(x$occurrences, ...)
   x$occurrences <- oc
   return(x)
@@ -141,14 +155,15 @@ filter.input_sdm <- function(x, ...){
 
 #' @rdname tidyverse-methods
 #' @export
-filter.occurrences <- function(x, ...){
+filter.occurrences <- function(.data, ..., .by, .preserve){
+  x <- .data
+
   oc <- x
   x <- x$occurrences
   cd <- FALSE
   if("cell_id" %in% names(x)){
     cd <- TRUE
   }
-  #x <- sf_to_df_sdm(x)
   grd <- dplyr::filter(x, ...)
   grd_col_names <- colnames(grd)
   if(cd){

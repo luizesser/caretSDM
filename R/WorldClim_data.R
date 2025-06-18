@@ -5,19 +5,19 @@
 #'
 #' @usage
 #' WorldClim_data(path = NULL,
-#'                period = 'current',
-#'                variable = 'bioc',
-#'                year = '2090',
-#'                gcm = 'mi',
-#'                ssp = '585',
+#'                period = "current",
+#'                variable = "bioc",
+#'                year = "2090",
+#'                gcm = "mi",
+#'                ssp = "585",
 #'                resolution = 10)
 #'
 #' @param path Directory path to save downloads.
-#' @param period Can be 'current' or 'future'.
+#' @param period Can be "current" or "future".
 #' @param variable Allows to specify which variables you want to retrieve Possible entries are:
-#' 'tmax','tmin','prec' and/or 'bioc'.
+#' "tmax","tmin","prec" and/or "bioc".
 #' @param year Specify the year you want to retrieve data. Possible entries are:
-#' '2030', '2050', '2070' and/or '2090'. You can  use a vector to provide more than one entry.
+#' "2030", "2050", "2070" and/or "2090". You can  use a vector to provide more than one entry.
 #' @param gcm GCMs to be considered in future scenarios. You can use a vector to provide more than
 #' one entry.
 #'  | **CODE** | **GCM** |
@@ -48,12 +48,12 @@
 #'  | mr  | MRI-ESM2-0 |
 #'  | uk  | UKESM1-0-LL |
 #' @md
-#' @param ssp SSPs for future data. Possible entries are: '126', '245', '370' and/or '585'.
+#' @param ssp SSPs for future data. Possible entries are: "126", "245", "370" and/or "585".
 #' You can use a vector to provide more than one entry.
 #' @param resolution You can select one resolution from the following alternatives: 10, 5, 2.5 OR 30.
 #'
-#' @details This function will create a folder entitled 'input_data/WorldClim_data_current' or
-#' 'input_data/WorldClim_data_future'. All the data downloaded will be stored in this folder.
+#' @details This function will create a folder entitled "input_data/WorldClim_data_current" or
+#' "input_data/WorldClim_data_future". All the data downloaded will be stored in this folder.
 #' Note that, despite being possible to retrieve a lot of data at once, it is not recommended to do
 #' so, since the data is very heavy.
 #'
@@ -76,6 +76,7 @@
 #' @importFrom raster stack
 #' @importFrom gtools mixedsort
 #' @importFrom cli cli_alert_warning cli_abort
+#' @importFrom utils unzip
 #'
 #' @export
 
@@ -150,7 +151,7 @@ WorldClim_data <- function(path = NULL, period = "current", variable = "bioc", y
         ),
         httr::write_disk(paste0(path, "/current_", resolution, res, ".zip"))
       )
-      unzip(
+      utils::unzip(
         zipfile = paste0(path, "/current_", resolution, res, ".zip"),
         exdir = path
       )

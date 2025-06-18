@@ -6,7 +6,8 @@
 \alias{selected_variables}
 \title{Calculate VIF}
 \usage{
-vif_predictors(pred, th = 0.5, maxobservations = 5000, variables_selected = NULL)
+vif_predictors(pred, area = "all", th = 0.5, maxobservations = 5000, variables_selected =
+NULL)
 
 vif_summary(i)
 
@@ -17,12 +18,15 @@ selected_variables(i)
 
 \item{area}{Character. Which area should be used in vif selection? Standard is \code{"all"}.}
 
-\item{th}{Threshold to be applied in VIF routine.}
+\item{th}{Threshold to be applied in VIF routine. See ?usdm::vifcor.}
 
 \item{maxobservations}{Max observations to use to calculate the VIF.}
 
 \item{variables_selected}{If there is a subset of predictors that should be used in this
-function, it can be informed using this parameter.}
+function, it can be informed using this parameter. If set to \code{NULL} (standard) all variables
+are used.}
+
+\item{i}{A \code{input_sdm} to retrieve information from.}
 }
 \value{
 A \code{input_sdm} or \code{predictors} object with VIF data.
@@ -30,15 +34,18 @@ A \code{input_sdm} or \code{predictors} object with VIF data.
 \description{
 Apply Variance Inflation Factor (VIF) calculation.
 }
+\details{
+vif_predictors is a wrapper function to run usdm::vifcor in caretSDM.
+}
 \examples{
 # Create sdm_area object:
 sa <- sdm_area(parana, cell_size = 25000, crs = 6933)
 
 # Include predictors:
-sa <- add_predictors(sa, bioc) |> dplyr::select(c("bio01", "bio12"))
+sa <- add_predictors(sa, bioc) |> dplyr::select(c("bio1", "bio4", "bio12"))
 
 # Include scenarios:
-sa <- add_scenarios(sa)
+sa <- add_scenarios(sa, scen)
 
 # Create occurrences:
 oc <- occurrences_sdm(occ, crs = 6933) |> join_area(sa)
@@ -51,10 +58,15 @@ i <- data_clean(i)
 
 # VIF calculation:
 i <- vif_predictors(i)
+i
+
+# Retrieve information about vif:
+vif_summary(i)
+selected_variables(i)
 
 }
 \seealso{
-\code{\link{usdm::vifcor} \link{get_predictor_names}}
+\code{\link{get_predictor_names}}
 }
 \author{
 Luíz Fernando Esser (luizesser@gmail.com)

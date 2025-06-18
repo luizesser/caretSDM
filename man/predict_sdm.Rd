@@ -2,8 +2,6 @@
 % Please edit documentation in R/predict_sdm.R
 \name{predict_sdm}
 \alias{predict_sdm}
-\alias{scenarios_names}
-\alias{get_scenarios_data}
 \alias{get_predictions}
 \alias{get_ensembles}
 \title{Predict SDM models in new data}
@@ -17,10 +15,6 @@ predict_sdm(m,
             file = NULL,
             add.current = TRUE)
 
-scenarios_names(i)
-
-get_scenarios_data(i)
-
 get_predictions(i)
 
 get_ensembles(i)
@@ -31,17 +25,18 @@ get_ensembles(i)
 \item{scen}{A \code{scenarios} object or \code{NULL}. If \code{NULL} and \code{m} is a
 \code{input_sdm} with a scenarios slot, it will be used.}
 
-\item{metric}{A character containing the metric in which the \code{th} will be calculated/applied.
-Default is ROC. See \code{?mean_validation_metrics} for the metrics available.}
+\item{metric}{A character containing the metric in which the \code{th} will be
+calculated/applied. Default is ROC. See \code{?mean_validation_metrics} for the metrics
+available.}
 
 \item{th}{Thresholds for metrics. Can be numeric or a function.}
 
 \item{tp}{Type of output to be retrieved. See details.}
 
-\item{file}{File to sabe predictions.}
-
 \item{ensembles}{Boolean. Should ensembles be calculated? If \code{TRUE} a series of ensembles
 are obtained. See details.}
+
+\item{file}{File to sabe predictions.}
 
 \item{add.current}{If current scenario is not available, predictors will be used as the current
 scenario.}
@@ -82,10 +77,10 @@ object.
 sa <- sdm_area(parana, cell_size = 25000, crs = 6933)
 
 # Include predictors:
-sa <- add_predictors(sa, bioc) |> dplyr::select(c("bio01", "bio12"))
+sa <- add_predictors(sa, bioc) |> dplyr::select(c("bio1", "bio4", "bio12"))
 
 # Include scenarios:
-sa <- add_scenarios(sa)
+sa <- add_scenarios(sa, scen)
 
 # Create occurrences:
 oc <- occurrences_sdm(occ, crs = 6933) |> join_area(sa)
@@ -103,11 +98,17 @@ i <- vif_predictors(i)
 i <- pseudoabsences(i, method="bioclim", variables_selected = "vif")
 
 # Custom trainControl:
-ctrl_sdm <- caret::trainControl(method = "repeatedcv", number = 4, repeats = 10, classProbs = TRUE,
-returnResamp = "all", summaryFunction = summary_sdm, savePredictions = "all")
+ctrl_sdm <- caret::trainControl(method = "repeatedcv",
+                                number = 4,
+                                repeats = 1,
+                                classProbs = TRUE,
+                                returnResamp = "all",
+                                summaryFunction = summary_sdm,
+                                savePredictions = "all")
 
 # Train models:
-i <- train_sdm(i, algo = c("nnet", "kknn"), variables_selected = "vif", ctrl=ctrl_sdm)
+i <- train_sdm(i, algo = c("naive_bayes", "kknn"), variables_selected = "vif", ctrl=ctrl_sdm) |>
+suppressWarnings()
 
 # Predict models:
 i  <- predict_sdm(i)

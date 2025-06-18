@@ -219,7 +219,7 @@ fmt_bullet_cli <- function(res, cli_bullet="i"){
    } else {
      res <- res |>
        sanitize_cli() |>
-       setNames(rep("i", length(res)))
+       stats::setNames(rep("i", length(res)))
 
      return(res)
    }

@@ -52,7 +52,7 @@
       Number of Predictors          : 12 
       Predictors Names              : bio1, bio12, div, prod, sub, soma, PC1, PC2, PC3, PC4, PC5, PC6 
       PCA-transformed variables     : DONE 
-      Cummulative proportion (0.99) : PC1 
+      Cummulative proportion ( 1 ) : PC1 
       ---------  Scenarios  ---------
       Number of Scenarios           : 1 
       Scenarios Names               : current 
@@ -89,7 +89,7 @@
       Number of Predictors          : 12 
       Predictors Names              : bio1, bio12, div, prod, sub, soma, PC1, PC2, PC3, PC4, PC5, PC6 
       PCA-transformed variables     : DONE 
-      Cummulative proportion (0.99) : PC1 
+      Cummulative proportion ( 1 ) : PC1 
       ---------  Scenarios  ---------
       Number of Scenarios           : 1 
       Scenarios Names               : current 

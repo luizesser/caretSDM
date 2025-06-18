@@ -22,21 +22,20 @@
 #' @param ... A vector with column names addressing the columns with species names, longitude and
 #' latitude, respectively, in \code{x}.
 #' @param i \code{input_sdm} or \code{occurrences} object.
+#' @param oc1 A \code{occurrences} object to be summed with.
+#' @param oc2 A \code{occurrences} object to be summed with.
 #'
 #' @return A \code{occurrences} object.
 #'
 #' @details
 #' \code{x} must have three columns: species, decimalLongitude and decimalLatitude. When \code{sf}
 #' it is only necessary a species column.
-#'
 #' \code{n_records} return the number of presence records to each species.
-#'
 #' \code{species_names} return the species names.
-#'
 #' \code{get_coords} return a \code{data.frame} with coordinates of species records.
-#'
 #' \code{add_occurrences} return a \code{occurrences}. This function sums two \code{occurrences} objects.
 #' It can also sum a \code{occurrences} object with a \code{data.frame} object.
+#' \code{occurrences_as_df} returns a \code{data.frame} with species names and coordinates.
 #'
 #' @seealso \code{\link{input_sdm} \link{GBIF_data} \link{occ}}
 #'
@@ -44,15 +43,6 @@
 #' https://luizfesser.wordpress.com
 #'
 #' @examples
-#' # Create sdm_area object:
-#' sa <- sdm_area(parana, cell_size = 25000, crs = 6933)
-#'
-#' # Include predictors:
-#' sa <- add_predictors(sa, bioc) |> dplyr::select(c("bio01", "bio12"))
-#'
-#' # Include scenarios:
-#' sa <- add_scenarios(sa)
-#'
 #' # Create occurrences:
 #' oc <- occurrences_sdm(occ, crs = 6933)
 #'
@@ -60,6 +50,9 @@
 #' @importFrom dplyr select
 #' @importFrom sf st_coordinates st_as_sf st_transform st_crs
 #' @importFrom cli cli_alert_warning cli_abort
+#' @importFrom utils read.csv head
+#'
+#' @global X Y
 #'
 #' @export
 occurrences_sdm <- function(x, independent_test = NULL, p = 0.1, crs = NULL,
@@ -93,7 +86,7 @@ occurrences_sdm.sf <- function(x, independent_test = NULL, p = 0.1, crs = NULL,
 #' @export
 occurrences_sdm.character <- function(x, independent_test = NULL, p = 0.1, crs = NULL,
                                independent_test_crs = NULL, ...) {
-  x <- read.csv(x)
+  x <- utils::read.csv(x)
   occ <- .occurrences(x, independent_test, p, crs, independent_test_crs, ...)
   return(occ)
 }
@@ -148,7 +141,7 @@ occurrences_as_df <- function(i) {
     y <- x
   }
   res <- y$occurrences |>
-    sf_to_df_sdm()
+    .sf_to_df_sdm()
   return(res)
 }
 
@@ -168,11 +161,6 @@ add_occurrences <- function(oc1, oc2) {
 }
 
 #' @export
-select_species <- function(oc, sp_names=NULL) {
-  return(oc)
-}
-
-#' @export
 .occurrences <- function(x, independent_test = NULL, p = 0.1, crs = NULL,
                          independent_test_crs = NULL, ...) {
   assert_int_cli(crs, lower = 1024, upper = 32766, null.ok = TRUE)
@@ -180,7 +168,7 @@ select_species <- function(oc, sp_names=NULL) {
   if(isTRUE(independent_test)){
     assert_numeric_cli(p, lower = 0.0001, upper = 0.9999, len=1)
   }
-  col_names <- find_columns(x, ...)
+  col_names <- .find_columns(x, ...)
   x <- x[, col_names]
   if (length(col_names) == 2) {
     cli::cli_alert_warning("Species column not found. Addressing all records to a unknown species.")
@@ -267,7 +255,7 @@ select_species <- function(oc, sp_names=NULL) {
           ))
         }
         independent_test <- as.data.frame(independent_test)
-        col_names <- find_columns(independent_test, ...)
+        col_names <- .find_columns(independent_test, ...)
         independent_test <- independent_test[, col_names]
         if (length(col_names) == 2) {
           if(length(spp_names) == 1){
@@ -320,8 +308,10 @@ select_species <- function(oc, sp_names=NULL) {
 }
 
 #' Print method for occurrences
+#' @param x occurrences object
+#' @param ... passed to other methods
 #' @exportS3Method base::print
-print.occurrences <- function(x) {
+print.occurrences <- function(x, ...) {
   cat("        caretSDM       \n")
   cat(".......................\n")
   cat("Class                 : occurrences\n")
@@ -335,5 +325,6 @@ print.occurrences <- function(x) {
   n <- n + sum(nchar(colnames(x$occurrences)[-1])) + ncol(x$occurrences) + 1
   cat(rep("=", n), sep = "")
   cat("\nData:\n")
-  print(head(x$occurrences))
+  print(utils::head(x$occurrences))
+  invisible(x)
 }

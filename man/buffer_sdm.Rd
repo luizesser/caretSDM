@@ -13,13 +13,13 @@ Usually the output from \code{GBIF_data}.}
 \item{size}{\code{numeric}. The distance between the record and the margin of the buffer (i.e.
 buffer radius).}
 
-\item{crs}{\code{numeric}. Indicates which EPSG it the occ_data in.}
+\item{crs}{\code{numeric}. Indicates which EPSG it the \code{occ_data} in.}
 }
 \value{
-A buffer around occ_data records.
+A \code{sf} buffer around \code{occ_data} records.
 }
 \description{
-Obtain the Partial Dependence Plots (PDP) to each variable.
+Create buffer around records in \code{occ_data} to be used as study area
 }
 \examples{
 # Create sdm_area object:

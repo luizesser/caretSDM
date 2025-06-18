@@ -2,10 +2,15 @@
 % Please edit documentation in R/predict_sdm.R
 \name{print.predictions}
 \alias{print.predictions}
-\title{Print method for predictors}
+\title{Print method for predictions}
 \usage{
-\method{print}{predictions}(x)
+\method{print}{predictions}(x, ...)
+}
+\arguments{
+\item{x}{predictions object}
+
+\item{...}{passed to other methods}
 }
 \description{
-Print method for predictors
+Print method for predictions
 }

@@ -5,9 +5,12 @@
 #' @param ... Data to be used in SDMs. Can be a \code{occurrences} and/or a \code{sdm_area} object.
 #'
 #' @returns A \code{input_sdm} object containing:
-#'    \item{grid}{\code{sf} with \code{POLYGON} geometry representing the grid for the study area.}
-#'    \item{bbox}{Four corners for the bounding box (class \code{bbox}): minimum value of X, minimum value of Y, maximum value of X, maximum value of Y}
-#'    \item{cell_size}{\code{numeric} information regarding the size of the cell used to rescale variables to the study area, representing also the cell size in the \code{grid}.}
+#'    \item{grid}{\code{sf} with POLYGON geometry representing the grid for the study area or
+#'    LINESTRING if \code{sdm_area} was built with a LINESTRING \code{sf}.}
+#'    \item{bbox}{Four corners for the bounding box (class \code{bbox}): minimum value of X, minimum
+#'    value of Y, maximum value of X, maximum value of Y}
+#'    \item{cell_size}{\code{numeric} information regarding the size of the cell used to rescale
+#'    variables to the study area, representing also the cell size in the \code{grid}.}
 #'    \item{epsg}{\code{character} information about the EPSG used in all slots from \code{sdm_area}.}
 #'    \item{predictors}{\code{character} vector with predictors names included in \code{sdm_area}.}
 #'
@@ -20,7 +23,7 @@
 #'
 #' @seealso \code{\link{occurrences_sdm} \link{sdm_area}}
 #'
-#' @author Luíz Fernando Esser (luizesser@gmail.com)
+#' @author Luiz Fernando Esser (luizesser@gmail.com)
 #' https://luizfesser.wordpress.com
 #'
 #' @examples
@@ -28,16 +31,18 @@
 #' sa <- sdm_area(parana, cell_size = 25000, crs = 6933)
 #'
 #' # Include predictors:
-#' sa <- add_predictors(sa, bioc) |> dplyr::select(c("bio01", "bio12"))
+#' sa <- add_predictors(sa, bioc) |> dplyr::select(c("bio1", "bio4", "bio12"))
 #'
 #' # Include scenarios:
-#' sa <- add_scenarios(sa)
+#' sa <- add_scenarios(sa, scen)
 #'
 #' # Create occurrences:
 #' oc <- occurrences_sdm(occ, crs = 6933) |> join_area(sa)
 #'
 #' # Create input_sdm:
 #' i <- input_sdm(oc, sa)
+#'
+#' @importFrom stats sd
 #'
 #' @export
 input_sdm <- function(...) {
@@ -62,12 +67,6 @@ input_sdm <- function(...) {
       l$predictors <- x[classes %in% "sdm_area"][[1]]
     }
   }
-  #else if ("predictors" %in% classes) {
-  #  l$predictors <- x[classes %in% "predictors"][[1]]
-  #}
-  #if ("scenarios" %in% classes) {
-  #  l$scenarios <- x[classes %in% "scenarios"][[1]]
-  #}
 
   inp <- structure(l,
     class = "input_sdm"
@@ -75,9 +74,11 @@ input_sdm <- function(...) {
   return(inp)
 }
 
-#' Print method for predictors
+#' Print method for input_sdm
+#' @param x input_sdm object
+#' @param ... passed to other methods
 #' @exportS3Method base::print
-print.input_sdm <- function(x) {
+print.input_sdm <- function(x, ...) {
   cat("            caretSDM           \n")
   cat("...............................\n")
   cat("Class                         : input_sdm\n")
@@ -127,7 +128,7 @@ print.input_sdm <- function(x) {
       if (!is.null(x$predictors$variable_selection$pca)) {
         cat(
           cat("PCA-transformed variables     : DONE \n"),
-          cat("Cummulative proportion (0.99) : "), cat(x$predictors$variable_selection$pca$selected_variables, sep = ", "), "\n"
+          cat("Cummulative proportion (",x$predictors$variable_selection$pca$cumulative_proportion_th,") : "), cat(x$predictors$variable_selection$pca$selected_variables, sep = ", "), "\n"
         )
       }
     }
@@ -161,9 +162,9 @@ print.input_sdm <- function(x) {
     if ("independent_validation" %in% names(x$models)) {
       cat(
         "Independent Validation        :\n",
-        "   ROC (mean ± sd)            : ", round(mean(unlist(x$models$independent_validation)), 3),
-        " ± ",
-        round(sd(unlist(x$models$independent_validation)), 3), "\n"
+        "   ROC (mean +- sd)            : ", round(mean(unlist(x$models$independent_validation)), 3),
+        " +- ",
+        round(stats::sd(unlist(x$models$independent_validation)), 3), "\n"
       )
     }
   }
@@ -179,6 +180,6 @@ print.input_sdm <- function(x) {
       "   Method                    :", x$predictions$thresholds$method, "\n",
       "   Criteria                  :", x$predictions$thresholds$criteria, "\n"
     )
-
   }
+  invisible(x)
 }

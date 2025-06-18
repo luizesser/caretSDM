@@ -2,10 +2,15 @@
 % Please edit documentation in R/input_sdm.R
 \name{print.input_sdm}
 \alias{print.input_sdm}
-\title{Print method for predictors}
+\title{Print method for input_sdm}
 \usage{
-\method{print}{input_sdm}(x)
+\method{print}{input_sdm}(x, ...)
+}
+\arguments{
+\item{x}{input_sdm object}
+
+\item{...}{passed to other methods}
 }
 \description{
-Print method for predictors
+Print method for input_sdm
 }

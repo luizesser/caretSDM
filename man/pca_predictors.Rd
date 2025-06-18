@@ -4,9 +4,9 @@
 \alias{pca_predictors}
 \alias{pca_summary}
 \alias{get_pca_model}
-\title{Predictors as PCA-axis}
+\title{Predictors as PCA-axes}
 \usage{
-pca_predictors(i)
+pca_predictors(i, cumulative_proportion = 0.99)
 
 pca_summary(i)
 
@@ -14,23 +14,30 @@ get_pca_model(i)
 }
 \arguments{
 \item{i}{A \code{input_sdm} object.}
+
+\item{cumulative_proportion}{A \code{numeric} with the threshold for cumulative proportion.
+Standard is 0.99, meaning that axes returned as predictors sum up more than 99% of environmental
+variance.}
 }
 \value{
 \code{input_sdm} object with variables from both \code{predictors} and \code{scenarios}
-transformed in PCA-axis.
+transformed in PCA-axes.
 }
 \description{
-Transform predictors data into PCA-axis.
+Transform predictors data into PCA-axes.
+}
+\details{
+\code{pca_predictors} Transform predictors data into PCA-axes. If the user wants to use PCA-axes
+as future scenarios, then scenarios should be added after the PCA transformation (see examples).
+\code{pca_summary} Returns the summary of \code{prcomp} function. See ?stats::prcomp.
+\code{get_pca_model} Returns the model built to calculate PCA-axes.
 }
 \examples{
 # Create sdm_area object:
 sa <- sdm_area(parana, cell_size = 25000, crs = 6933)
 
 # Include predictors:
-sa <- add_predictors(sa, bioc) |> dplyr::select(c("bio01", "bio12"))
-
-# Include scenarios:
-sa <- add_scenarios(sa)
+sa <- add_predictors(sa, bioc) |> dplyr::select(c("bio1", "bio4", "bio12"))
 
 # Create occurrences:
 oc <- occurrences_sdm(occ, crs = 6933) |> join_area(sa)
@@ -38,11 +45,11 @@ oc <- occurrences_sdm(occ, crs = 6933) |> join_area(sa)
 # Create input_sdm:
 i <- input_sdm(oc, sa)
 
-# Clean coordinates:
-i <- data_clean(i)
-
-# VIF calculation:
+# PCA transformation:
 i <- pca_predictors(i)
+
+# Include scenarios:
+i <- add_scenarios(i, scen)
 
 }
 \seealso{
