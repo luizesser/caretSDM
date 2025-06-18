@@ -488,8 +488,8 @@ write_ensembles(i, path = "results/ensembles", ext = ".tif")
 
 This vignette demonstrates how to build Species Distribution Models using `caretSDM`. This vignette
 aimed to terrestrial uses highlights the use of the package using a grid in the sdm_area.
-Alternative to that can be seen in vignettes("Salminus") where we build SDMs for a fish species
-using river lines in a simplefeatures object instead of cells in a grid.
+Alternative to that can be seen in vignettes("Salminus", "caretSDM") where we build SDMs for a fish
+species using river lines in a simplefeatures object instead of cells in a grid.
 
 ```{r rmd_time}
 end_time <- Sys.time()

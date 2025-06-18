@@ -12,7 +12,7 @@ First we will install the package from github. For that we will need to install 
 
 ``` r
 install.packages(setdiff("devtools", rownames(installed.packages())))
-devtools::install_github("luizesser/caretSDM", build_vignettes = TRUE) # This can take around 7 minutes to complete.
+devtools::install_github("luizesser/caretSDM", build_vignettes = TRUE) # This can take around 3 minutes to complete.
 ```
 
 ``` r
@@ -41,12 +41,13 @@ caretSDM is vastly documented and has included some objects that can guide your 
 
 *Vignettes*
 
--   `Araucaria` is the main vignette for terrestrial species modeling.
+-   `caretSDM Workflow for Species Distribution Modeling` is the main vignette for terrestrial species modeling, where we model the tree species *Araucaria angustifolia*.
 
--   `Salminus` is the main vignette for continental aquatic species modeling.
+-   `Modeling Species Distributions in Continental Water Bodies` is the main vignette for continental aquatic species modeling, where we model the fish species *Salminus brasiliensis*.
 
 To access the vignettes in R, simply run:
 
 ``` r
 vignette("Araucaria", "caretSDM")
+vignette("Salminus", "caretSDM")
 ```

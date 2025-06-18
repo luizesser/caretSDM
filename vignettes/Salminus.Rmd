@@ -488,8 +488,8 @@ write_ensembles(i, path = "results/ensembles", ext = ".tif")
 This vignette demonstrates how to build Species Distribution Models with lines as predictor
 variables using `caretSDM`. This vignette aimed to continental aquatic environments highlights the
 use of the package using a line simplefeature in the `sdm_area`. Alternative to that can be seen in
-vignettes("Salminus") where we build SDMs for a tree species using a grid simplefeatures instead of
-lines.
+vignettes("Araucaria", "caretSDM") where we build SDMs for a tree species using a grid
+simplefeatures instead of lines.
 
 ```{r final_time}
 end_time <- Sys.time()
