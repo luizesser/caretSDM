@@ -76,7 +76,7 @@
 <p>First we will install the package from github. For that we will need to install the <code>devtools</code> package first and then install the <code>caretSDM</code> package.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sets.html" class="external-link">setdiff</a></span><span class="op">(</span><span class="st">"devtools"</span>, <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/installed.packages.html" class="external-link">installed.packages</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="fu">devtools</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"luizesser/caretSDM"</span>, build_vignettes <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="co"># This can take around 7 minutes to complete.</span></span></code></pre></div>
+<span><span class="fu">devtools</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"luizesser/caretSDM"</span>, build_vignettes <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="co"># This can take around 3 minutes to complete.</span></span></code></pre></div>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://luizesser.github.io/caretSDM/">caretSDM</a></span><span class="op">)</span></span></code></pre></div>
 </div>
@@ -96,12 +96,13 @@
 </ul>
 <p><em>Vignettes</em></p>
 <ul>
-<li><p><code>Araucaria</code> is the main vignette for terrestrial species modeling.</p></li>
-<li><p><code>Salminus</code> is the main vignette for continental aquatic species modeling.</p></li>
+<li><p><code>caretSDM Workflow for Species Distribution Modeling</code> is the main vignette for terrestrial species modeling, where we model the tree species <em>Araucaria angustifolia</em>.</p></li>
+<li><p><code>Modeling Species Distributions in Continental Water Bodies</code> is the main vignette for continental aquatic species modeling, where we model the fish species <em>Salminus brasiliensis</em>.</p></li>
 </ul>
 <p>To access the vignettes in R, simply run:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/vignette.html" class="external-link">vignette</a></span><span class="op">(</span><span class="st">"Araucaria"</span>, <span class="st">"caretSDM"</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/vignette.html" class="external-link">vignette</a></span><span class="op">(</span><span class="st">"Araucaria"</span>, <span class="st">"caretSDM"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/vignette.html" class="external-link">vignette</a></span><span class="op">(</span><span class="st">"Salminus"</span>, <span class="st">"caretSDM"</span><span class="op">)</span></span></code></pre></div>
 </div>
 </div>
 
