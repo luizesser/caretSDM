@@ -5,14 +5,19 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>Build Species Distribution Modeling using caret. • caretSDM</title>
+<title>Build Species Distribution Modeling using Caret • caretSDM</title>
+<!-- favicons --><link rel="icon" type="image/png" sizes="96x96" href="favicon-96x96.png">
+<link rel="icon" type="”image/svg+xml”" href="favicon.svg">
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+<link rel="icon" sizes="any" href="favicon.ico">
+<link rel="manifest" href="site.webmanifest">
 <script src="deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
 <script src="deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
-<script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Build Species Distribution Modeling using caret.">
-<meta name="description" content="Use machine learning algorithms and advanced geoprocessing tools to build Species Distribution Modeling (SDMs) in a extensible and modern fashion.n">
-<meta property="og:description" content="Use machine learning algorithms and advanced geoprocessing tools to build Species Distribution Modeling (SDMs) in a extensible and modern fashion.n">
+<script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Build Species Distribution Modeling using Caret">
+<meta name="description" content="Use machine learning algorithms and advanced geoprocessing tools to build Species Distribution Modeling (SDMs) in a extensible and modern fashion.">
+<meta property="og:description" content="Use machine learning algorithms and advanced geoprocessing tools to build Species Distribution Modeling (SDMs) in a extensible and modern fashion.">
 <meta property="og:image" content="https://luizesser.github.io/caretSDM/logo.png">
 </head>
 <body>
@@ -23,7 +28,7 @@
 
     <a class="navbar-brand me-2" href="index.html">caretSDM</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.7</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -36,8 +41,8 @@
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
-<li><a class="dropdown-item" href="articles/area_modeling.html">area_modeling</a></li>
-    <li><a class="dropdown-item" href="articles/lines_modeling.html">lines_modeling</a></li>
+<li><a class="dropdown-item" href="articles/Araucaria.html">caretSDM Workflow for Species Distribution Modeling</a></li>
+    <li><a class="dropdown-item" href="articles/Salminus.html">Modeling Species Distributions in Continental Water Bodies</a></li>
   </ul>
 </li>
       </ul>
@@ -82,7 +87,9 @@
 <p><em>Objects</em></p>
 <ul>
 <li><p><code>bioc</code> Bioclimatic variables for current scenario in stars class.</p></li>
+<li><p><code>rivs</code> Hydrological variables for current scenario in sf class.</p></li>
 <li><p><code>occ</code> <em>Araucaria angustifolia</em> occurrence data as a dataframe.</p></li>
+<li><p><code>salm</code> <em>Salminus brasiliensis</em> occurrence data as a dataframe.</p></li>
 <li><p><code>parana</code> Shapefile to use in <code>sdm_area</code> in Simple Feature class.</p></li>
 <li><p><code>scen</code> Bioclimatic variables for future scenarios in stars class.</p></li>
 <li><p><code>algorithms</code> Dataframe with characteristics from every algorithm available in caretSDM.</p></li>
@@ -109,7 +116,9 @@
 <div class="license">
 <h2 data-toc-skip>License</h2>
 <ul class="list-unstyled">
-<li><a href="https://opensource.org/licenses/mit-license.php" class="external-link">MIT</a></li>
+<li>
+<a href="https://opensource.org/licenses/mit-license.php" class="external-link">MIT</a> + file <a href="LICENSE-text.html">LICENSE</a>
+</li>
 </ul>
 </div>
 
@@ -129,7 +138,7 @@
 <li>José Hilário Delconte Ferreira <br><small class="roles"> Author </small> <a href="https://orcid.org/0000-0002-7116-2600" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a>  </li>
 <li>Reginaldo Ré <br><small class="roles"> Author </small> <a href="https://orcid.org/0000-0001-6452-3466" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a>  </li>
 <li>Valéria Batista <br><small class="roles"> Author </small> <a href="https://orcid.org/0000-0002-6574-7338" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a>  </li>
-<li>Luíz Esser <br><small class="roles"> Author, maintainer </small> <a href="https://orcid.org/0000-0003-2982-7223" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a>  </li>
+<li>Luíz Fernando Esser <br><small class="roles"> Author, maintainer </small> <a href="https://orcid.org/0000-0003-2982-7223" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a>  </li>
 </ul>
 </div>
 
@@ -140,7 +149,7 @@
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by Dayani Bailly, Edivando Couto, José Hilário Delconte Ferreira, Reginaldo Ré, Valéria Batista, Luíz Esser.</p>
+  <p>Developed by Dayani Bailly, Edivando Couto, José Hilário Delconte Ferreira, Reginaldo Ré, Valéria Batista, Luíz Fernando Esser.</p>
 </div>
 
 <div class="pkgdown-footer-right">
