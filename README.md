@@ -1,22 +1,31 @@
 # caretSDM
 
+<!-- badges: start -->
+
+[![R-CMD-check](https://github.com/luizesser/chooseGCM/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/luizesser/chooseGCM/actions/workflows/R-CMD-check.yaml)
+<!-- badges: end -->
+
 Luíz Fernando Esser
 
 # caretSDM <a href="https://luizesser.github.io/caretSDM/"><img src="man/figures/logo.png" alt="caretSDM website" align="right" height="85"/></a>
 
 `caretSDM` is a under development R package that uses the powerful `caret` package as the main engine to obtain Species Distribution Models. As `caret` is a packaged turned to build machine learning models, `caretSDM` has a strong focus on this approach.
 
-## Installing
+## Installation
 
-First we will install the package from github. For that we will need to install the `devtools` package first and then install the `caretSDM` package.
+You can install the development version of caretSDM from
+[GitHub](https://github.com/luizesser/caretSDM) with:
 
 ``` r
-install.packages(setdiff("devtools", rownames(installed.packages())))
-devtools::install_github("luizesser/caretSDM", build_vignettes = TRUE) # This can take around 3 minutes to complete.
+install.packages("devtools")
+devtools::install_github("luizesser/caretSDM")
 ```
 
+The package is also available on CRAN. Users are able to install it
+using the following code:
+
 ``` r
-library(caretSDM)
+install.packages("caretSDM")
 ```
 
 ## You need help?

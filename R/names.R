@@ -95,6 +95,7 @@ set_predictor_names <- function(x, new_names) {
 #' @export
 set_predictor_names.input_sdm <- function(x, new_names) {
   i <- x
+  assert_subset_cli("predictors", names(x))
   x <- x$predictors
   .check_sdm_area(x)
   assert_character_cli(
@@ -149,8 +150,8 @@ set_predictor_names.input_sdm <- function(x, new_names) {
 #' @rdname predictor_names
 #' @export
 set_predictor_names.sdm_area <- function(x, new_names) {
-
   .check_sdm_area(x)
+  assert_subset_cli("grid", names(x))
   assert_character_cli(
     new_names,
     any.missing = FALSE,

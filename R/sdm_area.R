@@ -818,7 +818,8 @@ sdm_area.sf <- function(x, cell_size = NULL, crs = NULL, variables_selected = NU
   process_river_feature <- function(river_feature, grid) {
     # Convert to single part if it's a multilinestring
     if (sf::st_geometry_type(river_feature) == "MULTILINESTRING") {
-      suppressWarnings(river_lines <- sf::st_cast(river_feature, "LINESTRING"))
+      suppressWarnings(river_lines <- sf::st_cast(river_feature, "LINESTRING")) |>
+        suppressWarnings()
       river_lines <- river_lines |>
         dplyr::mutate(original_id = 1:dplyr::n())
     } else {

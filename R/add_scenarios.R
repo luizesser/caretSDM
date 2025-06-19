@@ -196,6 +196,7 @@ add_scenarios.stars <- function(sa, scen=NULL, scenarios_names = NULL, pred_as_s
           dplyr::select(-"cell_id") |>
           stats::aggregate(stationary_grd, mean) |>
           sf::st_cast("LINESTRING") |>
+          suppressWarnings() |>
           cbind(stationary_grd) |>
           dplyr::select(-"geometry.1") |>
           dplyr::relocate(c("cell_id", variables_selected, stationary, "geometry"))
@@ -280,6 +281,7 @@ add_scenarios.stars <- function(sa, scen=NULL, scenarios_names = NULL, pred_as_s
           dplyr::select(-"cell_id") |>
           stats::aggregate(grid_t, mean) |>
           sf::st_cast("LINESTRING") |>
+          suppressWarnings() |>
           cbind(grid_t) |>
           dplyr::select(c("cell_id", variables_selected, "geometry"))
       }

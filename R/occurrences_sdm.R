@@ -49,6 +49,7 @@
 #' @importFrom caret createDataPartition
 #' @importFrom dplyr select
 #' @importFrom sf st_coordinates st_as_sf st_transform st_crs
+#' @importFrom stats na.omit
 #' @importFrom cli cli_alert_warning cli_abort
 #' @importFrom utils read.csv head
 #'
@@ -169,7 +170,7 @@ add_occurrences <- function(oc1, oc2) {
     assert_numeric_cli(p, lower = 0.0001, upper = 0.9999, len=1)
   }
   col_names <- .find_columns(x, ...)
-  x <- x[, col_names]
+  x <- x[, col_names] |> stats::na.omit()
   if (length(col_names) == 2) {
     cli::cli_alert_warning("Species column not found. Addressing all records to a unknown species.")
     colnames(x) <- c("decimalLongitude", "decimalLatitude")

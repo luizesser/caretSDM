@@ -40,7 +40,6 @@ test_that("sdm_area - sf/predictors", {
   expect_true("cell_id" %in% colnames(sa$grid))
   expect_true("geometry" %in% colnames(sa$grid))
   expect_equal(as.character(unique(st_geometry_type(sa$grid))), "POLYGON")
-
 })
 
 test_that("sdm_area - sf/predictors no variables selected", {
@@ -61,7 +60,6 @@ test_that("sdm_area - sf/predictors no variables selected", {
   expect_equal(as.character(unique(st_geometry_type(sa$grid))), "POLYGON")
 })
 
-## Test sf
 test_that("sdm_area - sf/predictors lines instead of polygons", {
   sa <- sdm_area(amazon_shp, cell_size = 10000, crs = 6933)
   checkmate::expect_names(
@@ -127,7 +125,6 @@ test_that("sdm_area - sf/grid erro tamanho celula", {
     "sdm_area object is corrupted!"
   )
 })
-
 
 test_that("sdm_area - sf/no-epsg", {
   pr_gpkg_tmp <- pr_gpkg
@@ -414,11 +411,11 @@ test_that("sdm_area - stars+gdal=F areas do not intersect", {
 
 # test lines
 test_that("sdm_area - lines", {
-  sa <- sdm_area(l, cell_size = 5, lines_as_sdm_area = TRUE)
+  sa <- sdm_area(rivs, cell_size = 5, lines_as_sdm_area = TRUE)
   expect_true("cell_id" %in% colnames(sa$grid))
   expect_true("geometry" %in% colnames(sa$grid))
   expect_equal(class(sa$cell_size), "numeric")
-  expect_equal(sf::st_crs(sa$grid), sf::st_crs(l))
+  expect_equal(sf::st_crs(sa$grid), sf::st_crs(rivs))
   expect_equal(class(sa$grid)[1], "sf")
   expect_equal(as.character(unique(st_geometry_type(sa$grid))), "LINESTRING")
 })

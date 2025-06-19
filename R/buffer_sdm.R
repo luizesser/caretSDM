@@ -29,6 +29,10 @@ buffer_sdm <- function(occ_data, size = NULL, crs = NULL) {
   assert_class_cli(size, "numeric")
   assert_class_cli(crs, "numeric")
 
+  if(is_occurrences(occ_data)){
+    occ_data <- occ_data$occurrences |> .sf_to_df_sdm()
+  }
+
   cnames <- .find_columns(occ_data)
   if(length(cnames)>2){
     cnames <- cnames[c(2,3)]

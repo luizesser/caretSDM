@@ -19,7 +19,7 @@ Useful links:
 
 }
 \author{
-\strong{Maintainer}: Luíz Fernando Esser \email{luizesser@gmail.com} (\href{https://orcid.org/0000-0003-2982-7223}{ORCID})
+\strong{Maintainer}: Luíz Fernando Esser \email{luizesser@gmail.com} (\href{https://orcid.org/0000-0003-2982-7223}{ORCID}) [copyright holder]
 
 Authors:
 \itemize{

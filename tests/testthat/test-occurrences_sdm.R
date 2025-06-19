@@ -5,6 +5,14 @@ test_that("occurrences - data.frame - single species", {
 
 test_that("occurrences - data.frame - multiple species", {
   df <- data.frame(spp_names = c(rep("Aa", 50), rep("Bb", 50)), longitude = runif(100),
+                   decimalLatitude = runif(100)) |> rbind(c(NA,NA,NA))
+  oc <- occurrences_sdm(df)
+  expect_s3_class(oc, "occurrences")
+  expect_true(occurrences_sdm(df) |> n_records() |> sum() == 100)
+})
+
+test_that("occurrences - data.frame - multiple species", {
+  df <- data.frame(spp_names = c(rep("Aa", 50), rep("Bb", 50)), longitude = runif(100),
                    decimalLatitude = runif(100))
   expect_s3_class(occurrences_sdm(df), "occurrences")
 })

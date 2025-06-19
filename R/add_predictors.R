@@ -74,7 +74,6 @@ add_predictors <- function(sa, pred, variables_selected = NULL, gdal = TRUE) {
 add_predictors.RasterStack <- function(sa, pred, variables_selected = NULL, gdal = TRUE) {
   pred <- sa  |>
     .add_predictors(pred, variables_selected, gdal)
-
   return(invisible(pred))
 }
 
@@ -82,7 +81,6 @@ add_predictors.RasterStack <- function(sa, pred, variables_selected = NULL, gdal
 add_predictors.SpatRaster <- function(sa, pred, variables_selected = NULL, gdal = TRUE) {
   pred <- sa  |>
     .add_predictors(pred, variables_selected, gdal)
-
   return(invisible(pred))
 }
 
@@ -90,7 +88,6 @@ add_predictors.SpatRaster <- function(sa, pred, variables_selected = NULL, gdal 
 add_predictors.character <- function(sa, pred, variables_selected = NULL, gdal = TRUE) {
   pred <- sa  |>
     .add_predictors(pred, variables_selected, gdal)
-
   return(invisible(pred))
 }
 
@@ -98,7 +95,6 @@ add_predictors.character <- function(sa, pred, variables_selected = NULL, gdal =
 add_predictors.stars <- function(sa, pred, variables_selected = NULL, gdal = TRUE) {
   pred <- sa  |>
     .add_predictors(pred, variables_selected, gdal)
-
   return(invisible(pred))
 }
 
@@ -106,7 +102,6 @@ add_predictors.stars <- function(sa, pred, variables_selected = NULL, gdal = TRU
 add_predictors.sf <- function(sa, pred, variables_selected = NULL, gdal = TRUE) {
   pred <- sa  |>
     .add_predictors(pred, variables_selected, gdal)
-
   return(invisible(pred))
 }
 
@@ -124,11 +119,16 @@ add_predictors.sf <- function(sa, pred, variables_selected = NULL, gdal = TRUE) 
     return(sa)
   }
 
-
   if(unique(st_geometry_type(sa$grid)) == "LINESTRING") {
     grd <- sa$grid |>
-      sf::st_intersection(dplyr::select(pred_sa$grid, -cell_id)) |>
-      sf::st_cast("LINESTRING")
+      sf::st_intersection(dplyr::select(pred_sa$grid, -cell_id))|>
+      suppressWarnings()
+    if("POINT" %in% st_geometry_type(grd)) {
+      grd <- grd[st_geometry_type(grd) %in% c("LINESTRING","MULTILINESTRING"),]
+    }
+    grd <- grd |>
+      sf::st_cast("LINESTRING") |>
+      suppressWarnings()
     grd$cell_id <- 1:nrow(grd)
   } else {
     grd <- sa$grid |>
