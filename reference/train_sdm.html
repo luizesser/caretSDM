@@ -19,6 +19,7 @@
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/Araucaria.html">caretSDM Workflow for Species Distribution Modeling</a></li>
+    <li><a class="dropdown-item" href="../articles/Compact.html">Concatenate functions in caretSDM</a></li>
     <li><a class="dropdown-item" href="../articles/Salminus.html">Modeling Species Distributions in Continental Water Bodies</a></li>
   </ul></li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
@@ -82,7 +83,7 @@
 
 <dt id="arg-ctrl">ctrl<a class="anchor" aria-label="anchor" href="#arg-ctrl"></a></dt>
 <dd><p>A <code>trainControl</code> object to be used to build models. See
-<code>trainControl</code>.</p></dd>
+<code><a href="https://rdrr.io/pkg/caret/man/trainControl.html" class="external-link">?caret::trainControl</a></code>.</p></dd>
 
 
 <dt id="arg-variables-selected">variables_selected<a class="anchor" aria-label="anchor" href="#arg-variables-selected"></a></dt>
@@ -133,17 +134,17 @@ https://luizfesser.wordpress.com</p>
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Create sdm_area object:</span></span></span>
-<span class="r-in"><span><span class="va">sa</span> <span class="op">&lt;-</span> <span class="fu"><a href="sdm_area.html">sdm_area</a></span><span class="op">(</span><span class="va">parana</span>, cell_size <span class="op">=</span> <span class="fl">25000</span>, crs <span class="op">=</span> <span class="fl">6933</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">sa</span> <span class="op">&lt;-</span> <span class="fu"><a href="sdm_area.html">sdm_area</a></span><span class="op">(</span><span class="va">parana</span>, cell_size <span class="op">=</span> <span class="fl">100000</span>, crs <span class="op">=</span> <span class="fl">6933</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> Making grid over study area is an expensive task. Please, be patient!</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Using GDAL to make the grid and resample the variables.</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Include predictors:</span></span></span>
-<span class="r-in"><span><span class="va">sa</span> <span class="op">&lt;-</span> <span class="fu"><a href="add_predictors.html">add_predictors</a></span><span class="op">(</span><span class="va">sa</span>, <span class="va">bioc</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"bio1"</span>, <span class="st">"bio4"</span>, <span class="st">"bio12"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">sa</span> <span class="op">&lt;-</span> <span class="fu"><a href="add_predictors.html">add_predictors</a></span><span class="op">(</span><span class="va">sa</span>, <span class="va">bioc</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="tidyverse-methods.html">select_predictors</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"bio1"</span>, <span class="st">"bio12"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> Making grid over the study area is an expensive task. Please, be patient!</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Using GDAL to make the grid and resample the variables.</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Include scenarios:</span></span></span>
-<span class="r-in"><span><span class="va">sa</span> <span class="op">&lt;-</span> <span class="fu"><a href="add_scenarios.html">add_scenarios</a></span><span class="op">(</span><span class="va">sa</span>, <span class="va">scen</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">sa</span> <span class="op">&lt;-</span> <span class="fu"><a href="add_scenarios.html">add_scenarios</a></span><span class="op">(</span><span class="va">sa</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Create occurrences:</span></span></span>
 <span class="r-in"><span><span class="va">oc</span> <span class="op">&lt;-</span> <span class="fu"><a href="occurrences_sdm.html">occurrences_sdm</a></span><span class="op">(</span><span class="va">occ</span>, crs <span class="op">=</span> <span class="fl">6933</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="join_area.html">join_area</a></span><span class="op">(</span><span class="va">sa</span><span class="op">)</span></span></span>
@@ -154,40 +155,12 @@ https://luizfesser.wordpress.com</p>
 <span class="r-in"><span><span class="co"># Create input_sdm:</span></span></span>
 <span class="r-in"><span><span class="va">i</span> <span class="op">&lt;-</span> <span class="fu"><a href="input_sdm.html">input_sdm</a></span><span class="op">(</span><span class="va">oc</span>, <span class="va">sa</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Clean coordinates:</span></span></span>
-<span class="r-in"><span><span class="va">i</span> <span class="op">&lt;-</span> <span class="fu"><a href="data_clean.html">data_clean</a></span><span class="op">(</span><span class="va">i</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Cell_ids identified, removing duplicated cell_id.</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Testing country capitals</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Removed 0 records.</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Testing country centroids</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Removed 0 records.</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Testing duplicates</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Removed 0 records.</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Testing equal lat/lon</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Removed 0 records.</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Testing biodiversity institutions</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Removed 1 records.</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Testing coordinate validity</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Removed 0 records.</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Testing sea coordinates</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Reading layer `ne_110m_land' from data source `/tmp/RtmpPYov8D/ne_110m_land.shp' using driver `ESRI Shapefile'</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Simple feature collection with 127 features and 3 fields</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Geometry type: POLYGON</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Dimension:     XY</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Bounding box:  xmin: -180 ymin: -90 xmax: 180 ymax: 83.64513</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Geodetic CRS:  WGS 84</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Removed 0 records.</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Predictors identified, procceding with grid filter (removing NA and duplicated data).</span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># VIF calculation:</span></span></span>
-<span class="r-in"><span><span class="va">i</span> <span class="op">&lt;-</span> <span class="fu"><a href="vif_predictors.html">vif_predictors</a></span><span class="op">(</span><span class="va">i</span><span class="op">)</span></span></span>
-<span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Pseudoabsence generation:</span></span></span>
-<span class="r-in"><span><span class="va">i</span> <span class="op">&lt;-</span> <span class="fu"><a href="pseudoabsences.html">pseudoabsences</a></span><span class="op">(</span><span class="va">i</span>, method<span class="op">=</span><span class="st">"bioclim"</span>, variables_selected <span class="op">=</span> <span class="st">"vif"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">i</span> <span class="op">&lt;-</span> <span class="fu"><a href="pseudoabsences.html">pseudoabsences</a></span><span class="op">(</span><span class="va">i</span>, method<span class="op">=</span><span class="st">"bioclim"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Custom trainControl:</span></span></span>
 <span class="r-in"><span><span class="va">ctrl_sdm</span> <span class="op">&lt;-</span> <span class="fu">caret</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/caret/man/trainControl.html" class="external-link">trainControl</a></span><span class="op">(</span>method <span class="op">=</span> <span class="st">"repeatedcv"</span>,</span></span>
-<span class="r-in"><span>                                number <span class="op">=</span> <span class="fl">4</span>,</span></span>
+<span class="r-in"><span>                                number <span class="op">=</span> <span class="fl">2</span>,</span></span>
 <span class="r-in"><span>                                repeats <span class="op">=</span> <span class="fl">1</span>,</span></span>
 <span class="r-in"><span>                                classProbs <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
 <span class="r-in"><span>                                returnResamp <span class="op">=</span> <span class="st">"all"</span>,</span></span>
@@ -195,7 +168,7 @@ https://luizfesser.wordpress.com</p>
 <span class="r-in"><span>                                savePredictions <span class="op">=</span> <span class="st">"all"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Train models:</span></span></span>
-<span class="r-in"><span><span class="va">i</span> <span class="op">&lt;-</span> <span class="fu">train_sdm</span><span class="op">(</span><span class="va">i</span>, algo <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"naive_bayes"</span>, <span class="st">"kknn"</span><span class="op">)</span>, variables_selected <span class="op">=</span> <span class="st">"vif"</span>, ctrl<span class="op">=</span><span class="va">ctrl_sdm</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
+<span class="r-in"><span><span class="va">i</span> <span class="op">&lt;-</span> <span class="fu">train_sdm</span><span class="op">(</span><span class="va">i</span>, algo <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"naive_bayes"</span><span class="op">)</span>, ctrl<span class="op">=</span><span class="va">ctrl_sdm</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/warning.html" class="external-link">suppressWarnings</a></span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>

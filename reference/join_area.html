@@ -19,6 +19,7 @@
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/Araucaria.html">caretSDM Workflow for Species Distribution Modeling</a></li>
+    <li><a class="dropdown-item" href="../articles/Compact.html">Concatenate functions in caretSDM</a></li>
     <li><a class="dropdown-item" href="../articles/Salminus.html">Modeling Species Distributions in Continental Water Bodies</a></li>
   </ul></li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
@@ -83,12 +84,12 @@ https://luizfesser.wordpress.com</p>
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Create sdm_area object:</span></span></span>
-<span class="r-in"><span><span class="va">sa</span> <span class="op">&lt;-</span> <span class="fu"><a href="sdm_area.html">sdm_area</a></span><span class="op">(</span><span class="va">parana</span>, cell_size <span class="op">=</span> <span class="fl">25000</span>, crs <span class="op">=</span> <span class="fl">6933</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">sa</span> <span class="op">&lt;-</span> <span class="fu"><a href="sdm_area.html">sdm_area</a></span><span class="op">(</span><span class="va">parana</span>, cell_size <span class="op">=</span> <span class="fl">50000</span>, crs <span class="op">=</span> <span class="fl">6933</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> Making grid over study area is an expensive task. Please, be patient!</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Using GDAL to make the grid and resample the variables.</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Include predictors:</span></span></span>
-<span class="r-in"><span><span class="va">sa</span> <span class="op">&lt;-</span> <span class="fu"><a href="add_predictors.html">add_predictors</a></span><span class="op">(</span><span class="va">sa</span>, <span class="va">bioc</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"bio1"</span>, <span class="st">"bio4"</span>, <span class="st">"bio12"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">sa</span> <span class="op">&lt;-</span> <span class="fu"><a href="add_predictors.html">add_predictors</a></span><span class="op">(</span><span class="va">sa</span>, <span class="va">bioc</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="tidyverse-methods.html">select_predictors</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"bio1"</span>, <span class="st">"bio4"</span>, <span class="st">"bio12"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> Making grid over the study area is an expensive task. Please, be patient!</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Using GDAL to make the grid and resample the variables.</span>
 <span class="r-in"><span></span></span>
@@ -98,7 +99,7 @@ https://luizfesser.wordpress.com</p>
 <span class="r-in"><span><span class="co"># Create occurrences:</span></span></span>
 <span class="r-in"><span><span class="va">oc</span> <span class="op">&lt;-</span> <span class="fu"><a href="occurrences_sdm.html">occurrences_sdm</a></span><span class="op">(</span><span class="va">occ</span>, crs <span class="op">=</span> <span class="fl">6933</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu">join_area</span><span class="op">(</span><span class="va">sa</span><span class="op">)</span></span></span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Some records from `occ` do not fall in `pred`.</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> 2 elements from `occ` were excluded.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> 3 elements from `occ` were excluded.</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> If this seems too much, check how `occ` and `pred` intersect.</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>

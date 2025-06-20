@@ -19,6 +19,7 @@
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/Araucaria.html">caretSDM Workflow for Species Distribution Modeling</a></li>
+    <li><a class="dropdown-item" href="../articles/Compact.html">Concatenate functions in caretSDM</a></li>
     <li><a class="dropdown-item" href="../articles/Salminus.html">Modeling Species Distributions in Continental Water Bodies</a></li>
   </ul></li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
@@ -123,7 +124,7 @@ https://luizfesser.wordpress.com</p>
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Create sdm_area object:</span></span></span>
-<span class="r-in"><span><span class="va">sa</span> <span class="op">&lt;-</span> <span class="fu"><a href="sdm_area.html">sdm_area</a></span><span class="op">(</span><span class="va">parana</span>, cell_size <span class="op">=</span> <span class="fl">25000</span>, crs <span class="op">=</span> <span class="fl">6933</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">sa</span> <span class="op">&lt;-</span> <span class="fu"><a href="sdm_area.html">sdm_area</a></span><span class="op">(</span><span class="va">parana</span>, cell_size <span class="op">=</span> <span class="fl">50000</span>, crs <span class="op">=</span> <span class="fl">6933</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> Making grid over study area is an expensive task. Please, be patient!</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Using GDAL to make the grid and resample the variables.</span>
 <span class="r-in"><span></span></span>
@@ -139,7 +140,7 @@ https://luizfesser.wordpress.com</p>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Set scenarios names:</span></span></span>
 <span class="r-in"><span><span class="va">sa</span> <span class="op">&lt;-</span> <span class="fu">set_scenarios_names</span><span class="op">(</span><span class="va">sa</span>, scenarios_names <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"future_1"</span>, <span class="st">"future_2"</span>, <span class="st">"future_3"</span>, <span class="st">"future_4"</span>,</span></span>
-<span class="r-in"><span><span class="st">"current"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span>                                                  <span class="st">"current"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">scenarios_names</span><span class="op">(</span><span class="va">sa</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "future_1" "future_2" "future_3" "future_4" "current" </span>
 <span class="r-in"><span></span></span>
@@ -147,99 +148,99 @@ https://luizfesser.wordpress.com</p>
 <span class="r-in"><span><span class="va">scenarios_grid</span> <span class="op">&lt;-</span> <span class="fu">get_scenarios_data</span><span class="op">(</span><span class="va">sa</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">scenarios_grid</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $future_1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Simple feature collection with 365 features and 4 fields</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Simple feature collection with 96 features and 4 fields</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Geometry type: POLYGON</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Dimension:     XY</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Bounding box:  xmin: -5276744 ymin: -3295037 xmax: -4626744 ymax: -2795037</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Projected CRS: WGS 84 / NSIDC EASE-Grid 2.0 Global</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> First 10 features:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    cell_id  bio1   bio4   bio12                       geometry</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1        6 27.70 263.90 1099.40 POLYGON ((-5151744 -2795037...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2        7 27.60 263.45 1064.00 POLYGON ((-5126744 -2795037...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3        8 27.50 263.50 1049.60 POLYGON ((-5101744 -2795037...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4        9 27.50 265.80 1034.15 POLYGON ((-5076744 -2795037...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5       10 27.20 261.20 1021.10 POLYGON ((-5051744 -2795037...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6       11 27.60 266.05 1049.75 POLYGON ((-5026744 -2795037...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7       12 27.60 263.10 1079.20 POLYGON ((-5001744 -2795037...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8       13 27.60 265.40 1088.80 POLYGON ((-4976744 -2795037...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9       14 27.25 267.45 1159.40 POLYGON ((-4951744 -2795037...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10      31 27.55 268.15 1142.25 POLYGON ((-5176744 -2820037...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    cell_id     bio1     bio4    bio12                       geometry</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1        3 27.63333 265.8333 1133.250 POLYGON ((-5176744 -2795037...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2        4 27.31667 265.1167 1067.033 POLYGON ((-5126744 -2795037...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3        5 27.15000 266.4667 1048.550 POLYGON ((-5076744 -2795037...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4        6 27.30000 266.3125 1087.100 POLYGON ((-5026744 -2795037...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5        7 27.30000 268.7000 1132.117 POLYGON ((-4976744 -2795037...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6        8 26.88333 275.7167 1129.167 POLYGON ((-4926744 -2795037...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7       15 27.14444 283.1667 1232.511 POLYGON ((-5226744 -2845037...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8       16 27.08889 277.6667 1141.978 POLYGON ((-5176744 -2845037...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9       17 26.56667 275.3667 1104.367 POLYGON ((-5126744 -2845037...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10      18 25.76667 274.6556 1110.511 POLYGON ((-5076744 -2845037...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $future_2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Simple feature collection with 365 features and 4 fields</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Simple feature collection with 96 features and 4 fields</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Geometry type: POLYGON</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Dimension:     XY</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Bounding box:  xmin: -5276744 ymin: -3295037 xmax: -4626744 ymax: -2795037</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Projected CRS: WGS 84 / NSIDC EASE-Grid 2.0 Global</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> First 10 features:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    cell_id  bio1   bio4   bio12                       geometry</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1        6 33.10 265.30  973.00 POLYGON ((-5151744 -2795037...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2        7 33.00 262.55  942.50 POLYGON ((-5126744 -2795037...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3        8 32.80 265.00  930.40 POLYGON ((-5101744 -2795037...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4        9 32.75 265.85  916.75 POLYGON ((-5076744 -2795037...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5       10 32.50 263.80  905.90 POLYGON ((-5051744 -2795037...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6       11 32.85 266.30  930.10 POLYGON ((-5026744 -2795037...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7       12 32.80 265.40  955.15 POLYGON ((-5001744 -2795037...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8       13 32.80 266.40  961.30 POLYGON ((-4976744 -2795037...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9       14 32.50 266.95 1023.75 POLYGON ((-4951744 -2795037...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10      31 32.95 266.10 1008.95 POLYGON ((-5176744 -2820037...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    cell_id     bio1     bio4     bio12                       geometry</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1        3 33.00000 264.5167 1001.7000 POLYGON ((-5176744 -2795037...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2        4 32.68333 265.2000  945.3667 POLYGON ((-5126744 -2795037...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3        5 32.43333 267.0667  929.5000 POLYGON ((-5076744 -2795037...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4        6 32.56250 267.5875  962.1750 POLYGON ((-5026744 -2795037...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5        7 32.55000 268.8833  999.5000 POLYGON ((-4976744 -2795037...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6        8 32.08333 274.0833  993.4000 POLYGON ((-4926744 -2795037...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7       15 32.52222 280.4667 1086.1222 POLYGON ((-5226744 -2845037...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8       16 32.44444 276.9222 1010.5000 POLYGON ((-5176744 -2845037...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9       17 31.90000 274.9444  977.5000 POLYGON ((-5126744 -2845037...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10      18 31.05556 273.8333  981.9000 POLYGON ((-5076744 -2845037...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $future_3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Simple feature collection with 365 features and 4 fields</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Simple feature collection with 96 features and 4 fields</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Geometry type: POLYGON</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Dimension:     XY</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Bounding box:  xmin: -5276744 ymin: -3295037 xmax: -4626744 ymax: -2795037</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Projected CRS: WGS 84 / NSIDC EASE-Grid 2.0 Global</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> First 10 features:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    cell_id  bio1   bio4   bio12                       geometry</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1        6 24.40 276.00 1334.30 POLYGON ((-5151744 -2795037...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2        7 24.35 271.10 1289.15 POLYGON ((-5126744 -2795037...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3        8 24.20 270.40 1267.90 POLYGON ((-5101744 -2795037...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4        9 24.15 269.70 1247.90 POLYGON ((-5076744 -2795037...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5       10 23.90 264.50 1230.30 POLYGON ((-5051744 -2795037...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6       11 24.30 264.65 1261.30 POLYGON ((-5026744 -2795037...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7       12 24.30 262.00 1292.25 POLYGON ((-5001744 -2795037...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8       13 24.30 265.30 1296.80 POLYGON ((-4976744 -2795037...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9       14 24.00 267.70 1372.20 POLYGON ((-4951744 -2795037...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10      31 24.25 281.15 1392.30 POLYGON ((-5176744 -2820037...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    cell_id     bio1     bio4    bio12                       geometry</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1        3 24.33333 278.4167 1379.083 POLYGON ((-5176744 -2795037...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2        4 24.03333 273.0500 1292.950 POLYGON ((-5126744 -2795037...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3        5 23.83333 271.0000 1265.700 POLYGON ((-5076744 -2795037...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4        6 24.01250 266.5750 1304.925 POLYGON ((-5026744 -2795037...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5        7 24.06667 269.6333 1343.817 POLYGON ((-4976744 -2795037...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6        8 23.66667 276.6000 1330.817 POLYGON ((-4926744 -2795037...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7       15 23.86667 302.1000 1510.533 POLYGON ((-5226744 -2845037...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8       16 23.81111 293.2444 1394.444 POLYGON ((-5176744 -2845037...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9       17 23.32222 287.4333 1344.767 POLYGON ((-5126744 -2845037...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10      18 22.48889 284.6778 1345.289 POLYGON ((-5076744 -2845037...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $future_4</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Simple feature collection with 365 features and 4 fields</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Simple feature collection with 96 features and 4 fields</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Geometry type: POLYGON</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Dimension:     XY</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Bounding box:  xmin: -5276744 ymin: -3295037 xmax: -4626744 ymax: -2795037</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Projected CRS: WGS 84 / NSIDC EASE-Grid 2.0 Global</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> First 10 features:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    cell_id  bio1   bio4   bio12                       geometry</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1        6 25.90 286.80 1404.70 POLYGON ((-5151744 -2795037...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2        7 25.80 281.15 1361.45 POLYGON ((-5126744 -2795037...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3        8 25.60 280.00 1341.20 POLYGON ((-5101744 -2795037...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4        9 25.65 278.55 1321.00 POLYGON ((-5076744 -2795037...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5       10 25.40 273.80 1304.50 POLYGON ((-5051744 -2795037...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6       11 25.75 272.95 1338.30 POLYGON ((-5026744 -2795037...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7       12 25.75 269.50 1372.60 POLYGON ((-5001744 -2795037...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8       13 25.70 270.50 1375.70 POLYGON ((-4976744 -2795037...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9       14 25.45 273.45 1452.95 POLYGON ((-4951744 -2795037...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10      31 25.70 294.20 1466.50 POLYGON ((-5176744 -2820037...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    cell_id     bio1     bio4    bio12                       geometry</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1        3 25.80000 290.6167 1451.633 POLYGON ((-5176744 -2795037...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2        4 25.48333 283.4000 1368.350 POLYGON ((-5126744 -2795037...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3        5 25.28333 279.6000 1342.400 POLYGON ((-5076744 -2795037...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4        6 25.46250 274.1000 1387.837 POLYGON ((-5026744 -2795037...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5        7 25.48333 275.4500 1426.517 POLYGON ((-4976744 -2795037...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6        8 25.06667 281.6500 1412.767 POLYGON ((-4926744 -2795037...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7       15 25.27778 312.9778 1590.411 POLYGON ((-5226744 -2845037...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8       16 25.21111 305.4111 1476.967 POLYGON ((-5176744 -2845037...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9       17 24.70000 298.3222 1432.489 POLYGON ((-5126744 -2845037...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10      18 23.85556 293.8222 1437.589 POLYGON ((-5076744 -2845037...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $current</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Simple feature collection with 367 features and 4 fields</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Simple feature collection with 97 features and 4 fields</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Geometry type: POLYGON</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Dimension:     XY</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Bounding box:  xmin: -5276744 ymin: -3295037 xmax: -4626744 ymax: -2795037</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Projected CRS: WGS 84 / NSIDC EASE-Grid 2.0 Global</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> First 10 features:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    cell_id     bio1 bio4    bio12                       geometry</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1        6 22.45938 1285 261.4752 POLYGON ((-5151744 -2795037...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2        7 22.39415 1243 258.4977 POLYGON ((-5126744 -2795037...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3        8 22.25541 1220 258.4987 POLYGON ((-5101744 -2795037...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4        9 22.19232 1203 259.3725 POLYGON ((-5076744 -2795037...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5       10 22.12438 1189 257.6924 POLYGON ((-5051744 -2795037...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6       11 22.38992 1192 257.7096 POLYGON ((-5026744 -2795037...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7       12 22.40336 1234 254.7985 POLYGON ((-5001744 -2795037...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8       13 22.39525 1247 255.8951 POLYGON ((-4976744 -2795037...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9       14 22.18080 1288 259.5389 POLYGON ((-4951744 -2795037...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10      31 22.20547 1317 267.3304 POLYGON ((-5176744 -2820037...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1        3 22.29992 1309 264.1004 POLYGON ((-5176744 -2795037...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2        4 22.00096 1234 260.8984 POLYGON ((-5126744 -2795037...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3        5 21.84850 1204 261.5507 POLYGON ((-5076744 -2795037...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4        6 22.02189 1236 259.6719 POLYGON ((-5026744 -2795037...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5        7 22.11035 1273 261.0204 POLYGON ((-4976744 -2795037...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6        8 21.87467 1287 268.6069 POLYGON ((-4926744 -2795037...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7       15 21.87878 1442 282.6844 POLYGON ((-5226744 -2845037...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8       16 21.82576 1306 276.7638 POLYGON ((-5176744 -2845037...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9       17 21.33781 1267 273.3400 POLYGON ((-5126744 -2845037...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10      18 20.47047 1272 273.4352 POLYGON ((-5076744 -2845037...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Select scenarios:</span></span></span>
@@ -250,14 +251,14 @@ https://luizfesser.wordpress.com</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Class                     : sdm_area</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Extent                    : -5276744 -3295037 -4626744 -2795037 (xmin, xmax, ymin, ymax)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> CRS                       : WGS 84 / NSIDC EASE- </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Resolution                : (25000, 25000) (x, y)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Resolution                : (50000, 50000) (x, y)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Number of Predictors      : 3 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Predictors Names          : bio1, bio4, bio12 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Number of Scenarios      : 2 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Scenarios Names          : future_1, future_2 </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Setting stationary variables in scenarios:</span></span></span>
-<span class="r-in"><span><span class="va">sa</span> <span class="op">&lt;-</span> <span class="fu"><a href="sdm_area.html">sdm_area</a></span><span class="op">(</span><span class="va">rivs</span>, cell_size<span class="op">=</span><span class="fl">25000</span>, crs <span class="op">=</span> <span class="fl">6933</span>, lines_as_sdm_area <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
+<span class="r-in"><span><span class="va">sa</span> <span class="op">&lt;-</span> <span class="fu"><a href="sdm_area.html">sdm_area</a></span><span class="op">(</span><span class="va">rivs</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">500</span><span class="op">)</span>,<span class="op">]</span>, cell_size <span class="op">=</span> <span class="fl">100000</span>, crs <span class="op">=</span> <span class="fl">6933</span>, lines_as_sdm_area <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
 <span class="r-in"><span>  <span class="fu"><a href="add_predictors.html">add_predictors</a></span><span class="op">(</span><span class="va">bioc</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
 <span class="r-in"><span>  <span class="fu">add_scenarios</span><span class="op">(</span><span class="va">scen</span>, stationary <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"LENGTH_KM"</span>, <span class="st">"DIST_DN_KM"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> Making grid over study area is an expensive task. Please, be patient!</span>
@@ -277,9 +278,9 @@ https://luizfesser.wordpress.com</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>           caretSDM         </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ...........................</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Class                     : sdm_area</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Extent                    : -5269921 -3228134 -4719921 -2803134 (xmin, xmax, ymin, ymax)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Extent                    : -5243024 -3003134 -4743024 -2803134 (xmin, xmax, ymin, ymax)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> CRS                       : EPSG:6933 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Resolution                : (25000, 25000) (x, y)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Resolution                : (1e+05, 1e+05) (x, y)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Number of Predictors      : 5 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Predictors Names          : LENGTH_KM, DIST_DN_KM, bio1, bio4, bio12 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Number of Scenarios      : 5 </span>
