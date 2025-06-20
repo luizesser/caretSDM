@@ -18,8 +18,8 @@
 #' https://luizfesser.wordpress.com
 #'
 #' @examples
-#' \dontrun{
 #' # Create sdm_area object:
+#' set.seed(1)
 #' sa <- sdm_area(parana, cell_size = 100000, crs = 6933)
 #'
 #' # Include predictors:
@@ -34,35 +34,30 @@
 #' # Create input_sdm:
 #' i <- input_sdm(oc, sa)
 #'
-#' # Clean coordinates:
-#' i <- data_clean(i)
-#'
-#' # VIF calculation:
-#' i <- vif_predictors(i)
-#'
 #' # Pseudoabsence generation:
-#' i <- pseudoabsences(i, method="bioclim", variables_selected = "vif")
+#' i <- pseudoabsences(i, method="random", n_set = 3)
 #'
 #' # Custom trainControl:
-#' ctrl_sdm <- caret::trainControl(method = "repeatedcv",
-#'                                 number = 2,
-#'                                 repeats = 1,
+#' ctrl_sdm <- caret::trainControl(method = "boot",
+#'                                 number = 1,
 #'                                 classProbs = TRUE,
 #'                                 returnResamp = "all",
 #'                                 summaryFunction = summary_sdm,
 #'                                 savePredictions = "all")
 #'
 #' # Train models:
-#' i <- train_sdm(i, algo = c("naive_bayes", "kknn"), variables_selected = "vif", ctrl=ctrl_sdm) |>
-#' suppressWarnings()
+#' i <- train_sdm(i,
+#'                algo = c("naive_bayes", "kknn"),
+#'                ctrl=ctrl_sdm,
+#'                variables_selected = c("bio1", "bio12")) |>
+#'   suppressWarnings()
 #'
 #' # Predict models:
-#' i  <- predict_sdm(i)
+#' i  <- predict_sdm(i, th=0.8)
 #'
 #' #' # Ensemble GCMs:
 #' i <- gcms_ensembles(i, gcms = c("ca", "mi"))
 #' i
-#' }
 #'
 #' @importFrom dplyr bind_cols
 #'

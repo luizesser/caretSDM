@@ -19,4 +19,4 @@ reduce examples' execution time. Test times were also reduced. Check total time 
 0 errors | 0 warnings | 1 note
 
 * This is a new release.
-* R CMD check takes 6m 18.2s
+* R CMD check takes 6m 2.6s
