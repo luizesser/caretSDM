@@ -49,10 +49,10 @@ otherwise sf/stars will be used.
 }
 \examples{
 # Create sdm_area object:
-sa_area <- sdm_area(parana, cell_size = 25000, crs = 6933)
+sa_area <- sdm_area(parana, cell_size = 50000, crs = 6933)
 
-# Create sdm_area using lines:
-sa_rivers <- sdm_area(rivs, cell_size = 25000, crs = 6933, lines_as_sdm_area = TRUE)
+# Create sdm_area using a subset of rivs (lines):
+sa_rivers <- sdm_area(rivs[c(1:500),], cell_size = 100000, crs = 6933, lines_as_sdm_area = TRUE)
 
 }
 \seealso{

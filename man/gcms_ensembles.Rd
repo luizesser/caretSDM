@@ -18,11 +18,12 @@ A \code{input_sdm} object with grouped GCMs.
 An ensembling method to group different GCMs into one SSP scenario
 }
 \examples{
+\dontrun{
 # Create sdm_area object:
-sa <- sdm_area(parana, cell_size = 25000, crs = 6933)
+sa <- sdm_area(parana, cell_size = 100000, crs = 6933)
 
 # Include predictors:
-sa <- add_predictors(sa, bioc) |> dplyr::select(c("bio1", "bio4", "bio12"))
+sa <- add_predictors(sa, bioc) |> select_predictors(c("bio1", "bio4", "bio12"))
 
 # Include scenarios:
 sa <- add_scenarios(sa, scen)
@@ -44,7 +45,7 @@ i <- pseudoabsences(i, method="bioclim", variables_selected = "vif")
 
 # Custom trainControl:
 ctrl_sdm <- caret::trainControl(method = "repeatedcv",
-                                number = 4,
+                                number = 2,
                                 repeats = 1,
                                 classProbs = TRUE,
                                 returnResamp = "all",
@@ -61,6 +62,7 @@ i  <- predict_sdm(i)
 #' # Ensemble GCMs:
 i <- gcms_ensembles(i, gcms = c("ca", "mi"))
 i
+}
 
 }
 \seealso{

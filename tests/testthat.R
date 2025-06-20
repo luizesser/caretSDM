@@ -9,6 +9,7 @@
 library(testthat)
 library(future)
 library(tibble)
+library(purrr)
 
 library(caretSDM)
 

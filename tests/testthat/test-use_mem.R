@@ -17,7 +17,7 @@ sa <- sdm_area(parana, 0.1)
 sa <- add_predictors(sa, bioc)
 sa <- select(sa, c("bio1", "bio12"))
 sa <- add_scenarios(sa)
-occ <- GBIF_data(c("Araucaria angustifolia", "Ilex paraguariensis"), as_df = T)
+occ <- rbind(occ, salm)
 oc <- occurrences_sdm(occ, crs=4326)
 i <- input_sdm(oc, sa)
 

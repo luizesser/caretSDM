@@ -17,7 +17,9 @@
 #' @param method Method to create pseudoabsences. One of: "random", "bioclim" or "mahal.dist".
 #' @param n_set \code{numeric}. Number of datasets of pseudoabsence to create.
 #' @param n_pa \code{numeric}. Number of pseudoabsences to be generated in each dataset created.
-#' If \code{NULL} then the function prevents imbalance by using the same number of presence records.
+#' If \code{NULL} then the function prevents imbalance by using the same number of presence records
+#' (\code{n_records(occ)}). If you want to address different sizes to each species, you must provide
+#' a named vector (as in \code{n_records(occ)}).
 #' @param variables_selected A vector with variables names to be used while building pseudoabsences.
 #' Only used when method is not "random".
 #' @param th \code{numeric} Threshold to be applied in bioclim/mahal.dist projections. See details.
@@ -52,10 +54,10 @@
 #' sa <- sdm_area(parana, cell_size = 25000, crs = 6933)
 #'
 #' # Include predictors:
-#' sa <- add_predictors(sa, bioc) |> dplyr::select(c("bio1", "bio4", "bio12"))
+#' sa <- add_predictors(sa, bioc) |> select_predictors(c("bio1", "bio4", "bio12"))
 #'
 #' # Include scenarios:
-#' sa <- add_scenarios(sa, scen)
+#' sa <- add_scenarios(sa)
 #'
 #' # Create occurrences:
 #' oc <- occurrences_sdm(occ, crs = 6933) |> join_area(sa)
@@ -63,14 +65,8 @@
 #' # Create input_sdm:
 #' i <- input_sdm(oc, sa)
 #'
-#' # Clean coordinates:
-#' i <- data_clean(i)
-#'
-#' # VIF calculation:
-#' i <- vif_predictors(i)
-#'
 #' # Pseudoabsence generation:
-#' i <- pseudoabsences(i, method="bioclim", variables_selected = "vif")
+#' i <- pseudoabsences(i, method="bioclim")
 #'
 #' @importFrom sf st_as_sf st_crs st_transform st_intersection st_geometry_type
 #' @importFrom dplyr select all_of filter
@@ -89,14 +85,31 @@ pseudoabsences <- function(occ, pred = NULL, method = "random", n_set = 10, n_pa
   assert_choice_cli(method, c("random", "bioclim", "mahal.dist"))
   assert_int_cli(n_set)
   assert_int_cli(n_pa, null.ok = TRUE)
+  if(length(n_pa)!=1){assert_numeric_cli(n_pa, len = length(species_names(y)), null.ok=T)}
   assert_numeric_cli(th, len=1, null.ok=FALSE, upper=1, lower=0, any.missing=FALSE)
-  assert_subset_cli(variables_selected, c(get_predictor_names(pred), "vif", "pca"), empty.ok=T)
+  assert_subset_cli(variables_selected, c(get_predictor_names(pred), "vif", "pca"), empty.ok = TRUE)
 
   if (!is.null(y$pseudoabsences)) {
-    cli::cli_warn("Previous pseudoabsence element on Occurrences object was overwrited.", call. = F)
+    cli::cli_warn("Previous pseudoabsence element on Occurrences object was overwrited.", call. = FALSE)
   }
   if (is.null(n_pa)) {
     n_pa <- y$n_presences
+  } else if(is.null(names(n_pa))){
+      cli::cli_warn(c("{.var n_pa} has no names.",
+                    "i" = "Trying to set n_pa names to: {species_names(y)}"))
+    if(length(n_pa) == length(species_names(y))) {
+      names(n_pa) <- species_names(y)
+    } else {
+      if(length(n_pa)==1) {
+        cli::cli_warn(c("Length of {.var n_pa} is 1.",
+                        "i" = "Setting all species to have {n_pa} pseudoabsences."))
+        n_pa <- rep(n_pa, length(species_names(y)))
+        names(n_pa) <- species_names(y)
+      } else {
+        cli::cli_abort(c("{.var n_pa} could not be addressed to species.",
+                         "i" = "Provide a named numeric vector with species names and number of pseudoabsences"))
+      }
+    }
   }
 
   if (is_sdm_area(pred)) {
@@ -124,7 +137,7 @@ pseudoabsences <- function(occ, pred = NULL, method = "random", n_set = 10, n_pa
         if (n_pa[sp] < nrow(df)) {
           samp <- sample(df$cell_id, n_pa[sp])
         } else {
-          samp <- sample(df$cell_id, n_pa[sp], replace = T)
+          samp <- sample(df$cell_id, n_pa[sp], replace = TRUE)
         }
         l[[j]] <- df[df$cell_id %in% samp, ]
       }
@@ -158,7 +171,7 @@ pseudoabsences <- function(occ, pred = NULL, method = "random", n_set = 10, n_pa
             if (n_pa[sp] < length(p$cell_id)) {
               samp <- sample(p$cell_id, n_pa[sp])
             } else {
-              samp <- sample(p$cell_id, n_pa[sp], replace = T)
+              samp <- sample(p$cell_id, n_pa[sp], replace = TRUE)
             }
             l[[j]] <- df[df$cell_id %in% samp, ]
           }
@@ -186,7 +199,7 @@ pseudoabsences <- function(occ, pred = NULL, method = "random", n_set = 10, n_pa
             if (n_pa[sp] < length(p$cell_id)) {
               samp <- sample(p$cell_id, n_pa[sp])
             } else {
-              samp <- sample(p$cell_id, n_pa[sp], replace = T)
+              samp <- sample(p$cell_id, n_pa[sp], replace = TRUE)
             }
             l[[j]] <- df[df$cell_id %in% samp, ]
           }
@@ -240,7 +253,6 @@ pseudoabsence_data <- function(i) {
   return(y$pseudoabsences$data)
 }
 
-#' @export
 .pseudoabsences <- function(occ, l, method, n_set, n_pa) {
   occ$pseudoabsences$data <- l
   occ$pseudoabsences$method <- method

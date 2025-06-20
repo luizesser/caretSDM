@@ -25,11 +25,13 @@ This function is a wrapper to get records from GBIF using \code{rgbif} and retur
 \code{data.frame} ready to be used in caretSDM.
 }
 \examples{
+\dontrun{
 # Select species names:
 s <- c("Araucaria angustifolia", "Salminus brasiliensis")
 
 # Run function:
 oc <- GBIF_data(s)
+}
 
 }
 \references{

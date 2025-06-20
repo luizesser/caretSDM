@@ -21,7 +21,7 @@ if (fs::dir_exists(here::here("tests", "testthat", "testdata"))) {
   pr_shp <- test_path("testdata", "parana.shp") |>
     sf::st_read(quiet = TRUE)
 }
-sa <- sdm_area(pr_gpkg, cell_size = 20000, crs = 6933)
+sa <- sdm_area(pr_gpkg, cell_size = 100000, crs = 6933)
 sa <- add_predictors(sa, pr_raster)
 sa <- dplyr::select(sa, c("wc2.1_10m_bio_1","wc2.1_10m_bio_12"))
 sa <- set_predictor_names(sa, c("bio1", "bio12"))

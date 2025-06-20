@@ -1,7 +1,7 @@
 test_that("sdm_as_stars", {
-  sa <- sdm_area(parana, 0.1)
-  sa <- add_predictors(sa, bioc)
-  sa <- select(sa, c("bio1", "bio12"))
+  sa <- sdm_area(parana, 100000, crs=6933) |>
+    add_predictors(bioc) |>
+    select(c("bio1", "bio12"))
 
   expect_null(sdm_as_stars(sa))
   expect_null(sdm_as_terra(sa))
@@ -19,8 +19,14 @@ test_that("sdm_as_stars", {
   expect_equal(names(sdm_as_stars(i)), "current")
   expect_equal(class(sdm_as_stars(i)$current), "stars")
 
-  suppressWarnings(i <- pseudoabsences(i, method = "bioclim"))
-  suppressWarnings(i <- train_sdm(i, algo=c("mda", "kknn")))
+  suppressWarnings(i <- pseudoabsences(i, method = "bioclim", n_set = 3))
+  ctrl <- caret::trainControl(
+    method = "cv", number = 2, classProbs = TRUE, returnResamp = "all",
+    summaryFunction = caret::twoClassSummary, savePredictions = "all"
+  )
+  suppressWarnings(i <- train_sdm(i,
+                                  algo = c("naive_bayes", "kknn"),
+                                  ctrl = ctrl))
   p <- predict_sdm(i, ensembles = FALSE)
   # predictions
   expect_equal(class(sdm_as_stars(p)), "stars")

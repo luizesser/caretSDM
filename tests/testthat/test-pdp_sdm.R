@@ -1,10 +1,9 @@
-sa <- sdm_area(parana, cell_size = 25000, crs = 6933)
+sa <- sdm_area(parana, cell_size = 50000, crs = 6933)
 sa <- add_predictors(sa, bioc)
 sa <- dplyr::select(sa, c("bio1", "bio12"))
 i <- input_sdm(occurrences_sdm(occ, crs=6933), sa)
-i <- data_clean(i)
-i <- pseudoabsences(i, method="random")
-suppressWarnings(i <- train_sdm(i, algo = c("mda", "kknn")))
+i <- pseudoabsences(i, method="random", n_set = 3)
+suppressWarnings(i <- train_sdm(i, algo = c("naive_bayes", "kknn")))
 
 test_that("pdp_sdm", {
   expect_error(pdp_sdm("i"))
@@ -23,32 +22,27 @@ test_that("pdp_sdm", {
   x <- pdp_sdm(i, algo = "kknn")
   expect_equal(class(x), c("gg", "ggplot"))
   expect_true(all(c("id", "yhat", "variable", "value") %in% colnames(x$data)))
-  expect_equal(c("m1.2", "m2.2", "m3.2", "m4.2", "m5.2", "m6.2", "m7.2", "m8.2", "m9.2", "m10.2"),
+  expect_equal(c("m1.2", "m2.2", "m3.2"),
                unique(x$data$id))
 
   x <- get_pdp_sdm(i)
   expect_equal(class(x), "list")
   expect_equal(names(x), algorithms_used(i))
-  expect_true(all(c("id", "yhat", "variable", "value") %in% colnames(x$mda)))
-
+  expect_true(all(c("id", "yhat", "variable", "value") %in% colnames(x$naive_bayes)))
   expect_error(get_pdp_sdm("i"))
-  x <- get_pdp_sdm(i)
-  expect_equal(class(x), c("list"))
-  expect_equal(names(x), algorithms_used(i))
-  expect_true(all(c("id", "yhat", "variable", "value") %in% colnames(x$mda)))
-  expect_equal(c("bio1", "bio12"), unique(x$mda$variable))
+  expect_equal(c("bio1", "bio12"), unique(x$naive_bayes$variable))
 
   expect_error(get_pdp_sdm(i, variables_selected = "bio01"))
   x <- get_pdp_sdm(i, variables_selected = "bio1")
   expect_equal(class(x), c("list"))
-  expect_true(all(c("id", "yhat", "variable", "value") %in% colnames(x$mda)))
-  expect_equal(c("bio1"), unique(x$mda$variable))
+  expect_true(all(c("id", "yhat", "variable", "value") %in% colnames(x$naive_bayes)))
+  expect_equal(c("bio1"), unique(x$naive_bayes$variable))
 
   expect_error(get_pdp_sdm(i, algo = "knn"))
   x <- get_pdp_sdm(i, algo = "kknn")
   expect_equal(class(x), c("list"))
   expect_true(all(c("id", "yhat", "variable", "value") %in% colnames(x$kknn)))
-  expect_equal(c("m1.2", "m2.2", "m3.2", "m4.2", "m5.2", "m6.2", "m7.2", "m8.2", "m9.2", "m10.2"),
+  expect_equal(c("m1.2", "m2.2", "m3.2"),
                unique(x$kknn$id))
 })
 

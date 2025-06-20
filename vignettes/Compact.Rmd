@@ -1,0 +1,70 @@
+---
+title: "Concatenate functions in caretSDM"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Concatenate functions in caretSDM}
+  %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
+editor_options: 
+  markdown: 
+    wrap: 80
+---
+
+In caretSDM we always use one central object through out the framework, the
+`input_sdm` object. This allows us to concatenate functions, which can be very
+useful when running SDMs for the first couple of times. Here we provide a
+functioning way to easily run your framework with only three objects.
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+# Open library
+library(caretSDM)
+set.seed(1)
+```
+
+```{r, results="hide"}
+# Build sdm_area object
+sa <- sdm_area(rivs, 
+               cell_size = 25000, 
+               crs = 6933, 
+               gdal = T,
+               lines_as_sdm_area = TRUE) |> 
+  add_predictors(bioc) |> 
+  add_scenarios() |> 
+  select_predictors(c("LENGTH_KM", "DIST_DN_KM","bio1", "bio4", "bio12"))
+
+# Build occurrences_sdm object
+oc <- occurrences_sdm(salm, crs = 6933) |> 
+  join_area(sa)
+
+# Merge sdm_area and occurrences_sdm and perform pre-processing, processing and projecting.
+i <- input_sdm(oc, sa) |> 
+  data_clean() |> 
+  vif_predictors() |> 
+  pseudoabsences(method = "bioclim", variables_selected = "vif") |> 
+  train_sdm(algo = c("naive_bayes", "kknn"), 
+            crtl = caret::trainControl(method = "repeatedcv", 
+                                       number = 4, 
+                                       repeats = 1, 
+                                       classProbs = TRUE, 
+                                       returnResamp = "all", 
+                                       summaryFunction = summary_sdm, 
+                                       savePredictions = "all"), 
+            variables_selected = "vif") |> 
+  predict_sdm(th = 0.7) |> 
+  suppressWarnings()
+```
+
+```{r}
+i
+```
+
+```{r}
+plot(i)
+```

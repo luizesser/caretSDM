@@ -1,7 +1,8 @@
 set.seed(1)
-sa <- sdm_area(parana, 0.1)
-sa <- add_predictors(sa, bioc) |> dplyr::select(c("bio1", "bio12"))
-sa <- add_scenarios(sa)
+sa <- sdm_area(parana, 1) |>
+  add_predictors(bioc) |>
+  select_predictors(c("bio1", "bio12")) |>
+  add_scenarios()
 suppressWarnings(oc <- occurrences_sdm(occ, crs=6933) |> join_area(sa))
 test_that("plot works with i", {
   expect_no_error(plot(input_sdm(oc)))
@@ -10,13 +11,12 @@ i <- input_sdm(oc, sa)
 test_that("plot works with i", {
   expect_no_error(plot(i))
 })
-i <- vif_predictors(i)
-suppressWarnings(i <- pseudoabsences(i, method = "bioclim"))
-ctrl_sdm <- caret::trainControl(method = "repeatedcv", number = 4, repeats = 10, classProbs = TRUE,
+suppressWarnings(i <- pseudoabsences(i, method = "random", n_set = 3))
+ctrl_sdm <- caret::trainControl(method = "repeatedcv", number = 4, repeats = 2, classProbs = TRUE,
                                 returnResamp = "all", summaryFunction = summary_sdm,
                                 savePredictions = "all")
-suppressWarnings(i <- train_sdm(i, algo=c("mda", "kknn"), crtl=ctrl_sdm))
-i <- predict_sdm(i)
+suppressWarnings(i <- train_sdm(i, algo=c("naive_bayes", "kknn"), crtl=ctrl_sdm))
+i <- predict_sdm(i, th=0.5)
 
 test_that("plot works with i", {
   expect_no_error(plot(i))

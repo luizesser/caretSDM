@@ -59,13 +59,10 @@ information. In this regard, we implemented the parameters \code{species}, \code
 }
 \examples{
 # Create sdm_area object:
-sa <- sdm_area(parana, cell_size = 25000, crs = 6933)
+sa <- sdm_area(parana, cell_size = 50000, crs = 6933)
 
 # Include predictors:
-sa <- add_predictors(sa, bioc) |> dplyr::select(c("bio1", "bio4", "bio12"))
-
-# Include scenarios:
-sa <- add_scenarios(sa, scen)
+sa <- add_predictors(sa, bioc) |> select_predictors(c("bio1", "bio12"))
 
 # Create occurrences:
 oc <- occurrences_sdm(occ, crs = 6933) |> join_area(sa)
@@ -73,8 +70,8 @@ oc <- occurrences_sdm(occ, crs = 6933) |> join_area(sa)
 # Create input_sdm:
 i <- input_sdm(oc, sa)
 
-# Clean coordinates:
-i <- data_clean(i)
+# Clean coordinates (terrestrial is set to false to make the run quicker):
+i <- data_clean(i, terrestrial = FALSE)
 
 }
 \seealso{

@@ -32,7 +32,9 @@ pseudoabsence_data(i)
 \item{n_set}{\code{numeric}. Number of datasets of pseudoabsence to create.}
 
 \item{n_pa}{\code{numeric}. Number of pseudoabsences to be generated in each dataset created.
-If \code{NULL} then the function prevents imbalance by using the same number of presence records.}
+If \code{NULL} then the function prevents imbalance by using the same number of presence records
+(\code{n_records(occ)}). If you want to address different sizes to each species, you must provide
+a named vector (as in \code{n_records(occ)}).}
 
 \item{variables_selected}{A vector with variables names to be used while building pseudoabsences.
 Only used when method is not "random".}
@@ -69,10 +71,10 @@ Pseudoabsences are retrieved outside the projected distribution of the species.
 sa <- sdm_area(parana, cell_size = 25000, crs = 6933)
 
 # Include predictors:
-sa <- add_predictors(sa, bioc) |> dplyr::select(c("bio1", "bio4", "bio12"))
+sa <- add_predictors(sa, bioc) |> select_predictors(c("bio1", "bio4", "bio12"))
 
 # Include scenarios:
-sa <- add_scenarios(sa, scen)
+sa <- add_scenarios(sa)
 
 # Create occurrences:
 oc <- occurrences_sdm(occ, crs = 6933) |> join_area(sa)
@@ -80,14 +82,8 @@ oc <- occurrences_sdm(occ, crs = 6933) |> join_area(sa)
 # Create input_sdm:
 i <- input_sdm(oc, sa)
 
-# Clean coordinates:
-i <- data_clean(i)
-
-# VIF calculation:
-i <- vif_predictors(i)
-
 # Pseudoabsence generation:
-i <- pseudoabsences(i, method="bioclim", variables_selected = "vif")
+i <- pseudoabsences(i, method="bioclim")
 
 }
 \seealso{

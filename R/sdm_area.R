@@ -37,10 +37,10 @@
 #'
 #' @examples
 #' # Create sdm_area object:
-#' sa_area <- sdm_area(parana, cell_size = 25000, crs = 6933)
+#' sa_area <- sdm_area(parana, cell_size = 50000, crs = 6933)
 #'
-#' # Create sdm_area using lines:
-#' sa_rivers <- sdm_area(rivs, cell_size = 25000, crs = 6933, lines_as_sdm_area = TRUE)
+#' # Create sdm_area using a subset of rivs (lines):
+#' sa_rivers <- sdm_area(rivs[c(1:500),], cell_size = 100000, crs = 6933, lines_as_sdm_area = TRUE)
 #'
 #' @importFrom stars st_as_stars read_stars write_stars st_dimensions
 #' @importFrom sf st_crs st_read st_bbox st_as_sf gdal_utils st_crop st_make_valid st_transform
@@ -915,7 +915,6 @@ sdm_area.sf <- function(x, cell_size = NULL, crs = NULL, variables_selected = NU
   return(final_sf)
 }
 
-#' @export
 .sdm_area <- function(x) {
   sa <- structure(
     list(

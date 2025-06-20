@@ -1,9 +1,9 @@
 test_that("data_clean - normal path with sdm_area", {
-  sa <- sdm_area(parana, cell_size = 25000, crs = 6933)
+  sa <- sdm_area(parana, cell_size = 100000, crs = 6933)
   sa <- add_predictors(sa, bioc)
   expect_warning(oc <- occurrences_sdm(occ, independent_test = TRUE, crs= 6933) |> join_area(sa))
   i <- input_sdm(oc, sa)
-  i <- data_clean(i)
+  i <- data_clean(i, terrestrial=FALSE)
   expect_true(st_crs(i$occurrences$occurrences) == st_crs(oc$occurrences))
   expect_true(st_geometry_type(oc$occurrences, by_geometry = FALSE) ==
                 st_geometry_type(i$occurrences$occurrences, by_geometry = FALSE))
@@ -21,7 +21,7 @@ test_that("data_clean - normal path with pred", {
   pred <- sdm_area(bioc, cell_size = 1)
   expect_warning(oc <- occurrences_sdm(occ, independent_test = TRUE, crs= 6933) |> join_area(pred))
   i <- input_sdm(oc, pred)
-  i <- data_clean(i)
+  i <- data_clean(i, terrestrial=FALSE)
   expect_true(st_crs(i$occurrences$occurrences) == st_crs(oc$occurrences))
   expect_true(st_geometry_type(oc$occurrences, by_geometry = FALSE) ==
                 st_geometry_type(i$occurrences$occurrences, by_geometry = FALSE))
@@ -36,7 +36,7 @@ test_that("data_clean - normal path with pred", {
 test_that("data_clean - normal path without pred", {
   oc <- occurrences_sdm(occ, crs= 6933)
   i <- input_sdm(oc)
-  i <- data_clean(i)
+  i <- data_clean(i, terrestrial=FALSE)
   expect_true(st_crs(i$occurrences$occurrences) == st_crs(oc$occurrences))
   expect_true(st_geometry_type(oc$occurrences, by_geometry = FALSE) ==
                 st_geometry_type(i$occurrences$occurrences, by_geometry = FALSE))
@@ -49,7 +49,7 @@ test_that("data_clean - normal path without pred", {
 
 test_that("data_clean - normal path with occurences", {
   oc <- occurrences_sdm(occ, crs= 6933)
-  i <- data_clean(oc)
+  i <- data_clean(oc, terrestrial=FALSE)
   expect_true(st_crs(i$occurrences) == st_crs(oc$occurrences))
   expect_true(sf::st_geometry_type(oc$occurrences, by_geometry = FALSE) ==
                 sf::st_geometry_type(i$occurrences, by_geometry = FALSE))
@@ -69,7 +69,7 @@ test_that("data_clean - normal path with pred at wgs84", {
   occ2 <- sf::st_transform(occ2, crs = 4326)
   suppressWarnings(oc <- occurrences_sdm(occ2, independent_test = TRUE, crs= 4326) |> join_area(pred))
   i <- input_sdm(oc, pred)
-  i <- data_clean(i)
+  i <- data_clean(i, terrestrial=FALSE)
   expect_true(st_crs(i$occurrences$occurrences) == st_crs(oc$occurrences))
   expect_true(st_geometry_type(oc$occurrences, by_geometry = FALSE) ==
                 st_geometry_type(i$occurrences$occurrences, by_geometry = FALSE))

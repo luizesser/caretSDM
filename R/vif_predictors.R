@@ -29,7 +29,7 @@
 #' sa <- sdm_area(parana, cell_size = 25000, crs = 6933)
 #'
 #' # Include predictors:
-#' sa <- add_predictors(sa, bioc) |> dplyr::select(c("bio1", "bio4", "bio12"))
+#' sa <- add_predictors(sa, bioc) |> select_predictors(c("bio1", "bio4", "bio12"))
 #'
 #' # Include scenarios:
 #' sa <- add_scenarios(sa, scen)
@@ -39,9 +39,6 @@
 #'
 #' # Create input_sdm:
 #' i <- input_sdm(oc, sa)
-#'
-#' # Clean coordinates:
-#' i <- data_clean(i)
 #'
 #' # VIF calculation:
 #' i <- vif_predictors(i)

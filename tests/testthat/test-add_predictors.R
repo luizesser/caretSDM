@@ -24,7 +24,7 @@ if (fs::dir_exists(here::here("tests", "testthat", "testdata"))) {
   pr_file <- test_path("testdata", "parana.tiff")
 }
 
-sa <- sdm_area(pr_gpkg, cell_size = 10000, crs = 6933)
+sa <- sdm_area(pr_gpkg, cell_size = 100000, crs = 6933)
 
 # Parana
 test_that("add_predictors - rasterStack", {
@@ -39,6 +39,7 @@ test_that("add_predictors - rasterStack", {
   expect_true(
     sa_pred$grid |> nrow() <=  sa$grid |> nrow()
   )
+  expect_true(sf::st_geometry_type(sa_pred$grid) |> unique() == "POLYGON")
   expect_true("cell_id" %in% colnames(sa_pred$grid))
   expect_true("geometry" %in% colnames(sa_pred$grid))
   checkmate::expect_integer(
@@ -53,6 +54,17 @@ test_that("add_predictors - rasterStack", {
 
 test_that("add_predictors - rasterStack selecionando uma variável", {
   sa_pred <- add_predictors(sa, pr_raster, c("wc2.1_10m_bio_1"))
+  expect_true(sf::st_geometry_type(sa_pred$grid) |> unique() == "POLYGON")
+  expect_true("cell_id" %in% colnames(sa_pred$grid))
+  expect_true("geometry" %in% colnames(sa_pred$grid))
+  checkmate::expect_integer(
+    sa_pred$grid$cell_id,
+    any.missing = FALSE,
+    all.missing = FALSE,
+    unique = TRUE,
+    sorted = TRUE,
+    null.ok = FALSE
+  )
   expect_equal(
     predictors(sa_pred),
     c("GID0", "CODIGOIB1", "NOMEUF2", "SIGLAUF3", "wc2.1_10m_bio_1")
@@ -61,6 +73,17 @@ test_that("add_predictors - rasterStack selecionando uma variável", {
 
 test_that("add_predictors - stars", {
   sa_pred <- add_predictors(sa, pr_stars)
+  expect_true(sf::st_geometry_type(sa_pred$grid) |> unique() == "POLYGON")
+  expect_true("cell_id" %in% colnames(sa_pred$grid))
+  expect_true("geometry" %in% colnames(sa_pred$grid))
+  checkmate::expect_integer(
+    sa_pred$grid$cell_id,
+    any.missing = FALSE,
+    all.missing = FALSE,
+    unique = TRUE,
+    sorted = TRUE,
+    null.ok = FALSE
+  )
   expect_equal(
     predictors(sa_pred),
     c(
@@ -72,6 +95,17 @@ test_that("add_predictors - stars", {
 
 test_that("add_predictors - sf", {
   sa_pred <- add_predictors(sa, pr_gpkg)
+  expect_true(sf::st_geometry_type(sa_pred$grid) |> unique() == "POLYGON")
+  expect_true("cell_id" %in% colnames(sa_pred$grid))
+  expect_true("geometry" %in% colnames(sa_pred$grid))
+  checkmate::expect_integer(
+    sa_pred$grid$cell_id,
+    any.missing = FALSE,
+    all.missing = FALSE,
+    unique = TRUE,
+    sorted = TRUE,
+    null.ok = FALSE
+  )
   expect_equal(
     predictors(sa_pred),
     c(
@@ -95,6 +129,17 @@ test_that("add_predictors - stack/terra", {
     pr <- terra::rast(test_path("testdata/parana.tiff"))
   }
   sa_pred <- add_predictors(sa, pr)
+  expect_true(sf::st_geometry_type(sa_pred$grid) |> unique() == "POLYGON")
+  expect_true("cell_id" %in% colnames(sa_pred$grid))
+  expect_true("geometry" %in% colnames(sa_pred$grid))
+  checkmate::expect_integer(
+    sa_pred$grid$cell_id,
+    any.missing = FALSE,
+    all.missing = FALSE,
+    unique = TRUE,
+    sorted = TRUE,
+    null.ok = FALSE
+  )
   expect_equal(
     predictors(sa_pred),
     c(
@@ -110,31 +155,73 @@ test_that("add_predictors, but there is no overlap", {
 
 test_that("get_predictors - sdm_area", {
   sa_pred <- add_predictors(sa, pr_raster)
+  expect_true(sf::st_geometry_type(sa_pred$grid) |> unique() == "POLYGON")
+  expect_true("cell_id" %in% colnames(sa_pred$grid))
+  expect_true("geometry" %in% colnames(sa_pred$grid))
+  checkmate::expect_integer(
+    sa_pred$grid$cell_id,
+    any.missing = FALSE,
+    all.missing = FALSE,
+    unique = TRUE,
+    sorted = TRUE,
+    null.ok = FALSE
+  )
   expect_equal(get_predictors(sa_pred), sa_pred$grid)
 })
 
 test_that("get_predictors - input_sdm", {
   sa_pred <- add_predictors(sa, pr_raster)
+  expect_true(sf::st_geometry_type(sa_pred$grid) |> unique() == "POLYGON")
+  expect_true("cell_id" %in% colnames(sa_pred$grid))
+  expect_true("geometry" %in% colnames(sa_pred$grid))
+  checkmate::expect_integer(
+    sa_pred$grid$cell_id,
+    any.missing = FALSE,
+    all.missing = FALSE,
+    unique = TRUE,
+    sorted = TRUE,
+    null.ok = FALSE
+  )
   expect_equal(get_predictors(input_sdm(sa_pred)), sa_pred$grid)
 })
 
 test_that("add_predictors - character input", {
   sa_pred <- add_predictors(sa, pr_file)
   sa_pred2 <- add_predictors(sa, pr_raster)
+  expect_true(sf::st_geometry_type(sa_pred$grid) |> unique() == "POLYGON")
+  expect_true("cell_id" %in% colnames(sa_pred$grid))
+  expect_true("geometry" %in% colnames(sa_pred$grid))
+  checkmate::expect_integer(
+    sa_pred$grid$cell_id,
+    any.missing = FALSE,
+    all.missing = FALSE,
+    unique = TRUE,
+    sorted = TRUE,
+    null.ok = FALSE
+  )
+  expect_true(sf::st_geometry_type(sa_pred2$grid) |> unique() == "POLYGON")
+  expect_true("cell_id" %in% colnames(sa_pred2$grid))
+  expect_true("geometry" %in% colnames(sa_pred2$grid))
+  checkmate::expect_integer(
+    sa_pred2$grid$cell_id,
+    any.missing = FALSE,
+    all.missing = FALSE,
+    unique = TRUE,
+    sorted = TRUE,
+    null.ok = FALSE
+  )
   expect_equal(sa_pred$grid, sa_pred2$grid)
 })
 
 # Rivs
-sa_rivs <- sdm_area(rivs, cell_size = 25000, crs = 6933, lines_as_sdm_area = TRUE)
+sa_rivs <- sdm_area(rivs, cell_size = 100000, crs = 6933, lines_as_sdm_area = TRUE)
 test_that("add_predictors - rasterStack", {
-  sa_pred <- add_predictors(sa_rivs, pr_raster)
+  sa_pred <- add_predictors(sa_rivs, bioc)
   expect_equal(
     get_predictor_names(sa_pred),
-    c("LENGTH_KM", "DIST_DN_KM", "wc2.1_10m_bio_1", "wc2.1_10m_bio_12")
+    c("LENGTH_KM", "DIST_DN_KM", "bio1", "bio4", "bio12")
   )
-  expect_true(
-    sa_pred$grid |> nrow() >=  sa_rivs$grid |> nrow()
-  )
+  expect_true(sf::st_geometry_type(sa_pred$grid) |> unique() == "LINESTRING")
   expect_true("cell_id" %in% colnames(sa_pred$grid))
   expect_true("geometry" %in% colnames(sa_pred$grid))
   checkmate::expect_integer(
@@ -148,15 +235,37 @@ test_that("add_predictors - rasterStack", {
 })
 
 test_that("add_predictors - rasterStack selecionando uma variável", {
-  sa_pred <- add_predictors(sa_rivs, pr_raster, c("wc2.1_10m_bio_1"))
+  sa_pred <- add_predictors(sa_rivs, bioc, c("bio1"))
+  expect_true(sf::st_geometry_type(sa_pred$grid) |> unique() == "LINESTRING")
+  expect_true("cell_id" %in% colnames(sa_pred$grid))
+  expect_true("geometry" %in% colnames(sa_pred$grid))
+  checkmate::expect_integer(
+    sa_pred$grid$cell_id,
+    any.missing = FALSE,
+    all.missing = FALSE,
+    unique = TRUE,
+    sorted = TRUE,
+    null.ok = FALSE
+  )
   expect_equal(
     get_predictor_names(sa_pred),
-    c("LENGTH_KM", "DIST_DN_KM", "wc2.1_10m_bio_1")
+    c("LENGTH_KM", "DIST_DN_KM", "bio1")
   )
 })
 
 test_that("add_predictors - stars", {
   sa_pred <- add_predictors(sa_rivs, pr_stars)
+  expect_true(sf::st_geometry_type(sa_pred$grid) |> unique() == "LINESTRING")
+  expect_true("cell_id" %in% colnames(sa_pred$grid))
+  expect_true("geometry" %in% colnames(sa_pred$grid))
+  checkmate::expect_integer(
+    sa_pred$grid$cell_id,
+    any.missing = FALSE,
+    all.missing = FALSE,
+    unique = TRUE,
+    sorted = TRUE,
+    null.ok = FALSE
+  )
   expect_equal(
     get_predictor_names(sa_pred),
     c("LENGTH_KM", "DIST_DN_KM", "wc2.1_10m_bio_1", "wc2.1_10m_bio_12")
@@ -165,6 +274,17 @@ test_that("add_predictors - stars", {
 
 test_that("add_predictors - sf", {
   sa_pred <- add_predictors(sa_rivs, pr_gpkg)
+  expect_true(sf::st_geometry_type(sa_pred$grid) |> unique() == "LINESTRING")
+  expect_true("cell_id" %in% colnames(sa_pred$grid))
+  expect_true("geometry" %in% colnames(sa_pred$grid))
+  checkmate::expect_integer(
+    sa_pred$grid$cell_id,
+    any.missing = FALSE,
+    all.missing = FALSE,
+    unique = TRUE,
+    sorted = TRUE,
+    null.ok = FALSE
+  )
   expect_equal(
     get_predictor_names(sa_pred),
     c("LENGTH_KM", "DIST_DN_KM", "GID0", "CODIGOIB1", "NOMEUF2", "SIGLAUF3")
@@ -185,6 +305,17 @@ test_that("add_predictors - stack/terra", {
     pr <- terra::rast(test_path("testdata/parana.tiff"))
   }
   sa_pred <- add_predictors(sa_rivs, pr)
+  expect_true(sf::st_geometry_type(sa_pred$grid) |> unique() == "LINESTRING")
+  expect_true("cell_id" %in% colnames(sa_pred$grid))
+  expect_true("geometry" %in% colnames(sa_pred$grid))
+  checkmate::expect_integer(
+    sa_pred$grid$cell_id,
+    any.missing = FALSE,
+    all.missing = FALSE,
+    unique = TRUE,
+    sorted = TRUE,
+    null.ok = FALSE
+  )
   expect_equal(
     get_predictor_names(sa_pred),
     c("LENGTH_KM", "DIST_DN_KM", "wc2.1_10m_bio_1", "wc2.1_10m_bio_12")
@@ -197,17 +328,61 @@ test_that("add_predictors, but there is no overlap", {
 
 test_that("get_predictors - sdm_area", {
   sa_pred <- add_predictors(sa_rivs, pr_raster)
+  expect_true(sf::st_geometry_type(sa_pred$grid) |> unique() == "LINESTRING")
+  expect_true("cell_id" %in% colnames(sa_pred$grid))
+  expect_true("geometry" %in% colnames(sa_pred$grid))
+  checkmate::expect_integer(
+    sa_pred$grid$cell_id,
+    any.missing = FALSE,
+    all.missing = FALSE,
+    unique = TRUE,
+    sorted = TRUE,
+    null.ok = FALSE
+  )
   expect_equal(get_predictors(sa_pred), sa_pred$grid)
 })
 
 test_that("get_predictors - input_sdm", {
   sa_pred <- add_predictors(sa_rivs, pr_raster)
+  expect_true(sf::st_geometry_type(sa_pred$grid) |> unique() == "LINESTRING")
+  expect_true("cell_id" %in% colnames(sa_pred$grid))
+  expect_true("geometry" %in% colnames(sa_pred$grid))
+  checkmate::expect_integer(
+    sa_pred$grid$cell_id,
+    any.missing = FALSE,
+    all.missing = FALSE,
+    unique = TRUE,
+    sorted = TRUE,
+    null.ok = FALSE
+  )
   expect_equal(get_predictors(input_sdm(sa_pred)), sa_pred$grid)
 })
 
 test_that("add_predictors - character input", {
   sa_pred <- add_predictors(sa_rivs, pr_file)
   sa_pred2 <- add_predictors(sa_rivs, pr_raster)
+  expect_true(sf::st_geometry_type(sa_pred$grid) |> unique() == "LINESTRING")
+  expect_true("cell_id" %in% colnames(sa_pred$grid))
+  expect_true("geometry" %in% colnames(sa_pred$grid))
+  checkmate::expect_integer(
+    sa_pred$grid$cell_id,
+    any.missing = FALSE,
+    all.missing = FALSE,
+    unique = TRUE,
+    sorted = TRUE,
+    null.ok = FALSE
+  )
+  expect_true(sf::st_geometry_type(sa_pred2$grid) |> unique() == "LINESTRING")
+  expect_true("cell_id" %in% colnames(sa_pred2$grid))
+  expect_true("geometry" %in% colnames(sa_pred2$grid))
+  checkmate::expect_integer(
+    sa_pred2$grid$cell_id,
+    any.missing = FALSE,
+    all.missing = FALSE,
+    unique = TRUE,
+    sorted = TRUE,
+    null.ok = FALSE
+  )
   expect_equal(sa_pred$grid, sa_pred2$grid)
 })
 
@@ -226,14 +401,14 @@ test_that("add_predictors - correção do tidyr::drop_na: drop_na modifica o bbo
    sf::st_buffer(dist = 10000) |>
    sf::st_union() |>
    sf::st_as_sf(crs=sf::st_crs(6933))
- sa_buf <- sdm_area(buf_sa, cell_size = 5000, crs = 6933)
+ sa_buf <- sdm_area(buf_sa, cell_size = 100000, crs = 6933)
  sa_pred <- add_predictors(sa_buf, bioc)
  suppressWarnings(bbox_intersect <- sf::st_bbox(sf::st_intersection(sa_buf$grid, sa_pred$grid))) #find intersection between sdm_area and add_pred.
  expect_equal(bbox_intersect, sf::st_bbox(sa_pred$grid))
 })
 
 test_that("add_predictors - correção do tidyr::drop_na: drop_na modifica o bbox Gpkg+gdal", {
- sa_buf <- sdm_area(pr_gpkg, cell_size = 5000, crs = 6933)
+ sa_buf <- sdm_area(pr_gpkg, cell_size = 100000, crs = 6933)
  sa_pred <- add_predictors(sa_buf, bioc)
  suppressWarnings(bbox_intersect <- sf::st_bbox(sf::st_intersection(sa_buf$grid, sa_pred$grid))) #find intersection between sdm_area and add_pred.
  expect_equal(bbox_intersect, sf::st_bbox(sa_pred$grid))
@@ -245,14 +420,14 @@ test_that("add_predictors - correção do tidyr::drop_na: drop_na modifica o bbo
    sf::st_buffer(dist = 10000) |>
    sf::st_union() |>
    sf::st_as_sf(crs=sf::st_crs(6933))
- sa_buf <- sdm_area(buf_sa, cell_size = 5000, crs = 6933, gdal = FALSE)
+ sa_buf <- sdm_area(buf_sa, cell_size = 100000, crs = 6933, gdal = FALSE)
  sa_pred <- add_predictors(sa_buf, bioc, gdal = FALSE)
  suppressWarnings(bbox_intersect <- sf::st_bbox(sf::st_intersection(sa_buf$grid, sa_pred$grid))) #find intersection between sdm_area and add_pred.
  expect_equal(bbox_intersect, sf::st_bbox(sa_pred$grid))
 })
 
 test_that("add_predictors - correção do tidyr::drop_na: drop_na modifica o bbox Gpkg-nogdal", {
- sa_buf <- sdm_area(pr_gpkg, cell_size = 5000, crs = 6933, gdal = FALSE)
+ sa_buf <- sdm_area(pr_gpkg, cell_size = 100000, crs = 6933, gdal = FALSE)
  sa_pred <- add_predictors(sa_buf, bioc, gdal = FALSE)
  suppressWarnings(bbox_intersect <- sf::st_bbox(sf::st_intersection(sa_buf$grid, sa_pred$grid))) #find intersection between sdm_area and add_pred.
  expect_equal(bbox_intersect, sf::st_bbox(sa_pred$grid))

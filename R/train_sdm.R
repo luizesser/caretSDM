@@ -17,7 +17,7 @@
 #' @param algo A \code{character} vector. Algorithms to be used. For a complete list see
 #' (https://topepo.github.io/caret/available-models.html) or in caretSDM::algorithms.
 #' @param ctrl A \code{trainControl} object to be used to build models. See
-#' \code{\link{trainControl}}.
+#' \code{?caret::trainControl}.
 #' @param variables_selected A \code{vector} of variables to be used as predictors. If \code{NULL},
 #' predictors names from \code{pred} will be used. Can also be a selection method (e.g. 'vif').
 #' @param ... Additional arguments to be passed to \code{caret::train} function.
@@ -51,13 +51,13 @@
 #'
 #' @examples
 #' # Create sdm_area object:
-#' sa <- sdm_area(parana, cell_size = 25000, crs = 6933)
+#' sa <- sdm_area(parana, cell_size = 100000, crs = 6933)
 #'
 #' # Include predictors:
-#' sa <- add_predictors(sa, bioc) |> dplyr::select(c("bio1", "bio4", "bio12"))
+#' sa <- add_predictors(sa, bioc) |> select_predictors(c("bio1", "bio12"))
 #'
 #' # Include scenarios:
-#' sa <- add_scenarios(sa, scen)
+#' sa <- add_scenarios(sa)
 #'
 #' # Create occurrences:
 #' oc <- occurrences_sdm(occ, crs = 6933) |> join_area(sa)
@@ -65,18 +65,12 @@
 #' # Create input_sdm:
 #' i <- input_sdm(oc, sa)
 #'
-#' # Clean coordinates:
-#' i <- data_clean(i)
-#'
-#' # VIF calculation:
-#' i <- vif_predictors(i)
-#'
 #' # Pseudoabsence generation:
-#' i <- pseudoabsences(i, method="bioclim", variables_selected = "vif")
+#' i <- pseudoabsences(i, method="bioclim")
 #'
 #' # Custom trainControl:
 #' ctrl_sdm <- caret::trainControl(method = "repeatedcv",
-#'                                 number = 4,
+#'                                 number = 2,
 #'                                 repeats = 1,
 #'                                 classProbs = TRUE,
 #'                                 returnResamp = "all",
@@ -84,7 +78,7 @@
 #'                                 savePredictions = "all")
 #'
 #' # Train models:
-#' i <- train_sdm(i, algo = c("naive_bayes", "kknn"), variables_selected = "vif", ctrl=ctrl_sdm) |>
+#' i <- train_sdm(i, algo = c("naive_bayes"), ctrl=ctrl_sdm) |>
 #' suppressWarnings()
 #'
 #' @importFrom sf st_centroid st_as_sf st_join st_intersection st_geometry_type
@@ -174,7 +168,6 @@ train_sdm <- function(occ, pred = NULL, algo, ctrl = NULL, variables_selected = 
       x <- rbind(occ2, pa)
       x <- dplyr::select(as.data.frame(x), dplyr::all_of(selected_vars))
       df <- as.factor(c(rep("presence", nrow(occ2)), rep("pseudoabsence", nrow(pa))))
-
           m <- lapply(algo, function(a) {
             caret::train(
               df~.,
@@ -194,6 +187,12 @@ train_sdm <- function(occ, pred = NULL, algo, ctrl = NULL, variables_selected = 
   m <- apply(l, 2, function(x) {
     unlist(x, recursive = FALSE)
   })
+
+  if(length(algo) == 1) {
+    for (j in 1:length(m)) {
+      names(m[[j]]) <- paste0(names(m[[j]]), 1)
+    }
+  }
 
   metrics <- sapply(z$spp_names, function(sp) {
     metrics <- lapply(m[[sp]], function(x) {
@@ -289,7 +288,6 @@ mean_validation_metrics <- function(i) {
   return(res)
 }
 
-#' @export
 .models <- function(x) {
   if ("independent_test" %in% names(x)) {
     models <- structure(

@@ -1,5 +1,5 @@
 test_that("predictors misc - predictors_names", {
-  sa <- sdm_area(parana, cell_size = 1)
+  sa <- sdm_area(parana, cell_size = 2)
   pred <- bioc
   suppressWarnings(sa_pred <- add_predictors(sa, pred))
   expect_equal(
@@ -9,7 +9,7 @@ test_that("predictors misc - predictors_names", {
 })
 
 test_that("predictors misc - set_predictors_names", {
-  sa <- sdm_area(parana, cell_size = 1)
+  sa <- sdm_area(parana, cell_size = 2)
   pred <- bioc
   suppressWarnings(sa_pred <- add_predictors(sa, pred))
   expect_equal(get_predictors(sa_pred), sa_pred$grid)

@@ -8,29 +8,28 @@
       Class                         : input_sdm
       --------  Occurrences  --------
       Species Names                 : Araucaria angustifolia 
-      Number of presences           : 414 
+      Number of presences           : 418 
       Pseudoabsence methods         :
-          Method to obtain PAs      : bioclim 
-          Number of PA sets         : 10 
-          Number of PAs in each set : 414 
+          Method to obtain PAs      : random 
+          Number of PA sets         : 3 
+          Number of PAs in each set : 418 
       --------  Predictors  ---------
-      Number of Predictors          : 6 
-      Predictors Names              : bio1, bio12, div, prod, sub, soma 
+      Number of Predictors          : 2 
+      Predictors Names              : bio1, bio12 
       ---------  Scenarios  ---------
       Number of Scenarios           : 1 
       Scenarios Names               : current 
       -----------  Models  ----------
-      Algorithms Names              : kknn mda naive_bayes 
+      Algorithms Names              : kknn naive_bayes 
       Variables Names               : bio1 bio12 
       Model Validation              :
-          Method                    : repeatedcv 
-          Number                    : 4 
+          Method                    : cv 
+          Number                    : 2 
           Metrics                   :
       $`Araucaria angustifolia`
-               algo       ROC       TSS Sensitivity Specificity
-      1        kknn 0.9918481 0.9815342    0.991975    0.989525
-      2         mda 0.9870577 0.9414377    0.989575    0.955225
-      3 naive_bayes 0.9953786 0.9676901    0.992925    0.983075
+               algo       ROC      Sens      Spec      ROCSD
+      1        kknn 0.6469233 0.9856459 0.2600733 0.05959788
+      2 naive_bayes 0.8576489 0.9792663 0.2994505 0.06242039
       
 
 # train_sdm - pca
@@ -43,68 +42,30 @@
       Class                         : input_sdm
       --------  Occurrences  --------
       Species Names                 : Araucaria angustifolia 
-      Number of presences           : 414 
+      Number of presences           : 418 
       Pseudoabsence methods         :
-          Method to obtain PAs      : bioclim 
-          Number of PA sets         : 10 
-          Number of PAs in each set : 414 
+          Method to obtain PAs      : random 
+          Number of PA sets         : 3 
+          Number of PAs in each set : 418 
       --------  Predictors  ---------
-      Number of Predictors          : 12 
-      Predictors Names              : bio1, bio12, div, prod, sub, soma, PC1, PC2, PC3, PC4, PC5, PC6 
+      Number of Predictors          : 4 
+      Predictors Names              : bio1, bio12, PC1, PC2 
       PCA-transformed variables     : DONE 
       Cummulative proportion ( 0.99 ) : PC1 
       ---------  Scenarios  ---------
       Number of Scenarios           : 1 
       Scenarios Names               : current 
       -----------  Models  ----------
-      Algorithms Names              : kknn mda naive_bayes 
+      Algorithms Names              : kknn naive_bayes 
       Variables Names               : PC1 
       Model Validation              :
-          Method                    : repeatedcv 
-          Number                    : 4 
-          Metrics                   :
-      $`Araucaria angustifolia`
-               algo       ROC       TSS Sensitivity Specificity
-      1        kknn 0.9996394 0.9992788    0.999275      1.0000
-      2         mda 1.0000000 0.9228272    1.000000      0.9250
-      3 naive_bayes 0.9986756 0.8846107    0.997075      0.8875
-      
-
-# train_sdm - change ctrl
-
-    Code
-      i2
-    Output
-                  caretSDM           
-      ...............................
-      Class                         : input_sdm
-      --------  Occurrences  --------
-      Species Names                 : Araucaria angustifolia 
-      Number of presences           : 414 
-      Pseudoabsence methods         :
-          Method to obtain PAs      : bioclim 
-          Number of PA sets         : 10 
-          Number of PAs in each set : 414 
-      --------  Predictors  ---------
-      Number of Predictors          : 12 
-      Predictors Names              : bio1, bio12, div, prod, sub, soma, PC1, PC2, PC3, PC4, PC5, PC6 
-      PCA-transformed variables     : DONE 
-      Cummulative proportion ( 0.99 ) : PC1 
-      ---------  Scenarios  ---------
-      Number of Scenarios           : 1 
-      Scenarios Names               : current 
-      -----------  Models  ----------
-      Algorithms Names              : kknn mda naive_bayes 
-      Variables Names               : PC1 
-      Model Validation              :
-          Method                    : boot 
-          Number                    : 10 
+          Method                    : cv 
+          Number                    : 2 
           Metrics                   :
       $`Araucaria angustifolia`
                algo       ROC      Sens      Spec      ROCSD
-      1        kknn 0.9948919 0.9992282 0.9905556 0.01545422
-      2         mda 1.0000000 1.0000000 0.7528889 0.00000000
-      3 naive_bayes 0.9891688 0.9949012 0.8358730 0.08506030
+      1        kknn 0.5936322 0.9912281 0.1739927 0.04869515
+      2 naive_bayes 0.8307438 1.0000000 0.1474359 0.07067102
       
 
 # train_sdm - vif
@@ -117,32 +78,67 @@
       Class                         : input_sdm
       --------  Occurrences  --------
       Species Names                 : Araucaria angustifolia 
-      Number of presences           : 414 
+      Number of presences           : 418 
       Pseudoabsence methods         :
-          Method to obtain PAs      : bioclim 
-          Number of PA sets         : 10 
-          Number of PAs in each set : 414 
+          Method to obtain PAs      : random 
+          Number of PA sets         : 3 
+          Number of PAs in each set : 418 
       --------  Predictors  ---------
-      Number of Predictors          : 6 
-      Predictors Names              : bio1, bio12, div, prod, sub, soma 
+      Number of Predictors          : 2 
+      Predictors Names              : bio1, bio12 
       Area (VIF)                    : all
       Threshold                     : 0.5
-      Selected Variables (VIF)      : div, prod 
+      Selected Variables (VIF)      : bio1, bio12 
       ---------  Scenarios  ---------
       Number of Scenarios           : 1 
       Scenarios Names               : current 
       -----------  Models  ----------
-      Algorithms Names              : naive_bayes mda kknn 
-      Variables Names               : div prod 
+      Algorithms Names              : naive_bayes kknn 
+      Variables Names               : bio1 bio12 
       Model Validation              :
-          Method                    : repeatedcv 
-          Number                    : 4 
+          Method                    : cv 
+          Number                    : 2 
           Metrics                   :
       $`Araucaria angustifolia`
-               algo       ROC       TSS Sensitivity Specificity
-      1        kknn 0.9944007 0.9888014    0.994825    0.993925
-      2         mda 0.9992931 0.9686132    0.982350    0.987925
-      3 naive_bayes 0.9986406 0.9386259    0.987600    0.951200
+               algo       ROC      Sens      Spec      ROCSD
+      1        kknn 0.6407715 0.9920255 0.2472527 0.05269499
+      2 naive_bayes 0.8414612 0.9816587 0.2957875 0.12695378
+      
+
+# train_sdm - change ctrl
+
+    Code
+      i2
+    Output
+                  caretSDM           
+      ...............................
+      Class                         : input_sdm
+      --------  Occurrences  --------
+      Species Names                 : Araucaria angustifolia 
+      Number of presences           : 418 
+      Pseudoabsence methods         :
+          Method to obtain PAs      : random 
+          Number of PA sets         : 3 
+          Number of PAs in each set : 418 
+      --------  Predictors  ---------
+      Number of Predictors          : 4 
+      Predictors Names              : bio1, bio12, PC1, PC2 
+      PCA-transformed variables     : DONE 
+      Cummulative proportion ( 0.99 ) : PC1 
+      ---------  Scenarios  ---------
+      Number of Scenarios           : 1 
+      Scenarios Names               : current 
+      -----------  Models  ----------
+      Algorithms Names              : kknn naive_bayes 
+      Variables Names               : PC1 
+      Model Validation              :
+          Method                    : boot 
+          Number                    : 10 
+          Metrics                   :
+      $`Araucaria angustifolia`
+               algo       ROC      Sens      Spec      ROCSD
+      1        kknn 0.5915856 0.9930731 0.1839508 0.04563348
+      2 naive_bayes 0.8169982 0.9991820 0.1631217 0.12930768
       
 
 # train_sdm - selecting vars
@@ -155,28 +151,27 @@
       Class                         : input_sdm
       --------  Occurrences  --------
       Species Names                 : Araucaria angustifolia 
-      Number of presences           : 414 
+      Number of presences           : 418 
       Pseudoabsence methods         :
-          Method to obtain PAs      : bioclim 
-          Number of PA sets         : 10 
-          Number of PAs in each set : 414 
+          Method to obtain PAs      : random 
+          Number of PA sets         : 3 
+          Number of PAs in each set : 418 
       --------  Predictors  ---------
-      Number of Predictors          : 6 
-      Predictors Names              : bio1, bio12, div, prod, sub, soma 
+      Number of Predictors          : 2 
+      Predictors Names              : bio1, bio12 
       ---------  Scenarios  ---------
       Number of Scenarios           : 1 
       Scenarios Names               : current 
       -----------  Models  ----------
-      Algorithms Names              : naive_bayes mda kknn 
+      Algorithms Names              : naive_bayes kknn 
       Variables Names               : bio1 bio12 
       Model Validation              :
-          Method                    : repeatedcv 
-          Number                    : 4 
+          Method                    : cv 
+          Number                    : 2 
           Metrics                   :
       $`Araucaria angustifolia`
-               algo       ROC       TSS Sensitivity Specificity
-      1        kknn 0.9920913 0.9832597    0.990225    0.992925
-      2         mda 0.9894955 0.9447250    0.989350    0.960775
-      3 naive_bayes 0.9953773 0.9700069    0.992675    0.985275
+               algo       ROC      Sens      Spec      ROCSD
+      1        kknn 0.6368237 0.9904306 0.1978022 0.08078370
+      2 naive_bayes 0.8538370 0.9784689 0.3104396 0.07867379
       
 

@@ -279,7 +279,6 @@ assert_cli <- function(..., combine = "or", .var.name = NULL, add = NULL) {
   invisible(TRUE)
 }
 
-
 .mstopOrPush = function(res, v_name, collection = NULL) {
   if (!is.null(collection)) {
     purrr::map2(res, names(res), \(e, n) glue::glue("({n}): {e}")) |>

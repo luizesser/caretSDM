@@ -36,7 +36,7 @@
 #'
 #' @examples
 #' # Create sdm_area object:
-#' sa <- sdm_area(parana, cell_size = 25000, crs = 6933)
+#' sa <- sdm_area(parana, cell_size = 50000, crs = 6933)
 #'
 #' # Include predictors:
 #' sa <- add_predictors(sa, bioc)
@@ -279,7 +279,6 @@ set_variables_names <- function(s1 = NULL, s2 = NULL, new_names = NULL) {
   return(s1)
 }
 
-#' @export
 .find_closest_matches <- function(inputs, valid_inputs) {
   closest_matches <- character(length(inputs))
   for (i in seq_along(inputs)) {
