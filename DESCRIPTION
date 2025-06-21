@@ -78,3 +78,4 @@ Depends:
     R (>= 4.2.0)
 VignetteBuilder: knitr
 URL: https://luizesser.github.io/caretSDM/
+Config/Needs/website: rmarkdown

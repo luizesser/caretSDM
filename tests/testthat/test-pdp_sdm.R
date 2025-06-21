@@ -1,11 +1,11 @@
-sa <- sdm_area(parana, cell_size = 50000, crs = 6933)
-sa <- add_predictors(sa, bioc)
-sa <- dplyr::select(sa, c("bio1", "bio12"))
-i <- input_sdm(occurrences_sdm(occ, crs=6933), sa)
-i <- pseudoabsences(i, method="random", n_set = 3)
-suppressWarnings(i <- train_sdm(i, algo = c("naive_bayes", "kknn")))
-
 test_that("pdp_sdm", {
+  skip_on_cran()
+  sa <- sdm_area(parana, cell_size = 50000, crs = 6933)
+  sa <- add_predictors(sa, bioc)
+  sa <- dplyr::select(sa, c("bio1", "bio12"))
+  i <- input_sdm(occurrences_sdm(occ, crs=6933), sa)
+  i <- pseudoabsences(i, method="random", n_set = 3)
+  suppressWarnings(i <- train_sdm(i, algo = c("naive_bayes", "kknn")))
   expect_error(pdp_sdm("i"))
   x <- pdp_sdm(i)
   expect_equal(class(x), c("gg", "ggplot"))

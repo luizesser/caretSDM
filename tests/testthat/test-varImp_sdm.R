@@ -6,7 +6,11 @@ oc <- occurrences_sdm(occ, crs=6933)
 suppressWarnings(oc <- join_area(oc, sa))
 i <- input_sdm(oc, sa)
 suppressWarnings(i <- pseudoabsences(i, method = "bioclim"))
-suppressWarnings(i <- train_sdm(i, algo=c("naive_bayes", "kknn")))
+ctrl <- caret::trainControl(
+  method = "cv", number = 2, classProbs = TRUE, returnResamp = "all",
+  summaryFunction = caret::twoClassSummary, savePredictions = "all"
+)
+suppressWarnings(i <- train_sdm(i, algo=c("naive_bayes", "kknn"), ctrl = ctrl))
 test_that("varImp_sdm works", {
   v <- varImp_sdm(i)
   expect_equal(names(v), species_names(i))

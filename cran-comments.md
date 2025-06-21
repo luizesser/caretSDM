@@ -42,3 +42,16 @@ required amount of space to keep the package below 5MB.
 
 * This is a new release.
 * R CMD check takes 6m 8.8s
+
+June 21st 2025 (2). I omitted some slow tests from secondary functions, while maintaining tests from
+important functions. I also omitted tests from subroutines that are expected to be rarely used and
+which represented a big processing time. As vignettes don't needed to be delivered with the package,
+I transformed them in articles for package's website.
+
+## R CMD check results
+
+0 errors | 0 warnings | 1 note
+
+* This is a new release.
+* R CMD check takes 2m 59.3s
+

@@ -4,16 +4,13 @@ if (fs::dir_exists(here::here("tests", "testthat", "testdata"))) {
     stars::read_stars(quiet = TRUE)
   pr_gpkg <- here::here("tests", "testthat", "testdata", "parana.gpkg") |>
     sf::st_read(quiet = TRUE)
-  #pr_shp <- here::here("tests", "testthat", "testdata", "parana.tiff") |>
-  #  stars::read_stars(quiet = TRUE, proxy = TRUE)
 } else {
   pr_tif <- test_path("testdata", "parana.tiff") |>
     stars::read_stars(quiet = TRUE)
   pr_gpkg <- test_path("testdata","parana.gpkg") |>
     sf::st_read(quiet = TRUE)
-  #pr_shp <- here::here("tests", "testthat", "testdata", "parana.tiff") |>
-  #  stars::read_stars(quiet = TRUE, proxy = TRUE)
 }
+
 ## Test read
 test_that("sdm_area - leitura stars", {
   expect_equal(round(pr_tif$parana.tiff[1, 1, 1], 4), 22.9386)
@@ -228,12 +225,14 @@ test_that("sdm_area - print", {
 })
 
 test_that("sdm_area - stars' crs = NA", {
+  skip_on_cran()
   pr_tif2 <- pr_tif
   sf::st_crs(pr_tif2) <- NA
   expect_error(sdm_area(pr_tif2, cell_size = 50000, crs=6933, gdal=F))
 })
 
 test_that("sdm_area - crs=NA", {
+  skip_on_cran()
   expect_error(sdm_area(pr_tif, cell_size = 50000, crs=NA, gdal=F))
 })
 
@@ -360,12 +359,14 @@ test_that("sdm_area - sf+gdal=F", {
 })
 
 test_that("sdm_area - sf+gdal=F areas do not intersect", {
+  skip_on_cran()
   box <- st_bbox(c(xmin = 16.1, xmax = 16.6, ymax = 48.6, ymin = 47.9), crs = st_crs(4326))
   box <- sf::st_transform(box, crs=6933)
   expect_warning(sdm_area(parana, cell_size = 100000, crs=6933, crop_by = box, gdal=F))
 })
 
 test_that("sdm_area - sf+gdal=F numeric col", {
+  skip_on_cran()
   pr_gpkg2 <- pr_gpkg
   class(pr_gpkg2$CODIGOIB1) <- "numeric"
   sa <- sdm_area(pr_gpkg2, cell_size = 100000, crs=6933, gdal=F)
@@ -379,6 +380,7 @@ test_that("sdm_area - stars+gdal=F", {
 })
 
 test_that("sdm_area - stars+gdal=F areas do not intersect", {
+  skip_on_cran()
   box <- st_bbox(c(xmin = 16.1, xmax = 16.6, ymax = 48.6, ymin = 47.9), crs = st_crs(4326))
   box <- sf::st_transform(box, crs=6933)
   expect_warning(sdm_area(pr_tif, cell_size = 100000, crs=6933, crop_by = box, gdal=F))

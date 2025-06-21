@@ -396,9 +396,10 @@ test_that("add_predictors - rasterStack não usando sdm_area", {
 })
 
 test_that("add_predictors - correção do tidyr::drop_na: drop_na modifica o bbox buff+gdal", {
+ skip_on_cran()
  buf_sa <- occ |>
    sf::st_as_sf(coords = c(2,3)) |>
-   sf::st_buffer(dist = 10000) |>
+   sf::st_buffer(dist = 100000) |>
    sf::st_union() |>
    sf::st_as_sf(crs=sf::st_crs(6933))
  sa_buf <- sdm_area(buf_sa, cell_size = 100000, crs = 6933)
@@ -415,9 +416,10 @@ test_that("add_predictors - correção do tidyr::drop_na: drop_na modifica o bbo
 })
 
 test_that("add_predictors - correção do tidyr::drop_na: drop_na modifica o bbox buff-nogdal", {
+ skip_on_cran()
  buf_sa <- occ |>
    sf::st_as_sf(coords = c(2,3)) |>
-   sf::st_buffer(dist = 10000) |>
+   sf::st_buffer(dist = 100000) |>
    sf::st_union() |>
    sf::st_as_sf(crs=sf::st_crs(6933))
  sa_buf <- sdm_area(buf_sa, cell_size = 100000, crs = 6933, gdal = FALSE)
@@ -427,6 +429,7 @@ test_that("add_predictors - correção do tidyr::drop_na: drop_na modifica o bbo
 })
 
 test_that("add_predictors - correção do tidyr::drop_na: drop_na modifica o bbox Gpkg-nogdal", {
+ skip_on_cran()
  sa_buf <- sdm_area(pr_gpkg, cell_size = 100000, crs = 6933, gdal = FALSE)
  sa_pred <- add_predictors(sa_buf, bioc, gdal = FALSE)
  suppressWarnings(bbox_intersect <- sf::st_bbox(sf::st_intersection(sa_buf$grid, sa_pred$grid))) #find intersection between sdm_area and add_pred.
