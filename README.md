@@ -3,6 +3,7 @@
 <!-- badges: start -->
 
 [![R-CMD-check](https://github.com/luizesser/chooseGCM/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/luizesser/chooseGCM/actions/workflows/R-CMD-check.yaml)
+
 <!-- badges: end -->
 
 Luíz Fernando Esser
@@ -13,16 +14,14 @@ Luíz Fernando Esser
 
 ## Installation
 
-You can install the development version of caretSDM from
-[GitHub](https://github.com/luizesser/caretSDM) with:
+You can install the development version of caretSDM from [GitHub](https://github.com/luizesser/caretSDM) with:
 
 ``` r
 install.packages("devtools")
 devtools::install_github("luizesser/caretSDM")
 ```
 
-The package is also available on CRAN. Users are able to install it
-using the following code:
+The package is also available on CRAN. Users are able to install it using the following code:
 
 ``` r
 install.packages("caretSDM")
@@ -30,7 +29,7 @@ install.packages("caretSDM")
 
 ## You need help?
 
-caretSDM is vastly documented and has included some objects that can guide your data management. If some of your data or code seem to be wrong, try to take a look at those objects or the vignettes:
+caretSDM is vastly documented and has included some objects that can guide your data management. If some of your data or code seem to be wrong, try to take a look at those objects or the articles in the website:
 
 *Objects*
 
@@ -48,15 +47,10 @@ caretSDM is vastly documented and has included some objects that can guide your 
 
 -   `algorithms` Dataframe with characteristics from every algorithm available in caretSDM.
 
-*Vignettes*
+*Articles*
 
 -   `caretSDM Workflow for Species Distribution Modeling` is the main vignette for terrestrial species modeling, where we model the tree species *Araucaria angustifolia*.
 
 -   `Modeling Species Distributions in Continental Water Bodies` is the main vignette for continental aquatic species modeling, where we model the fish species *Salminus brasiliensis*.
 
-To access the vignettes in R, simply run:
-
-``` r
-vignette("Araucaria", "caretSDM")
-vignette("Salminus", "caretSDM")
-```
+-   `Concatenate functions in caretSDM` shows how to build compact scripts, which is very useful to run your first tests.
