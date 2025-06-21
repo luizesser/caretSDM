@@ -83,12 +83,14 @@ https://luizfesser.wordpress.com</p>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Using GDAL to make the grid and resample the variables.</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Include predictors:</span></span></span>
-<span class="r-in"><span><span class="va">sa</span> <span class="op">&lt;-</span> <span class="fu"><a href="add_predictors.html">add_predictors</a></span><span class="op">(</span><span class="va">sa</span>, <span class="va">bioc</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="tidyverse-methods.html">select_predictors</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"bio1"</span>, <span class="st">"bio4"</span>, <span class="st">"bio12"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">sa</span> <span class="op">&lt;-</span> <span class="fu"><a href="add_predictors.html">add_predictors</a></span><span class="op">(</span><span class="va">sa</span>, <span class="va">bioc</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> Making grid over the study area is an expensive task. Please, be patient!</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Using GDAL to make the grid and resample the variables.</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Include scenarios:</span></span></span>
-<span class="r-in"><span><span class="va">sa</span> <span class="op">&lt;-</span> <span class="fu"><a href="add_scenarios.html">add_scenarios</a></span><span class="op">(</span><span class="va">sa</span>, <span class="va">scen</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">sa</span> <span class="op">&lt;-</span> <span class="fu"><a href="add_scenarios.html">add_scenarios</a></span><span class="op">(</span><span class="va">sa</span>, <span class="va">scen</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="tidyverse-methods.html">select_predictors</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"bio1"</span>, <span class="st">"bio12"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Some variables in `variables_selected` are not present in `scen`.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Using only variables present in `scen`: bio1, bio4, and bio12</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Create occurrences:</span></span></span>
 <span class="r-in"><span><span class="va">oc</span> <span class="op">&lt;-</span> <span class="fu"><a href="occurrences_sdm.html">occurrences_sdm</a></span><span class="op">(</span><span class="va">occ</span>, crs <span class="op">=</span> <span class="fl">6933</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="join_area.html">join_area</a></span><span class="op">(</span><span class="va">sa</span><span class="op">)</span></span></span>
@@ -100,7 +102,7 @@ https://luizfesser.wordpress.com</p>
 <span class="r-in"><span><span class="va">i</span> <span class="op">&lt;-</span> <span class="fu"><a href="input_sdm.html">input_sdm</a></span><span class="op">(</span><span class="va">oc</span>, <span class="va">sa</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Pseudoabsence generation:</span></span></span>
-<span class="r-in"><span><span class="va">i</span> <span class="op">&lt;-</span> <span class="fu"><a href="pseudoabsences.html">pseudoabsences</a></span><span class="op">(</span><span class="va">i</span>, method<span class="op">=</span><span class="st">"random"</span>, n_set <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">i</span> <span class="op">&lt;-</span> <span class="fu"><a href="pseudoabsences.html">pseudoabsences</a></span><span class="op">(</span><span class="va">i</span>, method<span class="op">=</span><span class="st">"random"</span>, n_set <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Custom trainControl:</span></span></span>
 <span class="r-in"><span><span class="va">ctrl_sdm</span> <span class="op">&lt;-</span> <span class="fu">caret</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/caret/man/trainControl.html" class="external-link">trainControl</a></span><span class="op">(</span>method <span class="op">=</span> <span class="st">"boot"</span>,</span></span>
@@ -112,7 +114,7 @@ https://luizfesser.wordpress.com</p>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Train models:</span></span></span>
 <span class="r-in"><span><span class="va">i</span> <span class="op">&lt;-</span> <span class="fu"><a href="train_sdm.html">train_sdm</a></span><span class="op">(</span><span class="va">i</span>,</span></span>
-<span class="r-in"><span>               algo <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"naive_bayes"</span>, <span class="st">"kknn"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>               algo <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"naive_bayes"</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>               ctrl<span class="op">=</span><span class="va">ctrl_sdm</span>,</span></span>
 <span class="r-in"><span>               variables_selected <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"bio1"</span>, <span class="st">"bio12"</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
 <span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/warning.html" class="external-link">suppressWarnings</a></span><span class="op">(</span><span class="op">)</span></span></span>
@@ -172,16 +174,16 @@ https://luizfesser.wordpress.com</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Number of presences           : 418 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Pseudoabsence methods         :</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     Method to obtain PAs      : random </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     Number of PA sets         : 3 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     Number of PA sets         : 2 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     Number of PAs in each set : 418 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> --------  Predictors  ---------</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Number of Predictors          : 3 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Predictors Names              : bio1, bio4, bio12 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Number of Predictors          : 2 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Predictors Names              : bio1, bio12 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ---------  Scenarios  ---------</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Number of Scenarios           : 5 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Scenarios Names               : ca_ssp245_2090 ca_ssp585_2090 mi_ssp245_2090 mi_ssp585_2090 current </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> -----------  Models  ----------</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Algorithms Names              : naive_bayes kknn </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Algorithms Names              : naive_bayes </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Variables Names               : bio1 bio12 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Model Validation              :</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     Method                    : boot </span>
@@ -189,8 +191,7 @@ https://luizfesser.wordpress.com</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     Metrics                   :</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $`Araucaria angustifolia`</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>          algo       ROC       TSS Sensitivity Specificity</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1        kknn 0.5921652 0.1843305   1.0000000   0.1843333</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2 naive_bayes 0.8721107 0.4506165   0.9863333   0.4796667</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 naive_bayes 0.8567781 0.4410403       0.974         0.5</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> --------  Predictions  --------</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Ensembles                     :</span>
