@@ -55,12 +55,11 @@ oc <- occurrences_sdm(occ, crs = 6933) |> join_area(sa)
 i <- input_sdm(oc, sa)
 
 # Pseudoabsence generation:
-i <- pseudoabsences(i, method="random")
+i <- pseudoabsences(i, method="random", n_set=2)
 
 # Custom trainControl:
-ctrl_sdm <- caret::trainControl(method = "repeatedcv",
-                                number = 2,
-                                repeats = 1,
+ctrl_sdm <- caret::trainControl(method = "boot",
+                                number = 1,
                                 classProbs = TRUE,
                                 returnResamp = "all",
                                 summaryFunction = summary_sdm,

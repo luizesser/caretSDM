@@ -34,6 +34,7 @@ test_that("predictors - set/get rename predictors", {
 })
 
 test_that("predictors - set/get invalid rename predictors", {
+  skip_on_cran()
   sa <- sdm_area(pr_gpkg, cell_size = 50000, crs = 6399)
   expect_snapshot(
     expect_error(

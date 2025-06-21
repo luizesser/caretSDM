@@ -74,7 +74,8 @@ object.
 }
 \examples{
 # Create sdm_area object:
-sa <- sdm_area(parana, cell_size = 50000, crs = 6933)
+set.seed(1)
+sa <- sdm_area(parana, cell_size = 100000, crs = 6933)
 
 # Include predictors:
 sa <- add_predictors(sa, bioc) |> select_predictors(c("bio1", "bio12"))
@@ -89,11 +90,11 @@ oc <- occurrences_sdm(occ, crs = 6933) |> join_area(sa)
 i <- input_sdm(oc, sa)
 
 # Pseudoabsence generation:
-i <- pseudoabsences(i, method="bioclim")
+i <- pseudoabsences(i, method="random", n_set=2)
 
 # Custom trainControl:
-ctrl_sdm <- caret::trainControl(method = "repeatedcv",
-                                number = 2,
+ctrl_sdm <- caret::trainControl(method = "boot",
+                                number = 1,
                                 repeats = 1,
                                 classProbs = TRUE,
                                 returnResamp = "all",
@@ -105,7 +106,7 @@ i <- train_sdm(i, algo = c("naive_bayes"), ctrl=ctrl_sdm) |>
   suppressWarnings()
 
 # Predict models:
-i  <- predict_sdm(i)
+i  <- predict_sdm(i, th = 0.8)
 i
 
 }

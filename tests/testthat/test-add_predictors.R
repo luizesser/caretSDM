@@ -8,9 +8,6 @@ if (fs::dir_exists(here::here("tests", "testthat", "testdata"))) {
   pr_gpkg <-
     here::here("tests", "testthat", "testdata", "parana.gpkg") |>
     sf::st_read(quiet = TRUE)
-  pr_shp <-
-    here::here("tests", "testthat", "testdata", "parana.shp") |>
-    sf::st_read(quiet = TRUE)
   pr_file <- here::here("tests", "testthat", "testdata", "parana.tiff")
 } else {
   pr_stars <- test_path("testdata", "parana.tiff") |>
@@ -18,8 +15,6 @@ if (fs::dir_exists(here::here("tests", "testthat", "testdata"))) {
   pr_raster <- test_path("testdata", "parana.tiff") |>
     raster::stack()
   pr_gpkg <- test_path("testdata", "parana.gpkg") |>
-    sf::st_read(quiet = TRUE)
-  pr_shp <- test_path("testdata", "parana.shp") |>
     sf::st_read(quiet = TRUE)
   pr_file <- test_path("testdata", "parana.tiff")
 }
@@ -150,7 +145,9 @@ test_that("add_predictors - stack/terra", {
 })
 
 test_that("add_predictors, but there is no overlap", {
-  expect_error(add_predictors(sa, amazon_shp))
+  box <- st_bbox(c(xmin = 16.1, xmax = 16.6, ymax = 48.6, ymin = 47.9), crs = st_crs(4326))
+  box <- sf::st_transform(box, crs=6933)
+  expect_error(add_predictors(sa, box))
 })
 
 test_that("get_predictors - sdm_area", {
@@ -323,7 +320,9 @@ test_that("add_predictors - stack/terra", {
 })
 
 test_that("add_predictors, but there is no overlap", {
-  expect_error(add_predictors(sa_rivs, amazon_shp))
+  box <- st_bbox(c(xmin = 16.1, xmax = 16.6, ymax = 48.6, ymin = 47.9), crs = st_crs(4326))
+  box <- sf::st_transform(box, crs=6933)
+  expect_error(add_predictors(sa_rivs, box))
 })
 
 test_that("get_predictors - sdm_area", {
@@ -389,6 +388,7 @@ test_that("add_predictors - character input", {
 # Others
 
 test_that("add_predictors - rasterStack não usando sdm_area", {
+  skip_on_cran()
   expect_snapshot(
     sa_pred <- add_predictors(pr_raster, pr_raster),
     error = TRUE

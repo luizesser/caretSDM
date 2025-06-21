@@ -37,10 +37,15 @@ test_that("predict_sdm - errors", {
 })
 
 test_that("predict_sdm", {
+  skip_on_cran()
   p <- predict_sdm(i)
-
   expect_snapshot(p)
   expect_snapshot(p$predictions)
+})
+
+test_that("predict_sdm2", {
+  p <- predict_sdm(i)
+
   expect_true("predictions" %in% names(p))
   expect_true("ensembles" %in% names(p$predictions))
 
@@ -68,10 +73,15 @@ test_that("predict_sdm", {
 })
 
 test_that("predict_sdm - th 0", {
+  skip_on_cran()
   p <- predict_sdm(i, th=0)
-
   expect_snapshot(p)
   expect_snapshot(p$predictions)
+})
+
+test_that("predict_sdm2 - th 0", {
+  p <- predict_sdm(i, th=0)
+
   expect_true("predictions" %in% names(p))
   expect_true("ensembles" %in% names(p$predictions))
 
@@ -97,10 +107,14 @@ test_that("predict_sdm - th 0", {
 })
 
 test_that("predict_sdm - th function", {
+  skip_on_cran()
   p <- predict_sdm(i, th=mean)
-
   expect_snapshot(p)
   expect_snapshot(p$predictions)
+})
+
+test_that("predict_sdm - th function", {
+  p <- predict_sdm(i, th=mean)
   expect_true("predictions" %in% names(p))
   expect_true("ensembles" %in% names(p$predictions))
 

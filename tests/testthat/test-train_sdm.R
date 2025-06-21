@@ -30,6 +30,7 @@ test_that("train_sdm", {
   expect_true(all(c("algo", "ROC") %in% colnames(get_validation_metrics(i2)[[1]])))
   expect_true(all(c("bio1", "bio12") %in%
                     colnames(i2$models$models$`Araucaria angustifolia`$m1.1$trainingData)))
+  skip_on_cran()
   expect_snapshot(i2)
 })
 
@@ -46,6 +47,7 @@ test_that("train_sdm - pca", {
   expect_true(all(c("algo", "ROC") %in% colnames(get_validation_metrics(i2)[[1]])))
   expect_true(all(i2$predictors$variable_selection$pca$selected_variables %in%
                     colnames(i2$models$models$`Araucaria angustifolia`$m1.1$trainingData)))
+  skip_on_cran()
   expect_snapshot(i2)
 })
 
@@ -62,6 +64,7 @@ test_that("train_sdm - vif", {
   expect_true(all(c("algo", "ROC") %in% colnames(get_validation_metrics(i2)[[1]])))
   expect_true(all(i2$predictors$variable_selection$vif$selected_variables %in%
                     colnames(i2$models$models$`Araucaria angustifolia`$m1.1$trainingData)))
+  skip_on_cran()
   expect_snapshot(i2)
 })
 
@@ -76,6 +79,7 @@ test_that("train_sdm - change ctrl", {
                                    ctrl=ctrl2))
   expect_equal(10, length(unique(i2$models$models$`Araucaria angustifolia`$m1.1$resample$Resample)))
   expect_equal("boot", i2$models$validation$method)
+  skip_on_cran()
   expect_snapshot(i2)
 })
 
@@ -91,5 +95,6 @@ test_that("train_sdm - selecting vars", {
   expect_true(all(c("algo", "ROC") %in% colnames(get_validation_metrics(i2)[[1]])))
   expect_true(all(c("bio1", "bio12") %in%
                     colnames(i2$models$models$`Araucaria angustifolia`$m1.1$trainingData)))
+  skip_on_cran()
   expect_snapshot(i2)
 })

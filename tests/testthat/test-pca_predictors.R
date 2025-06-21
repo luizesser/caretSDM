@@ -12,6 +12,7 @@ test_that("pca_predictors - normal path", {
   expect_true("pca" %in% names(i$predictors$variable_selection))
   expect_true(any(get_predictor_names(i)[-c(1:6)] %in% i$predictors$variable_selection$pca$selected_variables))
   expect_true(all(get_predictor_names(i)[-c(1:6)] %in% colnames(i$scenarios$data$current)))
+  skip_on_cran()
   expect_snapshot(pca_summary(i))
 })
 
@@ -28,5 +29,6 @@ test_that("pca_predictors - without scenarios", {
   expect_true("pca" %in% names(i$predictors$variable_selection))
   expect_true(any(get_predictor_names(i)[-c(1:6)] %in% i$predictors$variable_selection$pca$selected_variables))
   expect_true(all(get_predictor_names(i)[-c(1:6)] %in% colnames(i$scenarios$data$current)))
+  skip_on_cran()
   expect_snapshot(pca_summary(i))
 })

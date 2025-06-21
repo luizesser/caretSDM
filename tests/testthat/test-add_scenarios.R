@@ -8,17 +8,12 @@ if (fs::dir_exists(here::here("tests", "testthat", "testdata"))) {
   pr_gpkg <-
     here::here("tests", "testthat", "testdata", "parana.gpkg") |>
     sf::st_read(quiet = TRUE)
-  pr_shp <-
-    here::here("tests", "testthat", "testdata", "parana.shp") |>
-    sf::st_read(quiet = TRUE)
 } else {
   pr_stars <- test_path("testdata", "parana.tiff") |>
     stars::read_stars(quiet = TRUE)
   pr_raster <- test_path("testdata", "parana.tiff") |>
     raster::stack()
   pr_gpkg <- test_path("testdata", "parana.gpkg") |>
-    sf::st_read(quiet = TRUE)
-  pr_shp <- test_path("testdata", "parana.shp") |>
     sf::st_read(quiet = TRUE)
 }
 sa <- sdm_area(pr_gpkg, cell_size = 100000, crs = 6933)

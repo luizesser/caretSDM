@@ -8,7 +8,7 @@
 \description{
 \if{html}{\figure{logo.png}{options: style='float: right' alt='logo' width='120'}}
 
-Use machine learning algorithms and advanced geoprocessing tools to build Species Distribution Modeling (SDMs) in a extensible and modern fashion.
+Use machine learning algorithms and advanced geographic information system tools to build Species Distribution Modeling in a extensible and modern fashion.
 }
 \seealso{
 Useful links:

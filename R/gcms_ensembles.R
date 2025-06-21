@@ -23,10 +23,10 @@
 #' sa <- sdm_area(parana, cell_size = 100000, crs = 6933)
 #'
 #' # Include predictors:
-#' sa <- add_predictors(sa, bioc) |> select_predictors(c("bio1", "bio4", "bio12"))
+#' sa <- add_predictors(sa, bioc)
 #'
 #' # Include scenarios:
-#' sa <- add_scenarios(sa, scen)
+#' sa <- add_scenarios(sa, scen) |> select_predictors(c("bio1", "bio12"))
 #'
 #' # Create occurrences:
 #' oc <- occurrences_sdm(occ, crs = 6933) |> join_area(sa)
@@ -35,7 +35,7 @@
 #' i <- input_sdm(oc, sa)
 #'
 #' # Pseudoabsence generation:
-#' i <- pseudoabsences(i, method="random", n_set = 3)
+#' i <- pseudoabsences(i, method="random", n_set = 2)
 #'
 #' # Custom trainControl:
 #' ctrl_sdm <- caret::trainControl(method = "boot",
@@ -47,7 +47,7 @@
 #'
 #' # Train models:
 #' i <- train_sdm(i,
-#'                algo = c("naive_bayes", "kknn"),
+#'                algo = c("naive_bayes"),
 #'                ctrl=ctrl_sdm,
 #'                variables_selected = c("bio1", "bio12")) |>
 #'   suppressWarnings()

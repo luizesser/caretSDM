@@ -7,10 +7,6 @@
 # * https://testthat.r-lib.org/reference/test_package.html#special-files
 
 library(testthat)
-library(future)
-library(tibble)
-library(purrr)
-
 library(caretSDM)
 
 test_check("caretSDM")

@@ -20,3 +20,25 @@ reduce examples' execution time. Test times were also reduced. Check total time 
 
 * This is a new release.
 * R CMD check takes 6m 2.6s
+
+June 20th 2025. "SDM" and "geoprocessing" words in DESCRIPTION were changed. I excluded "library" 
+calls and exluded test-write due to problems with temporary directories creation in CRAN, as well as 
+snapshot tests. I reduced even further the examples to keep them in the requested time. I used 
+skip_on_cran function to avoid errors with snapshot test.
+
+## R CMD check results
+
+0 errors | 0 warnings | 2 note
+
+* This is a new release.
+* R CMD check takes 5m 39.2s
+
+June 21st 2025. I adapted some tests to avoid the use of some bigger files. This saved us the 
+required amount of space to keep the package below 5MB.
+
+## R CMD check results
+
+0 errors | 0 warnings | 1 note
+
+* This is a new release.
+* R CMD check takes 6m 8.8s

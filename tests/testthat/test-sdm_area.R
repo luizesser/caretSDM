@@ -4,25 +4,16 @@ if (fs::dir_exists(here::here("tests", "testthat", "testdata"))) {
     stars::read_stars(quiet = TRUE)
   pr_gpkg <- here::here("tests", "testthat", "testdata", "parana.gpkg") |>
     sf::st_read(quiet = TRUE)
-  pr_shp <- here::here("tests", "testthat", "testdata", "parana.shp") |>
-    sf::st_read(quiet = TRUE)
-  amazon_shp <-  here::here("tests", "testthat", "testdata", "AmazonHydroRivers4.shp") |>
-    sf::st_read(quiet = TRUE)
-  l <-  here::here("tests", "testthat", "testdata", "ne_10m_rivers_lake_centerlines.shp") |>
-    sf::st_read(quiet = TRUE)
+  #pr_shp <- here::here("tests", "testthat", "testdata", "parana.tiff") |>
+  #  stars::read_stars(quiet = TRUE, proxy = TRUE)
 } else {
   pr_tif <- test_path("testdata", "parana.tiff") |>
     stars::read_stars(quiet = TRUE)
   pr_gpkg <- test_path("testdata","parana.gpkg") |>
     sf::st_read(quiet = TRUE)
-  pr_shp <- test_path("testdata","parana.shp")|>
-    sf::st_read(quiet = TRUE)
-  amazon_shp <-  test_path("testdata", "AmazonHydroRivers4.shp") |>
-    sf::st_read(quiet = TRUE)
-  l <-  test_path("testdata", "ne_10m_rivers_lake_centerlines.shp") |>
-    sf::st_read(quiet = TRUE)
+  #pr_shp <- here::here("tests", "testthat", "testdata", "parana.tiff") |>
+  #  stars::read_stars(quiet = TRUE, proxy = TRUE)
 }
-
 ## Test read
 test_that("sdm_area - leitura stars", {
   expect_equal(round(pr_tif$parana.tiff[1, 1, 1], 4), 22.9386)
@@ -52,9 +43,14 @@ test_that("sdm_area - sf/predictors no variables selected", {
 })
 
 test_that("sdm_area - sf/predictors no variables selected", {
+  skip_on_cran()
   expect_snapshot(
     sa <- sdm_area(pr_gpkg, cell_size = 2, variables_selected = c("CODIGOIB1", "NOMEUF2", "foo"))
   )
+})
+
+test_that("sdm_area - sf/predictors no variables selected", {
+  expect_warning(sa <- sdm_area(pr_gpkg, cell_size = 2, variables_selected = c("CODIGOIB1", "NOMEUF2", "foo")))
   expect_equal(predictors(sa), c("CODIGOIB1", "NOMEUF2"))
   expect_true("cell_id" %in% colnames(sa$grid))
   expect_true("geometry" %in% colnames(sa$grid))
@@ -62,26 +58,22 @@ test_that("sdm_area - sf/predictors no variables selected", {
 })
 
 test_that("sdm_area - sf/predictors lines instead of polygons", {
-  sa <- sdm_area(amazon_shp, cell_size = 200000, crs = 6933)
+  sa <- sdm_area(rivs, cell_size = 100000, crs = 6933)
   checkmate::expect_names(
     predictors(sa),
-    permutation.of = c(
-      "HYRIV_ID", "NEXT_DOWN", "MAIN_RIV", "LENGTH_KM", "DIST_DN_KM",
-      "DIST_UP_KM", "CATCH_SKM", "UPLAND_SKM", "ENDORHEIC", "DIS_AV_CMS",
-      "ORD_STRA", "ORD_CLAS", "ORD_FLOW", "HYBAS_L12"
-    ))
+    permutation.of = c("LENGTH_KM", "DIST_DN_KM"))
   expect_true("cell_id" %in% colnames(sa$grid))
   expect_true("geometry" %in% colnames(sa$grid))
   expect_equal(as.character(unique(st_geometry_type(sa$grid))), "POLYGON")
 })
 
-test_that("sdm_area - stars_proxy", {
-  sa <- sdm_area(pr_shp, cell_size = 100000)
-  expect_equal(sf::st_crs(sa$grid), sf::st_crs(pr_shp))
-  expect_true("cell_id" %in% colnames(sa$grid))
-  expect_true("geometry" %in% colnames(sa$grid))
-  expect_equal(as.character(unique(st_geometry_type(sa$grid))), "POLYGON")
-})
+#test_that("sdm_area - stars_proxy", {
+#  sa <- sdm_area(pr_shp, cell_size = 100000)
+#  expect_equal(sf::st_crs(sa$grid), sf::st_crs(pr_shp))
+#  expect_true("cell_id" %in% colnames(sa$grid))
+#  expect_true("geometry" %in% colnames(sa$grid))
+#  expect_equal(as.character(unique(st_geometry_type(sa$grid))), "POLYGON")
+#})
 
 test_that("sdm_area - sf/grid-bbox", {
   sa <- sdm_area(pr_gpkg, cell_size = 2)
@@ -230,6 +222,7 @@ test_that("sdm_area - stack/terra", {
 })
 
 test_that("sdm_area - print", {
+  skip_on_cran()
   sa <- sdm_area(test_path("testdata/parana.gpkg"), cell_size = 2)
   expect_snapshot(print(sa), error = FALSE)
 })
@@ -278,6 +271,7 @@ test_that("sdm_area - GEOMTYPE - stars", {
 
 ## Test .detect_sdm_area
 test_that("sdm_area - sdm_area para ser detectado", {
+  skip_on_cran()
   sa <- sdm_area(pr_gpkg, cell_size = 100000, crs = 6933)
   expect_snapshot(
     expect_equal(
@@ -299,6 +293,7 @@ test_that("sdm_area - gpkg para retornar NULL", {
 })
 
 test_that("sdm_area - sdm_area para ser detectado com parametros diferentes", {
+  skip_on_cran()
   sa <- sdm_area(pr_gpkg, cell_size = 100000, crs = 6933)
   expect_snapshot(
     expect_equal(
@@ -310,7 +305,7 @@ test_that("sdm_area - sdm_area para ser detectado com parametros diferentes", {
 
 test_that("sdm_area - sf/predictors try detect lines instead of polygons", {
   expect_equal(
-    .detect_sdm_area(amazon_shp |> dplyr::rename(cell_id=HYRIV_ID), cell_size = 100000, crs = 6933),
+    .detect_sdm_area(rivs |> dplyr::mutate(cell_id=rep(1:nrow(rivs))), cell_size = 100000, crs = 6933),
     "x has other features than of polygons."
   )
 })
@@ -324,6 +319,7 @@ test_that("sdm_area - sdm_area para ser detectado", {
 
 ## Test .detect_sdm_area
 test_that("sdm_area - sdm_area para ser detectado com avisos", {
+  skip_on_cran()
   sa <- sdm_area(pr_gpkg, cell_size = 100000, crs = 6933)
   expect_snapshot(
     expect_equal(
@@ -351,19 +347,22 @@ test_that("sdm_area - crop_by tem crs diferente de bioc e crs=NULL", {
 
 # print
 test_that("sdm_area - print", {
+  skip_on_cran()
   sa <- sdm_area(bioc, cell_size = 100000, crs = 6933)
   expect_snapshot(sa)
 })
 
 # test gdal=F
 test_that("sdm_area - sf+gdal=F", {
+  skip_on_cran()
   sa <- sdm_area(pr_gpkg, cell_size = 100000, crs=6933, gdal=F)
   expect_snapshot(sa)
 })
 
 test_that("sdm_area - sf+gdal=F areas do not intersect", {
-  am <- sf::st_transform(amazon_shp, crs=6933)
-  expect_warning(sdm_area(pr_gpkg, cell_size = 100000, crs=6933, crop_by = am, gdal=F))
+  box <- st_bbox(c(xmin = 16.1, xmax = 16.6, ymax = 48.6, ymin = 47.9), crs = st_crs(4326))
+  box <- sf::st_transform(box, crs=6933)
+  expect_warning(sdm_area(parana, cell_size = 100000, crs=6933, crop_by = box, gdal=F))
 })
 
 test_that("sdm_area - sf+gdal=F numeric col", {
@@ -374,13 +373,15 @@ test_that("sdm_area - sf+gdal=F numeric col", {
 })
 
 test_that("sdm_area - stars+gdal=F", {
+  skip_on_cran()
   sa <- sdm_area(pr_tif, cell_size = 100000, crs=6933, gdal=F)
   expect_snapshot(sa)
 })
 
 test_that("sdm_area - stars+gdal=F areas do not intersect", {
-  am <- sf::st_transform(amazon_shp, crs=6933)
-  expect_warning(sdm_area(pr_tif, cell_size = 100000, crs=6933, crop_by = am, gdal=F))
+  box <- st_bbox(c(xmin = 16.1, xmax = 16.6, ymax = 48.6, ymin = 47.9), crs = st_crs(4326))
+  box <- sf::st_transform(box, crs=6933)
+  expect_warning(sdm_area(pr_tif, cell_size = 100000, crs=6933, crop_by = box, gdal=F))
 })
 
 # test lines

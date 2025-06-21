@@ -332,6 +332,7 @@ test_that("occurrences - print", {
   set.seed(1)
   tb <- tibble::tibble(decimalLatitude = runif(100), longitude = runif(100), sp = c(rep("Aa", 100)))
   oc <- occurrences_sdm(tb, independent_test = TRUE)
+  skip_on_cran()
   expect_snapshot(print(oc), error = FALSE)
 })
 
