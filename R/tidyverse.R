@@ -11,9 +11,9 @@
 #' @param .by See ?dplyr::filter.
 #' @param .preserve See ?dplyr::filter.
 #'
+#' @returns The transformed \code{sdm_area}/\code{input_sdm} object.
 #'
 #' @examples
-
 #' # Create sdm_area object:
 #' sa <- sdm_area(parana, cell_size = 25000, crs = 6933)
 #'

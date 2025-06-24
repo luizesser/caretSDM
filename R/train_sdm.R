@@ -327,6 +327,7 @@ mean_validation_metrics <- function(i) {
 #' Print method for models
 #' @param x models object
 #' @param ... passed to other methods
+#' @returns Concatenate structured characters to showcase what is stored in the object.
 #' @exportS3Method base::print
 print.models <- function(x, ...) {
   cat("         caretSDM        \n")

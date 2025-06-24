@@ -310,6 +310,7 @@ add_occurrences <- function(oc1, oc2) {
 #' Print method for occurrences
 #' @param x occurrences object
 #' @param ... passed to other methods
+#' @returns Concatenate structured characters to showcase what is stored in the object.
 #' @exportS3Method base::print
 print.occurrences <- function(x, ...) {
   cat("        caretSDM       \n")

@@ -1,6 +1,6 @@
 Type: Package
 Package: caretSDM
-Title: Build Species Distribution Modeling using Caret
+Title: Build Species Distribution Modeling using 'caret'
 Version: 1.1.0
 Authors@R: c(
     person("Dayani", "Bailly", role = "aut",
@@ -76,6 +76,5 @@ Suggests:
 Config/testthat/edition: 3
 Depends: 
     R (>= 4.2.0)
-VignetteBuilder: knitr
 URL: https://luizesser.github.io/caretSDM/
 Config/Needs/website: rmarkdown

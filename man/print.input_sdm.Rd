@@ -11,6 +11,9 @@
 
 \item{...}{passed to other methods}
 }
+\value{
+Concatenate structured characters to showcase what is stored in the object.
+}
 \description{
 Print method for input_sdm
 }

@@ -9,47 +9,29 @@
 \alias{write_gpkg.sdm_area}
 \alias{write_occurrences}
 \alias{write_pseudoabsences}
-\alias{write_scenarios}
 \alias{write_grid}
 \alias{write_validation_metrics}
 \title{Write caretSDM data}
 \usage{
-write_ensembles(x, path = "results/ensembles", ext = ".tif", centroid = FALSE)
+write_ensembles(x, path = NULL, ext = ".tif", centroid = FALSE)
 
-write_predictions(
-  x,
-  path = "results/predictions",
-  ext = ".tif",
-  centroid = FALSE
-)
+write_predictions(x, path = NULL, ext = ".tif", centroid = FALSE)
 
-write_predictors(
-  x,
-  path = "results/predictors",
-  ext = ".tif",
-  centroid = FALSE
-)
+write_predictors(x, path = NULL, ext = ".tif", centroid = FALSE)
 
-write_models(x, path = "results/models")
+write_models(x, path = NULL)
 
 write_gpkg(x, file_path, file_name)
 
 \method{write_gpkg}{sdm_area}(x, file_path, file_name)
 
-write_occurrences(x, path = "results/occurrences.csv", grid = FALSE, ...)
+write_occurrences(x, path = NULL, grid = FALSE, ...)
 
-write_pseudoabsences(
-  x,
-  path = "results/pseudoabsences",
-  ext = ".csv",
-  centroid = FALSE
-)
+write_pseudoabsences(x, path = NULL, ext = ".csv", centroid = FALSE)
 
-write_scenarios(x, path = "results/predictors", ext = ".tif")
+write_grid(x, path = NULL, centroid = FALSE)
 
-write_grid(x, path = "results/grid_study_area.gpkg", centroid = FALSE)
-
-write_validation_metrics(x, path = "results/validation_metrics")
+write_validation_metrics(x, path = NULL)
 }
 \arguments{
 \item{x}{Object to be written. Can be of class \code{input_sdm}, \code{occurrences},
@@ -69,6 +51,9 @@ files in.}
 \item{grid}{Boolean. Return a grid.}
 
 \item{...}{Arguments to pass to \code{sf::st_write} or \code{write.csv}.}
+}
+\value{
+No return value, called for side effects.
 }
 \description{
 This function exports caretSDM data.

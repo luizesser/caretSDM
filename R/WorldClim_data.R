@@ -57,19 +57,32 @@
 #' Note that, despite being possible to retrieve a lot of data at once, it is not recommended to do
 #' so, since the data is very heavy.
 #'
+#' @returns If data is not downloaded, the function downloads the data and has no return value. If
+#' the data is downloaded, it imports the data as a \code{stack}.
+#'
 #' @references https://www.worldclim.org/data/index.html
 #'
 #' @author Luíz Fernando Esser (luizesser@gmail.com)
 #' https://luizfesser.wordpress.com
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' # download data from multiple periods:
-#' year <- c(2050, 2090)
-#' WorldClim_data("bioc", year, "mi", 126, 10)
+#' year <- c("2050", "2090")
+#' WorldClim_data(period = "future",
+#'                variable = "bioc",
+#'                year = year,
+#'                gcm = "mi",
+#'                ssp = "126",
+#'                resolution = 10)
 #'
 #' # download data from one specific period
-#' WorldClim_data("bioc", 2070, "mi", 585, 10)
+#' WorldClim_data(period = "future",
+#'                variable = "bioc",
+#'                year = "2070",
+#'                gcm = "mi",
+#'                ssp = "585",
+#'                resolution = 10)
 #' }
 #'
 #' @importFrom httr GET write_disk http_error
@@ -165,6 +178,9 @@ WorldClim_data <- function(path = NULL, period = "current", variable = "bioc", y
   }
 
   if (period == "future") {
+    if (is.null(path)) {
+      path <- "input_data/WorldClim_data_future"
+    }
     if (!dir.exists(path)) {
       dir.create(path, recursive = TRUE)
     }

@@ -76,6 +76,7 @@ input_sdm <- function(...) {
 #' Print method for input_sdm
 #' @param x input_sdm object
 #' @param ... passed to other methods
+#' @returns Concatenate structured characters to showcase what is stored in the object.
 #' @exportS3Method base::print
 print.input_sdm <- function(x, ...) {
   cat("            caretSDM           \n")

@@ -55,3 +55,10 @@ I transformed them in articles for package's website.
 * This is a new release.
 * R CMD check takes 2m 59.3s
 
+June 24th 2025. I included single quotes in the package name in the title. I changed dontrun to
+donttest in GBIF_data and WorlClim_data functions' examples. I changed parameters description from
+GBIF_data function to make clear that if file parameter is not informed, it will not save data on
+folder. The same was applied to write functions, where now the path parameter is set as NULL. 
+Package has still no article supporting it, but an article is being prepared for submission in the
+next months. Finally, I included the return-tag in roxygen documentation for print functions, 
+WorldClim_data, tidyverse functions and write functions.

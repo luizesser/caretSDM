@@ -43,6 +43,9 @@ filter_species(x, spp = NULL, ...)
 
 \item{spp}{Species to be filtered.}
 }
+\value{
+The transformed \code{sdm_area}/\code{input_sdm} object.
+}
 \description{
 Set of functions to facilitate the use of caretSDM through tidyverse grammatics.
 }

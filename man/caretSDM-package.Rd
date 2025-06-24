@@ -4,7 +4,7 @@
 \name{caretSDM-package}
 \alias{caretSDM}
 \alias{caretSDM-package}
-\title{caretSDM: Build Species Distribution Modeling using Caret}
+\title{caretSDM: Build Species Distribution Modeling using 'caret'}
 \description{
 \if{html}{\figure{logo.png}{options: style='float: right' alt='logo' width='120'}}
 

@@ -294,6 +294,7 @@ get_ensembles <- function(i) {
 #' Print method for predictions
 #' @param x predictions object
 #' @param ... passed to other methods
+#' @returns Concatenate structured characters to showcase what is stored in the object.
 #' @exportS3Method base::print
 print.predictions <- function(x, ...) {
   cat("         caretSDM        \n")

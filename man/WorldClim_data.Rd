@@ -58,6 +58,10 @@ You can use a vector to provide more than one entry.}
 
 \item{resolution}{You can select one resolution from the following alternatives: 10, 5, 2.5 OR 30.}
 }
+\value{
+If data is not downloaded, the function downloads the data and has no return value. If
+the data is downloaded, it imports the data as a \code{stack}.
+}
 \description{
 This function allows to download data from WorldClim v.2.1
 (https://www.worldclim.org/data/index.html) considering multiple GCMs, time periods and SSPs.
@@ -69,13 +73,23 @@ Note that, despite being possible to retrieve a lot of data at once, it is not r
 so, since the data is very heavy.
 }
 \examples{
-\dontrun{
+\donttest{
 # download data from multiple periods:
-year <- c(2050, 2090)
-WorldClim_data("bioc", year, "mi", 126, 10)
+year <- c("2050", "2090")
+WorldClim_data(period = "future",
+               variable = "bioc",
+               year = year,
+               gcm = "mi",
+               ssp = "126",
+               resolution = 10)
 
 # download data from one specific period
-WorldClim_data("bioc", 2070, "mi", 585, 10)
+WorldClim_data(period = "future",
+               variable = "bioc",
+               year = "2070",
+               gcm = "mi",
+               ssp = "585",
+               resolution = 10)
 }
 
 }

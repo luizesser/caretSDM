@@ -4,12 +4,13 @@
 \alias{GBIF_data}
 \title{Retrieve Species data from GBIF}
 \usage{
-GBIF_data(s, file = "", as_df = FALSE, ...)
+GBIF_data(s, file = NULL, as_df = FALSE, ...)
 }
 \arguments{
 \item{s}{\code{character} vector of species names.}
 
-\item{file}{File to save the output.}
+\item{file}{\code{character} with file to save the output. If not informed, data will not be
+saved on folder.}
 
 \item{as_df}{Should the output be a \code{dataframe}? Default is \code{FALSE}, returning a
 \code{occurrences} object.}
@@ -25,7 +26,7 @@ This function is a wrapper to get records from GBIF using \code{rgbif} and retur
 \code{data.frame} ready to be used in caretSDM.
 }
 \examples{
-\dontrun{
+\donttest{
 # Select species names:
 s <- c("Araucaria angustifolia", "Salminus brasiliensis")
 

@@ -2,7 +2,7 @@
 #'
 #' This function exports caretSDM data.
 #'
-#' @usage write_ensembles(x, path = "results/ensembles", ext = ".tif", centroid = FALSE)
+#' @usage write_ensembles(x, path = NULL, ext = ".tif", centroid = FALSE)
 #'
 #' @param x Object to be written. Can be of class \code{input_sdm}, \code{occurrences},
 #' \code{predictions} or \code{models}.
@@ -21,6 +21,8 @@
 #' "gtm", "gxt", "jml", "map", "mdb", "nc", "ods", "osm", "pbf", "shp", "sqlite", "vdv", "xls", "xlsx").
 #' \code{path} ideally shoulf only provide the folder.
 #'
+#' @returns No return value, called for side effects.
+#'
 #' @author Luíz Fernando Esser (luizesser@gmail.com)
 #' https://luizfesser.wordpress.com
 #'
@@ -34,11 +36,14 @@
 #' @global cell_id.x species sp sc geometry
 #'
 #' @export
-write_ensembles <- function(x, path = "results/ensembles", ext = ".tif", centroid = FALSE) {
+write_ensembles <- function(x, path = NULL, ext = ".tif", centroid = FALSE) {
   if (is_input_sdm(x)) {
     y <- x$predictions
   } else {
     y <- x
+  }
+  if(is.null(path)){
+    path <- "results/ensembles"
   }
   ext_sf <- c(".bna", ".csv", ".e00", ".gdb", ".geojson", ".gml", ".gmt", ".gpkg", ".gps", ".gtm", ".gxt", ".jml",
               ".map", ".mdb", ".nc", ".ods", ".osm", ".pbf", ".shp", ".sqlite", ".vdv", ".xls", ".xlsx")
@@ -74,11 +79,14 @@ write_ensembles <- function(x, path = "results/ensembles", ext = ".tif", centroi
 
 #' @rdname write_ensembles
 #' @export
-write_predictions <- function(x, path = "results/predictions", ext = ".tif", centroid = FALSE) {
+write_predictions <- function(x, path = NULL, ext = ".tif", centroid = FALSE) {
   if (is_input_sdm(x)) {
     y <- x$predictions
   } else {
     y <- x
+  }
+  if(is.null(path)) {
+    path = "results/predictions"
   }
   ext_sf <- c(".bna", ".csv", ".e00", ".gdb", ".geojson", ".gml", ".gmt", ".gpkg", ".gps", ".gtm", ".gxt", ".jml",
               ".map", ".mdb", ".nc", ".ods", ".osm", ".pbf", ".shp", ".sqlite", ".vdv", ".xls", ".xlsx")
@@ -114,11 +122,14 @@ write_predictions <- function(x, path = "results/predictions", ext = ".tif", cen
 
 #' @rdname write_ensembles
 #' @export
-write_predictors <- function(x, path = "results/predictors", ext = ".tif", centroid = FALSE) {
+write_predictors <- function(x, path = NULL, ext = ".tif", centroid = FALSE) {
   if (is_input_sdm(x)) {
     y <- x$predictors
   } else {
     y <- x
+  }
+  if(is.null(path)) {
+    path <- "results/predictors"
   }
   ext_sf <- c(".bna", ".csv", ".e00", ".gdb", ".geojson", ".gml", ".gmt", ".gpkg", ".gps", ".gtm", ".gxt", ".jml",
               ".map", ".mdb", ".nc", ".ods", ".osm", ".pbf", ".shp", ".sqlite", ".vdv", ".xls", ".xlsx")
@@ -143,11 +154,14 @@ write_predictors <- function(x, path = "results/predictors", ext = ".tif", centr
 
 #' @rdname write_ensembles
 #' @export
-write_models <- function(x, path = "results/models") {
+write_models <- function(x, path = NULL) {
   if (is_input_sdm(x)) {
     y <- x$models
   } else {
     y <- x
+  }
+  if(is.null(path)) {
+    path <- "results/models"
   }
   spp <- names(y$models)
   for (sp in spp) {
@@ -196,7 +210,10 @@ write_gpkg.sdm_area <- function(x, file_path, file_name) {
 
 #' @rdname write_ensembles
 #' @export
-write_occurrences <- function(x, path = "results/occurrences.csv", grid = FALSE, ...) {
+write_occurrences <- function(x, path = NULL, grid = FALSE, ...) {
+  if(is.null(path)) {
+    path <- "results/occurrences.csv"
+  }
   if(is_input_sdm(x) & grid){
     suppressWarnings(dir.create(dirname(path), recursive = TRUE))
     assert_directory_cli(dirname(path))
@@ -223,8 +240,11 @@ write_occurrences <- function(x, path = "results/occurrences.csv", grid = FALSE,
 
 #' @rdname write_ensembles
 #' @export
-write_pseudoabsences <- function(x, path = "results/pseudoabsences", ext = ".csv", centroid = FALSE) {
+write_pseudoabsences <- function(x, path = NULL, ext = ".csv", centroid = FALSE) {
   y <- pseudoabsence_data(x)
+  if(is.null(path)) {
+    path <- "results/pseudoabsences"
+  }
   ext_sf <- c(".bna", ".csv", ".e00", ".gdb", ".geojson", ".gml", ".gmt", ".gpkg", ".gps", ".gtm", ".gxt", ".jml",
               ".map", ".mdb", ".nc", ".ods", ".osm", ".pbf", ".shp", ".sqlite", ".vdv", ".xls", ".xlsx")
   spp <- species_names(x)
@@ -256,15 +276,12 @@ write_pseudoabsences <- function(x, path = "results/pseudoabsences", ext = ".csv
 
 #' @rdname write_ensembles
 #' @export
-write_scenarios <- function(x, path = "results/predictors", ext = ".tif") {
-
-}
-
-#' @rdname write_ensembles
-#' @export
-write_grid <- function(x, path = "results/grid_study_area.gpkg", centroid = FALSE) {
+write_grid <- function(x, path = NULL, centroid = FALSE) {
   if(is_input_sdm(x)){
     x <- x$predictors
+  }
+  if(is.null(path)) {
+    path <- "results/grid_study_area.gpkg"
   }
   assert_class_cli(x, "sdm_area")
   suppressWarnings(dir.create(dirname(path), recursive = TRUE))
@@ -286,7 +303,10 @@ write_grid <- function(x, path = "results/grid_study_area.gpkg", centroid = FALS
 
 #' @rdname write_ensembles
 #' @export
-write_validation_metrics <- function(x, path = "results/validation_metrics") {
+write_validation_metrics <- function(x, path = NULL) {
+  if(is.null(path)) {
+    path <- "results/validation_metrics"
+  }
   spp <- species_names(x)
   val <- get_validation_metrics(x)
   for (sp in spp) {
