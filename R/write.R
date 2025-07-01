@@ -16,10 +16,13 @@
 #' @param ... Arguments to pass to \code{sf::st_write} or \code{write.csv}.
 #'
 #' @details
-#' \code{ext} can be set accordingly to the desired output. Possible values are .tif and .asc for rasters,
-#' .csv for for a spreadsheet, but also  one of: c("bna", "csv", "e00", "gdb", "geojson", "gml", "gmt", "gpkg", "gps",
-#' "gtm", "gxt", "jml", "map", "mdb", "nc", "ods", "osm", "pbf", "shp", "sqlite", "vdv", "xls", "xlsx").
-#' \code{path} ideally shoulf only provide the folder.
+#' \code{ext} can be set accordingly to the desired output. Possible values are .tif and .asc for
+#' rasters, .csv for for a spreadsheet, but also  one of: c("bna", "csv", "e00", "gdb", "geojson",
+#' "gml", "gmt", "gpkg", "gps", "gtm", "gxt", "jml", "map", "mdb", "nc", "ods", "osm", "pbf", "shp",
+#' "sqlite", "vdv", "xls", "xlsx").
+#' \code{path} ideally should only provide the folder. We recommend using:
+#' \code{results/what_are_you_writting}. So for writting ensembles users are advised to run:
+#' \code{path = "results/ensembles"}
 #'
 #' @returns No return value, called for side effects.
 #'
@@ -42,9 +45,7 @@ write_ensembles <- function(x, path = NULL, ext = ".tif", centroid = FALSE) {
   } else {
     y <- x
   }
-  if(is.null(path)){
-    path <- "results/ensembles"
-  }
+  assert_character_cli(path, null.ok = FALSE)
   ext_sf <- c(".bna", ".csv", ".e00", ".gdb", ".geojson", ".gml", ".gmt", ".gpkg", ".gps", ".gtm", ".gxt", ".jml",
               ".map", ".mdb", ".nc", ".ods", ".osm", ".pbf", ".shp", ".sqlite", ".vdv", ".xls", ".xlsx")
   scen <- colnames(y$ensembles)
@@ -85,9 +86,7 @@ write_predictions <- function(x, path = NULL, ext = ".tif", centroid = FALSE) {
   } else {
     y <- x
   }
-  if(is.null(path)) {
-    path = "results/predictions"
-  }
+  assert_character_cli(path, null.ok = FALSE)
   ext_sf <- c(".bna", ".csv", ".e00", ".gdb", ".geojson", ".gml", ".gmt", ".gpkg", ".gps", ".gtm", ".gxt", ".jml",
               ".map", ".mdb", ".nc", ".ods", ".osm", ".pbf", ".shp", ".sqlite", ".vdv", ".xls", ".xlsx")
   scen <- names(y$predictions)
@@ -160,9 +159,7 @@ write_models <- function(x, path = NULL) {
   } else {
     y <- x
   }
-  if(is.null(path)) {
-    path <- "results/models"
-  }
+  assert_character_cli(path, null.ok = FALSE)
   spp <- names(y$models)
   for (sp in spp) {
     if (!dir.exists(paste0(path, "/", sp))) {
@@ -242,9 +239,7 @@ write_occurrences <- function(x, path = NULL, grid = FALSE, ...) {
 #' @export
 write_pseudoabsences <- function(x, path = NULL, ext = ".csv", centroid = FALSE) {
   y <- pseudoabsence_data(x)
-  if(is.null(path)) {
-    path <- "results/pseudoabsences"
-  }
+  assert_character_cli(path, null.ok = FALSE)
   ext_sf <- c(".bna", ".csv", ".e00", ".gdb", ".geojson", ".gml", ".gmt", ".gpkg", ".gps", ".gtm", ".gxt", ".jml",
               ".map", ".mdb", ".nc", ".ods", ".osm", ".pbf", ".shp", ".sqlite", ".vdv", ".xls", ".xlsx")
   spp <- species_names(x)
@@ -280,9 +275,7 @@ write_grid <- function(x, path = NULL, centroid = FALSE) {
   if(is_input_sdm(x)){
     x <- x$predictors
   }
-  if(is.null(path)) {
-    path <- "results/grid_study_area.gpkg"
-  }
+  assert_character_cli(path, null.ok = FALSE)
   assert_class_cli(x, "sdm_area")
   suppressWarnings(dir.create(dirname(path), recursive = TRUE))
   assert_directory_cli(dirname(path))
@@ -304,9 +297,6 @@ write_grid <- function(x, path = NULL, centroid = FALSE) {
 #' @rdname write_ensembles
 #' @export
 write_validation_metrics <- function(x, path = NULL) {
-  if(is.null(path)) {
-    path <- "results/validation_metrics"
-  }
   spp <- species_names(x)
   val <- get_validation_metrics(x)
   for (sp in spp) {

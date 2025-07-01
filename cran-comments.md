@@ -62,3 +62,7 @@ folder. The same was applied to write functions, where now the path parameter is
 Package has still no article supporting it, but an article is being prepared for submission in the
 next months. Finally, I included the return-tag in roxygen documentation for print functions, 
 WorldClim_data, tidyverse functions and write functions.
+
+June 29th 2025. When using write functions and setting path to NULL, I was creating a path, which I
+was advised against. I deleted the code for that and recommended the use of standardized paths in the
+documentation of the function. I also added a assertion to avoid the use of path=NULL.

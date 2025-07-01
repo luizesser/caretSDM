@@ -59,10 +59,13 @@ No return value, called for side effects.
 This function exports caretSDM data.
 }
 \details{
-\code{ext} can be set accordingly to the desired output. Possible values are .tif and .asc for rasters,
-.csv for for a spreadsheet, but also  one of: c("bna", "csv", "e00", "gdb", "geojson", "gml", "gmt", "gpkg", "gps",
-"gtm", "gxt", "jml", "map", "mdb", "nc", "ods", "osm", "pbf", "shp", "sqlite", "vdv", "xls", "xlsx").
-\code{path} ideally shoulf only provide the folder.
+\code{ext} can be set accordingly to the desired output. Possible values are .tif and .asc for
+rasters, .csv for for a spreadsheet, but also  one of: c("bna", "csv", "e00", "gdb", "geojson",
+"gml", "gmt", "gpkg", "gps", "gtm", "gxt", "jml", "map", "mdb", "nc", "ods", "osm", "pbf", "shp",
+"sqlite", "vdv", "xls", "xlsx").
+\code{path} ideally should only provide the folder. We recommend using:
+\code{results/what_are_you_writting}. So for writting ensembles users are advised to run:
+\code{path = "results/ensembles"}
 }
 \author{
 Luíz Fernando Esser (luizesser@gmail.com)
