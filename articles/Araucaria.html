@@ -38,7 +38,8 @@
 <li class="active nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
-<li><a class="dropdown-item" href="../articles/Araucaria.html">caretSDM Workflow for Species Distribution Modeling</a></li>
+<li><a class="dropdown-item" href="../articles/Add-Algorithm.html">Adding New Algorithms to caretSDM</a></li>
+    <li><a class="dropdown-item" href="../articles/Araucaria.html">caretSDM Workflow for Species Distribution Modeling</a></li>
     <li><a class="dropdown-item" href="../articles/Compact.html">Concatenate functions in caretSDM</a></li>
     <li><a class="dropdown-item" href="../articles/Salminus.html">Modeling Species Distributions in Continental Water Bodies</a></li>
   </ul>
@@ -194,7 +195,7 @@ information on the data)..</p>
 <span><span class="co">#&gt;   GID0 CODIGOIB1 NOMEUF2 SIGLAUF3                           geom</span></span>
 <span><span class="co">#&gt; 1   19        41  PARANA       PR MULTIPOLYGON (((-52.06416 -...</span></span></code></pre></div>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">parana</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/tidyverse-methods.html">select_predictors</a></span><span class="op">(</span><span class="va">NOMEUF2</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">parana</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/tidyverse-methods.html">select_predictors</a></span><span class="op">(</span><span class="va">NOMEUF2</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/base/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <p><img src="Araucaria_files/figure-html/parana_view-1.png" width="700"></p>
 <p>The <code>sdm_area</code> function is responsible to create a grid to
 build models, a key aspect of caretSDM workflow. With a grid built,
@@ -465,7 +466,7 @@ This method is only possible when we have both the
 <span><span class="co">#&gt; Testing coordinate validity</span></span>
 <span><span class="co">#&gt; Removed 0 records.</span></span>
 <span><span class="co">#&gt; Testing sea coordinates</span></span>
-<span><span class="co">#&gt; Reading layer `ne_110m_land' from data source `/tmp/RtmpsIk9H6/ne_110m_land.shp' using driver `ESRI Shapefile'</span></span>
+<span><span class="co">#&gt; Reading layer `ne_110m_land' from data source `/tmp/RtmpZ3KIo2/ne_110m_land.shp' using driver `ESRI Shapefile'</span></span>
 <span><span class="co">#&gt; Simple feature collection with 127 features and 3 fields</span></span>
 <span><span class="co">#&gt; Geometry type: POLYGON</span></span>
 <span><span class="co">#&gt; Dimension:     XY</span></span>
@@ -1134,7 +1135,7 @@ simplefeatures object instead of cells in a grid.</p>
 <div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">end_time</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">end_time</span> <span class="op">-</span> <span class="va">start_time</span></span>
-<span><span class="co">#&gt; Time difference of 1.986803 mins</span></span></code></pre></div>
+<span><span class="co">#&gt; Time difference of 2.078406 mins</span></span></code></pre></div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>
