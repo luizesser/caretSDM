@@ -127,9 +127,8 @@ write_predictors <- function(x, path = NULL, ext = ".tif", centroid = FALSE) {
   } else {
     y <- x
   }
-  if(is.null(path)) {
-    path <- "results/predictors"
-  }
+  assert_character_cli(path, null.ok = FALSE)
+
   ext_sf <- c(".bna", ".csv", ".e00", ".gdb", ".geojson", ".gml", ".gmt", ".gpkg", ".gps", ".gtm", ".gxt", ".jml",
               ".map", ".mdb", ".nc", ".ods", ".osm", ".pbf", ".shp", ".sqlite", ".vdv", ".xls", ".xlsx")
   grd <- y$grid
@@ -160,11 +159,13 @@ write_models <- function(x, path = NULL) {
     y <- x
   }
   assert_character_cli(path, null.ok = FALSE)
+
   spp <- names(y$models)
   for (sp in spp) {
     if (!dir.exists(paste0(path, "/", sp))) {
       dir.create(paste0(path, "/", sp), recursive = TRUE)
     }
+    assert_directory_cli(dirname(path))
     saveRDS(y$models[[sp]], paste0(path, "/", sp, "/models.rds"))
   }
 }
@@ -208,9 +209,9 @@ write_gpkg.sdm_area <- function(x, file_path, file_name) {
 #' @rdname write_ensembles
 #' @export
 write_occurrences <- function(x, path = NULL, grid = FALSE, ...) {
-  if(is.null(path)) {
-    path <- "results/occurrences.csv"
-  }
+  assert_character_cli(path, null.ok = FALSE)
+  assert_logical_cli(grid, len = 1)
+
   if(is_input_sdm(x) & grid){
     suppressWarnings(dir.create(dirname(path), recursive = TRUE))
     assert_directory_cli(dirname(path))
@@ -238,8 +239,11 @@ write_occurrences <- function(x, path = NULL, grid = FALSE, ...) {
 #' @rdname write_ensembles
 #' @export
 write_pseudoabsences <- function(x, path = NULL, ext = ".csv", centroid = FALSE) {
-  y <- pseudoabsence_data(x)
   assert_character_cli(path, null.ok = FALSE)
+  assert_directory_cli(dirname(path))
+  assert_logical_cli(centroid, len = 1)
+
+  y <- pseudoabsence_data(x)
   ext_sf <- c(".bna", ".csv", ".e00", ".gdb", ".geojson", ".gml", ".gmt", ".gpkg", ".gps", ".gtm", ".gxt", ".jml",
               ".map", ".mdb", ".nc", ".ods", ".osm", ".pbf", ".shp", ".sqlite", ".vdv", ".xls", ".xlsx")
   spp <- species_names(x)
@@ -276,6 +280,8 @@ write_grid <- function(x, path = NULL, centroid = FALSE) {
     x <- x$predictors
   }
   assert_character_cli(path, null.ok = FALSE)
+  assert_logical_cli(centroid, len = 1)
+
   assert_class_cli(x, "sdm_area")
   suppressWarnings(dir.create(dirname(path), recursive = TRUE))
   assert_directory_cli(dirname(path))
@@ -297,6 +303,8 @@ write_grid <- function(x, path = NULL, centroid = FALSE) {
 #' @rdname write_ensembles
 #' @export
 write_validation_metrics <- function(x, path = NULL) {
+  assert_character_cli(path, null.ok = FALSE)
+  assert_directory_cli(dirname(path))
   spp <- species_names(x)
   val <- get_validation_metrics(x)
   for (sp in spp) {

@@ -44,6 +44,7 @@ use_mem <- function(x, add = TRUE, name = "MEM") {
   } else {
     stop("x must be of class input_sdm or occurrences")
   }
+
   if (!add) {
     y$occurrences$species <- rep(name, length(y$occurrences$species))
     y$spp_names <- name

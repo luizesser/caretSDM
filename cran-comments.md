@@ -66,3 +66,5 @@ WorldClim_data, tidyverse functions and write functions.
 June 29th 2025. When using write functions and setting path to NULL, I was creating a path, which I
 was advised against. I deleted the code for that and recommended the use of standardized paths in the
 documentation of the function. I also added a assertion to avoid the use of path=NULL.
+
+July 5th 2025. I missed some functions on the previous comment. Now they are addressed.

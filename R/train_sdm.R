@@ -87,6 +87,7 @@
 #' @importFrom pROC roc
 #' @importFrom caret train trainControl
 #' @importFrom stars st_extract
+#' @importFrom utils combn
 #'
 #' @global species
 #'
@@ -97,7 +98,8 @@ train_sdm <- function(occ, pred = NULL, algo, ctrl = NULL, variables_selected = 
     z <- occ$occurrences
     pred <- occ$predictors
   }
-  assert_character_cli(algo)
+  assert_subset_cli(class(algo), c("list", "character"), empty.ok = FALSE)
+
   if(!is.null(ctrl)){
     assert_list_cli(ctrl, len=27)
     assert_names_cli(names(ctrl),
@@ -129,6 +131,11 @@ train_sdm <- function(occ, pred = NULL, algo, ctrl = NULL, variables_selected = 
     )
   }
   algo2 <- algo
+  custom_algo <- c("label", "library", "loop", "type", "levels", "parameters", "grid", "fit",
+                   "predict", "prob", "predictors", "varImp", "tags")
+  if(is.list(algo) && all(names(algo) %in% custom_algo)) {
+    algo2 <- deparse(substitute(algo))
+  }
 
   l <- list()
   if ("independent_test" %in% names(z)) {
@@ -168,18 +175,66 @@ train_sdm <- function(occ, pred = NULL, algo, ctrl = NULL, variables_selected = 
       x <- rbind(occ2, pa)
       x <- dplyr::select(as.data.frame(x), dplyr::all_of(selected_vars))
       df <- as.factor(c(rep("presence", nrow(occ2)), rep("pseudoabsence", nrow(pa))))
-          m <- lapply(algo, function(a) {
-            caret::train(
-              df~.,
-              data=cbind(df,x),
-              method = a,
-              trControl = ctrl,
-              ...
-            ) # lapply retorna diferentes valores de tuning (padronizar com seed?)
-          })
 
-      l[[paste0("m", i, ".")]] <- m
+      # TRAIN MODELS ##################
+      #if ("esm" %in% names(z)) {
+      #  if(sp %in% z$esm$spp ) {
+      #    cli::cli_progress_message("ESM species")
+      #    vars_comb <- colnames(x) |> utils::combn(2)
+      #    m1 <- list()
+      #    for (vars in 1:ncol(vars_comb)) {
+      #      m1[[vars]] <- lapply(algo, function(a) {
+      #        caret::train(
+      #          df~.,
+      #          data = cbind(df,x[,vars_comb[,vars]]),
+      #          method = a,
+      #          trControl = ctrl
+      #        )
+      #      })
+      #    }
+#
+      #  } else if(!is.null(z$esm$n_records)) {
+      #    if (z$n_presences[sp] <  z$esm$n_records) {
+      #      cli::cli_progress_message("ESM records")
+      #      vars_comb <- colnames(x) |> utils::combn(2)
+      #      for (vars in 1:ncol(vars_comb)) {
+      #        m1[[vars]] <- lapply(algo, function(a) {
+      #          caret::train(
+      #            df~.,
+      #            data = cbind(df,x[,vars_comb[,vars]]),
+      #            method = a,
+      #            trControl = ctrl
+      #          )
+      #        })
+      #      }
+      #    }
       #  }
+      #  m <- unlist(m1, recursive = FALSE)
+      #  l[[paste0("m", i, ".")]] <- m
+      #  next
+      #}
+      if(is.character(algo)) {
+        m <- lapply(algo, function(a) {
+          caret::train(
+            df~.,
+            data = cbind(df,x),
+            method = a,
+            trControl = ctrl,
+            ...
+          ) # lapply retorna diferentes valores de tuning (padronizar com seed?)
+        })
+      } else if (is.list(algo)) {
+        m <- caret::train(
+            df~.,
+            data = cbind(df,x),
+            method = algo,
+            trControl = ctrl,
+            ...
+          ) |> list()
+      }
+
+      #################################
+      l[[paste0("m", i, ".")]] <- m
     }
     return(l)
   }, simplify = TRUE, USE.NAMES = TRUE)
@@ -196,6 +251,9 @@ train_sdm <- function(occ, pred = NULL, algo, ctrl = NULL, variables_selected = 
 
   metrics <- sapply(z$spp_names, function(sp) {
     metrics <- lapply(m[[sp]], function(x) {
+      if(x$method == "custom") {
+        x$method <- algo2
+      }
       bt <- names(x$bestTune)
       res <- x$results[, !colnames(x$results) %in% bt]
       mx <- apply(res, 2, max)
@@ -335,6 +393,7 @@ print.models <- function(x, ...) {
   cat("Class                   : Models\n")
   cat("Algorithms Names        :", x$algorithms, "\n")
   cat("Variables Names         :", x$predictors, "\n")
+
   if ("independent_test" %in% names(x)) {
     cat(
       "Independent Validation  :\n",
