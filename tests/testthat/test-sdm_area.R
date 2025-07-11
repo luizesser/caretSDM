@@ -28,7 +28,7 @@ test_that("sdm_area - sf/predictors", {
   expect_equal(predictors(sa), c("cell_id.1", "CODIGOIB1", "NOMEUF2"))
   expect_true("cell_id" %in% colnames(sa$grid))
   expect_true("geometry" %in% colnames(sa$grid))
-  expect_equal(as.character(unique(st_geometry_type(sa$grid))), "POLYGON")
+  expect_equal(as.character(unique(sf::st_geometry_type(sa$grid))), "POLYGON")
 })
 
 test_that("sdm_area - sf/predictors no variables selected", {
@@ -36,7 +36,7 @@ test_that("sdm_area - sf/predictors no variables selected", {
   expect_equal(predictors(sa), character(0))
   expect_true("cell_id" %in% colnames(sa$grid))
   expect_true("geometry" %in% colnames(sa$grid))
-  expect_equal(as.character(unique(st_geometry_type(sa$grid))), "POLYGON")
+  expect_equal(as.character(unique(sf::st_geometry_type(sa$grid))), "POLYGON")
 })
 
 test_that("sdm_area - sf/predictors no variables selected", {
@@ -51,7 +51,7 @@ test_that("sdm_area - sf/predictors no variables selected", {
   expect_equal(predictors(sa), c("CODIGOIB1", "NOMEUF2"))
   expect_true("cell_id" %in% colnames(sa$grid))
   expect_true("geometry" %in% colnames(sa$grid))
-  expect_equal(as.character(unique(st_geometry_type(sa$grid))), "POLYGON")
+  expect_equal(as.character(unique(sf::st_geometry_type(sa$grid))), "POLYGON")
 })
 
 test_that("sdm_area - sf/predictors lines instead of polygons", {
@@ -61,7 +61,7 @@ test_that("sdm_area - sf/predictors lines instead of polygons", {
     permutation.of = c("LENGTH_KM", "DIST_DN_KM"))
   expect_true("cell_id" %in% colnames(sa$grid))
   expect_true("geometry" %in% colnames(sa$grid))
-  expect_equal(as.character(unique(st_geometry_type(sa$grid))), "POLYGON")
+  expect_equal(as.character(unique(sf::st_geometry_type(sa$grid))), "POLYGON")
 })
 
 #test_that("sdm_area - stars_proxy", {
@@ -83,7 +83,7 @@ test_that("sdm_area - sf/grid-bbox", {
   expect_equal(sf::st_crs(sa$grid), sf::st_crs(pr_gpkg))
   expect_equal(class(sa$cell_size), "numeric")
   expect_equal(class(sa$grid)[1], "sf")
-  expect_equal(as.character(unique(st_geometry_type(sa$grid))), "POLYGON")
+  expect_equal(as.character(unique(sf::st_geometry_type(sa$grid))), "POLYGON")
   sa$grid <- sa$grid |> select(-cell_id)
   expect_error(
     caretSDM:::.check_sdm_area(sa),
@@ -110,7 +110,7 @@ test_that("sdm_area - sf/no-epsg", {
 test_that("sdm_area - stars/epsg", {
   sa <- sdm_area(pr_gpkg, cell_size = 100000, crs = 6933)
   expect_true(sf::st_crs(sa$grid) == sf::st_crs(6933))
-  expect_equal(as.character(unique(st_geometry_type(sa$grid))), "POLYGON")
+  expect_equal(as.character(unique(sf::st_geometry_type(sa$grid))), "POLYGON")
 })
 
 ## Test stars
@@ -126,7 +126,7 @@ test_that("sdm_area - stars/predictors choosing some vars", {
   expect_equal(predictors(sa), c("bio1", "bio12"))
   expect_true("cell_id" %in% colnames(sa$grid))
   expect_true("geometry" %in% colnames(sa$grid))
-  expect_equal(as.character(unique(st_geometry_type(sa$grid))), "POLYGON")
+  expect_equal(as.character(unique(sf::st_geometry_type(sa$grid))), "POLYGON")
 })
 
 test_that("sdm_area - stars/predictors chossing some vars using list", {
@@ -134,14 +134,14 @@ test_that("sdm_area - stars/predictors chossing some vars using list", {
   expect_equal(predictors(sa), c("wc2.1_10m_bio_1"))
   expect_true("cell_id" %in% colnames(sa$grid))
   expect_true("geometry" %in% colnames(sa$grid))
-  expect_equal(as.character(unique(st_geometry_type(sa$grid))), "POLYGON")
+  expect_equal(as.character(unique(sf::st_geometry_type(sa$grid))), "POLYGON")
 })
 
 test_that("sdm_area - stars/grid-bbox", {
-  sa <- sdm_area(pr_tif, cell_size = 2)
+  sa <- sdm_area(parana, cell_size = 2)
   expect_equal(
-    round(as.numeric(sf::st_bbox(sa$grid)), 4),
-    c(-54.6667, -27.667, -46.667, -21.6667),
+    round(as.numeric(sf::st_bbox(sa$grid)), 3),
+    c(-55.321, -27.641, -47.321, -21.641),
     tolerance = 0.01
   )
   expect_true(sf::st_crs(sa$grid) == sf::st_crs("wgs84"))
@@ -182,7 +182,7 @@ test_that("sdm_area - character/stars", {
   }
 
   expect_equal(class(sa$grid)[1], "sf")
-  expect_equal(as.character(unique(st_geometry_type(sa$grid))), "POLYGON")
+  expect_equal(as.character(unique(sf::st_geometry_type(sa$grid))), "POLYGON")
 })
 
 test_that("sdm_area - character/error", {
@@ -201,7 +201,7 @@ test_that("sdm_area - stack/raster", {
   expect_equal(class(sa$grid)[1], "sf")
   expect_true("cell_id" %in% colnames(sa$grid))
   expect_true("geometry" %in% colnames(sa$grid))
-  expect_equal(as.character(unique(st_geometry_type(sa$grid))), "POLYGON")
+  expect_equal(as.character(unique(sf::st_geometry_type(sa$grid))), "POLYGON")
 })
 
 test_that("sdm_area - stack/terra", {
@@ -215,7 +215,7 @@ test_that("sdm_area - stack/terra", {
   expect_equal(class(sa$grid)[1], "sf")
   expect_true("cell_id" %in% colnames(sa$grid))
   expect_true("geometry" %in% colnames(sa$grid))
-  expect_equal(as.character(unique(st_geometry_type(sa$grid))), "POLYGON")
+  expect_equal(as.character(unique(sf::st_geometry_type(sa$grid))), "POLYGON")
 })
 
 test_that("sdm_area - print", {
@@ -250,7 +250,7 @@ test_that("sdm_area - GEOMTYPE - sf", {
   expect_equal(as.character(unique(sf::st_geometry_type(sa$grid))), "POLYGON")
   expect_true("cell_id" %in% colnames(sa$grid))
   expect_true("geometry" %in% colnames(sa$grid))
-  expect_equal(as.character(unique(st_geometry_type(sa$grid))), "POLYGON")
+  expect_equal(as.character(unique(sf::st_geometry_type(sa$grid))), "POLYGON")
 })
 
 test_that("sdm_area - GEOMTYPE - stars", {
@@ -264,7 +264,7 @@ test_that("sdm_area - GEOMTYPE - stars", {
   expect_equal(as.character(unique(sf::st_geometry_type(sa$grid))), "POLYGON")
   expect_true("cell_id" %in% colnames(sa$grid))
   expect_true("geometry" %in% colnames(sa$grid))
-  expect_equal(as.character(unique(st_geometry_type(sa$grid))), "POLYGON")
+  expect_equal(as.character(unique(sf::st_geometry_type(sa$grid))), "POLYGON")
 })
 
 
@@ -394,5 +394,5 @@ test_that("sdm_area - lines", {
   expect_equal(class(sa$cell_size), "numeric")
   expect_equal(sf::st_crs(sa$grid), sf::st_crs(rivs))
   expect_equal(class(sa$grid)[1], "sf")
-  expect_equal(as.character(unique(st_geometry_type(sa$grid))), "LINESTRING")
+  expect_equal(as.character(unique(sf::st_geometry_type(sa$grid))), "LINESTRING")
 })

@@ -54,3 +54,5 @@ caretSDM is vastly documented and has included some objects that can guide your 
 -   `Modeling Species Distributions in Continental Water Bodies` is the main vignette for continental aquatic species modeling, where we model the fish species *Salminus brasiliensis*.
 
 -   `Concatenate functions in caretSDM` shows how to build compact scripts, which is very useful to run your first tests.
+
+-   `Adding New Algorithms to caretSDM` Do not found your ideal algorithm already implemented? Here we show how to implement any custom algorithm in our package.

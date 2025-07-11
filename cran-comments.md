@@ -68,3 +68,8 @@ was advised against. I deleted the code for that and recommended the use of stan
 documentation of the function. I also added a assertion to avoid the use of path=NULL.
 
 July 5th 2025. I missed some functions on the previous comment. Now they are addressed.
+
+July 9th 2025. After entering CRAN, the package do not passed a test check in M1mac. I corrected the
+test, since it was wrong by rounding a number to 4 digits, but expecting 3 digits as output. This
+did not worked, since it did not passed checks due to a import issue with .tif file. I change the
+test to use an object from within the package. I also updated the version, which was set to 1.1.0.1.
