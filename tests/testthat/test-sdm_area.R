@@ -271,10 +271,10 @@ test_that("sdm_area - GEOMTYPE - stars", {
 ## Test .detect_sdm_area
 test_that("sdm_area - sdm_area para ser detectado", {
   skip_on_cran()
-  sa <- sdm_area(pr_gpkg, cell_size = 100000, crs = 6933)
+  sa <- sdm_area(pr_gpkg, cell_size = 100000, crs = 6933, gdal = TRUE, lines_as_sdm_area = FALSE)
   expect_snapshot(
     expect_equal(
-      .detect_sdm_area(sa$grid, 100000, 6933),
+      .detect_sdm_area(sa$grid, 100000, 6933, gdal = TRUE, lines_as_sdm_area = FALSE),
       sa
     )
   )
@@ -282,7 +282,7 @@ test_that("sdm_area - sdm_area para ser detectado", {
 
 test_that("sdm_area - gpkg para retornar NULL", {
   expect_equal(
-    .detect_sdm_area(pr_gpkg, 100000, 6933),
+    .detect_sdm_area(pr_gpkg, 100000, 6933, gdal = TRUE, lines_as_sdm_area = FALSE),
     c(
       "Variable 'grid': Names must include the elements {'cell_id','geometry'}, but is missing elements {'cell_id','geometry'}",
       "Variable 'geometry': Must inherit from class 'sfc', but has class 'NULL'",
@@ -293,10 +293,10 @@ test_that("sdm_area - gpkg para retornar NULL", {
 
 test_that("sdm_area - sdm_area para ser detectado com parametros diferentes", {
   skip_on_cran()
-  sa <- sdm_area(pr_gpkg, cell_size = 100000, crs = 6933)
+  sa <- sdm_area(pr_gpkg, cell_size = 100000, crs = 6933, gdal = TRUE, lines_as_sdm_area = FALSE)
   expect_snapshot(
     expect_equal(
-      .detect_sdm_area(sa$grid, 90000, 5839),
+      .detect_sdm_area(sa$grid, 90000, 5839, gdal = TRUE, lines_as_sdm_area = FALSE),
       sa
     )
   )
@@ -304,7 +304,11 @@ test_that("sdm_area - sdm_area para ser detectado com parametros diferentes", {
 
 test_that("sdm_area - sf/predictors try detect lines instead of polygons", {
   expect_equal(
-    .detect_sdm_area(rivs |> dplyr::mutate(cell_id=rep(1:nrow(rivs))), cell_size = 100000, crs = 6933),
+    .detect_sdm_area(rivs |> dplyr::mutate(cell_id=rep(1:nrow(rivs))),
+                     cell_size = 100000,
+                     crs = 6933,
+                     gdal = TRUE,
+                     lines_as_sdm_area = FALSE),
     "x has other features than of polygons."
   )
 })

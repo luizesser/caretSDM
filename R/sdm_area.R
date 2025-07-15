@@ -248,7 +248,8 @@ sdm_area.stars <- function(x, cell_size = NULL, crs = NULL, variables_selected =
     l <- list(
       grid = .sdm_area_from_stars_using_gdal(x, cell_size, crs, crop_by) |>
         dplyr::select(dplyr::all_of(var_names_final)),
-      cell_size = cell_size
+      cell_size = cell_size,
+      parameters = list(gdal = gdal, lines_as_sdm_area = lines_as_sdm_area)
     )
 
   } else {
@@ -260,7 +261,8 @@ sdm_area.stars <- function(x, cell_size = NULL, crs = NULL, variables_selected =
     l <- list(
       grid = .sdm_area_from_stars_using_stars(x, cell_size, crs, crop_by) |>
         dplyr::select(dplyr::all_of(var_names_final)),
-      cell_size = cell_size
+      cell_size = cell_size,
+      parameters = list(gdal = gdal, lines_as_sdm_area = lines_as_sdm_area)
     )
   }
   if ((l$grid |> nrow()) > 0) {
@@ -470,7 +472,7 @@ sdm_area.sf <- function(x, cell_size = NULL, crs = NULL, variables_selected = NU
     cli_abort(c("x" = "crs is invalid."))
   }
 
-  sa <- .detect_sdm_area(x, cell_size, crs)
+  sa <- .detect_sdm_area(x, cell_size, crs, gdal, lines_as_sdm_area)
   if (checkmate::test_class(sa, "sdm_area")){
     return(invisible(sa))
   }
@@ -519,7 +521,8 @@ sdm_area.sf <- function(x, cell_size = NULL, crs = NULL, variables_selected = NU
     l <- list(
       grid = .sdm_area_from_sf_using_gdal(x, cell_size, crs) |>
         dplyr::select(dplyr::all_of(var_names_final)),
-      cell_size = cell_size
+      cell_size = cell_size,
+      parameters = list(gdal = gdal, lines_as_sdm_area = lines_as_sdm_area)
     )
   } else {
     info_msg <- c("!" = "Making grid over the study area is an expensive task. Please, be patient!")
@@ -530,7 +533,8 @@ sdm_area.sf <- function(x, cell_size = NULL, crs = NULL, variables_selected = NU
     l <- list(
       grid = .sdm_area_from_sf_using_stars(x, cell_size, crs) |>
         dplyr::select(dplyr::all_of(var_names_final)),
-      cell_size = cell_size
+      cell_size = cell_size,
+      parameters = list(gdal = gdal, lines_as_sdm_area = lines_as_sdm_area)
     )
   }
 
@@ -919,7 +923,8 @@ sdm_area.sf <- function(x, cell_size = NULL, crs = NULL, variables_selected = NU
   sa <- structure(
     list(
       grid = x$grid,
-      cell_size = x$cell_size
+      cell_size = x$cell_size,
+      parameters = x$parameters
     ),
     class = "sdm_area"
   )
@@ -1035,7 +1040,7 @@ sdm_area.sf <- function(x, cell_size = NULL, crs = NULL, variables_selected = NU
 }
 
 
-.detect_sdm_area <- function(x, cell_size, crs){
+.detect_sdm_area <- function(x, cell_size, crs, gdal, lines_as_sdm_area){
   error_collection <- checkmate::makeAssertCollection()
   assert_class_cli(
     x,
@@ -1129,7 +1134,8 @@ sdm_area.sf <- function(x, cell_size = NULL, crs = NULL, variables_selected = NU
   }
   l <- list(
     grid = x,
-    cell_size = cell_size_calc
+    cell_size = cell_size_calc,
+    parameters = list(gdal = gdal, lines_as_sdm_area = lines_as_sdm_area)
   )
   sa <- .sdm_area(l)
   return(sa)

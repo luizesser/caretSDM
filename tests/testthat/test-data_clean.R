@@ -1,4 +1,5 @@
 test_that("data_clean - normal path with sdm_area", {
+  set.seed(1)
   sa <- sdm_area(parana, cell_size = 100000, crs = 6933)
   sa <- add_predictors(sa, bioc)
   expect_warning(oc <- occurrences_sdm(occ, independent_test = TRUE, crs= 6933) |> join_area(sa))

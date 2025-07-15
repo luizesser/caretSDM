@@ -42,12 +42,14 @@
 # sdm_area - sdm_area para ser detectado
 
     Code
-      expect_equal(.detect_sdm_area(sa$grid, 1e+05, 6933), sa)
+      expect_equal(.detect_sdm_area(sa$grid, 1e+05, 6933, gdal = TRUE,
+      lines_as_sdm_area = FALSE), sa)
 
 # sdm_area - sdm_area para ser detectado com parametros diferentes
 
     Code
-      expect_equal(.detect_sdm_area(sa$grid, 90000, 5839), sa)
+      expect_equal(.detect_sdm_area(sa$grid, 90000, 5839, gdal = TRUE,
+      lines_as_sdm_area = FALSE), sa)
     Condition
       Warning:
       ! A sdm_area object was detected but some parameters are different. Please check it!

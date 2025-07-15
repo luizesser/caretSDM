@@ -217,7 +217,6 @@ plot.predictions <- function(x, spp_name = NULL, scenario = NULL, id = NULL, ens
     valid_scen <- names(x$predictions)
   }
 
-  grd <- x$grid
   if (!is.null(scenario)) {
     scenario <- valid_scen[which.min(stringdist::stringdist(scenario, valid_scen))]
   } else {
@@ -228,6 +227,9 @@ plot.predictions <- function(x, spp_name = NULL, scenario = NULL, id = NULL, ens
   } else {
     spp_name <- valid_spp[1]
   }
+
+  grd <- x$predictions[[scenario]][[spp_name]][[1]]
+
   if (ensemble) {
     cell_id <- x[[ens]][[spp_name, scenario]][, "cell_id"]
     v <- x[[ens]][[spp_name, scenario]][, ensemble_type]

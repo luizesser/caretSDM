@@ -145,6 +145,20 @@ add_scenarios.stars <- function(sa, scen=NULL, scenarios_names = NULL, pred_as_s
                   "i" = "Check for: {missing_vars}"))
     }
     scen <- scen[, , , variables_selected]
+
+    bbox1 <- st_as_sfc(st_bbox(scen))
+    bbox2 <- st_as_sfc(st_bbox(st_transform(stationary_grd, crs = st_crs(scen))))
+    suppressMessages(intersects <- st_intersects(bbox1,
+                                                 bbox2,
+                                                 sparse = FALSE)[1,1])
+    if(!intersects) {
+      cli::cli_abort(c("Stationary data do not intersect with scenarios data",
+                       "i" = "If you are projecting for the same area as modeling, your scenarios
+                              are not intersecting with current area.",
+                       "i" = "If you are trying to make a invasiveness assessment, you need to add
+                              a current scenario before adding future scenarios."))
+    }
+
     l <- list()
     for (i in cli::cli_progress_along(1:length(scen), "Reescaling data")) {
       l[[scenarios_names[i]]]  <- scen[i] |>
@@ -178,7 +192,18 @@ add_scenarios.stars <- function(sa, scen=NULL, scenarios_names = NULL, pred_as_s
     stationary_grd <- sa$grid |> dplyr::select(all_of(c("cell_id", stationary)))
     variables_selected <- pres_names[!pres_names %in% stationary]
     scen <- scen[, , , variables_selected]
-
+    bbox1 <- st_as_sfc(st_bbox(scen))
+    bbox2 <- st_as_sfc(st_bbox(st_transform(stationary_grd, crs = st_crs(scen))))
+    suppressMessages(intersects <- st_intersects(bbox1,
+                                                    bbox2,
+                                                    sparse = FALSE)[1,1])
+    if(!intersects) {
+      cli::cli_abort(c("Stationary data do not intersect with scenarios data",
+                       "i" = "If you are projecting for the same area as modeling, your scenarios
+                              are not intersecting with current area.",
+                       "i" = "If you are trying to make a invasiveness assessment, you need to add
+                              a current scenario before adding future scenarios."))
+    }
     l <- list()
     if(unique(sf::st_geometry_type(sa$grid)) == "LINESTRING") {
       for (i in cli::cli_progress_along(1:length(scen), "Reescaling data")) {
@@ -232,6 +257,7 @@ add_scenarios.stars <- function(sa, scen=NULL, scenarios_names = NULL, pred_as_s
     sa$scenarios <- sa_data
     return(sa)
 
+####################################################################################################
   } else if ( is.null(stationary) ) {
 
     if ( !test_variables_names(sa, scen) ) {
@@ -272,28 +298,37 @@ add_scenarios.stars <- function(sa, scen=NULL, scenarios_names = NULL, pred_as_s
             cell_size = sa$cell_size,
             crs = grid_t |> sf::st_crs(),
             variables_selected = variables_selected,
-            gdal = TRUE,
-            crop_by = grid_t
+            gdal = sa$parameters$gdal,
+            lines_as_sdm_area = sa$parameters$lines_as_sdm_area
           )
 
-        l[[scenarios_names[i]]]  <- scen_area$grid |>
-          dplyr::select(-"cell_id") |>
-          stats::aggregate(grid_t, mean) |>
-          sf::st_cast("LINESTRING") |>
-          suppressWarnings() |>
-          cbind(grid_t) |>
-          dplyr::select(c("cell_id", variables_selected, "geometry"))
+        l[[scenarios_names[i]]]  <- scen_area$grid #|>
+          #dplyr::select(-"cell_id") |>
+          #stats::aggregate(grid_t, mean) |>
+          #sf::st_cast("LINESTRING") |>
+          #suppressWarnings() |>
+          #cbind(grid_t) |>
+          #dplyr::select(c("cell_id", variables_selected, "geometry"))
       }
     } else {
-      grid_t <- sf::st_transform(grid_t, sf::st_crs(scen))
+      #grid_t <- sf::st_transform(grid_t, sf::st_crs(scen))
       for (i in cli::cli_progress_along(1:length(scen), "Reescaling data")) {
-        l[[scenarios_names[i]]]  <- scen[i] |>
-          stats::aggregate(grid_t, mean) |>
-          sf::st_as_sf() |>
-          cbind(grid_t) |>
-          sf::st_transform(sf::st_crs(sa$grid)) |>
-          tidyr::drop_na() |>
-          dplyr::select(dplyr::all_of(c("cell_id", variables_selected, "geometry")))
+        scen_area <- scen[i] |>
+          sdm_area(
+            cell_size = sa$cell_size,
+            crs = grid_t |> sf::st_crs(),
+            variables_selected = variables_selected,
+            gdal = sa$parameters$gdal,
+            lines_as_sdm_area = sa$parameters$lines_as_sdm_area
+          )
+
+        l[[scenarios_names[i]]]  <- scen_area$grid#[i] |>
+          #stats::aggregate(grid_t, mean) |>
+          #sf::st_as_sf() |>
+          #cbind(grid_t) |>
+          #sf::st_transform(sf::st_crs(sa$grid)) |>
+          #tidyr::drop_na() |>
+          #dplyr::select(dplyr::all_of(c("cell_id", variables_selected, "geometry")))
       }
     }
 
