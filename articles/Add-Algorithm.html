@@ -159,10 +159,11 @@ class levels. For <code>caretSDM</code>, this will be
 <p>Let’s see how these components come together in our example.</p>
 </div>
 <div class="section level3">
-<h3 id="example-mahalanobis-distance-algorithm">Example: Mahalanobis Distance Algorithm<a class="anchor" aria-label="anchor" href="#example-mahalanobis-distance-algorithm"></a>
+<h3 id="example-1-an-algorithm-from-a-package">Example 1: An algorithm from a package<a class="anchor" aria-label="anchor" href="#example-1-an-algorithm-from-a-package"></a>
 </h3>
 <p>Here is the complete code for creating the <code>algo</code> list for
-the Mahalanobis Distance model.</p>
+the Mahalanobis Distance using the <code>dismo</code> package. This
+structure can be changed to include new algorithms into caretSDM.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">mahal.dist</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
 <span>  label <span class="op">=</span> <span class="st">"Mahalanobis Distance"</span>,</span>
@@ -219,6 +220,63 @@ the Mahalanobis Distance model.</p>
 <span>  tags <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Distance"</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 </div>
+<div class="section level3">
+<h3 id="example-2-a-custom-made-algorithm">Example 2: A custom made algorithm<a class="anchor" aria-label="anchor" href="#example-2-a-custom-made-algorithm"></a>
+</h3>
+<p>Alternatively, the user can built its own algorithm and implement it
+through the same method. Here I show the code for a custom Mahalanobis
+Distance.</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Create function</span></span>
+<span><span class="va">mahal.sdm</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  </span>
+<span><span class="op">}</span></span>
+<span></span>
+<span></span>
+<span></span>
+<span><span class="va">mahal.dist</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
+<span>  label <span class="op">=</span> <span class="st">"Mahalanobis Distance"</span>,</span>
+<span>  library <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  loop <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Classification"</span>, <span class="st">"Regression"</span><span class="op">)</span>,</span>
+<span>  levels <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"presence"</span>, <span class="st">"pseudoabsence"</span><span class="op">)</span>,</span>
+<span>  parameters <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  grid <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  fit <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span>, <span class="va">wts</span>, <span class="va">param</span>, <span class="va">lev</span>, <span class="va">last</span>, <span class="va">classProbs</span>, <span class="va">...</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="co"># The 'fit' function uses 'dismo::mahal'. </span></span>
+<span>    <span class="co"># It's trained only on presence data.</span></span>
+<span>    <span class="va">model</span> <span class="op">&lt;-</span> <span class="fu">dismo</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/dismo/man/mahal.html" class="external-link">mahal</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">x</span><span class="op">[</span><span class="va">y</span> <span class="op">==</span> <span class="st">"presence"</span>, <span class="op">]</span><span class="op">)</span></span>
+<span>    <span class="co"># We return the model and the tuning parameter value.</span></span>
+<span>    <span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>model <span class="op">=</span> <span class="va">model</span>, abs <span class="op">=</span> <span class="va">param</span><span class="op">$</span><span class="va">abs</span><span class="op">)</span></span>
+<span>    <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span></span>
+<span>  <span class="op">}</span>,</span>
+<span>  predict <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">modelFit</span>, <span class="va">newdata</span>, <span class="va">preProc</span> <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">submodels</span> <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="co"># 'predict' generates predictions for new data.</span></span>
+<span>    <span class="va">pred</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span><span class="va">modelFit</span><span class="op">$</span><span class="va">model</span>, <span class="va">newdata</span><span class="op">)</span></span>
+<span>    <span class="co"># The output is converted to probabilities for both classes.</span></span>
+<span>    <span class="va">pred</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>presence <span class="op">=</span> <span class="va">pred</span>, pseudoabsence <span class="op">=</span> <span class="fl">1</span> <span class="op">-</span> <span class="va">pred</span><span class="op">)</span></span>
+<span>    <span class="co"># The 'abs' parameter determines the prediction type.</span></span>
+<span>    <span class="kw">if</span> <span class="op">(</span><span class="va">modelFit</span><span class="op">$</span><span class="va">abs</span><span class="op">)</span> <span class="op">{</span></span>
+<span>      <span class="va">pred</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">as.factor</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="va">pred</span><span class="op">$</span><span class="va">presence</span> <span class="op">&gt;</span> <span class="fl">0</span>, <span class="st">"presence"</span>, <span class="st">"pseudoabsence"</span><span class="op">)</span><span class="op">)</span></span>
+<span>    <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span></span>
+<span>      <span class="va">pred</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">as.factor</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">pred</span><span class="op">)</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/apply.html" class="external-link">apply</a></span><span class="op">(</span><span class="va">pred</span>, <span class="fl">1</span>, <span class="va">which.max</span><span class="op">)</span><span class="op">]</span><span class="op">)</span></span>
+<span>    <span class="op">}</span></span>
+<span>    <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="va">pred</span><span class="op">)</span></span>
+<span>  <span class="op">}</span>,</span>
+<span>  prob <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">modelFit</span>, <span class="va">newdata</span>, <span class="va">preProc</span> <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">submodels</span> <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="co"># 'prob' calculates the class probabilities.</span></span>
+<span>    <span class="va">prob</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span><span class="va">modelFit</span><span class="op">$</span><span class="va">model</span>, <span class="va">newdata</span><span class="op">)</span></span>
+<span>    <span class="co"># It must return a data frame with column names matching the class levels.</span></span>
+<span>    <span class="va">prob</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>presence <span class="op">=</span> <span class="va">prob</span>, pseudoabsence <span class="op">=</span> <span class="fl">1</span> <span class="op">-</span> <span class="va">prob</span><span class="op">)</span></span>
+<span>    <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="va">prob</span><span class="op">)</span></span>
+<span>  <span class="op">}</span>,</span>
+<span>  predictors <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span>
+<span>  <span class="op">}</span>,</span>
+<span>  varImp <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  tags <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Distance"</span><span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+</div>
 </div>
 <div class="section level2">
 <h2 id="integrating-the-new-algorithm-into-caretsdm">Integrating the New Algorithm into <code>caretSDM</code><a class="anchor" aria-label="anchor" href="#integrating-the-new-algorithm-into-caretsdm"></a>
@@ -236,7 +294,7 @@ this in action.</p>
 <p>We’ll use data already included in the <code>caretSDM</code> package
 to create a simple <code>input_sdm</code> object. This simulates the
 pre-processing steps of a typical SDM analysis.</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Create an sdm_area object</span></span>
 <span><span class="va">sa</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sdm_area.html">sdm_area</a></span><span class="op">(</span><span class="va">parana</span>, </span>
 <span>               cell_size <span class="op">=</span> <span class="fl">50000</span>, <span class="co"># Using a coarse resolution for speed</span></span>
@@ -271,7 +329,7 @@ pre-processing steps of a typical SDM analysis.</p>
 <code>mahal.dist</code> list to the <code>algo</code> argument. We also
 need to define our training control parameters using
 <code><a href="https://rdrr.io/pkg/caret/man/trainControl.html" class="external-link">caret::trainControl</a></code>.</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Define training controls</span></span>
 <span><span class="va">ctrl_sdm</span> <span class="op">&lt;-</span> <span class="fu">caret</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/caret/man/trainControl.html" class="external-link">trainControl</a></span><span class="op">(</span>method <span class="op">=</span> <span class="st">"cv"</span>, </span>
 <span>                                number <span class="op">=</span> <span class="fl">3</span>, </span>
@@ -294,7 +352,7 @@ need to define our training control parameters using
 <span><span class="co">#&gt;     predictors</span></span></code></pre></div>
 <p>Let’s check the output. The printout shows that “Mahalanobis
 Distance” was successfully trained and evaluated.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">i</span></span>
 <span><span class="co">#&gt;             caretSDM           </span></span>
 <span><span class="co">#&gt; ...............................</span></span>
@@ -321,11 +379,11 @@ Distance” was successfully trained and evaluated.</p>
 <span><span class="co">#&gt; 1 mahal.dist 0.9979445 0.9529519   0.9922222   0.9841111</span></span></code></pre></div>
 <p>Note that the algorithm name will be set as the name of the object
 passed to algo:</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/train_sdm.html">algorithms_used</a></span><span class="op">(</span><span class="va">i</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "mahal.dist"</span></span></code></pre></div>
 <p>We can also inspect the model’s performance metrics.</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/train_sdm.html">mean_validation_metrics</a></span><span class="op">(</span><span class="va">i</span><span class="op">)</span></span>
 <span><span class="co">#&gt; $`Araucaria angustifolia`</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 1 × 53</span></span></span>
