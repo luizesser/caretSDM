@@ -139,7 +139,7 @@ mahal.dist <- list(
 Alternatively, the user can built its own algorithm and implement it through the same method. Here I
 show the code for a custom Mahalanobis Distance.
 
-```{r mahal.dist}
+```{r mahal.dist, eval=FALSE}
 # Create function
 mahal.sdm <- function(x) {
   
