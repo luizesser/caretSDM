@@ -19,11 +19,19 @@ knitr::opts_chunk$set(
 
 ## Introduction
 
-The `caretSDM` package leverages the robust `caret` package as its core engine for Species Distribution Modeling (SDM). This integration means that `caretSDM` is not limited to its pre-configured algorithms. Any modeling algorithm that can be used with `caret`'s `train` function can also be seamlessly integrated into the `caretSDM` workflow.
+The `caretSDM` package leverages the robust `caret` package as its core engine for Species
+Distribution Modeling (SDM). This integration means that `caretSDM` is not limited to its
+pre-configured algorithms. Any modeling algorithm that can be used with `caret`'s `train` function
+can also be seamlessly integrated into the `caretSDM` workflow.
 
-This vignette will guide you through the process of adding a new, custom algorithm to `caretSDM`. We will use the **Mahalanobis Distance** model, a classic algorithm for presence-only SDMs, as our working example. The process involves creating a list object that contains all the necessary components for `caret` to train, tune, and predict from the model.
+This vignette will guide you through the process of adding a new, custom algorithm to `caretSDM`. We
+will use the **Mahalanobis Distance** model, a classic algorithm for presence-only SDMs, as our
+working example. The process involves creating a list object that contains all the necessary
+components for `caret` to train, tune, and predict from the model.
 
-For a deeper dive into creating custom models for `caret`, we highly recommend consulting the official `caret` documentation: [Using Your Own Model in train](https://topepo.github.io/caret/using-your-own-model-in-train.html).
+For a deeper dive into creating custom models for `caret`, we highly recommend consulting the
+official `caret` documentation: [Using Your Own Model in
+train](https://topepo.github.io/caret/using-your-own-model-in-train.html).
 
 First, let's load the `caretSDM` library to set up our environment.
 
@@ -35,27 +43,39 @@ set.seed(1)
 
 ## The Custom Model Structure
 
-To add a new algorithm, you need to create a list in R that contains specific named elements. The `caret` package uses this list to understand how to handle your model. Here are the key components of this list, which we will define for our Mahalanobis Distance example.
+To add a new algorithm, you need to create a list in R that contains specific named elements. The
+`caret` package uses this list to understand how to handle your model. Here are the key components
+of this list, which we will define for our Mahalanobis Distance example.
 
 ### The Components of the List
 
-The core of a custom model is a list that we'll call `mahal.dist`. This list bundles together everything `caret` needs.
+The core of a custom model is a list that we'll call `mahal.dist`. This list bundles together
+everything `caret` needs.
 
-  * **`label`**: A simple character string for the model's name.
-  * **`library`**: A character vector listing the R packages required to run the model. For Mahalanobis Distance, we need the `dismo` package.
-  * **`type`**: A character vector indicating the type of prediction problem. For SDM, this will typically be `"Classification"`.
-  * **`parameters`**: A data frame that defines the model's tuning parameters. Each row represents a parameter and should include columns for its `parameter` name, its `class` (e.g., "numeric", "logical"), and a descriptive `label`.
-  * **`grid`**: A function that generates a data frame of tuning parameter combinations for `caret` to test.
-  * **`fit`**: The main function that trains your model. It takes the predictor data (`x`), the response variable (`y`), and other arguments, and returns a fitted model object.
-  * **`predict`**: A function that uses the fitted model from `fit` to make predictions on new data.
-  * **`prob`**: A function that generates class probabilities (e.g., probability of presence and pseudo-absence) for new data. This is crucial for evaluating models using metrics like AUC/ROC.
-  * **`levels`**: A function that returns the class levels. For `caretSDM`, this will be `"presence"` and `"pseudoabsence"`.
+-   **`label`**: A simple character string for the model's name.
+-   **`library`**: A character vector listing the R packages required to run the model. For
+    Mahalanobis Distance, we need the `dismo` package.
+-   **`type`**: A character vector indicating the type of prediction problem. For SDM, this will
+    typically be `"Classification"`.
+-   **`parameters`**: A data frame that defines the model's tuning parameters. Each row represents a
+    parameter and should include columns for its `parameter` name, its `class` (e.g., "numeric",
+    "logical"), and a descriptive `label`.
+-   **`grid`**: A function that generates a data frame of tuning parameter combinations for `caret`
+    to test.
+-   **`fit`**: The main function that trains your model. It takes the predictor data (`x`), the
+    response variable (`y`), and other arguments, and returns a fitted model object.
+-   **`predict`**: A function that uses the fitted model from `fit` to make predictions on new data.
+-   **`prob`**: A function that generates class probabilities (e.g., probability of presence and
+    pseudo-absence) for new data. This is crucial for evaluating models using metrics like AUC/ROC.
+-   **`levels`**: A function that returns the class levels. For `caretSDM`, this will be
+    `"presence"` and `"pseudoabsence"`.
 
 Let's see how these components come together in our example.
 
-### Example: Mahalanobis Distance Algorithm
+### Example 1: An algorithm from a package
 
-Here is the complete code for creating the `algo` list for the Mahalanobis Distance model.
+Here is the complete code for creating the `algo` list for the Mahalanobis Distance using the
+`dismo` package. This structure can be changed to include new algorithms into caretSDM.
 
 ```{r mahalanobis_code}
 mahal.dist <- list(
@@ -114,15 +134,75 @@ mahal.dist <- list(
 )
 ```
 
+### Example 2: A custom made algorithm
+
+Alternatively, the user can built its own algorithm and implement it through the same method. Here I
+show the code for a custom Mahalanobis Distance.
+
+```{r mahal.dist}
+# Create function
+mahal.sdm <- function(x) {
+  
+}
+
+
+
+mahal.dist <- list(
+  label = "Mahalanobis Distance",
+  library = NULL,
+  loop = NULL,
+  type = c("Classification", "Regression"),
+  levels = function(x) c("presence", "pseudoabsence"),
+  parameters = NULL,
+  grid = NULL,
+  fit = function(x, y, wts, param, lev, last, classProbs, ...) {
+    # The 'fit' function uses 'dismo::mahal'. 
+    # It's trained only on presence data.
+    model <- dismo::mahal(x = x[y == "presence", ])
+    # We return the model and the tuning parameter value.
+    result <- list(model = model, abs = param$abs)
+    return(result)
+  },
+  predict = function(modelFit, newdata, preProc = NULL, submodels = NULL) {
+    # 'predict' generates predictions for new data.
+    pred <- predict(modelFit$model, newdata)
+    # The output is converted to probabilities for both classes.
+    pred <- data.frame(presence = pred, pseudoabsence = 1 - pred)
+    # The 'abs' parameter determines the prediction type.
+    if (modelFit$abs) {
+      pred <- as.factor(ifelse(pred$presence > 0, "presence", "pseudoabsence"))
+    } else {
+      pred <- as.factor(colnames(pred)[apply(pred, 1, which.max)])
+    }
+    return(pred)
+  },
+  prob = function(modelFit, newdata, preProc = NULL, submodels = NULL) {
+    # 'prob' calculates the class probabilities.
+    prob <- predict(modelFit$model, newdata)
+    # It must return a data frame with column names matching the class levels.
+    prob <- data.frame(presence = prob, pseudoabsence = 1 - prob)
+    return(prob)
+  },
+  predictors = function(x, ...) {
+    colnames(x)
+  },
+  varImp = NULL,
+  tags = c("Distance")
+)
+```
+
 ## Integrating the New Algorithm into `caretSDM`
 
-With our `mahal.dist` list defined, we can now use it directly with the `train_sdm` function. The process is the same as for any built-in algorithm, but instead of providing the algorithm's name as a string (e.g., `"rf"`), we provide our `mahal.dist` list object.
+With our `mahal.dist` list defined, we can now use it directly with the `train_sdm` function. The
+process is the same as for any built-in algorithm, but instead of providing the algorithm's name as
+a string (e.g., `"rf"`), we provide our `mahal.dist` list object.
 
 Let's walk through a minimal `caretSDM` workflow to see this in action.
 
-### 1\. Prepare a Minimal `input_sdm` Object
+### 1. Prepare a Minimal `input_sdm` Object
 
-We'll use data already included in the `caretSDM` package to create a simple `input_sdm` object. This simulates the pre-processing steps of a typical SDM analysis.
+We'll use data already included in the `caretSDM` package to create a simple `input_sdm` object.
+This simulates the pre-processing steps of a typical SDM analysis.
 
 ```{r prepare_input}
 # Create an sdm_area object
@@ -146,9 +226,10 @@ i <- pseudoabsences(i,
                     n_set = 3)
 ```
 
-### 2\. Train the Model using `train_sdm`
+### 2. Train the Model using `train_sdm`
 
-Now, we will call `train_sdm` and pass our custom `mahal.dist` list to the `algo` argument. We also need to define our training control parameters using `caret::trainControl`.
+Now, we will call `train_sdm` and pass our custom `mahal.dist` list to the `algo` argument. We also
+need to define our training control parameters using `caret::trainControl`.
 
 ```{r train_custom_model}
 # Define training controls
@@ -166,13 +247,15 @@ i <- train_sdm(i,
                ctrl = ctrl_sdm)
 ```
 
-Let's check the output. The printout shows that "Mahalanobis Distance" was successfully trained and evaluated.
+Let's check the output. The printout shows that "Mahalanobis Distance" was successfully trained and
+evaluated.
 
 ```{r print_results}
 i
 ```
 
 Note that the algorithm name will be set as the name of the object passed to algo:
+
 ```{r algo_name}
 algorithms_used(i)
 ```
@@ -185,4 +268,9 @@ mean_validation_metrics(i)
 
 ## Conclusion
 
-The `caretSDM` package is designed to be flexible and extensible. By leveraging the power of `caret`, you can easily integrate virtually any modeling algorithm into your Species Distribution Modeling workflow. The key is to create a well-defined list that tells `caret` how to `fit`, `predict`, and `tune` your model. This opens the door to using state-of-the-art algorithms or custom-built models tailored to your specific research questions, all within the structured and reproducible environment of `caretSDM`.
+The `caretSDM` package is designed to be flexible and extensible. By leveraging the power of
+`caret`, you can easily integrate virtually any modeling algorithm into your Species Distribution
+Modeling workflow. The key is to create a well-defined list that tells `caret` how to `fit`,
+`predict`, and `tune` your model. This opens the door to using state-of-the-art algorithms or
+custom-built models tailored to your specific research questions, all within the structured and
+reproducible environment of `caretSDM`.
