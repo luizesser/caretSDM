@@ -5,8 +5,9 @@ articles:
   articles/Add-Algorithm: Add-Algorithm.html
   articles/Araucaria: Araucaria.html
   articles/Compact: Compact.html
+  articles/InvasiveSpp: InvasiveSpp.html
   articles/Salminus: Salminus.html
-last_built: 2025-07-11T14:26Z
+last_built: 2025-07-16T09:34Z
 urls:
   reference: https://luizesser.github.io/caretSDM/reference
   article: https://luizesser.github.io/caretSDM/articles

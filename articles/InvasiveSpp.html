@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>caretSDM Workflow for Species Distribution Modeling • caretSDM</title>
+<title>Projecting Non-native Distribution using SDMs • caretSDM</title>
 <!-- favicons --><link rel="icon" type="image/png" sizes="96x96" href="../favicon-96x96.png">
 <link rel="icon" type="”image/svg+xml”" href="../favicon.svg">
 <link rel="apple-touch-icon" sizes="180x180" href="../apple-touch-icon.png">
@@ -15,7 +15,7 @@
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
 <script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
-<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="caretSDM Workflow for Species Distribution Modeling">
+<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Projecting Non-native Distribution using SDMs">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -64,11 +64,11 @@
 
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
-      <img src="../logo.png" class="logo" alt=""><h1>caretSDM Workflow for Species Distribution Modeling</h1>
+      <img src="../logo.png" class="logo" alt=""><h1>Projecting Non-native Distribution using SDMs</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/luizesser/caretSDM/blob/main/vignettes/articles/Araucaria.Rmd" class="external-link"><code>vignettes/articles/Araucaria.Rmd</code></a></small>
-      <div class="d-none name"><code>Araucaria.Rmd</code></div>
+      <small class="dont-index">Source: <a href="https://github.com/luizesser/caretSDM/blob/main/vignettes/articles/InvasiveSpp.Rmd" class="external-link"><code>vignettes/articles/InvasiveSpp.Rmd</code></a></small>
+      <div class="d-none name"><code>InvasiveSpp.Rmd</code></div>
     </div>
 
     
@@ -76,16 +76,18 @@
 <div class="section level2">
 <h2 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
 </h2>
-<p><code>caretSDM</code> is a R package that uses the powerful
-<code>caret</code> package as the main engine to obtain Species
-Distribution Models. One of its main attributes is the strong
-geoprocessing underlying its functions provided by <code>stars</code>
-package. Here we show how to model species distributions using
-<code>caretSDM</code> through the function <code>sdm_area</code> with a
-polygon. We will also show how to apply a PCA in predictors and
-scenarios to avoid multicolinearity. The aim of this modeling will be to
-obtain the current and future distribution of <em>Araucaria
-angustifolia</em>, a keystone tree species from South Brazil.</p>
+<p>One of the main uses for Species Distribution Models is to project
+the impact of invasive species. To facilitate the use of
+<code>caretSDM</code> in invasiveness assessments, we put this document
+together. Here, we will build the Ecological Niche Model, i.e. the
+mathematical model that describes the hypervolume that encompasses the
+limiting values permitting a species to persist through time, for
+<em>Araucaria angustifolia</em> using records on Paraná. We then project
+the models into the Rio Grande do Sul state, further to the South, to
+assess the invasiveness potential of the species.</p>
+<p>This article may read repetitive, when comparing with others, but our
+aim here is to have a complete tutorial, thus some steps will be exactly
+as from other articles.</p>
 <p>First, we need to open our library.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://luizesser.github.io/caretSDM/">caretSDM</a></span><span class="op">)</span></span>
@@ -158,20 +160,75 @@ arc-minutes, which is very coarse, but quicker to download and run.</p>
 <span></span>
 <span><span class="co"># Import current bioclimatic variables to R</span></span>
 <span><span class="va">bioc</span> <span class="op">&lt;-</span> <span class="fu">read_stars</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.files.html" class="external-link">list.files</a></span><span class="op">(</span><span class="st">"input_data/WorldClim_data_current/"</span>, full.names <span class="op">=</span> <span class="cn">T</span><span class="op">)</span>, along <span class="op">=</span> <span class="st">"band"</span>, normalize_path <span class="op">=</span> <span class="cn">F</span><span class="op">)</span></span></code></pre></div>
-<p>As in the previous section, we already have a <code>bioc</code>
-object included in the package, which is the same output, but masked to
-match our study area and with fewer variables.</p>
+<p>As we are aiming for a climate change assessment, we will also
+download future data.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">bioc</span></span>
-<span><span class="co">#&gt; stars object with 3 dimensions and 1 attribute</span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/WorldClim_data.html">WorldClim_data</a></span><span class="op">(</span>path <span class="op">=</span> <span class="cn">NULL</span>, </span>
+<span>               period <span class="op">=</span> <span class="st">"future"</span>, </span>
+<span>               variable <span class="op">=</span> <span class="st">"bioc"</span>,</span>
+<span>               year <span class="op">=</span> <span class="st">"2090"</span>,</span>
+<span>               gcm <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ca"</span>, <span class="st">"mi"</span><span class="op">)</span>,</span>
+<span>               ssp <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"245"</span>,<span class="st">"585"</span><span class="op">)</span>,</span>
+<span>               resolution <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span></code></pre></div>
+<div class="section level4">
+<h4 id="key-change-for-invasiveness-assessment">KEY CHANGE FOR INVASIVENESS ASSESSMENT:<a class="anchor" aria-label="anchor" href="#key-change-for-invasiveness-assessment"></a>
+</h4>
+<p>In caretSDM, we will set the study area to match the region where the
+model will be trained. The region where models will be projected can be
+adapted from scenarios data. One can work around with this environmental
+data to adapt it using any package. We already have included in the
+package an object with current and future data for the Rio Grande do Sul
+state. To build it, we used an adaptation of the following code:</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># THIS IS AN EXAMPLE CODE, IT MUST BE ADAPTED TO RUN CORRECTLY!!!</span></span>
+<span><span class="co"># Import aim area shape</span></span>
+<span><span class="va">rs</span> <span class="op">&lt;-</span> <span class="fu">st_read</span><span class="op">(</span><span class="st">"Rio_Grande_do_Sul.shp"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Import current data</span></span>
+<span><span class="va">current</span> <span class="op">&lt;-</span> <span class="fu">read_stars</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.files.html" class="external-link">list.files</a></span><span class="op">(</span><span class="st">"WorldClim_data_current_folder"</span>, full.names<span class="op">=</span><span class="cn">T</span><span class="op">)</span>, along <span class="op">=</span> <span class="st">"band"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Change name of current scenario</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">current</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="st">"current"</span></span>
+<span></span>
+<span><span class="co"># Select variables and crop using the shape of the aim area</span></span>
+<span><span class="va">current</span> <span class="op">&lt;-</span> <span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_crop.html" class="external-link">st_crop</a></span><span class="op">(</span><span class="va">current</span><span class="op">[</span>,,,<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"1.tif"</span>, <span class="st">"4.tif"</span>, <span class="st">"12.tif"</span><span class="op">)</span><span class="op">]</span>, <span class="va">rs</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Set names of variables to match future scenario</span></span>
+<span><span class="va">current</span> <span class="op">&lt;-</span> <span class="fu">stars</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/stars/reference/st_dimensions.html" class="external-link">st_set_dimensions</a></span><span class="op">(</span><span class="va">current</span>, <span class="st">"band"</span>, values <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"bio1"</span>, <span class="st">"bio4"</span>,<span class="st">"bio12"</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Import future data</span></span>
+<span><span class="va">future</span> <span class="op">&lt;-</span> <span class="fu">read_stars</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.files.html" class="external-link">list.files</a></span><span class="op">(</span><span class="st">"WorldClim_data_future_folder"</span>, full.names<span class="op">=</span><span class="cn">T</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Change names of future scenarios</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">future</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ca_ssp245_2090"</span>, <span class="st">"ca_ssp585_2090"</span>, </span>
+<span>                   <span class="st">"mi_ssp245_2090"</span>, <span class="st">"mi_ssp585_2090"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Select variables and crop using the shape of the aim area</span></span>
+<span><span class="va">future</span> <span class="op">&lt;-</span> <span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_crop.html" class="external-link">st_crop</a></span><span class="op">(</span><span class="va">future</span><span class="op">[</span>,,,<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"bio01"</span>, <span class="st">"bio04"</span>, <span class="st">"bio12"</span><span class="op">)</span><span class="op">]</span>, <span class="va">rs</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Set names of variables to match current scenario</span></span>
+<span><span class="va">future</span> <span class="op">&lt;-</span> <span class="fu">stars</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/stars/reference/st_dimensions.html" class="external-link">st_set_dimensions</a></span><span class="op">(</span><span class="va">future</span>, <span class="st">"band"</span>, values <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"bio1"</span>, <span class="st">"bio4"</span>,<span class="st">"bio12"</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Sum scenarios</span></span>
+<span><span class="va">scen_rs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">current</span>, <span class="va">future</span><span class="op">)</span></span></code></pre></div>
+<p>The result should resemble the included object (see
+<code><a href="../reference/scen_rs.html">?scen_rs</a></code> for more information on the data).:</p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">scen_rs</span></span>
+<span><span class="co">#&gt; stars object with 3 dimensions and 5 attributes</span></span>
 <span><span class="co">#&gt; attribute(s):</span></span>
-<span><span class="co">#&gt;              Min.  1st Qu.   Median     Mean 3rd Qu. Max. NA's</span></span>
-<span><span class="co">#&gt; current  14.58698 21.19678 298.9147 622.9417  1353.5 2368 1845</span></span>
+<span><span class="co">#&gt;                     Min. 1st Qu.   Median     Mean  3rd Qu.   Max. NA's</span></span>
+<span><span class="co">#&gt; current         14.38403 19.5185 397.1582 668.0422 1467.000 2079.0 3204</span></span>
+<span><span class="co">#&gt; ca_ssp245_2090  17.60000 23.0000 414.1000 677.0502 1516.225 2134.2 3264</span></span>
+<span><span class="co">#&gt; ca_ssp585_2090  20.70000 26.6000 446.2500 688.5646 1551.125 2098.2 3264</span></span>
+<span><span class="co">#&gt; mi_ssp245_2090  15.70000 20.8000 407.8500 721.1667 1608.125 2284.4 3264</span></span>
+<span><span class="co">#&gt; mi_ssp585_2090  16.90000 22.1000 407.7500 754.2061 1679.425 2439.8 3264</span></span>
 <span><span class="co">#&gt; dimension(s):</span></span>
 <span><span class="co">#&gt;      from  to offset   delta refsys point              values x/y</span></span>
-<span><span class="co">#&gt; x     747 798   -180  0.1667 WGS 84 FALSE                NULL [x]</span></span>
-<span><span class="co">#&gt; y     670 706     90 -0.1667 WGS 84 FALSE                NULL [y]</span></span>
+<span><span class="co">#&gt; x     735 782   -180  0.1667 WGS 84 FALSE                NULL [x]</span></span>
+<span><span class="co">#&gt; y     703 743     90 -0.1667 WGS 84 FALSE                NULL [y]</span></span>
 <span><span class="co">#&gt; band    1   3     NA      NA     NA    NA bio1 , bio4 , bio12</span></span></code></pre></div>
+</div>
 </div>
 <div class="section level3">
 <h3 id="defining-the-study-area">Defining the study area<a class="anchor" aria-label="anchor" href="#defining-the-study-area"></a>
@@ -182,11 +239,12 @@ be, in Geographical Information Systems terms, as an example, the
 delimitation of a habitat (polygon) or a river basin network (lines).
 Another broadly used approach is the use of buffers around presences.
 The buffer size translates the potential distribution capabilities of a
-species. To educational purposes, we will use a simple polygon of Parana
-state boundaries that is available in caretSDM as the
-<code>parana</code> object (see <code><a href="../reference/parana.html">?parana</a></code> for more
-information on the data)..</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+species. As our invasiveness assessment aims to build models in the
+Parana state and project in the Rio Grande do Sul state, we will use a
+simple polygon of Parana state boundaries as study area. This shape is
+available in caretSDM as the <code>parana</code> object (see
+<code><a href="../reference/parana.html">?parana</a></code> for more information on the data).</p>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">parana</span></span>
 <span><span class="co">#&gt; Simple feature collection with 1 feature and 4 fields</span></span>
 <span><span class="co">#&gt; Geometry type: MULTIPOLYGON</span></span>
@@ -195,9 +253,9 @@ information on the data)..</p>
 <span><span class="co">#&gt; Geodetic CRS:  WGS 84</span></span>
 <span><span class="co">#&gt;   GID0 CODIGOIB1 NOMEUF2 SIGLAUF3                           geom</span></span>
 <span><span class="co">#&gt; 1   19        41  PARANA       PR MULTIPOLYGON (((-52.06416 -...</span></span></code></pre></div>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">parana</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/tidyverse-methods.html">select_predictors</a></span><span class="op">(</span><span class="va">NOMEUF2</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/base/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<p><img src="Araucaria_files/figure-html/parana_view-1.png" width="700"></p>
+<p><img src="InvasiveSpp_files/figure-html/parana_view-1.png" width="700"></p>
 <p>The <code>sdm_area</code> function is responsible to create a grid to
 build models, a key aspect of caretSDM workflow. With a grid built,
 modelers can pass multiple rasters with different resolutions, CRSs and
@@ -222,7 +280,7 @@ categorical variables) of the values falling within the cell. The
 approach using <code>stars</code> will do the same thing, but weighting
 for the area of each value within the cell. For other arguments meaning
 see <code><a href="../reference/sdm_area.html">?sdm_area</a></code>.</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">sa</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sdm_area.html">sdm_area</a></span><span class="op">(</span><span class="va">parana</span>, </span>
 <span>               cell_size <span class="op">=</span> <span class="fl">25000</span>, </span>
 <span>               crs <span class="op">=</span> <span class="fl">6933</span>, </span>
@@ -249,9 +307,9 @@ but we will not do that here, once the package will automatically drop
 them further. You can explore the grid generated and stored in the
 <code>sdm_area</code> object using the functions
 <code><a href="../reference/plot_occurrences.html">mapview_grid()</a></code> or <code><a href="../reference/plot_occurrences.html">plot_grid()</a></code>.</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_occurrences.html">plot_grid</a></span><span class="op">(</span><span class="va">sa</span><span class="op">)</span></span></code></pre></div>
-<p><img src="Araucaria_files/figure-html/plot_sdm_area-1.png" width="700"></p>
+<p><img src="InvasiveSpp_files/figure-html/plot_sdm_area-1.png" width="700"></p>
 <p>Now that we have a study area, we can assign predictor variables to
 it. To do that, we use the <code>add_predictors</code> function, which
 usually will only use the fist two arguments, which are the
@@ -260,7 +318,7 @@ usually will only use the fist two arguments, which are the
 object with predictors data. Note that <code>add_predictors</code> also
 has a <code>gdal</code> argument, which works as the previous one in
 <code>sdm_area</code> function.</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">sa</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_predictors.html">add_predictors</a></span><span class="op">(</span><span class="va">sa</span>, </span>
 <span>                     <span class="va">bioc</span>, </span>
 <span>                     variables_selected <span class="op">=</span> <span class="cn">NULL</span>, </span>
@@ -282,57 +340,20 @@ have any scenario in our <code>sdm_area</code> object. We can address
 the predictors data as the current scenario by applying the function
 <code>add_scenario</code> without considering any other argument. This
 happens because the argument <code>pred_as_scen</code> is standarly set
-to <code>TRUE</code>.</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/add_scenarios.html">add_scenarios</a></span><span class="op">(</span><span class="va">sa</span><span class="op">)</span></span></code></pre></div>
-<p>If we are aiming to project species distributions in other scenarios,
-we can download data and add in the same way we did for current
-data.</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/WorldClim_data.html">WorldClim_data</a></span><span class="op">(</span>path <span class="op">=</span> <span class="cn">NULL</span>, </span>
-<span>               period <span class="op">=</span> <span class="st">"future"</span>, </span>
-<span>               variable <span class="op">=</span> <span class="st">"bioc"</span>,</span>
-<span>               year <span class="op">=</span> <span class="st">"2090"</span>,</span>
-<span>               gcm <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ca"</span>, <span class="st">"mi"</span><span class="op">)</span>,</span>
-<span>               ssp <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"245"</span>,<span class="st">"585"</span><span class="op">)</span>,</span>
-<span>               resolution <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">scen</span> <span class="op">&lt;-</span> <span class="fu">read_stars</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.files.html" class="external-link">list.files</a></span><span class="op">(</span><span class="st">"input_data/WorldClim_data_future/"</span>, full.names <span class="op">=</span> <span class="cn">T</span><span class="op">)</span>, along <span class="op">=</span> <span class="st">"band"</span>, normalize_path <span class="op">=</span> <span class="cn">F</span><span class="op">)</span></span></code></pre></div>
-<p>As with current bioclimatic data, we have already included the
-<code>scen</code> object in the package, which is the same output from
-above, but masked to match our study area and with fewer variables (see
-<code><a href="../reference/scen.html">?scen</a></code> for more information on the data).</p>
+to <code>TRUE</code>. However, in invasiveness assessments, we want to
+project models into another region. This region was previously set as
+the <code>scen_rs</code> object.</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">scen</span></span>
-<span><span class="co">#&gt; stars object with 3 dimensions and 4 attributes</span></span>
-<span><span class="co">#&gt; attribute(s):</span></span>
-<span><span class="co">#&gt;                 Min. 1st Qu. Median     Mean  3rd Qu.   Max. NA's</span></span>
-<span><span class="co">#&gt; ca_ssp245_2090  18.4  26.100 296.50 570.0926 1188.975 2049.2 1908</span></span>
-<span><span class="co">#&gt; ca_ssp585_2090  22.2  31.275 293.25 516.0384 1033.150 1862.2 1908</span></span>
-<span><span class="co">#&gt; mi_ssp245_2090  16.3  23.000 314.65 660.9749 1426.800 2414.8 1908</span></span>
-<span><span class="co">#&gt; mi_ssp585_2090  17.9  24.500 323.45 702.6153 1534.100 2585.0 1908</span></span>
-<span><span class="co">#&gt; dimension(s):</span></span>
-<span><span class="co">#&gt;      from  to offset   delta refsys point              values x/y</span></span>
-<span><span class="co">#&gt; x     747 798   -180  0.1667 WGS 84 FALSE                NULL [x]</span></span>
-<span><span class="co">#&gt; y     670 706     90 -0.1667 WGS 84 FALSE                NULL [y]</span></span>
-<span><span class="co">#&gt; band    1   3     NA      NA     NA    NA bio1 , bio4 , bio12</span></span></code></pre></div>
-<p>Now we can add the current and future scenarios at once in our
-<code>sdm_area</code> object. For the meaning on other parameters see
-the help file at <code><a href="../reference/add_scenarios.html">?add_scenarios</a></code>. When adding scenarios, the
-function will test if all variables are available in all scenarios,
-otherwise it will filter predictors (see the warning below). See that we
-also provide a stationary argument, where the modeler can inform
-variables that do not change between scenarios. These variables can be,
-e.g., soil variables.</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">sa</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_scenarios.html">add_scenarios</a></span><span class="op">(</span><span class="va">sa</span>, </span>
-<span>                    scen <span class="op">=</span> <span class="va">scen</span>, </span>
+<span>                    scen <span class="op">=</span> <span class="va">scen_rs</span>, </span>
 <span>                    scenarios_names <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>                    pred_as_scen <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>                    pred_as_scen <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>                    variables_selected <span class="op">=</span> <span class="cn">NULL</span>, </span>
 <span>                    stationary <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Warning: Some variables in `variables_selected` are not present in `scen`.</span></span>
 <span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Using only variables present in `scen`: bio1, bio4, and bio12</span></span>
+<span><span class="co">#&gt; <span style="color: #BBBB00;">!</span> Making grid over the study area is an expensive task. Please, be patient!</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Using GDAL to make the grid and resample the variables.</span></span>
 <span><span class="co">#&gt; <span style="color: #BBBB00;">!</span> Making grid over the study area is an expensive task. Please, be patient!</span></span>
 <span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Using GDAL to make the grid and resample the variables.</span></span>
 <span><span class="co">#&gt; <span style="color: #BBBB00;">!</span> Making grid over the study area is an expensive task. Please, be patient!</span></span>
@@ -351,7 +372,7 @@ e.g., soil variables.</p>
 <span><span class="co">#&gt; Number of Predictors      : 3 </span></span>
 <span><span class="co">#&gt; Predictors Names          : bio1, bio4, bio12 </span></span>
 <span><span class="co">#&gt; Number of Scenarios      : 5 </span></span>
-<span><span class="co">#&gt; Scenarios Names          : ca_ssp245_2090, ca_ssp585_2090, mi_ssp245_2090, mi_ssp585_2090, current</span></span></code></pre></div>
+<span><span class="co">#&gt; Scenarios Names          : current, ca_ssp245_2090, ca_ssp585_2090, mi_ssp245_2090, mi_ssp585_2090</span></span></code></pre></div>
 <p>It is common that modelers need to subset variables that will inform
 models. This can be due to statistical artifacts that are common in
 quarter bioclimatic variables, or a causation subset, aiming for those
@@ -374,7 +395,7 @@ and functions, as pseudoabsences generation. For a reference, GBIF data
 is in crs = 4326, but our records stored in <code>occ</code> object is
 transformed to 6933 (see <code><a href="../reference/occ.html">?occ</a></code> for more information on the
 data).</p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">oc</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/occurrences_sdm.html">occurrences_sdm</a></span><span class="op">(</span><span class="va">occ</span>, crs <span class="op">=</span> <span class="fl">6933</span><span class="op">)</span></span>
 <span><span class="va">oc</span></span>
 <span><span class="co">#&gt;         caretSDM       </span></span>
@@ -396,12 +417,12 @@ data).</p>
 <span><span class="co">#&gt; 4 Araucaria angustifolia POINT (-4883188 -3092641)</span></span>
 <span><span class="co">#&gt; 5 Araucaria angustifolia POINT (-4766386 -3227445)</span></span>
 <span><span class="co">#&gt; 6 Araucaria angustifolia POINT (-4755861 -3139607)</span></span></code></pre></div>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_occurrences.html">plot_occurrences</a></span><span class="op">(</span><span class="va">oc</span><span class="op">)</span></span></code></pre></div>
-<p><img src="Araucaria_files/figure-html/plot_occurrences-1.png" width="700"></p>
+<p><img src="InvasiveSpp_files/figure-html/plot_occurrences-1.png" width="700"></p>
 <p>This next step assigns occurrences into a study area, excluding
 records outside the study area or with NAs as predictors.</p>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">oc</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/join_area.html">join_area</a></span><span class="op">(</span><span class="va">oc</span>, <span class="va">sa</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Warning: Some records from `occ` do not fall in `pred`.</span></span>
 <span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 2 elements from `occ` were excluded.</span></span>
@@ -419,7 +440,7 @@ occurrences, predictors, scenarios, models and predictions together to
 perform analysis that are only possible when two or more of these
 classes are available. First, we create the object by informing the
 occurrences and the sdm_area.</p>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">i</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/input_sdm.html">input_sdm</a></span><span class="op">(</span><span class="va">oc</span>, <span class="va">sa</span><span class="op">)</span></span>
 <span><span class="va">i</span></span>
 <span><span class="co">#&gt;             caretSDM           </span></span>
@@ -433,7 +454,7 @@ occurrences and the sdm_area.</p>
 <span><span class="co">#&gt; Predictors Names              : bio1, bio4, bio12 </span></span>
 <span><span class="co">#&gt; ---------  Scenarios  ---------</span></span>
 <span><span class="co">#&gt; Number of Scenarios           : 5 </span></span>
-<span><span class="co">#&gt; Scenarios Names               : ca_ssp245_2090 ca_ssp585_2090 mi_ssp245_2090 mi_ssp585_2090 current</span></span></code></pre></div>
+<span><span class="co">#&gt; Scenarios Names               : current ca_ssp245_2090 ca_ssp585_2090 mi_ssp245_2090 mi_ssp585_2090</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="data-cleaning-routine">Data cleaning routine<a class="anchor" aria-label="anchor" href="#data-cleaning-routine"></a>
@@ -452,7 +473,7 @@ obtained from the <code>data_clean</code> function, note that at the end
 of the Data Cleaning information there is the Duplicated Cell method.
 This method is only possible when we have both the
 <code>occurrence</code> and <code>predictors</code> data.</p>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">i</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/data_clean.html">data_clean</a></span><span class="op">(</span><span class="va">i</span>,</span>
 <span>                capitals <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>                centroids <span class="op">=</span> <span class="cn">TRUE</span>,</span>
@@ -475,7 +496,7 @@ This method is only possible when we have both the
 <span><span class="co">#&gt; Testing coordinate validity</span></span>
 <span><span class="co">#&gt; Removed 0 records.</span></span>
 <span><span class="co">#&gt; Testing sea coordinates</span></span>
-<span><span class="co">#&gt; Reading layer `ne_110m_land' from data source `/tmp/RtmpCLTCqn/ne_110m_land.shp' using driver `ESRI Shapefile'</span></span>
+<span><span class="co">#&gt; Reading layer `ne_110m_land' from data source `/tmp/RtmpeGjv9G/ne_110m_land.shp' using driver `ESRI Shapefile'</span></span>
 <span><span class="co">#&gt; Simple feature collection with 127 features and 3 fields</span></span>
 <span><span class="co">#&gt; Geometry type: POLYGON</span></span>
 <span><span class="co">#&gt; Dimension:     XY</span></span>
@@ -495,54 +516,11 @@ variables selection through <code>usdm</code> package. The function is a
 wrapper for <code><a href="https://rdrr.io/pkg/usdm/man/vif.html" class="external-link">usdm::vifcor</a></code>, where variables are kept given a
 maximum threshold of colinearity. The standard is 0.5. Here is a example
 code for demonstration:</p>
-<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">i</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/vif_predictors.html">vif_predictors</a></span><span class="op">(</span><span class="va">i</span>, </span>
 <span>                    th <span class="op">=</span> <span class="fl">0.5</span>, </span>
 <span>                    maxobservations <span class="op">=</span> <span class="fl">5000</span>, </span>
 <span>                    variables_selected <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
-<p>For this study, however, we will use the PCA approach to
-multicolinearity, where we synthesize environmental variability into
-PCA-axis and project these axis to the geographic space to use them as
-predictors. <code>pca_predictors</code> does not have arguments other
-than the <code>input_sdm</code> object. PCA-axis will be included in
-predictors together with raw variables.</p>
-<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">i</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/pca_predictors.html">pca_predictors</a></span><span class="op">(</span><span class="va">i</span>, cumulative_proportion <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
-<span><span class="va">i</span></span>
-<span><span class="co">#&gt;             caretSDM           </span></span>
-<span><span class="co">#&gt; ...............................</span></span>
-<span><span class="co">#&gt; Class                         : input_sdm</span></span>
-<span><span class="co">#&gt; --------  Occurrences  --------</span></span>
-<span><span class="co">#&gt; Species Names                 : Araucaria angustifolia </span></span>
-<span><span class="co">#&gt; Number of presences           : 84 </span></span>
-<span><span class="co">#&gt; Data Cleaning                 : NAs, Capitals, Centroids, Geographically Duplicated, Identical Lat/Long, Institutions, Invalid, Non-terrestrial, Duplicated Cell (grid) </span></span>
-<span><span class="co">#&gt; --------  Predictors  ---------</span></span>
-<span><span class="co">#&gt; Number of Predictors          : 6 </span></span>
-<span><span class="co">#&gt; Predictors Names              : bio1, bio4, bio12, PC1, PC2, PC3 </span></span>
-<span><span class="co">#&gt; PCA-transformed variables     : DONE </span></span>
-<span><span class="co">#&gt; Cummulative proportion ( 1 ) : PC1, PC2, PC3 </span></span>
-<span><span class="co">#&gt; ---------  Scenarios  ---------</span></span>
-<span><span class="co">#&gt; Number of Scenarios           : 5 </span></span>
-<span><span class="co">#&gt; Scenarios Names               : ca_ssp245_2090 ca_ssp585_2090 mi_ssp245_2090 mi_ssp585_2090 current</span></span></code></pre></div>
-<p>To better visualize PCA parameters, users can run
-<code>pca_summary</code> and <code>get_pca_model</code> functions, which
-are very self-explanatory.</p>
-<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/pca_predictors.html">pca_summary</a></span><span class="op">(</span><span class="va">i</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Importance of components:</span></span>
-<span><span class="co">#&gt;                             PC1      PC2     PC3</span></span>
-<span><span class="co">#&gt; Standard deviation     209.3679 17.15444 1.59698</span></span>
-<span><span class="co">#&gt; Proportion of Variance   0.9933  0.00667 0.00006</span></span>
-<span><span class="co">#&gt; Cumulative Proportion    0.9933  0.99994 1.00000</span></span>
-<span><span class="fu"><a href="../reference/pca_predictors.html">get_pca_model</a></span><span class="op">(</span><span class="va">i</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Standard deviations (1, .., p=3):</span></span>
-<span><span class="co">#&gt; [1] 209.367889  17.154439   1.596985</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Rotation (n x k) = (3 x 3):</span></span>
-<span><span class="co">#&gt;                PC1          PC2          PC3</span></span>
-<span><span class="co">#&gt; bio1   0.003623821 -0.006130769 -0.999974640</span></span>
-<span><span class="co">#&gt; bio4  -0.996624181 -0.082040097 -0.003108698</span></span>
-<span><span class="co">#&gt; bio12 -0.082018958  0.996610173 -0.006407371</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="obtaining-pseudoabsence-data">Obtaining pseudoabsence data<a class="anchor" aria-label="anchor" href="#obtaining-pseudoabsence-data"></a>
@@ -564,12 +542,12 @@ argument <code>variables_selected</code> will inform which variables you
 want to use to build your pseudoabsences/models. This can either be a
 vector of variables names or a previously performed selection
 method.</p>
-<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">i</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/pseudoabsences.html">pseudoabsences</a></span><span class="op">(</span><span class="va">i</span>, </span>
 <span>                    method <span class="op">=</span> <span class="st">"bioclim"</span>, </span>
 <span>                    n_set <span class="op">=</span> <span class="fl">10</span>,</span>
 <span>                    n_pa <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>                    variables_selected <span class="op">=</span> <span class="st">"pca"</span>,</span>
+<span>                    variables_selected <span class="op">=</span> <span class="st">"vif"</span>,</span>
 <span>                    th <span class="op">=</span> <span class="fl">0</span><span class="op">)</span> </span>
 <span><span class="va">i</span></span>
 <span><span class="co">#&gt;             caretSDM           </span></span>
@@ -584,13 +562,14 @@ method.</p>
 <span><span class="co">#&gt;     Number of PAs in each set : 84 </span></span>
 <span><span class="co">#&gt; Data Cleaning                 : NAs, Capitals, Centroids, Geographically Duplicated, Identical Lat/Long, Institutions, Invalid, Non-terrestrial, Duplicated Cell (grid) </span></span>
 <span><span class="co">#&gt; --------  Predictors  ---------</span></span>
-<span><span class="co">#&gt; Number of Predictors          : 6 </span></span>
-<span><span class="co">#&gt; Predictors Names              : bio1, bio4, bio12, PC1, PC2, PC3 </span></span>
-<span><span class="co">#&gt; PCA-transformed variables     : DONE </span></span>
-<span><span class="co">#&gt; Cummulative proportion ( 1 ) : PC1, PC2, PC3 </span></span>
+<span><span class="co">#&gt; Number of Predictors          : 3 </span></span>
+<span><span class="co">#&gt; Predictors Names              : bio1, bio4, bio12 </span></span>
+<span><span class="co">#&gt; Area (VIF)                    : all</span></span>
+<span><span class="co">#&gt; Threshold                     : 0.5</span></span>
+<span><span class="co">#&gt; Selected Variables (VIF)      : bio1, bio12 </span></span>
 <span><span class="co">#&gt; ---------  Scenarios  ---------</span></span>
 <span><span class="co">#&gt; Number of Scenarios           : 5 </span></span>
-<span><span class="co">#&gt; Scenarios Names               : ca_ssp245_2090 ca_ssp585_2090 mi_ssp245_2090 mi_ssp585_2090 current</span></span></code></pre></div>
+<span><span class="co">#&gt; Scenarios Names               : current ca_ssp245_2090 ca_ssp585_2090 mi_ssp245_2090 mi_ssp585_2090</span></span></code></pre></div>
 </div>
 </div>
 <div class="section level2">
@@ -615,7 +594,7 @@ defined through <code><a href="https://rdrr.io/pkg/caret/man/trainControl.html" 
 <p>Note that, when you are using an algorithm for the first time, caret
 will ask you to install the relevant packages to properly run the
 algorithm.</p>
-<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ctrl_sdm</span> <span class="op">&lt;-</span> <span class="fu">caret</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/caret/man/trainControl.html" class="external-link">trainControl</a></span><span class="op">(</span>method <span class="op">=</span> <span class="st">"repeatedcv"</span>, </span>
 <span>                                number <span class="op">=</span> <span class="fl">4</span>, </span>
 <span>                                repeats <span class="op">=</span> <span class="fl">1</span>, </span>
@@ -626,7 +605,7 @@ algorithm.</p>
 <span></span>
 <span><span class="va">i</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/train_sdm.html">train_sdm</a></span><span class="op">(</span><span class="va">i</span>, </span>
 <span>               algo <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"naive_bayes"</span>, <span class="st">"kknn"</span><span class="op">)</span>, </span>
-<span>               variables_selected <span class="op">=</span> <span class="st">"pca"</span>, </span>
+<span>               variables_selected <span class="op">=</span> <span class="st">"vif"</span>, </span>
 <span>               ctrl<span class="op">=</span><span class="va">ctrl_sdm</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/base/warning.html" class="external-link">suppressWarnings</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Loading required package: ggplot2</span></span>
 <span><span class="co">#&gt; Loading required package: lattice</span></span>
@@ -648,24 +627,25 @@ algorithm.</p>
 <span><span class="co">#&gt;     Number of PAs in each set : 84 </span></span>
 <span><span class="co">#&gt; Data Cleaning                 : NAs, Capitals, Centroids, Geographically Duplicated, Identical Lat/Long, Institutions, Invalid, Non-terrestrial, Duplicated Cell (grid) </span></span>
 <span><span class="co">#&gt; --------  Predictors  ---------</span></span>
-<span><span class="co">#&gt; Number of Predictors          : 6 </span></span>
-<span><span class="co">#&gt; Predictors Names              : bio1, bio4, bio12, PC1, PC2, PC3 </span></span>
-<span><span class="co">#&gt; PCA-transformed variables     : DONE </span></span>
-<span><span class="co">#&gt; Cummulative proportion ( 1 ) : PC1, PC2, PC3 </span></span>
+<span><span class="co">#&gt; Number of Predictors          : 3 </span></span>
+<span><span class="co">#&gt; Predictors Names              : bio1, bio4, bio12 </span></span>
+<span><span class="co">#&gt; Area (VIF)                    : all</span></span>
+<span><span class="co">#&gt; Threshold                     : 0.5</span></span>
+<span><span class="co">#&gt; Selected Variables (VIF)      : bio1, bio12 </span></span>
 <span><span class="co">#&gt; ---------  Scenarios  ---------</span></span>
 <span><span class="co">#&gt; Number of Scenarios           : 5 </span></span>
-<span><span class="co">#&gt; Scenarios Names               : ca_ssp245_2090 ca_ssp585_2090 mi_ssp245_2090 mi_ssp585_2090 current </span></span>
+<span><span class="co">#&gt; Scenarios Names               : current ca_ssp245_2090 ca_ssp585_2090 mi_ssp245_2090 mi_ssp585_2090 </span></span>
 <span><span class="co">#&gt; -----------  Models  ----------</span></span>
 <span><span class="co">#&gt; Algorithms Names              : naive_bayes kknn </span></span>
-<span><span class="co">#&gt; Variables Names               : PC1 PC2 PC3 </span></span>
+<span><span class="co">#&gt; Variables Names               : bio1 bio12 </span></span>
 <span><span class="co">#&gt; Model Validation              :</span></span>
 <span><span class="co">#&gt;     Method                    : repeatedcv </span></span>
 <span><span class="co">#&gt;     Number                    : 4 </span></span>
 <span><span class="co">#&gt;     Metrics                   :</span></span>
 <span><span class="co">#&gt; $`Araucaria angustifolia`</span></span>
 <span><span class="co">#&gt;          algo       ROC       TSS Sensitivity Specificity</span></span>
-<span><span class="co">#&gt; 1        kknn 0.9716306 0.9012374     0.95815    0.942875</span></span>
-<span><span class="co">#&gt; 2 naive_bayes 0.9855231 0.9069517     0.98800    0.921200</span></span></code></pre></div>
+<span><span class="co">#&gt; 1        kknn 0.9770617 0.9273936     0.96055    0.966675</span></span>
+<span><span class="co">#&gt; 2 naive_bayes 0.9957792 0.9413799     0.97965    0.965175</span></span></code></pre></div>
 </div>
 </div>
 <div class="section level2">
@@ -682,7 +662,7 @@ threshold. This validation metric is set using <code>metric</code> and
 <code>th</code> arguments. In the following example, metric is set to be
 “ROC” and th is equal 0.9. This means that only models with ROC &gt; 0.9
 will be used in predictions and ensembles.</p>
-<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">i</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/predict_sdm.html">predict_sdm</a></span><span class="op">(</span><span class="va">i</span>,</span>
 <span>                 metric <span class="op">=</span> <span class="st">"ROC"</span>,</span>
 <span>                 th <span class="op">=</span> <span class="fl">0.9</span>,</span>
@@ -694,6 +674,8 @@ will be used in predictions and ensembles.</p>
 <span><span class="co">#&gt; [1] "Projecting: 4/5"</span></span>
 <span><span class="co">#&gt; [1] "Projecting: 5/5"</span></span>
 <span><span class="co">#&gt; [1] "Ensembling..."</span></span>
+<span><span class="co">#&gt; [1] "current"</span></span>
+<span><span class="co">#&gt; [1] "Araucaria angustifolia"</span></span>
 <span><span class="co">#&gt; [1] "ca_ssp245_2090"</span></span>
 <span><span class="co">#&gt; [1] "Araucaria angustifolia"</span></span>
 <span><span class="co">#&gt; [1] "ca_ssp585_2090"</span></span>
@@ -701,8 +683,6 @@ will be used in predictions and ensembles.</p>
 <span><span class="co">#&gt; [1] "mi_ssp245_2090"</span></span>
 <span><span class="co">#&gt; [1] "Araucaria angustifolia"</span></span>
 <span><span class="co">#&gt; [1] "mi_ssp585_2090"</span></span>
-<span><span class="co">#&gt; [1] "Araucaria angustifolia"</span></span>
-<span><span class="co">#&gt; [1] "current"</span></span>
 <span><span class="co">#&gt; [1] "Araucaria angustifolia"</span></span>
 <span><span class="va">i</span></span>
 <span><span class="co">#&gt;             caretSDM           </span></span>
@@ -717,28 +697,29 @@ will be used in predictions and ensembles.</p>
 <span><span class="co">#&gt;     Number of PAs in each set : 84 </span></span>
 <span><span class="co">#&gt; Data Cleaning                 : NAs, Capitals, Centroids, Geographically Duplicated, Identical Lat/Long, Institutions, Invalid, Non-terrestrial, Duplicated Cell (grid) </span></span>
 <span><span class="co">#&gt; --------  Predictors  ---------</span></span>
-<span><span class="co">#&gt; Number of Predictors          : 6 </span></span>
-<span><span class="co">#&gt; Predictors Names              : bio1, bio4, bio12, PC1, PC2, PC3 </span></span>
-<span><span class="co">#&gt; PCA-transformed variables     : DONE </span></span>
-<span><span class="co">#&gt; Cummulative proportion ( 1 ) : PC1, PC2, PC3 </span></span>
+<span><span class="co">#&gt; Number of Predictors          : 3 </span></span>
+<span><span class="co">#&gt; Predictors Names              : bio1, bio4, bio12 </span></span>
+<span><span class="co">#&gt; Area (VIF)                    : all</span></span>
+<span><span class="co">#&gt; Threshold                     : 0.5</span></span>
+<span><span class="co">#&gt; Selected Variables (VIF)      : bio1, bio12 </span></span>
 <span><span class="co">#&gt; ---------  Scenarios  ---------</span></span>
 <span><span class="co">#&gt; Number of Scenarios           : 5 </span></span>
-<span><span class="co">#&gt; Scenarios Names               : ca_ssp245_2090 ca_ssp585_2090 mi_ssp245_2090 mi_ssp585_2090 current </span></span>
+<span><span class="co">#&gt; Scenarios Names               : current ca_ssp245_2090 ca_ssp585_2090 mi_ssp245_2090 mi_ssp585_2090 </span></span>
 <span><span class="co">#&gt; -----------  Models  ----------</span></span>
 <span><span class="co">#&gt; Algorithms Names              : naive_bayes kknn </span></span>
-<span><span class="co">#&gt; Variables Names               : PC1 PC2 PC3 </span></span>
+<span><span class="co">#&gt; Variables Names               : bio1 bio12 </span></span>
 <span><span class="co">#&gt; Model Validation              :</span></span>
 <span><span class="co">#&gt;     Method                    : repeatedcv </span></span>
 <span><span class="co">#&gt;     Number                    : 4 </span></span>
 <span><span class="co">#&gt;     Metrics                   :</span></span>
 <span><span class="co">#&gt; $`Araucaria angustifolia`</span></span>
 <span><span class="co">#&gt;          algo       ROC       TSS Sensitivity Specificity</span></span>
-<span><span class="co">#&gt; 1        kknn 0.9716306 0.9012374     0.95815    0.942875</span></span>
-<span><span class="co">#&gt; 2 naive_bayes 0.9855231 0.9069517     0.98800    0.921200</span></span>
+<span><span class="co">#&gt; 1        kknn 0.9770617 0.9273936     0.96055    0.966675</span></span>
+<span><span class="co">#&gt; 2 naive_bayes 0.9957792 0.9413799     0.97965    0.965175</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; --------  Predictions  --------</span></span>
 <span><span class="co">#&gt; Ensembles                     :</span></span>
-<span><span class="co">#&gt;     Scenarios                 : ca_ssp245_2090 ca_ssp585_2090 mi_ssp245_2090 mi_ssp585_2090 current </span></span>
+<span><span class="co">#&gt;     Scenarios                 : current ca_ssp245_2090 ca_ssp585_2090 mi_ssp245_2090 mi_ssp585_2090 </span></span>
 <span><span class="co">#&gt;     Methods                   : mean_occ_prob wmean_AUC committee_avg </span></span>
 <span><span class="co">#&gt; Thresholds                    :</span></span>
 <span><span class="co">#&gt;     Method                    : threshold </span></span>
@@ -752,250 +733,250 @@ majority rule, or the committee average (<code>committee_avg</code>; the
 sum of binaries).</p>
 <p>Besides the AUC/ROC metric, users can get every available metric by
 model using the following code before commit to “ROC”:</p>
-<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/train_sdm.html">get_validation_metrics</a></span><span class="op">(</span><span class="va">i</span><span class="op">)</span></span>
 <span><span class="co">#&gt; $`Araucaria angustifolia`</span></span>
 <span><span class="co">#&gt;              algo       ROC       TSS Sensitivity Specificity Pos Pred Value</span></span>
-<span><span class="co">#&gt; m1.2         kknn 0.9815476 0.9511905     0.97600     0.97500        0.98800</span></span>
-<span><span class="co">#&gt; m2.2         kknn 0.9530574 0.8898810     0.95200     0.93750        0.96525</span></span>
-<span><span class="co">#&gt; m3.2         kknn 0.9870130 0.9188312     0.96425     0.95450        0.97675</span></span>
-<span><span class="co">#&gt; m4.2         kknn 0.9642857 0.8652597     0.95225     0.91275        0.95475</span></span>
-<span><span class="co">#&gt; m5.2         kknn 0.9707792 0.9188312     0.96425     0.95450        0.97550</span></span>
-<span><span class="co">#&gt; m6.2         kknn 0.9909361 0.8979978     0.96400     0.93375        0.96475</span></span>
-<span><span class="co">#&gt; m7.2         kknn 0.9696970 0.8796537     0.95225     0.92725        0.96575</span></span>
-<span><span class="co">#&gt; m8.2         kknn 0.9623016 0.8996032     0.95225     0.94725        0.97675</span></span>
-<span><span class="co">#&gt; m9.2         kknn 0.9626623 0.8841991     0.95225     0.93175        0.96750</span></span>
-<span><span class="co">#&gt; m10.2        kknn 0.9740260 0.9069264     0.95200     0.95450        0.97600</span></span>
-<span><span class="co">#&gt; m1.1  naive_bayes 0.9988095 0.9392857     0.98800     0.97500        0.98875</span></span>
-<span><span class="co">#&gt; m2.1  naive_bayes 0.9871934 0.8990801     0.98800     0.91100        0.95575</span></span>
-<span><span class="co">#&gt; m3.1  naive_bayes 0.9821429 0.9199134     0.98800     0.93175        0.96700</span></span>
-<span><span class="co">#&gt; m4.1  naive_bayes 0.9731241 0.9218074     0.98800     0.93375        0.96700</span></span>
-<span><span class="co">#&gt; m5.1  naive_bayes 0.9870130 0.9199134     0.98800     0.93175        0.96625</span></span>
-<span><span class="co">#&gt; m6.1  naive_bayes 0.9848485 0.8971861     0.98800     0.90900        0.95500</span></span>
-<span><span class="co">#&gt; m7.1  naive_bayes 0.9955628 0.8926407     0.98800     0.90450        0.95550</span></span>
-<span><span class="co">#&gt; m8.1  naive_bayes 0.9714286 0.8853175     0.98800     0.89725        0.95500</span></span>
-<span><span class="co">#&gt; m9.1  naive_bayes 0.9913420 0.8971861     0.98800     0.90900        0.95500</span></span>
-<span><span class="co">#&gt; m10.1 naive_bayes 0.9837662 0.8971861     0.98800     0.90900        0.95475</span></span>
+<span><span class="co">#&gt; m1.2         kknn 0.9821429 0.8718254     0.95225     0.91950        0.96700</span></span>
+<span><span class="co">#&gt; m2.2         kknn 0.9811057 0.9188312     0.96400     0.95450        0.97675</span></span>
+<span><span class="co">#&gt; m3.2         kknn 0.9797619 0.9392857     0.96400     0.97500        0.98800</span></span>
+<span><span class="co">#&gt; m4.2         kknn 0.9859758 0.9434524     0.96400     0.97925        0.98875</span></span>
+<span><span class="co">#&gt; m5.2         kknn 0.9707792 0.9415584     0.96400     0.97725        0.98800</span></span>
+<span><span class="co">#&gt; m6.2         kknn 0.9584235 0.9188312     0.96425     0.95450        0.97725</span></span>
+<span><span class="co">#&gt; m7.2         kknn 0.9819625 0.9415584     0.96425     0.97725        0.98875</span></span>
+<span><span class="co">#&gt; m8.2         kknn 0.9744048 0.9523810     0.95225     1.00000        1.00000</span></span>
+<span><span class="co">#&gt; m9.2         kknn 0.9848485 0.9188312     0.96425     0.95450        0.97675</span></span>
+<span><span class="co">#&gt; m10.2        kknn 0.9712121 0.9273810     0.95225     0.97500        0.98800</span></span>
+<span><span class="co">#&gt; m1.1  naive_bayes 0.9940476 0.9261905     0.97600     0.95000        0.97600</span></span>
+<span><span class="co">#&gt; m2.1  naive_bayes 0.9924242 0.9534632     0.98800     0.97725        0.98800</span></span>
+<span><span class="co">#&gt; m3.1  naive_bayes 0.9978355 0.9307359     0.97600     0.95450        0.97725</span></span>
+<span><span class="co">#&gt; m4.1  naive_bayes 0.9924242 0.9099026     0.98800     0.93375        0.96625</span></span>
+<span><span class="co">#&gt; m5.1  naive_bayes 0.9978355 0.9761905     0.97600     1.00000        1.00000</span></span>
+<span><span class="co">#&gt; m6.1  naive_bayes 0.9978355 0.9534632     0.97625     0.97725        0.98875</span></span>
+<span><span class="co">#&gt; m7.1  naive_bayes 1.0000000 0.9307359     0.97625     0.95450        0.97750</span></span>
+<span><span class="co">#&gt; m8.1  naive_bayes 0.9976190 0.9511905     0.97600     0.97500        0.98800</span></span>
+<span><span class="co">#&gt; m9.1  naive_bayes 0.9935065 0.9534632     0.98800     0.97725        0.98750</span></span>
+<span><span class="co">#&gt; m10.1 naive_bayes 0.9942641 0.9284632     0.97600     0.95225        0.97600</span></span>
 <span><span class="co">#&gt;       Neg Pred Value Precision  Recall      F1 Prevalence Detection Rate</span></span>
-<span><span class="co">#&gt; m1.2         0.95225   0.98800 0.97600 0.98200    0.68275        0.66675</span></span>
-<span><span class="co">#&gt; m2.2         0.91500   0.96525 0.95200 0.95850    0.64600        0.61550</span></span>
-<span><span class="co">#&gt; m3.2         0.93875   0.97675 0.96425 0.96975    0.66125        0.63800</span></span>
-<span><span class="co">#&gt; m4.2         0.92725   0.95475 0.95225 0.95175    0.64600        0.61575</span></span>
-<span><span class="co">#&gt; m5.2         0.94225   0.97550 0.96425 0.96925    0.65600        0.63250</span></span>
-<span><span class="co">#&gt; m6.2         0.93575   0.96475 0.96400 0.96425    0.65100        0.62800</span></span>
-<span><span class="co">#&gt; m7.2         0.91675   0.96575 0.95225 0.95850    0.66125        0.63025</span></span>
-<span><span class="co">#&gt; m8.2         0.91450   0.97675 0.95225 0.96300    0.68275        0.65050</span></span>
-<span><span class="co">#&gt; m9.2         0.91875   0.96750 0.95225 0.95800    0.65600        0.62475</span></span>
-<span><span class="co">#&gt; m10.2        0.91300   0.97600 0.95200 0.96400    0.65600        0.62500</span></span>
-<span><span class="co">#&gt; m1.1         0.97500   0.98875 0.98800 0.98225    0.68275        0.67475</span></span>
-<span><span class="co">#&gt; m2.1         0.98075   0.95575 0.98800 0.97125    0.64600        0.63850</span></span>
-<span><span class="co">#&gt; m3.1         0.97725   0.96700 0.98800 0.97700    0.66125        0.65350</span></span>
-<span><span class="co">#&gt; m4.1         0.97925   0.96700 0.98800 0.97700    0.64600        0.63825</span></span>
-<span><span class="co">#&gt; m5.1         0.97925   0.96625 0.98800 0.97675    0.65600        0.64825</span></span>
-<span><span class="co">#&gt; m6.1         0.97925   0.95500 0.98800 0.97100    0.65100        0.64350</span></span>
-<span><span class="co">#&gt; m7.1         0.97500   0.95550 0.98800 0.97125    0.66125        0.65350</span></span>
-<span><span class="co">#&gt; m8.1         0.97500   0.95500 0.98800 0.97100    0.68275        0.67475</span></span>
-<span><span class="co">#&gt; m9.1         0.97725   0.95500 0.98800 0.97100    0.65600        0.64825</span></span>
-<span><span class="co">#&gt; m10.1        0.97500   0.95475 0.98800 0.97100    0.65600        0.64825</span></span>
+<span><span class="co">#&gt; m1.2         0.91950   0.96700 0.95225 0.95775    0.68275        0.65075</span></span>
+<span><span class="co">#&gt; m2.2         0.93725   0.97675 0.96400 0.97025    0.65100        0.62800</span></span>
+<span><span class="co">#&gt; m3.2         0.93350   0.98800 0.96400 0.97600    0.66125        0.63775</span></span>
+<span><span class="co">#&gt; m4.2         0.93775   0.98875 0.96400 0.97625    0.65100        0.62775</span></span>
+<span><span class="co">#&gt; m5.2         0.93725   0.98800 0.96400 0.97600    0.65100        0.62800</span></span>
+<span><span class="co">#&gt; m6.2         0.93925   0.97725 0.96425 0.97000    0.65100        0.62825</span></span>
+<span><span class="co">#&gt; m7.2         0.94225   0.98875 0.96425 0.97575    0.65100        0.62800</span></span>
+<span><span class="co">#&gt; m8.2         0.91475   1.00000 0.95225 0.97550    0.67175        0.64000</span></span>
+<span><span class="co">#&gt; m9.2         0.93875   0.97675 0.96425 0.96975    0.65100        0.62775</span></span>
+<span><span class="co">#&gt; m10.2        0.91575   0.98800 0.95225 0.96950    0.66125        0.63000</span></span>
+<span><span class="co">#&gt; m1.1         0.95000   0.97600 0.97600 0.97600    0.68275        0.66675</span></span>
+<span><span class="co">#&gt; m2.1         0.97925   0.98800 0.98800 0.98250    0.65100        0.64325</span></span>
+<span><span class="co">#&gt; m3.1         0.95225   0.97725 0.97600 0.97650    0.66125        0.64550</span></span>
+<span><span class="co">#&gt; m4.1         0.97500   0.96625 0.98800 0.97025    0.65100        0.64325</span></span>
+<span><span class="co">#&gt; m5.1         0.95850   1.00000 0.97600 0.98800    0.65100        0.63550</span></span>
+<span><span class="co">#&gt; m6.1         0.96150   0.98875 0.97625 0.98175    0.65100        0.63550</span></span>
+<span><span class="co">#&gt; m7.1         0.96150   0.97750 0.97625 0.97600    0.65100        0.63550</span></span>
+<span><span class="co">#&gt; m8.1         0.95225   0.98800 0.97600 0.98200    0.67175        0.65575</span></span>
+<span><span class="co">#&gt; m9.1         0.97725   0.98750 0.98800 0.98225    0.65100        0.64325</span></span>
+<span><span class="co">#&gt; m10.1        0.95225   0.97600 0.97600 0.97600    0.66125        0.64550</span></span>
 <span><span class="co">#&gt;       Detection Prevalence Balanced Accuracy Accuracy   Kappa AccuracyLower</span></span>
-<span><span class="co">#&gt; m1.2               0.67475           0.97550  0.97575 0.94500       0.84775</span></span>
-<span><span class="co">#&gt; m2.2               0.63825           0.94500  0.94650 0.88325       0.80775</span></span>
-<span><span class="co">#&gt; m3.2               0.65375           0.95950  0.96125 0.91425       0.82750</span></span>
-<span><span class="co">#&gt; m4.2               0.64700           0.93300  0.93900 0.86800       0.79750</span></span>
-<span><span class="co">#&gt; m5.2               0.65625           0.95950  0.96100 0.91575       0.83250</span></span>
-<span><span class="co">#&gt; m6.2               0.65900           0.94925  0.95375 0.89775       0.81650</span></span>
-<span><span class="co">#&gt; m7.2               0.65425           0.93975  0.94475 0.87625       0.80300</span></span>
-<span><span class="co">#&gt; m8.2               0.67525           0.95000  0.95100 0.89000       0.81050</span></span>
-<span><span class="co">#&gt; m9.2               0.64825           0.94225  0.94525 0.87875       0.81050</span></span>
-<span><span class="co">#&gt; m10.2              0.64050           0.95350  0.95350 0.89650       0.81500</span></span>
-<span><span class="co">#&gt; m1.1               0.69100           0.96950  0.97575 0.94400       0.84775</span></span>
-<span><span class="co">#&gt; m2.1               0.68475           0.94950  0.96175 0.91325       0.82850</span></span>
-<span><span class="co">#&gt; m3.1               0.70050           0.96000  0.96875 0.92800       0.83850</span></span>
-<span><span class="co">#&gt; m4.1               0.68500           0.96075  0.96925 0.93000       0.84150</span></span>
-<span><span class="co">#&gt; m5.1               0.68800           0.96025  0.96900 0.92975       0.83800</span></span>
-<span><span class="co">#&gt; m6.1               0.70600           0.94875  0.96125 0.91125       0.82900</span></span>
-<span><span class="co">#&gt; m7.1               0.70900           0.94625  0.96025 0.90800       0.82950</span></span>
-<span><span class="co">#&gt; m8.1               0.73175           0.94250  0.95925 0.90350       0.82200</span></span>
-<span><span class="co">#&gt; m9.1               0.70350           0.94875  0.96125 0.91125       0.82825</span></span>
-<span><span class="co">#&gt; m10.1              0.68750           0.94875  0.96100 0.91150       0.82925</span></span>
+<span><span class="co">#&gt; m1.2               0.67575           0.93600  0.94300 0.86950       0.79675</span></span>
+<span><span class="co">#&gt; m2.2               0.64375           0.95950  0.96150 0.91450       0.82750</span></span>
+<span><span class="co">#&gt; m3.2               0.64575           0.96950  0.96825 0.92900       0.83825</span></span>
+<span><span class="co">#&gt; m4.2               0.63550           0.97150  0.96925 0.93225       0.83900</span></span>
+<span><span class="co">#&gt; m5.2               0.63575           0.97075  0.96925 0.93225       0.84075</span></span>
+<span><span class="co">#&gt; m6.2               0.64400           0.95925  0.96125 0.91550       0.83250</span></span>
+<span><span class="co">#&gt; m7.2               0.65150           0.97075  0.96925 0.93300       0.84075</span></span>
+<span><span class="co">#&gt; m8.2               0.64825           0.97600  0.96800 0.93000       0.83625</span></span>
+<span><span class="co">#&gt; m9.2               0.65125           0.95950  0.96125 0.91425       0.82900</span></span>
+<span><span class="co">#&gt; m10.2              0.63800           0.96350  0.96050 0.91275       0.82675</span></span>
+<span><span class="co">#&gt; m1.1               0.69900           0.96300  0.96750 0.92600       0.83600</span></span>
+<span><span class="co">#&gt; m2.1               0.65900           0.97675  0.97700 0.94850       0.85375</span></span>
+<span><span class="co">#&gt; m3.1               0.67725           0.96525  0.96850 0.92900       0.84125</span></span>
+<span><span class="co">#&gt; m4.1               0.69050           0.95500  0.96150 0.91450       0.82750</span></span>
+<span><span class="co">#&gt; m5.1               0.65100           0.98800  0.98450 0.96600       0.86525</span></span>
+<span><span class="co">#&gt; m6.1               0.65125           0.97675  0.97675 0.94900       0.85375</span></span>
+<span><span class="co">#&gt; m7.1               0.66700           0.96550  0.96900 0.93125       0.84050</span></span>
+<span><span class="co">#&gt; m8.1               0.67200           0.97550  0.97575 0.94500       0.84950</span></span>
+<span><span class="co">#&gt; m9.1               0.65875           0.97675  0.97700 0.94925       0.85650</span></span>
+<span><span class="co">#&gt; m10.1              0.66925           0.96425  0.96825 0.92825       0.84000</span></span>
 <span><span class="co">#&gt;       AccuracyUpper AccuracyNull AccuracyPValue McnemarPValue Positive Negative</span></span>
-<span><span class="co">#&gt; m1.2        0.99775      0.68275        0.00025     1.0000000       21     9.75</span></span>
-<span><span class="co">#&gt; m2.2        0.99300      0.64600        0.00000     1.0000000       21    11.50</span></span>
-<span><span class="co">#&gt; m3.2        0.99575      0.66125        0.00000     0.8266667       21    10.75</span></span>
-<span><span class="co">#&gt; m4.2        0.99000      0.64600        0.00000     0.8120000       21    11.50</span></span>
-<span><span class="co">#&gt; m5.2        0.99100      0.65600        0.00125     0.8085000       21    11.00</span></span>
-<span><span class="co">#&gt; m6.2        0.99575      0.65100        0.00000     1.0000000       21    11.25</span></span>
-<span><span class="co">#&gt; m7.2        0.99250      0.66125        0.00050     0.8700000       21    10.75</span></span>
-<span><span class="co">#&gt; m8.2        0.99275      0.68275        0.00125     0.8120000       21     9.75</span></span>
-<span><span class="co">#&gt; m9.2        0.98625      0.65600        0.00150     0.4325000       21    11.00</span></span>
-<span><span class="co">#&gt; m10.2       0.99550      0.65600        0.00000     1.0000000       21    11.00</span></span>
-<span><span class="co">#&gt; m1.1        0.99775      0.68275        0.00025     1.0000000       21     9.75</span></span>
-<span><span class="co">#&gt; m2.1        0.99725      0.64600        0.00050     0.8700000       21    11.50</span></span>
-<span><span class="co">#&gt; m3.1        0.99750      0.66125        0.00025     0.8266667       21    10.75</span></span>
-<span><span class="co">#&gt; m4.1        0.99750      0.64600        0.00025     0.8700000       21    11.50</span></span>
-<span><span class="co">#&gt; m5.1        0.99900      0.65600        0.00075     1.0000000       21    11.00</span></span>
-<span><span class="co">#&gt; m6.1        0.99575      0.65100        0.00125     0.8266667       21    11.25</span></span>
-<span><span class="co">#&gt; m7.1        0.99300      0.66125        0.00100     0.8120000       21    10.75</span></span>
-<span><span class="co">#&gt; m8.1        0.99575      0.68275        0.00350     0.8266667       21     9.75</span></span>
-<span><span class="co">#&gt; m9.1        0.99575      0.65600        0.00150     0.8266667       21    11.00</span></span>
-<span><span class="co">#&gt; m10.1       0.99450      0.65600        0.00150     1.0000000       21    11.00</span></span>
-<span><span class="co">#&gt;       True Positive False Positive True Negative False Negative      ROCSD</span></span>
-<span><span class="co">#&gt; m1.2          20.50           0.50          9.50           0.25 0.03690476</span></span>
-<span><span class="co">#&gt; m2.2          20.00           1.00         10.75           0.75 0.04854347</span></span>
-<span><span class="co">#&gt; m3.2          20.25           0.75         10.25           0.50 0.02317804</span></span>
-<span><span class="co">#&gt; m4.2          20.00           1.00         10.50           1.00 0.04123930</span></span>
-<span><span class="co">#&gt; m5.2          20.25           0.75         10.50           0.75 0.05844156</span></span>
-<span><span class="co">#&gt; m6.2          20.25           0.75         10.50           1.00 0.02121863</span></span>
-<span><span class="co">#&gt; m7.2          20.00           1.00         10.00           0.75 0.04310929</span></span>
-<span><span class="co">#&gt; m8.2          20.00           1.00          9.25           0.75 0.04365079</span></span>
-<span><span class="co">#&gt; m9.2          20.00           1.00         10.25           0.75 0.04319524</span></span>
-<span><span class="co">#&gt; m10.2         20.00           1.00         10.50           0.50 0.03061068</span></span>
-<span><span class="co">#&gt; m1.1          20.75           0.75          9.50           0.50 0.03260978</span></span>
-<span><span class="co">#&gt; m2.1          20.75           0.50         10.50           1.75 0.02995821</span></span>
-<span><span class="co">#&gt; m3.1          20.75           0.25         10.00           1.50 0.03571429</span></span>
-<span><span class="co">#&gt; m4.1          20.75           0.25         10.75           1.50 0.06400608</span></span>
-<span><span class="co">#&gt; m5.1          20.75           0.75         10.25           1.75 0.06734350</span></span>
-<span><span class="co">#&gt; m6.1          20.75           0.25         10.25           2.00 0.03683365</span></span>
-<span><span class="co">#&gt; m7.1          20.75           0.25          9.75           1.75 0.05945451</span></span>
-<span><span class="co">#&gt; m8.1          20.75           0.25          8.75           1.75 0.04757273</span></span>
-<span><span class="co">#&gt; m9.1          20.75           0.50         10.00           2.00 0.04990887</span></span>
-<span><span class="co">#&gt; m10.1         20.75           0.75         10.00           1.75 0.02835966</span></span>
+<span><span class="co">#&gt; m1.2        0.99250      0.68275        0.00125     0.6820000       21     9.75</span></span>
+<span><span class="co">#&gt; m2.2        0.99725      0.65100        0.00000     1.0000000       21    11.25</span></span>
+<span><span class="co">#&gt; m3.2        0.99750      0.66125        0.00025     1.0000000       21    10.75</span></span>
+<span><span class="co">#&gt; m4.2        0.99900      0.65100        0.00000     1.0000000       21    11.25</span></span>
+<span><span class="co">#&gt; m5.2        0.99750      0.65100        0.00000     1.0000000       21    11.25</span></span>
+<span><span class="co">#&gt; m6.2        0.99325      0.65100        0.00025     0.7400000       21    11.25</span></span>
+<span><span class="co">#&gt; m7.2        0.99750      0.65100        0.00000     0.8700000       21    11.25</span></span>
+<span><span class="co">#&gt; m8.2        0.99750      0.67175        0.00025     0.8700000       21    10.25</span></span>
+<span><span class="co">#&gt; m9.2        0.99575      0.65100        0.00000     0.8700000       21    11.25</span></span>
+<span><span class="co">#&gt; m10.2       0.99575      0.66125        0.00025     0.8266667       21    10.75</span></span>
+<span><span class="co">#&gt; m1.1        0.99600      0.68275        0.00075     1.0000000       21     9.75</span></span>
+<span><span class="co">#&gt; m2.1        0.99925      0.65100        0.00000     1.0000000       21    11.25</span></span>
+<span><span class="co">#&gt; m3.1        0.99475      0.66125        0.00025     1.0000000       21    10.75</span></span>
+<span><span class="co">#&gt; m4.1        0.99725      0.65100        0.00025     0.8700000       21    11.25</span></span>
+<span><span class="co">#&gt; m5.1        0.99950      0.65100        0.00000     1.0000000       21    11.25</span></span>
+<span><span class="co">#&gt; m6.1        0.99775      0.65100        0.00000     0.8266667       21    11.25</span></span>
+<span><span class="co">#&gt; m7.1        0.99750      0.65100        0.00000     0.8266667       21    11.25</span></span>
+<span><span class="co">#&gt; m8.1        0.99775      0.67175        0.00025     1.0000000       21    10.25</span></span>
+<span><span class="co">#&gt; m9.1        0.99775      0.65100        0.00025     1.0000000       21    11.25</span></span>
+<span><span class="co">#&gt; m10.1       0.99600      0.66125        0.00025     1.0000000       21    10.75</span></span>
+<span><span class="co">#&gt;       True Positive False Positive True Negative False Negative       ROCSD</span></span>
+<span><span class="co">#&gt; m1.2          20.00           1.00          9.00           0.75 0.035714286</span></span>
+<span><span class="co">#&gt; m2.2          20.25           0.75         10.75           0.50 0.012634313</span></span>
+<span><span class="co">#&gt; m3.2          20.25           0.75         10.50           0.25 0.014219423</span></span>
+<span><span class="co">#&gt; m4.2          20.25           0.75         11.00           0.25 0.015793132</span></span>
+<span><span class="co">#&gt; m5.2          20.25           0.75         11.00           0.25 0.028959065</span></span>
+<span><span class="co">#&gt; m6.2          20.25           0.75         10.75           0.50 0.054489130</span></span>
+<span><span class="co">#&gt; m7.2          20.25           0.75         11.00           0.75 0.032281741</span></span>
+<span><span class="co">#&gt; m8.2          20.00           1.00         10.25           0.25 0.019765729</span></span>
+<span><span class="co">#&gt; m9.2          20.25           0.75         10.75           0.75 0.020205442</span></span>
+<span><span class="co">#&gt; m10.2         20.00           1.00         10.50           0.25 0.036551258</span></span>
+<span><span class="co">#&gt; m1.1          20.50           0.50          9.25           1.00 0.086885734</span></span>
+<span><span class="co">#&gt; m2.1          20.75           0.50         11.00           0.50 0.037684170</span></span>
+<span><span class="co">#&gt; m3.1          20.50           0.50         10.25           1.00 0.004329004</span></span>
+<span><span class="co">#&gt; m4.1          20.75           0.50         10.50           1.50 0.017316017</span></span>
+<span><span class="co">#&gt; m5.1          20.50           0.50         11.25           0.50 0.006122137</span></span>
+<span><span class="co">#&gt; m6.1          20.50           0.50         11.00           0.50 0.010229038</span></span>
+<span><span class="co">#&gt; m7.1          20.50           0.50         10.75           1.00 0.008289412</span></span>
+<span><span class="co">#&gt; m8.1          20.50           0.50         10.00           0.50 0.011251942</span></span>
+<span><span class="co">#&gt; m9.1          20.75           0.50         11.00           0.50 0.035756621</span></span>
+<span><span class="co">#&gt; m10.1         20.50           0.50         10.25           0.75 0.017371394</span></span>
 <span><span class="co">#&gt;            TSSSD SensitivitySD SpecificitySD Pos Pred ValueSD Neg Pred ValueSD</span></span>
-<span><span class="co">#&gt; m1.2  0.06959281    0.02771281    0.05000000       0.02400000      0.055259238</span></span>
-<span><span class="co">#&gt; m2.2  0.07978559    0.00000000    0.07990202       0.04379783      0.004000000</span></span>
-<span><span class="co">#&gt; m3.2  0.05822739    0.04552197    0.05253887       0.02687471      0.075256783</span></span>
-<span><span class="co">#&gt; m4.2  0.05841149    0.06741105    0.06831483       0.03715172      0.095062699</span></span>
-<span><span class="co">#&gt; m5.2  0.12182898    0.07150000    0.08712587       0.04273172      0.115500000</span></span>
-<span><span class="co">#&gt; m6.2  0.05607812    0.02400000    0.07440878       0.03561250      0.042999031</span></span>
-<span><span class="co">#&gt; m7.2  0.08416843    0.03878466    0.09506270       0.04233497      0.068178076</span></span>
-<span><span class="co">#&gt; m8.2  0.07138005    0.06741105    0.06107577       0.02687471      0.110213429</span></span>
-<span><span class="co">#&gt; m9.2  0.15208612    0.06741105    0.13650000       0.06500000      0.102811721</span></span>
-<span><span class="co">#&gt; m10.2 0.05248639    0.00000000    0.05253887       0.02771281      0.004618802</span></span>
-<span><span class="co">#&gt; m1.1  0.07407785    0.04552197    0.05773503       0.02687471      0.081785797</span></span>
-<span><span class="co">#&gt; m2.1  0.09094773    0.02771281    0.07955082       0.03988734      0.055259238</span></span>
-<span><span class="co">#&gt; m3.1  0.11356935    0.02400000    0.11748049       0.05353504      0.045500000</span></span>
-<span><span class="co">#&gt; m4.1  0.07705737    0.02400000    0.08651927       0.04178516      0.050000000</span></span>
-<span><span class="co">#&gt; m5.1  0.06926407    0.02400000    0.04550000       0.02300000      0.050000000</span></span>
-<span><span class="co">#&gt; m6.1  0.12042809    0.02400000    0.13062669       0.05353504      0.045500000</span></span>
-<span><span class="co">#&gt; m7.1  0.12454900    0.02400000    0.11051848       0.05141012      0.055500000</span></span>
-<span><span class="co">#&gt; m8.1  0.11440690    0.02400000    0.09298880       0.04064788      0.062500000</span></span>
-<span><span class="co">#&gt; m9.1  0.09566349    0.02771281    0.07430119       0.03558089      0.061075773</span></span>
-<span><span class="co">#&gt; m10.1 0.13482607    0.02400000    0.15541209       0.06790864      0.050000000</span></span>
+<span><span class="co">#&gt; m1.2  0.07380952    0.06741105    0.10545615       0.04178516       0.10911920</span></span>
+<span><span class="co">#&gt; m2.2  0.04334412    0.02400000    0.05253887       0.02687471       0.04222460</span></span>
+<span><span class="co">#&gt; m3.2  0.06213328    0.02400000    0.05000000       0.02400000       0.04505182</span></span>
+<span><span class="co">#&gt; m4.2  0.01785714    0.02400000    0.04150000       0.02250000       0.04150000</span></span>
+<span><span class="co">#&gt; m5.2  0.05791813    0.02400000    0.04550000       0.02400000       0.04222460</span></span>
+<span><span class="co">#&gt; m6.2  0.10856368    0.04552197    0.09100000       0.04550000       0.07231125</span></span>
+<span><span class="co">#&gt; m7.2  0.04449969    0.04552197    0.05253887       0.02598076       0.07430287</span></span>
+<span><span class="co">#&gt; m8.2  0.03888079    0.03878466    0.05000000       0.02250000       0.06828555</span></span>
+<span><span class="co">#&gt; m9.2  0.05822739    0.04552197    0.05253887       0.02687471       0.07525678</span></span>
+<span><span class="co">#&gt; m10.2 0.06333811    0.03878466    0.05000000       0.02400000       0.06380374</span></span>
+<span><span class="co">#&gt; m1.1  0.08615407    0.02771281    0.08164966       0.03561250       0.05773503</span></span>
+<span><span class="co">#&gt; m2.1  0.06530678    0.02771281    0.05033554       0.02598076       0.05033554</span></span>
+<span><span class="co">#&gt; m3.1  0.10911610    0.02771281    0.09100000       0.04550000       0.05525924</span></span>
+<span><span class="co">#&gt; m4.1  0.07119521    0.04750000    0.05494543       0.02545584       0.07700000</span></span>
+<span><span class="co">#&gt; m5.1  0.05844406    0.02771281    0.05033554       0.02687471       0.05033554</span></span>
+<span><span class="co">#&gt; m6.1  0.05376512    0.04750000    0.05033554       0.02598076       0.07700000</span></span>
+<span><span class="co">#&gt; m7.1  0.08668824    0.04750000    0.10507775       0.05022947       0.07700000</span></span>
+<span><span class="co">#&gt; m8.1  0.06959281    0.02771281    0.05773503       0.02687471       0.05525924</span></span>
+<span><span class="co">#&gt; m9.1  0.09307359    0.04750000    0.05033554       0.02687471       0.08350000</span></span>
+<span><span class="co">#&gt; m10.1 0.08268691    0.02771281    0.05525924       0.02771281       0.05525924</span></span>
 <span><span class="co">#&gt;       PrecisionSD   RecallSD       F1SD PrevalenceSD Detection RateSD</span></span>
-<span><span class="co">#&gt; m1.2   0.02400000 0.02771281 0.02297825   0.01150000       0.02681262</span></span>
-<span><span class="co">#&gt; m2.2   0.04379783 0.00000000 0.02211334   0.01154701       0.01096966</span></span>
-<span><span class="co">#&gt; m3.2   0.02687471 0.04552197 0.02361320   0.01050000       0.03628590</span></span>
-<span><span class="co">#&gt; m4.2   0.03715172 0.06741105 0.02929590   0.01154701       0.05272808</span></span>
-<span><span class="co">#&gt; m5.2   0.04273172 0.07150000 0.04750000   0.00000000       0.04700000</span></span>
-<span><span class="co">#&gt; m6.2   0.03561250 0.02400000 0.01415097   0.01000000       0.02070427</span></span>
-<span><span class="co">#&gt; m7.2   0.04233497 0.03878466 0.02321637   0.01050000       0.03442262</span></span>
-<span><span class="co">#&gt; m8.2   0.02687471 0.06741105 0.03309582   0.01150000       0.04657252</span></span>
-<span><span class="co">#&gt; m9.2   0.06500000 0.06741105 0.04883305   0.00000000       0.04431234</span></span>
-<span><span class="co">#&gt; m10.2  0.02771281 0.00000000 0.01385641   0.00000000       0.00000000</span></span>
-<span><span class="co">#&gt; m1.1   0.02687471 0.04552197 0.02289651   0.01150000       0.03069745</span></span>
-<span><span class="co">#&gt; m2.1   0.03988734 0.02771281 0.02844146   0.01154701       0.02362908</span></span>
-<span><span class="co">#&gt; m3.1   0.05353504 0.02400000 0.02839014   0.01050000       0.02142429</span></span>
-<span><span class="co">#&gt; m4.1   0.04178516 0.02400000 0.02238117   0.01154701       0.01291962</span></span>
-<span><span class="co">#&gt; m5.1   0.02300000 0.02400000 0.02350000   0.00000000       0.01550000</span></span>
-<span><span class="co">#&gt; m6.1   0.05353504 0.02400000 0.02661297   0.01000000       0.02500000</span></span>
-<span><span class="co">#&gt; m7.1   0.05141012 0.02400000 0.03473111   0.01050000       0.02142429</span></span>
-<span><span class="co">#&gt; m8.1   0.04064788 0.02400000 0.03205724   0.01150000       0.02260347</span></span>
-<span><span class="co">#&gt; m9.1   0.03558089 0.02771281 0.02957899   0.00000000       0.01789786</span></span>
-<span><span class="co">#&gt; m10.1  0.06790864 0.02400000 0.02940521   0.00000000       0.01550000</span></span>
+<span><span class="co">#&gt; m1.2   0.04178516 0.06741105 0.02528998       0.0115       0.05168091</span></span>
+<span><span class="co">#&gt; m2.2   0.02687471 0.02400000 0.01217580       0.0100       0.02070427</span></span>
+<span><span class="co">#&gt; m3.2   0.02400000 0.02400000 0.01959592       0.0105       0.01539210</span></span>
+<span><span class="co">#&gt; m4.2   0.02250000 0.02400000 0.00050000       0.0100       0.00550000</span></span>
+<span><span class="co">#&gt; m5.2   0.02400000 0.02400000 0.01959592       0.0100       0.02070427</span></span>
+<span><span class="co">#&gt; m6.2   0.04550000 0.04552197 0.03559026       0.0100       0.03777455</span></span>
+<span><span class="co">#&gt; m7.2   0.02598076 0.04552197 0.02043486       0.0100       0.03270066</span></span>
+<span><span class="co">#&gt; m8.2   0.02250000 0.03878466 0.02042058       0.0105       0.02797618</span></span>
+<span><span class="co">#&gt; m9.2   0.02687471 0.04552197 0.02361320       0.0100       0.02590206</span></span>
+<span><span class="co">#&gt; m10.2  0.02400000 0.03878466 0.02351595       0.0105       0.02721519</span></span>
+<span><span class="co">#&gt; m1.1   0.03561250 0.02771281 0.02771281       0.0115       0.02681262</span></span>
+<span><span class="co">#&gt; m2.1   0.02598076 0.02771281 0.02297825       0.0100       0.01539210</span></span>
+<span><span class="co">#&gt; m3.1   0.04550000 0.02771281 0.03300000       0.0105       0.01461734</span></span>
+<span><span class="co">#&gt; m4.1   0.02545584 0.04750000 0.02238117       0.0100       0.02922898</span></span>
+<span><span class="co">#&gt; m5.1   0.02687471 0.02771281 0.01960230       0.0100       0.01461734</span></span>
+<span><span class="co">#&gt; m6.1   0.02598076 0.04750000 0.02378200       0.0100       0.02922898</span></span>
+<span><span class="co">#&gt; m7.1   0.05022947 0.04750000 0.02345208       0.0100       0.02922898</span></span>
+<span><span class="co">#&gt; m8.1   0.02687471 0.02771281 0.02297825       0.0105       0.01508587</span></span>
+<span><span class="co">#&gt; m9.1   0.02687471 0.04750000 0.03650000       0.0100       0.02922898</span></span>
+<span><span class="co">#&gt; m10.1  0.02771281 0.02771281 0.02771281       0.0105       0.01461734</span></span>
 <span><span class="co">#&gt;       Detection PrevalenceSD Balanced AccuracySD AccuracySD    KappaSD</span></span>
-<span><span class="co">#&gt; m1.2              0.02260347          0.03488553 0.03107384 0.07068239</span></span>
-<span><span class="co">#&gt; m2.2              0.01985573          0.03969047 0.02872281 0.06294641</span></span>
-<span><span class="co">#&gt; m3.2              0.04198710          0.02903446 0.02968024 0.06490698</span></span>
-<span><span class="co">#&gt; m4.2              0.06871681          0.02934848 0.03464102 0.07066824</span></span>
-<span><span class="co">#&gt; m5.2              0.05103185          0.06097540 0.05979618 0.12851816</span></span>
-<span><span class="co">#&gt; m6.2              0.04200794          0.02794489 0.01761391 0.03797697</span></span>
-<span><span class="co">#&gt; m7.2              0.05850000          0.04195533 0.03040148 0.06717328</span></span>
-<span><span class="co">#&gt; m8.2              0.06300992          0.03550587 0.04210305 0.09070465</span></span>
-<span><span class="co">#&gt; m9.2              0.06471669          0.07594022 0.06447416 0.14527990</span></span>
-<span><span class="co">#&gt; m10.2             0.01789786          0.02598076 0.01789786 0.04099187</span></span>
-<span><span class="co">#&gt; m1.1              0.04026889          0.03711244 0.03107384 0.07103051</span></span>
-<span><span class="co">#&gt; m2.1              0.04771443          0.04548535 0.03795941 0.08521884</span></span>
-<span><span class="co">#&gt; m3.1              0.04213075          0.05666863 0.03934039 0.09241392</span></span>
-<span><span class="co">#&gt; m4.1              0.04210602          0.03855191 0.03029851 0.06811999</span></span>
-<span><span class="co">#&gt; m5.1              0.03150000          0.03500000 0.03150000 0.07050000</span></span>
-<span><span class="co">#&gt; m6.1              0.06060253          0.06050551 0.03954217 0.09901347</span></span>
-<span><span class="co">#&gt; m7.1              0.04057503          0.06236652 0.04740165 0.10866462</span></span>
-<span><span class="co">#&gt; m8.1              0.03512241          0.05718974 0.04549267 0.10986507</span></span>
-<span><span class="co">#&gt; m9.1              0.03020348          0.04796092 0.04053805 0.09350401</span></span>
-<span><span class="co">#&gt; m10.1             0.06743145          0.06748086 0.04053805 0.10062637</span></span>
+<span><span class="co">#&gt; m1.2              0.08046272          0.03676049 0.03135815 0.06689544</span></span>
+<span><span class="co">#&gt; m2.2              0.03598495          0.02142429 0.01567376 0.03578175</span></span>
+<span><span class="co">#&gt; m3.2              0.02544766          0.03112876 0.02655027 0.06051997</span></span>
+<span><span class="co">#&gt; m4.2              0.02100000          0.00900000 0.00050000 0.00050000</span></span>
+<span><span class="co">#&gt; m5.2              0.02463568          0.02881406 0.02531633 0.05680596</span></span>
+<span><span class="co">#&gt; m6.2              0.04777726          0.05442656 0.04672883 0.10369667</span></span>
+<span><span class="co">#&gt; m7.2              0.05104247          0.02223173 0.02531633 0.05437524</span></span>
+<span><span class="co">#&gt; m8.2              0.04323097          0.01959592 0.02654556 0.05717808</span></span>
+<span><span class="co">#&gt; m9.2              0.04040936          0.02903446 0.02968024 0.06490698</span></span>
+<span><span class="co">#&gt; m10.2             0.03628590          0.03176476 0.03049044 0.06774154</span></span>
+<span><span class="co">#&gt; m1.1              0.03064855          0.04311226 0.03752777 0.08544784</span></span>
+<span><span class="co">#&gt; m2.1              0.02626785          0.03253075 0.02968024 0.06641473</span></span>
+<span><span class="co">#&gt; m3.1              0.02150000          0.05468318 0.04431328 0.09993998</span></span>
+<span><span class="co">#&gt; m4.1              0.04461222          0.03574330 0.03037954 0.06890271</span></span>
+<span><span class="co">#&gt; m5.1              0.01809236          0.02912473 0.02531633 0.05675973</span></span>
+<span><span class="co">#&gt; m6.1              0.04040936          0.02687471 0.02968024 0.06409888</span></span>
+<span><span class="co">#&gt; m7.1              0.06244464          0.04336281 0.03100000 0.07072659</span></span>
+<span><span class="co">#&gt; m8.1              0.02860070          0.03488553 0.03107384 0.07068239</span></span>
+<span><span class="co">#&gt; m9.1              0.01539210          0.04650000 0.04700000 0.10150000</span></span>
+<span><span class="co">#&gt; m10.1             0.01594522          0.04133098 0.03668219 0.08293120</span></span>
 <span><span class="co">#&gt;       AccuracyLowerSD AccuracyUpperSD AccuracyNullSD AccuracyPValueSD</span></span>
-<span><span class="co">#&gt; m1.2       0.04818281     0.003862210     0.01150000     0.0005000000</span></span>
-<span><span class="co">#&gt; m2.2       0.03873306     0.008485281     0.01154701     0.0000000000</span></span>
-<span><span class="co">#&gt; m3.2       0.04579301     0.004349329     0.01050000     0.0000000000</span></span>
-<span><span class="co">#&gt; m4.2       0.04676537     0.010392305     0.01154701     0.0000000000</span></span>
-<span><span class="co">#&gt; m5.2       0.08748714     0.017339742     0.00000000     0.0025000000</span></span>
-<span><span class="co">#&gt; m6.2       0.02494661     0.003774917     0.01000000     0.0000000000</span></span>
-<span><span class="co">#&gt; m7.2       0.04300388     0.008962886     0.01050000     0.0005773503</span></span>
-<span><span class="co">#&gt; m8.2       0.06376258     0.009215024     0.01150000     0.0015000000</span></span>
-<span><span class="co">#&gt; m9.2       0.09437690     0.017017148     0.00000000     0.0023804761</span></span>
-<span><span class="co">#&gt; m10.2      0.02655811     0.004041452     0.00000000     0.0000000000</span></span>
-<span><span class="co">#&gt; m1.1       0.04818281     0.003862210     0.01150000     0.0005000000</span></span>
-<span><span class="co">#&gt; m2.1       0.05109468     0.014545904     0.01154701     0.0010000000</span></span>
-<span><span class="co">#&gt; m3.1       0.05845511     0.008246211     0.01050000     0.0005000000</span></span>
-<span><span class="co">#&gt; m4.1       0.04287968     0.008958236     0.01154701     0.0005000000</span></span>
-<span><span class="co">#&gt; m5.1       0.04400000     0.009500000     0.00000000     0.0005000000</span></span>
-<span><span class="co">#&gt; m6.1       0.05369978     0.015152008     0.01000000     0.0025000000</span></span>
-<span><span class="co">#&gt; m7.1       0.07251896     0.010969655     0.01050000     0.0014142136</span></span>
-<span><span class="co">#&gt; m8.1       0.06061559     0.016663333     0.01150000     0.0063508530</span></span>
-<span><span class="co">#&gt; m9.1       0.05502424     0.014899664     0.00000000     0.0023804761</span></span>
-<span><span class="co">#&gt; m10.1      0.05844299     0.014899664     0.00000000     0.0023804761</span></span>
+<span><span class="co">#&gt; m1.2       0.04450000     0.008962886         0.0115     0.0015000000</span></span>
+<span><span class="co">#&gt; m2.2       0.02374167     0.003500000         0.0100     0.0000000000</span></span>
+<span><span class="co">#&gt; m3.2       0.04286704     0.003696846         0.0105     0.0005000000</span></span>
+<span><span class="co">#&gt; m4.2       0.00200000     0.000000000         0.0100     0.0000000000</span></span>
+<span><span class="co">#&gt; m5.2       0.04045883     0.003696846         0.0100     0.0000000000</span></span>
+<span><span class="co">#&gt; m6.2       0.07033491     0.009429563         0.0100     0.0005000000</span></span>
+<span><span class="co">#&gt; m7.2       0.04045883     0.003774917         0.0100     0.0000000000</span></span>
+<span><span class="co">#&gt; m8.2       0.04170032     0.003696846         0.0105     0.0005000000</span></span>
+<span><span class="co">#&gt; m9.2       0.04845617     0.004349329         0.0100     0.0000000000</span></span>
+<span><span class="co">#&gt; m10.2      0.04872628     0.004349329         0.0105     0.0005000000</span></span>
+<span><span class="co">#&gt; m1.1       0.05775812     0.004618802         0.0115     0.0005773503</span></span>
+<span><span class="co">#&gt; m2.1       0.04854122     0.003862210         0.0100     0.0000000000</span></span>
+<span><span class="co">#&gt; m3.1       0.06669520     0.009844626         0.0105     0.0005000000</span></span>
+<span><span class="co">#&gt; m4.1       0.04340123     0.008962886         0.0100     0.0005000000</span></span>
+<span><span class="co">#&gt; m5.1       0.04045883     0.003696846         0.0100     0.0000000000</span></span>
+<span><span class="co">#&gt; m6.1       0.04854122     0.003862210         0.0100     0.0000000000</span></span>
+<span><span class="co">#&gt; m7.1       0.05100000     0.004000000         0.0100     0.0000000000</span></span>
+<span><span class="co">#&gt; m8.1       0.05002999     0.003862210         0.0105     0.0005000000</span></span>
+<span><span class="co">#&gt; m9.1       0.07101408     0.010000000         0.0100     0.0005000000</span></span>
+<span><span class="co">#&gt; m10.1      0.05894065     0.004618802         0.0105     0.0005000000</span></span>
 <span><span class="co">#&gt;       McnemarPValueSD PositiveSD NegativeSD True PositiveSD False PositiveSD</span></span>
-<span><span class="co">#&gt; m1.2        0.0000000          0  0.5000000       0.5773503        0.5773503</span></span>
-<span><span class="co">#&gt; m2.2        0.0000000          0  0.5773503       0.0000000        0.0000000</span></span>
-<span><span class="co">#&gt; m3.2        0.3002221          0  0.5000000       0.9574271        0.9574271</span></span>
-<span><span class="co">#&gt; m4.2        0.3760000          0  0.5773503       1.4142136        1.4142136</span></span>
-<span><span class="co">#&gt; m5.2        0.2708219          0  0.0000000       1.5000000        1.5000000</span></span>
-<span><span class="co">#&gt; m6.2        0.2600000          0  0.5000000       0.5000000        0.5000000</span></span>
-<span><span class="co">#&gt; m7.2        0.2600000          0  0.5000000       0.8164966        0.8164966</span></span>
-<span><span class="co">#&gt; m8.2        0.4341674          0  0.5000000       1.4142136        1.4142136</span></span>
-<span><span class="co">#&gt; m9.2        0.2609224          0  0.0000000       1.4142136        1.4142136</span></span>
-<span><span class="co">#&gt; m10.2       0.0000000          0  0.0000000       0.0000000        0.0000000</span></span>
-<span><span class="co">#&gt; m1.1        0.3002221          0  0.5000000       0.9574271        0.9574271</span></span>
-<span><span class="co">#&gt; m2.1        0.2666063          0  0.5773503       0.5773503        0.5773503</span></span>
-<span><span class="co">#&gt; m3.1        0.3850818          0  0.5000000       0.5000000        0.5000000</span></span>
-<span><span class="co">#&gt; m4.1        0.3002221          0  0.5773503       0.5000000        0.5000000</span></span>
-<span><span class="co">#&gt; m5.1        0.0000000          0  0.0000000       0.5000000        0.5000000</span></span>
-<span><span class="co">#&gt; m6.1        0.4243061          0  0.5000000       0.5000000        0.5000000</span></span>
-<span><span class="co">#&gt; m7.1        0.3760000          0  0.5000000       0.5000000        0.5000000</span></span>
-<span><span class="co">#&gt; m8.1        0.3002221          0  0.5000000       0.5000000        0.5000000</span></span>
-<span><span class="co">#&gt; m9.1        0.3002221          0  0.0000000       0.5773503        0.5773503</span></span>
-<span><span class="co">#&gt; m10.1       0.4330000          0  0.0000000       0.5000000        0.5000000</span></span>
+<span><span class="co">#&gt; m1.2        0.3792132          0        0.5       1.4142136        1.4142136</span></span>
+<span><span class="co">#&gt; m2.2        0.0000000          0        0.5       0.5000000        0.5000000</span></span>
+<span><span class="co">#&gt; m3.2        0.0000000          0        0.5       0.5000000        0.5000000</span></span>
+<span><span class="co">#&gt; m4.2        0.0000000          0        0.5       0.5000000        0.5000000</span></span>
+<span><span class="co">#&gt; m5.2        0.0000000          0        0.5       0.5000000        0.5000000</span></span>
+<span><span class="co">#&gt; m6.2        0.3676955          0        0.5       0.9574271        0.9574271</span></span>
+<span><span class="co">#&gt; m7.2        0.3002221          0        0.5       0.9574271        0.9574271</span></span>
+<span><span class="co">#&gt; m8.2        0.3002221          0        0.5       0.8164966        0.8164966</span></span>
+<span><span class="co">#&gt; m9.2        0.3002221          0        0.5       0.9574271        0.9574271</span></span>
+<span><span class="co">#&gt; m10.2       0.3002221          0        0.5       0.8164966        0.8164966</span></span>
+<span><span class="co">#&gt; m1.1        0.3002221          0        0.5       0.5773503        0.5773503</span></span>
+<span><span class="co">#&gt; m2.1        0.0000000          0        0.5       0.5773503        0.5773503</span></span>
+<span><span class="co">#&gt; m3.1        0.0000000          0        0.5       0.5773503        0.5773503</span></span>
+<span><span class="co">#&gt; m4.1        0.2600000          0        0.5       1.0000000        1.0000000</span></span>
+<span><span class="co">#&gt; m5.1        0.0000000          0        0.5       0.5773503        0.5773503</span></span>
+<span><span class="co">#&gt; m6.1        0.3676955          0        0.5       1.0000000        1.0000000</span></span>
+<span><span class="co">#&gt; m7.1        0.3002221          0        0.5       1.0000000        1.0000000</span></span>
+<span><span class="co">#&gt; m8.1        0.0000000          0        0.5       0.5773503        0.5773503</span></span>
+<span><span class="co">#&gt; m9.1               NA          0        0.5       1.0000000        1.0000000</span></span>
+<span><span class="co">#&gt; m10.1       0.0000000          0        0.5       0.5773503        0.5773503</span></span>
 <span><span class="co">#&gt;       True NegativeSD False NegativeSD</span></span>
-<span><span class="co">#&gt; m1.2        0.5773503        0.5000000</span></span>
-<span><span class="co">#&gt; m2.2        0.5000000        0.9574271</span></span>
-<span><span class="co">#&gt; m3.2        0.5000000        0.5773503</span></span>
-<span><span class="co">#&gt; m4.2        1.0000000        0.8164966</span></span>
-<span><span class="co">#&gt; m5.2        0.9574271        0.9574271</span></span>
-<span><span class="co">#&gt; m6.2        0.9574271        0.8164966</span></span>
-<span><span class="co">#&gt; m7.2        1.4142136        0.9574271</span></span>
-<span><span class="co">#&gt; m8.2        0.9574271        0.5773503</span></span>
-<span><span class="co">#&gt; m9.2        1.5000000        1.5000000</span></span>
-<span><span class="co">#&gt; m10.2       0.5773503        0.5773503</span></span>
-<span><span class="co">#&gt; m1.1        0.5773503        0.5773503</span></span>
-<span><span class="co">#&gt; m2.1        1.2909944        0.9574271</span></span>
-<span><span class="co">#&gt; m3.1        0.9574271        1.2909944</span></span>
-<span><span class="co">#&gt; m4.1        1.2583057        0.9574271</span></span>
-<span><span class="co">#&gt; m5.1        0.5000000        0.5000000</span></span>
-<span><span class="co">#&gt; m6.1        1.7078251        1.4142136</span></span>
+<span><span class="co">#&gt; m1.2        1.4142136        0.9574271</span></span>
+<span><span class="co">#&gt; m2.2        0.9574271        0.5773503</span></span>
+<span><span class="co">#&gt; m3.2        1.0000000        0.5000000</span></span>
+<span><span class="co">#&gt; m4.2        0.0000000        0.5000000</span></span>
+<span><span class="co">#&gt; m5.2        0.8164966        0.5000000</span></span>
+<span><span class="co">#&gt; m6.2        1.2583057        1.0000000</span></span>
+<span><span class="co">#&gt; m7.2        0.9574271        0.5773503</span></span>
+<span><span class="co">#&gt; m8.2        0.8164966        0.5000000</span></span>
+<span><span class="co">#&gt; m9.2        0.9574271        0.5773503</span></span>
+<span><span class="co">#&gt; m10.2       1.0000000        0.5000000</span></span>
+<span><span class="co">#&gt; m1.1        0.5000000        0.8164966</span></span>
+<span><span class="co">#&gt; m2.1        0.8164966        0.5773503</span></span>
+<span><span class="co">#&gt; m3.1        0.9574271        1.0000000</span></span>
+<span><span class="co">#&gt; m4.1        0.9574271        0.5773503</span></span>
+<span><span class="co">#&gt; m5.1        0.5000000        0.5773503</span></span>
+<span><span class="co">#&gt; m6.1        0.8164966        0.5773503</span></span>
 <span><span class="co">#&gt; m7.1        1.5000000        1.1547005</span></span>
-<span><span class="co">#&gt; m8.1        0.9574271        0.9574271</span></span>
-<span><span class="co">#&gt; m9.1        0.8164966        0.8164966</span></span>
-<span><span class="co">#&gt; m10.1       1.7078251        1.7078251</span></span></code></pre></div>
+<span><span class="co">#&gt; m8.1        0.9574271        0.5773503</span></span>
+<span><span class="co">#&gt; m9.1        0.8164966        0.5773503</span></span>
+<span><span class="co">#&gt; m10.1       0.9574271        0.5773503</span></span></code></pre></div>
 <p>Otherwise, the mean validation metric values per algorithm can also
 be obtained with the following code:</p>
-<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/train_sdm.html">mean_validation_metrics</a></span><span class="op">(</span><span class="va">i</span><span class="op">)</span></span>
 <span><span class="co">#&gt; $`Araucaria angustifolia`</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 2 × 53</span></span></span>
 <span><span class="co">#&gt;   algo       ROC   TSS Sensitivity Specificity `Pos Pred Value` `Neg Pred Value`</span></span>
 <span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> kknn     0.972 0.901       0.958       0.943            0.971            0.927</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> naive_b… 0.986 0.907       0.988       0.921            0.962            0.977</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> kknn     0.977 0.927       0.961       0.967            0.984            0.932</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> naive_b… 0.996 0.941       0.980       0.965            0.983            0.962</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># ℹ 46 more variables: Precision &lt;dbl&gt;, Recall &lt;dbl&gt;, F1 &lt;dbl&gt;,</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;">#   Prevalence &lt;dbl&gt;, `Detection Rate` &lt;dbl&gt;, `Detection Prevalence` &lt;dbl&gt;,</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;">#   `Balanced Accuracy` &lt;dbl&gt;, Accuracy &lt;dbl&gt;, Kappa &lt;dbl&gt;,</span></span></span>
@@ -1018,7 +999,7 @@ that, by removing the gcms abbreviation, the remaining name repeats
 itself two times). At the end, ensembles will be named after the new
 names generated in this last step and are included in object
 <code>i</code> scenarios.</p>
-<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">i</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/gcms_ensembles.html">gcms_ensembles</a></span><span class="op">(</span><span class="va">i</span>, gcms <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ca"</span>, <span class="st">"mi"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; New names:</span></span>
 <span><span class="co">#&gt; New names:</span></span>
@@ -1043,28 +1024,29 @@ names generated in this last step and are included in object
 <span><span class="co">#&gt;     Number of PAs in each set : 84 </span></span>
 <span><span class="co">#&gt; Data Cleaning                 : NAs, Capitals, Centroids, Geographically Duplicated, Identical Lat/Long, Institutions, Invalid, Non-terrestrial, Duplicated Cell (grid) </span></span>
 <span><span class="co">#&gt; --------  Predictors  ---------</span></span>
-<span><span class="co">#&gt; Number of Predictors          : 6 </span></span>
-<span><span class="co">#&gt; Predictors Names              : bio1, bio4, bio12, PC1, PC2, PC3 </span></span>
-<span><span class="co">#&gt; PCA-transformed variables     : DONE </span></span>
-<span><span class="co">#&gt; Cummulative proportion ( 1 ) : PC1, PC2, PC3 </span></span>
+<span><span class="co">#&gt; Number of Predictors          : 3 </span></span>
+<span><span class="co">#&gt; Predictors Names              : bio1, bio4, bio12 </span></span>
+<span><span class="co">#&gt; Area (VIF)                    : all</span></span>
+<span><span class="co">#&gt; Threshold                     : 0.5</span></span>
+<span><span class="co">#&gt; Selected Variables (VIF)      : bio1, bio12 </span></span>
 <span><span class="co">#&gt; ---------  Scenarios  ---------</span></span>
 <span><span class="co">#&gt; Number of Scenarios           : 5 </span></span>
-<span><span class="co">#&gt; Scenarios Names               : ca_ssp245_2090 ca_ssp585_2090 mi_ssp245_2090 mi_ssp585_2090 current </span></span>
+<span><span class="co">#&gt; Scenarios Names               : current ca_ssp245_2090 ca_ssp585_2090 mi_ssp245_2090 mi_ssp585_2090 </span></span>
 <span><span class="co">#&gt; -----------  Models  ----------</span></span>
 <span><span class="co">#&gt; Algorithms Names              : naive_bayes kknn </span></span>
-<span><span class="co">#&gt; Variables Names               : PC1 PC2 PC3 </span></span>
+<span><span class="co">#&gt; Variables Names               : bio1 bio12 </span></span>
 <span><span class="co">#&gt; Model Validation              :</span></span>
 <span><span class="co">#&gt;     Method                    : repeatedcv </span></span>
 <span><span class="co">#&gt;     Number                    : 4 </span></span>
 <span><span class="co">#&gt;     Metrics                   :</span></span>
 <span><span class="co">#&gt; $`Araucaria angustifolia`</span></span>
 <span><span class="co">#&gt;          algo       ROC       TSS Sensitivity Specificity</span></span>
-<span><span class="co">#&gt; 1        kknn 0.9716306 0.9012374     0.95815    0.942875</span></span>
-<span><span class="co">#&gt; 2 naive_bayes 0.9855231 0.9069517     0.98800    0.921200</span></span>
+<span><span class="co">#&gt; 1        kknn 0.9770617 0.9273936     0.96055    0.966675</span></span>
+<span><span class="co">#&gt; 2 naive_bayes 0.9957792 0.9413799     0.97965    0.965175</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; --------  Predictions  --------</span></span>
 <span><span class="co">#&gt; Ensembles                     :</span></span>
-<span><span class="co">#&gt;     Scenarios                 : ca_ssp245_2090 ca_ssp585_2090 mi_ssp245_2090 mi_ssp585_2090 current _ssp245_2090 _ssp585_2090 </span></span>
+<span><span class="co">#&gt;     Scenarios                 : current ca_ssp245_2090 ca_ssp585_2090 mi_ssp245_2090 mi_ssp585_2090 _ssp245_2090 _ssp585_2090 </span></span>
 <span><span class="co">#&gt;     Methods                   : mean_occ_prob wmean_AUC committee_avg </span></span>
 <span><span class="co">#&gt; Thresholds                    :</span></span>
 <span><span class="co">#&gt;     Method                    : threshold </span></span>
@@ -1091,31 +1073,31 @@ species you can inform the correct species to be plotted using the
 separate projections you can plot them informing the model
 <code>id</code> (see row names of <code>get_validation_metrics</code>
 above to retrieve models ids).</p>
-<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_occurrences.html">plot_predictions</a></span><span class="op">(</span><span class="va">i</span>,</span>
 <span>                 spp_name <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>                 scenario <span class="op">=</span> <span class="st">"current"</span>,</span>
 <span>                 id <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>                 ensemble <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>                 ensemble_type <span class="op">=</span> <span class="st">"mean_occ_prob"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="Araucaria_files/figure-html/plot_current_results-1.png" width="700"></p>
-<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
+<p><img src="InvasiveSpp_files/figure-html/plot_current_results-1.png" width="700"></p>
+<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_occurrences.html">plot_predictions</a></span><span class="op">(</span><span class="va">i</span>,</span>
 <span>                 spp_name <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>                 scenario <span class="op">=</span> <span class="st">"_ssp245_2090"</span>,</span>
+<span>                 scenario <span class="op">=</span> <span class="st">"mi_ssp245_2090"</span>,</span>
 <span>                 id <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>                 ensemble <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>                 ensemble_type <span class="op">=</span> <span class="st">"mean_occ_prob"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="Araucaria_files/figure-html/ssp245_2090-1.png" width="700"></p>
+<p><img src="InvasiveSpp_files/figure-html/ssp245_2090-1.png" width="700"></p>
 <p>Another plot widely used in SDM studies is the Partial Dependence
 Plot, which informs the response curves to each variable. Here we are
 using PCA axes as predictors, so there is not much sense in plotting
 these curves, but if someone want to do that, it is possible through the
 <code>pdp_sdm</code> function.</p>
-<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/pdp_sdm.html">pdp_sdm</a></span><span class="op">(</span><span class="va">i</span><span class="op">)</span></span>
 <span><span class="co">#&gt; `geom_smooth()` using method = 'gam' and formula = 'y ~ s(x, bs = "cs")'</span></span></code></pre></div>
-<p><img src="Araucaria_files/figure-html/pdp_sdm-1.png" width="700"></p>
+<p><img src="InvasiveSpp_files/figure-html/pdp_sdm-1.png" width="700"></p>
 </div>
 <div class="section level3">
 <h3 id="writing-results">Writing results<a class="anchor" aria-label="anchor" href="#writing-results"></a>
@@ -1125,7 +1107,7 @@ use the write functions. For all possibilities see the help file
 <code><a href="../reference/write_ensembles.html">?write_ensembles</a></code>. We encourage users to use standard path
 configuration, which organizes outputs in a straightforward fashion.
 Common functions are the following:</p>
-<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/write_ensembles.html">write_occurrences</a></span><span class="op">(</span><span class="va">i</span>, path <span class="op">=</span> <span class="st">"results/occurrences.csv"</span>, grid <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/write_ensembles.html">write_pseudoabsences</a></span><span class="op">(</span><span class="va">i</span>, path <span class="op">=</span> <span class="st">"results/pseudoabsences"</span>, ext <span class="op">=</span> <span class="st">".csv"</span>, centroid <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/write_ensembles.html">write_grid</a></span><span class="op">(</span><span class="va">i</span>, path <span class="op">=</span> <span class="st">"results/grid_study_area.gpkg"</span>, centroid <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
@@ -1141,10 +1123,10 @@ highlights the use of the package using a grid in the sdm_area.
 Alternative to that can be seen in vignettes(“Salminus”, “caretSDM”)
 where we build SDMs for a fish species using river lines in a
 simplefeatures object instead of cells in a grid.</p>
-<div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">end_time</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">end_time</span> <span class="op">-</span> <span class="va">start_time</span></span>
-<span><span class="co">#&gt; Time difference of 1.982815 mins</span></span></code></pre></div>
+<span><span class="co">#&gt; Time difference of 1.851192 mins</span></span></code></pre></div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>
