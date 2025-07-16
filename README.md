@@ -4,7 +4,7 @@
 
 [![R-CMD-check](https://github.com/luizesser/chooseGCM/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/luizesser/chooseGCM/actions/workflows/R-CMD-check.yaml)
 [![CRAN status](https://www.r-pkg.org/badges/version/caretSDM)](https://CRAN.R-project.org/package=caretSDM)
-[![codecov](https://codecov.io/gh/luizesser/caretSDM/graph/badge.svg?token=X6K1MWH6NW)](https://codecov.io/gh/luizesser/caretSDM)
+[![Codecov test coverage](https://codecov.io/gh/luizesser/caretSDM/graph/badge.svg)](https://app.codecov.io/gh/luizesser/caretSDM)
 <!-- badges: end -->
 
 Luíz Fernando Esser
