@@ -461,7 +461,7 @@ plot_predictions(i,
 ```{r ssp245_2090}
 plot_predictions(i,
                  spp_name = NULL,
-                 scenario = "mi_ssp245_2090",
+                 scenario = "_ssp245_2090",
                  id = NULL,
                  ensemble = TRUE,
                  ensemble_type = "mean_occ_prob")
