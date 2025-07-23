@@ -400,3 +400,15 @@ test_that("sdm_area - lines", {
   expect_equal(class(sa$grid)[1], "sf")
   expect_equal(as.character(unique(sf::st_geometry_type(sa$grid))), "LINESTRING")
 })
+
+# test cell_size=NULL
+test_that("sdm_area - cell_size=NULL", {
+  sa <- sdm_area(bioc, cell_size = NULL)
+  expect_true("cell_id" %in% colnames(sa$grid))
+  expect_true("geometry" %in% colnames(sa$grid))
+  expect_equal(class(sa$cell_size), "numeric")
+  expect_equal(round(sa$cell_size, 3), round(as.numeric(stars::st_res(bioc)[1]), 3))
+  expect_equal(sf::st_crs(sa$grid), sf::st_crs(rivs))
+  expect_equal(class(sa$grid)[1], "sf")
+  expect_equal(as.character(unique(sf::st_geometry_type(sa$grid))), "POLYGON")
+})

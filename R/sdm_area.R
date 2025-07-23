@@ -198,9 +198,13 @@ sdm_area.stars <- function(x, cell_size = NULL, crs = NULL, variables_selected =
   assert_number_cli(
     cell_size,
     na.ok = FALSE,
-    null.ok = FALSE,
+    null.ok = TRUE,
     lower = 0
   )
+
+  if(is.null(cell_size)) {
+    cell_size <- as.numeric(stars::st_res(x))[1]
+  }
 
   x_var <- x |>
     .try_split() |>
@@ -216,16 +220,10 @@ sdm_area.stars <- function(x, cell_size = NULL, crs = NULL, variables_selected =
     "geometry"
   )
 
-  assert_number_cli(
-    cell_size,
-    na.ok = FALSE,
-    null.ok = FALSE,
-    lower = 0
-  )
   assert_class_cli(
     sf::st_crs(x),
     classes = "crs",
-    null.ok = FALSE,
+    null.ok = TRUE,
     .var.name = "x"
   )
   if (is.null(crs)) {
@@ -236,6 +234,7 @@ sdm_area.stars <- function(x, cell_size = NULL, crs = NULL, variables_selected =
       error = function(e) NA
     )
   }
+
   if (is.na(crs) || is.na(crs$input)){
     cli_abort(c("x" = "crs is invalid."))
   }

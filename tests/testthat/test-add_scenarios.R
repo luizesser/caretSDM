@@ -226,7 +226,6 @@ test_that("add_scenarios - stationary data/input_sdm", {
   i_pred <- add_scenarios(i_pred, scen, stationary = c("GID0", "CODIGOIB1",
                                                          "NOMEUF2", "SIGLAUF3"))
   expect_equal(length(i_pred$scenarios$data), 6)
-
 })
 
 test_that("select_scenarios", {
@@ -254,7 +253,6 @@ test_that("select_scenarios", {
   )
   expect_error(select_scenarios(i_pred, c("a")))
   expect_error(select_scenarios(i_pred, c("a")))
-
 })
 
 test_that("set_scenarios_names", {
@@ -277,3 +275,15 @@ test_that("set_scenarios_names", {
   )
 })
 
+# test cell_size=NULL
+test_that("add_scenarios - cell_size=NULL", {
+  sa <- sdm_area(bioc[,,,c(1,3)], cell_size = NULL)
+  sa_pred <- add_scenarios(sa, scen)
+  expect_equal(
+    scenarios_names(sa_pred),
+    c("ca_ssp245_2090", "ca_ssp585_2090", "mi_ssp245_2090", "mi_ssp585_2090", "current")
+  )
+  expect_equal(sum(na.omit(as.data.frame(bioc))$band == "bio1"), sa_pred$scenarios$data$current |> nrow())
+  expect_equal(sum(na.omit(as.data.frame(scen["ca_ssp245_2090"]))$band == "bio1"),
+               sa_pred$scenarios$data$ca_ssp245_2090 |> nrow())
+})
