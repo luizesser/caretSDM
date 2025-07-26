@@ -156,7 +156,82 @@ AUC/ROC.</li>
 class levels. For <code>caretSDM</code>, this will be
 <code>"presence"</code> and <code>"pseudoabsence"</code>.</li>
 </ul>
-<p>Let’s see how these components come together in our example.</p>
+<p>You can find these informations for any method by substituting the
+“METHOD” below for the desired algorithm name (see also the
+<code>algorithms</code> object):</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">caret</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/caret/man/modelLookup.html" class="external-link">getModelInfo</a></span><span class="op">(</span><span class="st">"METHOD"</span>, regex <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span></span></code></pre></div>
+<p>See how the list is built for nayve_bayes algorithm:</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">caret</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/caret/man/modelLookup.html" class="external-link">getModelInfo</a></span><span class="op">(</span><span class="st">"naive_bayes"</span>, regex <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span></span>
+<span><span class="co">#&gt; $label</span></span>
+<span><span class="co">#&gt; [1] "Naive Bayes"</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $library</span></span>
+<span><span class="co">#&gt; [1] "naivebayes"</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $loop</span></span>
+<span><span class="co">#&gt; NULL</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $type</span></span>
+<span><span class="co">#&gt; [1] "Classification"</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $parameters</span></span>
+<span><span class="co">#&gt;   parameter   class                label</span></span>
+<span><span class="co">#&gt; 1   laplace numeric   Laplace Correction</span></span>
+<span><span class="co">#&gt; 2 usekernel logical    Distribution Type</span></span>
+<span><span class="co">#&gt; 3    adjust numeric Bandwidth Adjustment</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $grid</span></span>
+<span><span class="co">#&gt; function (x, y, len = NULL, search = "grid") </span></span>
+<span><span class="co">#&gt; expand.grid(usekernel = c(TRUE, FALSE), laplace = 0, adjust = 1)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $fit</span></span>
+<span><span class="co">#&gt; function (x, y, wts, param, lev, last, classProbs, ...) </span></span>
+<span><span class="co">#&gt; {</span></span>
+<span><span class="co">#&gt;     if (param$usekernel) {</span></span>
+<span><span class="co">#&gt;         out &lt;- naivebayes::naive_bayes(x, y, usekernel = TRUE, </span></span>
+<span><span class="co">#&gt;             laplace = param$laplace, adjust = param$adjust, ...)</span></span>
+<span><span class="co">#&gt;     }</span></span>
+<span><span class="co">#&gt;     else out &lt;- naivebayes::naive_bayes(x, y, usekernel = FALSE, </span></span>
+<span><span class="co">#&gt;         laplace = param$laplace, ...)</span></span>
+<span><span class="co">#&gt;     out</span></span>
+<span><span class="co">#&gt; }</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $predict</span></span>
+<span><span class="co">#&gt; function (modelFit, newdata, submodels = NULL) </span></span>
+<span><span class="co">#&gt; {</span></span>
+<span><span class="co">#&gt;     if (!is.data.frame(newdata)) </span></span>
+<span><span class="co">#&gt;         newdata &lt;- as.data.frame(newdata, stringsAsFactors = TRUE)</span></span>
+<span><span class="co">#&gt;     predict(modelFit, newdata)</span></span>
+<span><span class="co">#&gt; }</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $prob</span></span>
+<span><span class="co">#&gt; function (modelFit, newdata, submodels = NULL) </span></span>
+<span><span class="co">#&gt; {</span></span>
+<span><span class="co">#&gt;     if (!is.data.frame(newdata)) </span></span>
+<span><span class="co">#&gt;         newdata &lt;- as.data.frame(newdata, stringsAsFactors = TRUE)</span></span>
+<span><span class="co">#&gt;     as.data.frame(predict(modelFit, newdata, type = "prob"), </span></span>
+<span><span class="co">#&gt;         stringsAsFactors = TRUE)</span></span>
+<span><span class="co">#&gt; }</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $predictors</span></span>
+<span><span class="co">#&gt; function (x, ...) </span></span>
+<span><span class="co">#&gt; if (hasTerms(x)) predictors(x$terms) else names(x$tables)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $tags</span></span>
+<span><span class="co">#&gt; [1] "Bayesian Model"</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $levels</span></span>
+<span><span class="co">#&gt; function (x) </span></span>
+<span><span class="co">#&gt; x$levels</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $sort</span></span>
+<span><span class="co">#&gt; function (x) </span></span>
+<span><span class="co">#&gt; x[order(x[, 1]), ]</span></span></code></pre></div>
+<p>Naturally, some elements are particular to each method, but some
+elements are common to every algorithm implemented. Let’s see how these
+components come together in our example.</p>
 </div>
 <div class="section level3">
 <h3 id="example-1-an-algorithm-from-a-package">Example 1: An algorithm from a package<a class="anchor" aria-label="anchor" href="#example-1-an-algorithm-from-a-package"></a>
@@ -164,7 +239,7 @@ class levels. For <code>caretSDM</code>, this will be
 <p>Here is the complete code for creating the <code>algo</code> list for
 the Mahalanobis Distance using the <code>dismo</code> package. This
 structure can be changed to include new algorithms into caretSDM.</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">mahal.dist</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
 <span>  label <span class="op">=</span> <span class="st">"Mahalanobis Distance"</span>,</span>
 <span>  library <span class="op">=</span> <span class="st">"dismo"</span>,</span>
@@ -198,7 +273,7 @@ structure can be changed to include new algorithms into caretSDM.</p>
 <span>    <span class="va">pred</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span><span class="va">modelFit</span><span class="op">$</span><span class="va">model</span>, <span class="va">newdata</span><span class="op">)</span></span>
 <span>    <span class="co"># The output is converted to probabilities for both classes.</span></span>
 <span>    <span class="va">pred</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>presence <span class="op">=</span> <span class="va">pred</span>, pseudoabsence <span class="op">=</span> <span class="fl">1</span> <span class="op">-</span> <span class="va">pred</span><span class="op">)</span></span>
-<span>    <span class="co"># The 'abs' parameter determines the prediction type.</span></span>
+<span>    <span class="co"># The 'abs' parameter determines the binarization type.</span></span>
 <span>    <span class="kw">if</span> <span class="op">(</span><span class="va">modelFit</span><span class="op">$</span><span class="va">abs</span><span class="op">)</span> <span class="op">{</span></span>
 <span>      <span class="va">pred</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">as.factor</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="va">pred</span><span class="op">$</span><span class="va">presence</span> <span class="op">&gt;</span> <span class="fl">0</span>, <span class="st">"presence"</span>, <span class="st">"pseudoabsence"</span><span class="op">)</span><span class="op">)</span></span>
 <span>    <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span></span>
@@ -226,55 +301,102 @@ structure can be changed to include new algorithms into caretSDM.</p>
 <p>Alternatively, the user can built its own algorithm and implement it
 through the same method. Here I show the code for a custom Mahalanobis
 Distance.</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Create function</span></span>
-<span><span class="va">mahal.sdm</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span></span>
-<span>  </span>
-<span><span class="op">}</span></span>
-<span></span>
-<span></span>
-<span></span>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Define a custom Mahalanobis model</span></span>
 <span><span class="va">mahal.dist</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
-<span>  label <span class="op">=</span> <span class="st">"Mahalanobis Distance"</span>,</span>
+<span>  label <span class="op">=</span> <span class="st">"Mahalanobis Distance Classifier"</span>,</span>
 <span>  library <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  loop <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Classification"</span>, <span class="st">"Regression"</span><span class="op">)</span>,</span>
-<span>  levels <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"presence"</span>, <span class="st">"pseudoabsence"</span><span class="op">)</span>,</span>
-<span>  parameters <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  grid <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  type <span class="op">=</span> <span class="st">"Classification"</span>,</span>
+<span>  parameters <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
+<span>    parameter <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"abs"</span><span class="op">)</span>,</span>
+<span>    class <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"logical"</span><span class="op">)</span>,</span>
+<span>    label <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Absolute Binarization"</span><span class="op">)</span></span>
+<span>  <span class="op">)</span>,  </span>
+<span>  grid <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span>, <span class="va">len</span> <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">search</span> <span class="op">=</span> <span class="st">"grid"</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="co"># We define a simple grid that will test both TRUE and FALSE </span></span>
+<span>    <span class="co"># for the 'abs' parameter. Here, search can be anything that </span></span>
+<span>    <span class="co"># the output is the same. But in other implementations the user</span></span>
+<span>    <span class="co"># may want to change when search is not "grid".</span></span>
+<span>    <span class="kw">if</span> <span class="op">(</span><span class="va">search</span> <span class="op">==</span> <span class="st">"grid"</span><span class="op">)</span> <span class="op">{</span></span>
+<span>      <span class="va">out</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/expand.grid.html" class="external-link">expand.grid</a></span><span class="op">(</span>abs <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">TRUE</span>, <span class="cn">FALSE</span><span class="op">)</span><span class="op">)</span></span>
+<span>    <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span></span>
+<span>      <span class="va">out</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/expand.grid.html" class="external-link">expand.grid</a></span><span class="op">(</span>abs <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">TRUE</span>, <span class="cn">FALSE</span><span class="op">)</span><span class="op">)</span></span>
+<span>    <span class="op">}</span></span>
+<span>    <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="va">out</span><span class="op">)</span></span>
+<span>  <span class="op">}</span>,</span>
 <span>  fit <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span>, <span class="va">wts</span>, <span class="va">param</span>, <span class="va">lev</span>, <span class="va">last</span>, <span class="va">classProbs</span>, <span class="va">...</span><span class="op">)</span> <span class="op">{</span></span>
-<span>    <span class="co"># The 'fit' function uses 'dismo::mahal'. </span></span>
-<span>    <span class="co"># It's trained only on presence data.</span></span>
-<span>    <span class="va">model</span> <span class="op">&lt;-</span> <span class="fu">dismo</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/dismo/man/mahal.html" class="external-link">mahal</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">x</span><span class="op">[</span><span class="va">y</span> <span class="op">==</span> <span class="st">"presence"</span>, <span class="op">]</span><span class="op">)</span></span>
-<span>    <span class="co"># We return the model and the tuning parameter value.</span></span>
-<span>    <span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>model <span class="op">=</span> <span class="va">model</span>, abs <span class="op">=</span> <span class="va">param</span><span class="op">$</span><span class="va">abs</span><span class="op">)</span></span>
+<span>    <span class="co"># The 'fit' function is trained only on presence data.</span></span>
+<span>    <span class="co"># It calculates and stores the mean vector and inverse covariance matrix.</span></span>
+<span>    <span class="va">presence_data</span> <span class="op">&lt;-</span> <span class="va">x</span><span class="op">[</span><span class="va">y</span> <span class="op">==</span> <span class="st">"presence"</span>, , drop <span class="op">=</span> <span class="cn">FALSE</span><span class="op">]</span></span>
+<span>    </span>
+<span>    <span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">presence_data</span><span class="op">)</span> <span class="op">&lt;</span> <span class="fl">2</span><span class="op">)</span> <span class="op">{</span></span>
+<span>      <span class="kw"><a href="https://rdrr.io/r/base/stop.html" class="external-link">stop</a></span><span class="op">(</span><span class="st">"Not enough 'presence' data points to calculate covariance."</span><span class="op">)</span></span>
+<span>    <span class="op">}</span></span>
+<span>    </span>
+<span>    <span class="co"># Calculate model parameters</span></span>
+<span>    <span class="va">center_vec</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colSums.html" class="external-link">colMeans</a></span><span class="op">(</span><span class="va">presence_data</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span>    <span class="va">inv_cov_matrix</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/solve.html" class="external-link">solve</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/cor.html" class="external-link">cov</a></span><span class="op">(</span><span class="va">presence_data</span><span class="op">)</span><span class="op">)</span></span>
+<span>    </span>
+<span>    <span class="co"># The model object here is just a list of parameters.</span></span>
+<span>    <span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
+<span>      center <span class="op">=</span> <span class="va">center_vec</span>,</span>
+<span>      inv_cov <span class="op">=</span> <span class="va">inv_cov_matrix</span>,</span>
+<span>      df <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>, <span class="co"># Correction demonstrated by Etherington 2019.</span></span>
+<span>      abs <span class="op">=</span> <span class="va">param</span><span class="op">$</span><span class="va">abs</span>,</span>
+<span>      levels <span class="op">=</span> <span class="va">lev</span> <span class="co"># Retain data information dor consistency.</span></span>
+<span>    <span class="op">)</span></span>
 <span>    <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span></span>
 <span>  <span class="op">}</span>,</span>
+<span>  <span class="co"># Prediction function (must match caret's expected signature)</span></span>
 <span>  predict <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">modelFit</span>, <span class="va">newdata</span>, <span class="va">preProc</span> <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">submodels</span> <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span> <span class="op">{</span></span>
-<span>    <span class="co"># 'predict' generates predictions for new data.</span></span>
-<span>    <span class="va">pred</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span><span class="va">modelFit</span><span class="op">$</span><span class="va">model</span>, <span class="va">newdata</span><span class="op">)</span></span>
-<span>    <span class="co"># The output is converted to probabilities for both classes.</span></span>
-<span>    <span class="va">pred</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>presence <span class="op">=</span> <span class="va">pred</span>, pseudoabsence <span class="op">=</span> <span class="fl">1</span> <span class="op">-</span> <span class="va">pred</span><span class="op">)</span></span>
-<span>    <span class="co"># The 'abs' parameter determines the prediction type.</span></span>
+<span>    <span class="co"># 'predict' generates class labels based on the probabilities.</span></span>
+<span>    <span class="co"># 1. Get the probabilities by calling the 'prob' function.</span></span>
+<span>    <span class="va">probs</span> <span class="op">&lt;-</span> <span class="va">mahal.dist</span><span class="op">$</span><span class="fu">prob</span><span class="op">(</span><span class="va">modelFit</span>, <span class="va">newdata</span><span class="op">)</span></span>
+<span>    </span>
+<span>    <span class="co"># 2. The 'abs' parameter determines the binarization type.</span></span>
 <span>    <span class="kw">if</span> <span class="op">(</span><span class="va">modelFit</span><span class="op">$</span><span class="va">abs</span><span class="op">)</span> <span class="op">{</span></span>
-<span>      <span class="va">pred</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">as.factor</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="va">pred</span><span class="op">$</span><span class="va">presence</span> <span class="op">&gt;</span> <span class="fl">0</span>, <span class="st">"presence"</span>, <span class="st">"pseudoabsence"</span><span class="op">)</span><span class="op">)</span></span>
+<span>      <span class="co"># For "Absolute Binarization", we threshold the p-value.</span></span>
+<span>      <span class="co"># A common choice is alpha = 0.05. If p-value &gt;= 0.05, the point is</span></span>
+<span>      <span class="co"># considered within the "presence" environment.</span></span>
+<span>      <span class="va">pred</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="va">probs</span><span class="op">[</span>, <span class="va">modelFit</span><span class="op">$</span><span class="va">levels</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span> <span class="op">&gt;=</span> <span class="fl">0.05</span>,</span>
+<span>                     <span class="va">modelFit</span><span class="op">$</span><span class="va">levels</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, <span class="co"># presence</span></span>
+<span>                     <span class="va">modelFit</span><span class="op">$</span><span class="va">levels</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span><span class="op">)</span> <span class="co"># pseudoabsence</span></span>
 <span>    <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span></span>
-<span>      <span class="va">pred</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">as.factor</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">pred</span><span class="op">)</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/apply.html" class="external-link">apply</a></span><span class="op">(</span><span class="va">pred</span>, <span class="fl">1</span>, <span class="va">which.max</span><span class="op">)</span><span class="op">]</span><span class="op">)</span></span>
+<span>      <span class="co"># Standard method: assign the class with the highest probability.</span></span>
+<span>      <span class="va">pred</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">probs</span><span class="op">)</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/apply.html" class="external-link">apply</a></span><span class="op">(</span><span class="va">probs</span>, <span class="fl">1</span>, <span class="va">which.max</span><span class="op">)</span><span class="op">]</span></span>
 <span>    <span class="op">}</span></span>
+<span>    </span>
+<span>    <span class="co"># 3. Return a factor with the correct levels.</span></span>
+<span>    <span class="va">pred</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">pred</span>, levels <span class="op">=</span> <span class="va">modelFit</span><span class="op">$</span><span class="va">levels</span><span class="op">)</span></span>
 <span>    <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="va">pred</span><span class="op">)</span></span>
 <span>  <span class="op">}</span>,</span>
-<span>  prob <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">modelFit</span>, <span class="va">newdata</span>, <span class="va">preProc</span> <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">submodels</span> <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span> <span class="op">{</span></span>
-<span>    <span class="co"># 'prob' calculates the class probabilities.</span></span>
-<span>    <span class="va">prob</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span><span class="va">modelFit</span><span class="op">$</span><span class="va">model</span>, <span class="va">newdata</span><span class="op">)</span></span>
-<span>    <span class="co"># It must return a data frame with column names matching the class levels.</span></span>
-<span>    <span class="va">prob</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>presence <span class="op">=</span> <span class="va">prob</span>, pseudoabsence <span class="op">=</span> <span class="fl">1</span> <span class="op">-</span> <span class="va">prob</span><span class="op">)</span></span>
-<span>    <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="va">prob</span><span class="op">)</span></span>
-<span>  <span class="op">}</span>,</span>
+<span>  </span>
 <span>  predictors <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span> <span class="op">{</span></span>
-<span>    <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span>
+<span>    <span class="co"># This correctly extracts predictor names from the fitted model.</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">x</span><span class="op">$</span><span class="va">center</span><span class="op">)</span></span>
 <span>  <span class="op">}</span>,</span>
-<span>  varImp <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  tags <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Distance"</span><span class="op">)</span></span>
+<span>  </span>
+<span>  <span class="co"># Optional: Specify if probabilities are supported</span></span>
+<span>  prob <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">modelFit</span>, <span class="va">newdata</span>, <span class="va">preProc</span> <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">submodels</span> <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="co"># 'prob' calculates class probabilities using the fitted model.</span></span>
+<span>    <span class="co"># 1. Calculate the squared Mahalanobis distance (D^2) for newdata.</span></span>
+<span>    <span class="va">d2</span> <span class="op">&lt;-</span> <span class="fu">stats</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/stats/mahalanobis.html" class="external-link">mahalanobis</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">newdata</span>,</span>
+<span>                             center <span class="op">=</span> <span class="va">modelFit</span><span class="op">$</span><span class="va">center</span>,</span>
+<span>                             cov <span class="op">=</span> <span class="va">modelFit</span><span class="op">$</span><span class="va">inv_cov</span>,</span>
+<span>                             inverted <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="co"># Use inverted = TRUE for efficiency ######################</span></span>
+<span>                             </span>
+<span>    <span class="co"># 2. Convert distance to a p-value using the chi-squared distribution.</span></span>
+<span>    <span class="co"># This p-value can be interpreted as the probability of "presence".</span></span>
+<span>    <span class="va">p_presence</span> <span class="op">&lt;-</span> <span class="fl">1</span> <span class="op">-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Chisquare.html" class="external-link">pchisq</a></span><span class="op">(</span>q <span class="op">=</span> <span class="va">d2</span>, df <span class="op">=</span> <span class="va">modelFit</span><span class="op">$</span><span class="va">df</span><span class="op">)</span></span>
+<span>    </span>
+<span>    <span class="co"># 3. The output is a data frame of probabilities for both classes.</span></span>
+<span>    <span class="va">prob_df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
+<span>      presence <span class="op">=</span> <span class="va">p_presence</span>,</span>
+<span>      pseudoabsence <span class="op">=</span> <span class="fl">1</span> <span class="op">-</span> <span class="va">p_presence</span></span>
+<span>    <span class="op">)</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">prob_df</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">modelFit</span><span class="op">$</span><span class="va">levels</span> <span class="co"># Ensure column names match levels</span></span>
+<span>    <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="va">prob_df</span><span class="op">)</span></span>
+<span>  <span class="op">}</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 </div>
 </div>
@@ -294,7 +416,7 @@ this in action.</p>
 <p>We’ll use data already included in the <code>caretSDM</code> package
 to create a simple <code>input_sdm</code> object. This simulates the
 pre-processing steps of a typical SDM analysis.</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Create an sdm_area object</span></span>
 <span><span class="va">sa</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sdm_area.html">sdm_area</a></span><span class="op">(</span><span class="va">parana</span>, </span>
 <span>               cell_size <span class="op">=</span> <span class="fl">50000</span>, <span class="co"># Using a coarse resolution for speed</span></span>
@@ -329,7 +451,7 @@ pre-processing steps of a typical SDM analysis.</p>
 <code>mahal.dist</code> list to the <code>algo</code> argument. We also
 need to define our training control parameters using
 <code><a href="https://rdrr.io/pkg/caret/man/trainControl.html" class="external-link">caret::trainControl</a></code>.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Define training controls</span></span>
 <span><span class="va">ctrl_sdm</span> <span class="op">&lt;-</span> <span class="fu">caret</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/caret/man/trainControl.html" class="external-link">trainControl</a></span><span class="op">(</span>method <span class="op">=</span> <span class="st">"cv"</span>, </span>
 <span>                                number <span class="op">=</span> <span class="fl">3</span>, </span>
@@ -352,7 +474,7 @@ need to define our training control parameters using
 <span><span class="co">#&gt;     predictors</span></span></code></pre></div>
 <p>Let’s check the output. The printout shows that “Mahalanobis
 Distance” was successfully trained and evaluated.</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">i</span></span>
 <span><span class="co">#&gt;             caretSDM           </span></span>
 <span><span class="co">#&gt; ...............................</span></span>
@@ -376,20 +498,20 @@ Distance” was successfully trained and evaluated.</p>
 <span><span class="co">#&gt;     Metrics                   :</span></span>
 <span><span class="co">#&gt; $`Araucaria angustifolia`</span></span>
 <span><span class="co">#&gt;         algo       ROC       TSS Sensitivity Specificity</span></span>
-<span><span class="co">#&gt; 1 mahal.dist 0.9979445 0.9529519   0.9922222   0.9841111</span></span></code></pre></div>
+<span><span class="co">#&gt; 1 mahal.dist 0.9986297 0.8968825   0.8967778           1</span></span></code></pre></div>
 <p>Note that the algorithm name will be set as the name of the object
 passed to algo:</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/train_sdm.html">algorithms_used</a></span><span class="op">(</span><span class="va">i</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "mahal.dist"</span></span></code></pre></div>
 <p>We can also inspect the model’s performance metrics.</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/train_sdm.html">mean_validation_metrics</a></span><span class="op">(</span><span class="va">i</span><span class="op">)</span></span>
 <span><span class="co">#&gt; $`Araucaria angustifolia`</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 1 × 53</span></span></span>
 <span><span class="co">#&gt;   algo       ROC   TSS Sensitivity Specificity `Pos Pred Value` `Neg Pred Value`</span></span>
 <span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> mahal.d… 0.998 0.953       0.992       0.984            0.999            0.870</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> mahal.d… 0.999 0.897       0.897           1                1            0.337</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># ℹ 46 more variables: Precision &lt;dbl&gt;, Recall &lt;dbl&gt;, F1 &lt;dbl&gt;,</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;">#   Prevalence &lt;dbl&gt;, `Detection Rate` &lt;dbl&gt;, `Detection Prevalence` &lt;dbl&gt;,</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;">#   `Balanced Accuracy` &lt;dbl&gt;, Accuracy &lt;dbl&gt;, Kappa &lt;dbl&gt;,</span></span></span>
