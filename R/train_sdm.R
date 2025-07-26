@@ -243,7 +243,7 @@ train_sdm <- function(occ, pred = NULL, algo, ctrl = NULL, variables_selected = 
     unlist(x, recursive = FALSE)
   })
 
-  if(length(algo) == 1) {
+  if(length(algo2) == 1) {
     for (j in 1:length(m)) {
       names(m[[j]]) <- paste0(names(m[[j]]), 1)
     }
