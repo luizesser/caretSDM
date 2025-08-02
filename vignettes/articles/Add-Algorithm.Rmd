@@ -329,7 +329,7 @@ mean_validation_metrics(i)
 
 A final plot that can be useful is the Partial Dependence Plot
 
-```{r model_metrics}
+```{r pdp}
 pdp_sdm(i)
 ```
 
