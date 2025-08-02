@@ -1,7 +1,7 @@
 Type: Package
 Package: caretSDM
 Title: Build Species Distribution Modeling using 'caret'
-Version: 1.1.2
+Version: 1.1.3
 Authors@R: c(
     person("Dayani", "Bailly", role = "aut",
            comment = c(ORCID = "0000-0002-6954-9902")),
