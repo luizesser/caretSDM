@@ -25,7 +25,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">caretSDM</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.3</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -41,6 +41,7 @@
 <li><a class="dropdown-item" href="../articles/Add-Algorithm.html">Adding New Algorithms to caretSDM</a></li>
     <li><a class="dropdown-item" href="../articles/Araucaria.html">caretSDM Workflow for Species Distribution Modeling</a></li>
     <li><a class="dropdown-item" href="../articles/Compact.html">Concatenate functions in caretSDM</a></li>
+    <li><a class="dropdown-item" href="../articles/ESM.html">Modeling Rare Species using Ensemble of Small Models</a></li>
     <li><a class="dropdown-item" href="../articles/InvasiveSpp.html">Projecting Non-native Distribution using SDMs</a></li>
     <li><a class="dropdown-item" href="../articles/Salminus.html">Modeling Species Distributions in Continental Water Bodies</a></li>
   </ul>
@@ -496,13 +497,9 @@ This method is only possible when we have both the
 <span><span class="co">#&gt; Testing coordinate validity</span></span>
 <span><span class="co">#&gt; Removed 0 records.</span></span>
 <span><span class="co">#&gt; Testing sea coordinates</span></span>
-<span><span class="co">#&gt; Reading layer `ne_110m_land' from data source `/tmp/RtmpL1VVUm/ne_110m_land.shp' using driver `ESRI Shapefile'</span></span>
-<span><span class="co">#&gt; Simple feature collection with 127 features and 3 fields</span></span>
-<span><span class="co">#&gt; Geometry type: POLYGON</span></span>
-<span><span class="co">#&gt; Dimension:     XY</span></span>
-<span><span class="co">#&gt; Bounding box:  xmin: -180 ymin: -90 xmax: 180 ymax: 83.64513</span></span>
-<span><span class="co">#&gt; Geodetic CRS:  WGS 84</span></span>
+<span><span class="co">#&gt; Reading <span style="color: #0000BB;">ne_110m_land.zip</span> from naturalearth...</span></span>
 <span><span class="co">#&gt; Removed 0 records.</span></span>
+<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Predictors identified, procceding with grid filter (removing NA and duplicated data).</span></span></code></pre></div>
 </div>
 <div class="section level3">
@@ -1126,7 +1123,7 @@ simplefeatures object instead of cells in a grid.</p>
 <div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">end_time</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">end_time</span> <span class="op">-</span> <span class="va">start_time</span></span>
-<span><span class="co">#&gt; Time difference of 1.905743 mins</span></span></code></pre></div>
+<span><span class="co">#&gt; Time difference of 1.956912 mins</span></span></code></pre></div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>
