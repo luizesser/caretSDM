@@ -73,6 +73,8 @@
 #' @importFrom stars st_extract
 #' @importFrom dismo bioclim predict
 #' @importFrom cli cli_abort cli_warn
+#' @importFrom caret train
+#' @importFrom stats pchisq cov mahalanobis
 #'
 #' @export
 pseudoabsences <- function(occ, pred = NULL, method = "random", n_set = 10, n_pa = NULL, variables_selected = NULL, th = 0) {
@@ -183,17 +185,116 @@ pseudoabsences <- function(occ, pred = NULL, method = "random", n_set = 10, n_pa
     pa <- .pseudoabsences(y, l, method, n_set, n_pa)
   }
   if (method == "mahal.dist") {
+    mahal.dist <- list(
+      label = "Mahalanobis Distance Classifier",
+      library = NULL,
+      type = "Classification",
+      parameters = data.frame(
+        parameter = c("abs"),
+        class = c("logical"),
+        label = c("Absolute Binarization")
+      ),
+      grid = function(x, y, len = NULL, search = "grid") {
+        # We define a simple grid that will test both TRUE and FALSE
+        # for the 'abs' parameter. Here, search can be anything that
+        # the output is the same. But in other implementations the user
+        # may want to change when search is not "grid".
+        if (search == "grid") {
+          out <- expand.grid(abs = c(TRUE, FALSE))
+        } else {
+          out <- expand.grid(abs = c(TRUE, FALSE))
+        }
+        return(out)
+      },
+      fit = function(x, y, wts, param, lev, last, classProbs, ...) {
+        # The 'fit' function is trained only on presence data.
+        # It calculates and stores the mean vector and inverse covariance matrix.
+        presence_data <- x[y == "presence", , drop = FALSE]
+
+        if (nrow(presence_data) < 2) {
+          stop("Not enough 'presence' data points to calculate covariance.")
+        }
+
+        # Calculate model parameters
+        center_vec <- colMeans(presence_data, na.rm = TRUE)
+        inv_cov_matrix <- solve(stats::cov(presence_data))
+
+        # The model object here is just a list of parameters.
+        result <- list(
+          center = center_vec,
+          inv_cov = inv_cov_matrix,
+          df = ncol(x), # Correction demonstrated by Etherington 2019.
+          abs = param$abs,
+          levels = lev # Retain data information dor consistency.
+        )
+        return(result)
+      },
+      # Prediction function (must match caret's expected signature)
+      predict = function(modelFit, newdata, preProc = NULL, submodels = NULL) {
+        # 'predict' generates class labels based on the probabilities.
+        # 1. Get the probabilities by calling the 'prob' function.
+        probs <- mahal.dist$prob(modelFit, newdata)
+
+        # 2. The 'abs' parameter determines the binarization type.
+        if (modelFit$abs) {
+          # For "Absolute Binarization", we threshold the p-value.
+          # A common choice is alpha = 0.05. If p-value >= 0.05, the point is
+          # considered within the "presence" environment.
+          pred <- ifelse(probs[, modelFit$levels[1]] >= 0.05,
+                         modelFit$levels[1], # presence
+                         modelFit$levels[2]) # pseudoabsence
+        } else {
+          # Standard method: assign the class with the highest probability.
+          pred <- colnames(probs)[apply(probs, 1, which.max)]
+        }
+
+        # 3. Return a factor with the correct levels.
+        pred <- factor(pred, levels = modelFit$levels)
+        return(pred)
+      },
+
+      predictors = function(x, ...) {
+        # This correctly extracts predictor names from the fitted model.
+        names(x$center)
+      },
+
+      # Optional: Specify if probabilities are supported
+      prob = function(modelFit, newdata, preProc = NULL, submodels = NULL) {
+        # 'prob' calculates class probabilities using the fitted model.
+        # 1. Calculate the squared Mahalanobis distance (D^2) for newdata.
+        d2 <- stats::mahalanobis(x = newdata,
+                                 center = modelFit$center,
+                                 cov = modelFit$inv_cov,
+                                 inverted = TRUE) # Use inverted = TRUE for efficiency ######################
+
+        # 2. Convert distance to a p-value using the chi-squared distribution.
+        # This p-value can be interpreted as the probability of "presence".
+        p_presence <- 1 - stats::pchisq(q = d2, df = modelFit$df)
+
+        # 3. The output is a data frame of probabilities for both classes.
+        prob_df <- data.frame(
+          presence = p_presence,
+          pseudoabsence = 1 - p_presence
+        )
+        colnames(prob_df) <- modelFit$levels # Ensure column names match levels
+        return(prob_df)
+      }
+    )
     if (is_input_sdm(occ)) {
       l <- sapply(y$spp_names, function(sp) {
+
         occ2 <- df[df$cell_id %in% y$occurrences[y$occurrences$species == sp, ]$cell_id, ]
-        model <- dismo::mahal(x = select(as.data.frame(occ2), all_of(selected_vars)))
-        p <- predict(model, as.data.frame(df))
-        p[p[] < th] <- NA # A value of 1 means that the lower distance we are considering is 1 standard deviation from the mean in each dimention.
-        p <- data.frame(cell_id = df$cell_id, pred = p)
-        p <- p[!is.na(p$pred), ]
+        model <- caret::train(dplyr::select(as.data.frame(occ2), dplyr::all_of(selected_vars)),
+                     rep("presence", nrow(occ2)),
+                     method = mahal.dist) |>
+          suppressWarnings()
+
+        p1 <- predict(model, as.data.frame(df))
+        p <- data.frame(cell_id = df$cell_id, pred = p1)
+        p <- p[is.na(p1), ]
         l <- list()
         if (nrow(p) == 0) {
-          cli::cli_abort(c("bioclim envelope for ", sp, " covered all the study area. Change th argument or change the method."))
+          cli::cli_abort(c("Mahalanobis envelope for ", sp, " covered all the study area."))
         } else {
           for (j in 1:n_set) {
             if (n_pa[sp] < length(p$cell_id)) {

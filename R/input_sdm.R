@@ -103,6 +103,12 @@ print.input_sdm <- function(x, ...) {
     if (!is.null(x$occurrences$data_cleaning)) {
       cat(cat("Data Cleaning                 : "), cat(x$occurrences$data_cleaning, sep = ", "), "\n")
     }
+    if (!is.null(x$occurrences$esm)) {
+      cat(
+        "Ensemble of Small Models (ESM): TRUE\n",
+        "   Number of Records         :", x$occurrences$esm$n_records, "\n"
+      )
+    }
   }
   if ("predictors" %in% names(x)) {
     if (is_sdm_area(x$predictors)) {

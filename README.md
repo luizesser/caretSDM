@@ -46,14 +46,20 @@ caretSDM is vastly documented and has included some objects that can guide your 
 
 -   `scen` Bioclimatic variables for future scenarios in stars class.
 
+-   `scen_rs` Bioclimatic variables for invasive assessments vignette.
+
 -   `algorithms` Dataframe with characteristics from every algorithm available in caretSDM.
 
 *Articles*
 
--   `caretSDM Workflow for Species Distribution Modeling` is the main vignette for terrestrial species modeling, where we model the tree species *Araucaria angustifolia*.
+-   `Adding New Algorithms to caretSDM` do not found your ideal algorithm already implemented? Here we show how to implement any custom algorithm in our package.
 
--   `Modeling Species Distributions in Continental Water Bodies` is the main vignette for continental aquatic species modeling, where we model the fish species *Salminus brasiliensis*.
+-   `caretSDM Workflow for Species Distribution Modeling` is the main vignette for terrestrial species modeling, where we model the tree species *Araucaria angustifolia*.
 
 -   `Concatenate functions in caretSDM` shows how to build compact scripts, which is very useful to run your first tests.
 
--   `Adding New Algorithms to caretSDM` Do not found your ideal algorithm already implemented? Here we show how to implement any custom algorithm in our package.
+-   `Projecting Non-native Distribution using SDMs` a vignette demonstrating how to make invasiveness assessments.
+
+-   `Modeling Species Distributions in Continental Water Bodies` is the main vignette for continental aquatic species modeling, where we model the fish species *Salminus brasiliensis*.
+
+-   `Modeling Rare Species using Ensemble of Small Models` we showcase how easy it is to apply SDMs to rare species with low number of records.

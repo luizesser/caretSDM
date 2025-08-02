@@ -259,7 +259,7 @@ plot.predictions <- function(x, spp_name = NULL, scenario = NULL, id = NULL, ens
   }
   p <- ggplot2::ggplot()
   if(!unique(sf::st_geometry_type(grd)) == "LINESTRING"){
-    p <- p + ggplot2::geom_sf(data = grd, ggplot2::aes(fill = result)) +
+    p <- p + ggplot2::geom_sf(data = grd, ggplot2::aes(fill = result), linewidth = 0.001) +
       ggplot2::scale_fill_viridis_c(name = paste0("Occurrence\n Probability"), limits = c(0, 1))
   } else {
     p <- p + ggplot2::geom_sf(data = grd, ggplot2::aes(color = result)) +
@@ -276,8 +276,8 @@ plot.predictions <- function(x, spp_name = NULL, scenario = NULL, id = NULL, ens
       style = ggspatial::north_arrow_fancy_orienteering,
       pad_x = ggplot2::unit(0.2, "cm"),
       pad_y = ggplot2::unit(0.7, "cm")
-    ) +
-    ggspatial::annotation_scale(height = ggplot2::unit(0.2, "cm"))
+    ) #+
+    #ggspatial::annotation_scale(height = ggplot2::unit(0.2, "cm"), )
 
   return(p)
 }

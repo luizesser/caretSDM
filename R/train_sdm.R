@@ -168,8 +168,8 @@ train_sdm <- function(occ, pred = NULL, algo, ctrl = NULL, variables_selected = 
       }
     }
 
-    for (i in 1:length(z$pseudoabsences$data[[sp]])) {
-      pa <- z$pseudoabsences$data[[sp]][[i]]
+    for (j in 1:length(z$pseudoabsences$data[[sp]])) {
+      pa <- z$pseudoabsences$data[[sp]][[j]]
       pa <- pa[, names(occ2)[match(names(pa), names(occ2))]]
       occ2 <- occ2[, names(occ2)[match(names(pa), names(occ2))]]
       x <- rbind(occ2, pa)
@@ -177,42 +177,63 @@ train_sdm <- function(occ, pred = NULL, algo, ctrl = NULL, variables_selected = 
       df <- as.factor(c(rep("presence", nrow(occ2)), rep("pseudoabsence", nrow(pa))))
 
       # TRAIN MODELS ##################
-      #if ("esm" %in% names(z)) {
-      #  if(sp %in% z$esm$spp ) {
-      #    cli::cli_progress_message("ESM species")
-      #    vars_comb <- colnames(x) |> utils::combn(2)
-      #    m1 <- list()
-      #    for (vars in 1:ncol(vars_comb)) {
-      #      m1[[vars]] <- lapply(algo, function(a) {
-      #        caret::train(
-      #          df~.,
-      #          data = cbind(df,x[,vars_comb[,vars]]),
-      #          method = a,
-      #          trControl = ctrl
-      #        )
-      #      })
-      #    }
-#
-      #  } else if(!is.null(z$esm$n_records)) {
-      #    if (z$n_presences[sp] <  z$esm$n_records) {
-      #      cli::cli_progress_message("ESM records")
-      #      vars_comb <- colnames(x) |> utils::combn(2)
-      #      for (vars in 1:ncol(vars_comb)) {
-      #        m1[[vars]] <- lapply(algo, function(a) {
-      #          caret::train(
-      #            df~.,
-      #            data = cbind(df,x[,vars_comb[,vars]]),
-      #            method = a,
-      #            trControl = ctrl
-      #          )
-      #        })
-      #      }
-      #    }
-      #  }
-      #  m <- unlist(m1, recursive = FALSE)
-      #  l[[paste0("m", i, ".")]] <- m
-      #  next
-      #}
+      if ("esm" %in% names(z)) {
+        cli::cli_progress_message("ESM species")
+        m1 <- list()
+        if(sp %in% z$esm$spp ) {
+          vars_comb <- colnames(x) |> utils::combn(2)
+          for (vars in 1:ncol(vars_comb)) {
+            m1[[vars]] <- lapply(algo, function(a) {
+              caret::train(
+                df~.,
+                data = cbind(df,x[,vars_comb[,vars]]),
+                method = a,
+                trControl = ctrl
+              )
+            })
+          }
+        } else if(!is.null(z$esm$n_records)) {
+          if (z$n_presences[sp] <  z$esm$n_records) {
+            cli::cli_progress_message("ESM records")
+            vars_comb <- colnames(x) |> utils::combn(2)
+            for (vars in 1:ncol(vars_comb)) {
+              m1[[vars]] <- lapply(algo, function(a) {
+                caret::train(
+                  df~.,
+                  data = cbind(df,x[,vars_comb[,vars]]),
+                  method = a,
+                  trControl = ctrl
+                )
+              })
+            }
+          }
+        } else if(is.character(algo)) {
+            cli::cli_progress_message("ESM not applied (records do not match condition)")
+            m1 <- lapply(algo, function(a) {
+              caret::train(
+                df~.,
+                data = cbind(df,x),
+                method = a,
+                trControl = ctrl,
+                ...
+              ) # lapply retorna diferentes valores de tuning (padronizar com seed?)
+            })
+        } else if (is.list(algo)) {
+            m1 <- caret::train(
+              df~.,
+              data = cbind(df,x),
+              method = algo,
+              trControl = ctrl,
+              ...
+            ) |> list()
+        }
+        if(!exists("m1")){
+          cli::cli_abort("ESM ")
+        }
+        m <- unlist(m1, recursive = FALSE)
+        l[[paste0("m", j, ".")]] <- m
+        next
+      }
       if(is.character(algo)) {
         m <- lapply(algo, function(a) {
           caret::train(
@@ -234,7 +255,7 @@ train_sdm <- function(occ, pred = NULL, algo, ctrl = NULL, variables_selected = 
       }
 
       #################################
-      l[[paste0("m", i, ".")]] <- m
+      l[[paste0("m", j, ".")]] <- m
     }
     return(l)
   }, simplify = TRUE, USE.NAMES = TRUE)

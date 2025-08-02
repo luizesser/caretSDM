@@ -3,7 +3,7 @@
 #' This function includes scenarios in the \code{sdm_area} object.
 #'
 #' @usage add_scenarios(sa, scen = NULL, scenarios_names = NULL, pred_as_scen = TRUE,
-#'                      variables_selected = NULL, stationary = NULL)
+#'                      variables_selected = NULL, stationary = NULL, crop_area = NULL)
 #'
 #' @param sa A \code{sdm_area} or \code{input_sdm} object.
 #' @param scen \code{RasterStack}, \code{SpatRaster} or \code{stars} object. If \code{NULL} adds
@@ -14,6 +14,7 @@
 #' @param stationary Names of variables from \code{sa} that should be used in scenarios as
 #' stationary variables.
 #' @param pred_as_scen Logical. If \code{TRUE} adds the current predictors as a scenario.
+#' @param crop_area A \code{sf} object to crop the \code{scen} object if necessary.
 #' @param i A \code{sdm_area} or \code{input_sdm} object.
 #'
 #' @details
@@ -75,13 +76,13 @@
 #'
 #' @export
 add_scenarios <- function(sa, scen = NULL, scenarios_names = NULL, pred_as_scen = TRUE,
-                          variables_selected = NULL, stationary = NULL) {
+                          variables_selected = NULL, stationary = NULL, crop_area = NULL) {
   UseMethod("add_scenarios", scen)
 }
 
 #' @export
 add_scenarios.NULL <- function(sa, scen = NULL, scenarios_names = NULL, pred_as_scen = TRUE,
-                               variables_selected = NULL, stationary = NULL) {
+                               variables_selected = NULL, stationary = NULL, crop_area = NULL) {
   if(is_sdm_area(sa)){
     sa_teste <- sa
     sa_teste$data <- list(current = sa_teste$grid)
@@ -97,24 +98,29 @@ add_scenarios.NULL <- function(sa, scen = NULL, scenarios_names = NULL, pred_as_
 
 #' @export
 add_scenarios.RasterStack <- function(sa, scen=NULL, scenarios_names = NULL, pred_as_scen = TRUE,
-                                      variables_selected = NULL, stationary = NULL) {
+                                      variables_selected = NULL, stationary = NULL,
+                                      crop_area = NULL) {
   scen <- stars::st_as_stars(scen)
-  sa <- add_scenarios(sa, scen, scenarios_names, pred_as_scen, variables_selected, stationary)
+  sa <- add_scenarios(sa, scen, scenarios_names, pred_as_scen, variables_selected, stationary,
+                      crop_area)
   return(sa)
 }
 
 #' @export
 add_scenarios.SpatRaster <- function(sa, scen=NULL, scenarios_names = NULL, pred_as_scen = TRUE,
-                                     variables_selected = NULL, stationary = NULL) {
+                                     variables_selected = NULL, stationary = NULL,
+                                     crop_area = NULL) {
   scen <- stars::st_as_stars(scen)
   names(stars::st_dimensions(scen)) <- c("x", "y", "band")
-  sa <- add_scenarios(sa, scen, scenarios_names, pred_as_scen, variables_selected, stationary)
+  sa <- add_scenarios(sa, scen, scenarios_names, pred_as_scen, variables_selected, stationary,
+                      crop_area)
   return(sa)
 }
 
 #' @export
 add_scenarios.stars <- function(sa, scen=NULL, scenarios_names = NULL, pred_as_scen = TRUE,
-                                variables_selected = NULL, stationary = NULL) {
+                                variables_selected = NULL, stationary = NULL,
+                                crop_area = NULL) {
   # stationary assertion must include an empty vector. Empty vector must be changed to NULL.
   if (is_input_sdm(sa)) {
     if("scenarios" %in% names(sa)){
@@ -128,6 +134,11 @@ add_scenarios.stars <- function(sa, scen=NULL, scenarios_names = NULL, pred_as_s
     add_sc <- ifelse(length(sa$data)>0, TRUE, FALSE)
   } else if ( is_sdm_area(sa) ) {
     add_sc <- ifelse(length(sa$scenarios$data)>0, TRUE, FALSE)
+  }
+
+  if(!is.null(crop_area)){
+    assert_class_cli(crop_area, "sf")
+    scen <- sf::st_crop(scen, crop_area)
   }
 
   if (is.null(scenarios_names)) { scenarios_names <- names(scen) }

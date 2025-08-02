@@ -9,7 +9,7 @@
 \title{Add scenarios to \code{sdm_area}}
 \usage{
 add_scenarios(sa, scen = NULL, scenarios_names = NULL, pred_as_scen = TRUE,
-                     variables_selected = NULL, stationary = NULL)
+                     variables_selected = NULL, stationary = NULL, crop_area = NULL)
 
 set_scenarios_names(i, scenarios_names = NULL)
 
@@ -34,6 +34,8 @@ variables. If \code{NULL} adds all variables.}
 
 \item{stationary}{Names of variables from \code{sa} that should be used in scenarios as
 stationary variables.}
+
+\item{crop_area}{A \code{sf} object to crop the \code{scen} object if necessary.}
 
 \item{i}{A \code{sdm_area} or \code{input_sdm} object.}
 }

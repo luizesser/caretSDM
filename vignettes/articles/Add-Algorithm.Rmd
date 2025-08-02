@@ -91,8 +91,8 @@ algorithm implemented. Let's see how these components come together in our examp
 Here is the complete code for creating the `algo` list for the Mahalanobis Distance using the
 `dismo` package. This structure can be changed to include new algorithms into caretSDM.
 
-```{r mahalanobis_code, eval=FALSE}
-mahal.dist <- list(
+```{r mahalanobis_code}
+mahal.dismo <- list(
   label = "Mahalanobis Distance",
   library = "dismo",
   loop = NULL,
@@ -141,8 +141,8 @@ mahal.dist <- list(
     return(prob)
   },
   predictors = function(x, ...) {
-    colnames(x)
-  },
+    names(x$model@centroid)  
+    },
   varImp = NULL,
   tags = c("Distance")
 )
@@ -155,7 +155,7 @@ show the code for a custom Mahalanobis Distance.
 
 ```{r mahal.dist}
 # Define a custom Mahalanobis model
-mahal.dist <- list(
+mahal.custom <- list(
   label = "Mahalanobis Distance Classifier",
   library = NULL,
   type = "Classification",
@@ -203,7 +203,7 @@ mahal.dist <- list(
   predict = function(modelFit, newdata, preProc = NULL, submodels = NULL) {
     # 'predict' generates class labels based on the probabilities.
     # 1. Get the probabilities by calling the 'prob' function.
-    probs <- mahal.dist$prob(modelFit, newdata)
+    probs <- mahal.custom$prob(modelFit, newdata)
     
     # 2. The 'abs' parameter determines the binarization type.
     if (modelFit$abs) {
@@ -254,9 +254,9 @@ mahal.dist <- list(
 
 ## Integrating the New Algorithm into `caretSDM`
 
-With our `mahal.dist` list defined, we can now use it directly with the `train_sdm` function. The
+With our `mahal.custom` list defined, we can now use it directly with the `train_sdm` function. The
 process is the same as for any built-in algorithm, but instead of providing the algorithm's name as
-a string (e.g., `"rf"`), we provide our `mahal.dist` list object.
+a string (e.g., `"rf"`), we provide our `mahal.custom` list object.
 
 Let's walk through a minimal `caretSDM` workflow to see this in action.
 
@@ -303,7 +303,7 @@ ctrl_sdm <- caret::trainControl(method = "cv",
 # Train the model using our custom algorithm
 # Note that 'algo' is now our list object instead of a string
 i <- train_sdm(i, 
-               algo = mahal.dist, 
+               algo = mahal.custom, 
                variables_selected = c("bio1", "bio4", "bio12"), # Using only two variables for simplicity
                ctrl = ctrl_sdm)
 ```
@@ -315,7 +315,7 @@ evaluated.
 i
 ```
 
-Note that the algorithm name will be set as the name of the object passed to algo:
+Note that the algorithm name will be set as the name of the object passed to `algo`:
 
 ```{r algo_name}
 algorithms_used(i)
@@ -325,6 +325,43 @@ We can also inspect the model's performance metrics.
 
 ```{r model_metrics}
 mean_validation_metrics(i)
+```
+
+A final plot that can be useful is the Partial Dependence Plot
+
+```{r model_metrics}
+pdp_sdm(i)
+```
+
+### 2. Comparing both results
+
+To compare the output of both algorithms implemented we need to first build models using the
+mahal.dismo method.
+
+```{r i2}
+# Create a new input_sdm object
+i2 <- input_sdm(oc, sa) |>
+      pseudoabsences(method = "bioclim", 
+                      n_set = 3) |>
+      train_sdm(algo = mahal.dismo, 
+                variables_selected = c("bio1", "bio4", "bio12"), # Using only two variables for simplicity
+                ctrl = ctrl_sdm)
+```
+
+```{r}
+i2
+```
+
+Plotting the result of mahal.dismo.
+
+```{r mahal.dismo_plot}
+i2 |> add_scenarios() |> predict_sdm() |> plot_predictions()
+```
+
+Plotting the result of mahal.custom.
+
+```{r mahal.custom_plot}
+i |> add_scenarios() |> predict_sdm() |> plot_predictions()
 ```
 
 ## Conclusion
