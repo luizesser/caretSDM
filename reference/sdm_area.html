@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">caretSDM</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.3</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.4</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -50,7 +50,9 @@
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">sdm_area</span><span class="op">(</span><span class="va">x</span>, cell_size <span class="op">=</span> <span class="cn">NULL</span>, crs <span class="op">=</span> <span class="cn">NULL</span>, variables_selected <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>                gdal <span class="op">=</span> <span class="cn">TRUE</span>, crop_by <span class="op">=</span> <span class="cn">NULL</span>, lines_as_sdm_area <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">get_sdm_area</span><span class="op">(</span><span class="va">i</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">get_sdm_area</span><span class="op">(</span><span class="va">i</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">add_sdm_area</span><span class="op">(</span><span class="va">sa1</span>, <span class="va">sa2</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -72,7 +74,8 @@ epsg from <code>x</code> is used.</p></dd>
 
 
 <dt id="arg-variables-selected">variables_selected<a class="anchor" aria-label="anchor" href="#arg-variables-selected"></a></dt>
-<dd><p>A <code>character</code> vector with variables in <code>x</code> to be used in models.
+<dd><p>A <code>character</code> vector with variables in <code>x</code> to be used in
+models.
 If <code>NULL</code> (standard), all variables in <code>x</code> are used.</p></dd>
 
 
@@ -85,12 +88,21 @@ If <code>NULL</code> (standard), all variables in <code>x</code> are used.</p></
 
 
 <dt id="arg-lines-as-sdm-area">lines_as_sdm_area<a class="anchor" aria-label="anchor" href="#arg-lines-as-sdm-area"></a></dt>
-<dd><p>Boolean. If <code>x</code> is a <code>sf</code> with LINESTRING geometry, it can be used
+<dd><p>Boolean. If <code>x</code> is a <code>sf</code> with LINESTRING geometry, it can be
+used
 to model species distribution in lines and not grid cells.</p></dd>
 
 
 <dt id="arg-i">i<a class="anchor" aria-label="anchor" href="#arg-i"></a></dt>
 <dd><p>A <code>sdm_area</code> or a <code>input_sdm</code> object.</p></dd>
+
+
+<dt id="arg-sa-">sa1<a class="anchor" aria-label="anchor" href="#arg-sa-"></a></dt>
+<dd><p>A <code>sdm_area</code> object.</p></dd>
+
+
+<dt id="arg-sa-">sa2<a class="anchor" aria-label="anchor" href="#arg-sa-"></a></dt>
+<dd><p>A <code>sdm_area</code> object.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -108,9 +120,13 @@ to model species distribution in lines and not grid cells.</p></dd>
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>The function returns a <code>sdm_area</code> object with a grid built upon the <code>x</code> parameter.
 There are two ways to make the grid and resample the variables in <code>sdm_area</code>: with and
-without gdal. As standard, if gdal is available in you machine it will be used (<code>gdal = TRUE</code>),
+without gdal. As standard, if gdal is available in you machine it will be used
+(<code>gdal = TRUE</code>),
 otherwise sf/stars will be used.
-<code>get_sdm_area</code> will return the grid built by <code>sdm_area</code>.</p>
+<code>get_sdm_area</code> will return the grid built by <code>sdm_area</code>.
+<code>add_sdm_area</code> will sum two <code>sdm_area</code> objects. As geoprocessing in <code>caretSDM</code> is
+performed using <code>sf</code> objects, <code>add_sdm_area</code> simply applies a <code>rbind</code> in the two
+different areas.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
