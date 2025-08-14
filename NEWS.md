@@ -13,3 +13,8 @@
 # caretSDM 1.1.3
 
 -   Inclusion of Ensemble of Small Models in caretSDM.
+
+# caretSDM 1.1.4
+
+-   Inclusion of functions to add different classes together, as well as plots for niche and background.
+

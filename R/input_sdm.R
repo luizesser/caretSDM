@@ -3,6 +3,8 @@
 #' This function creates a new \code{input_sdm} object.
 #'
 #' @param ... Data to be used in SDMs. Can be a \code{occurrences} and/or a \code{sdm_area} object.
+#' @param i1 A \code{input_sdm} object.
+#' @param i2 A \code{input_sdm} object.
 #'
 #' @returns A \code{input_sdm} object containing:
 #'    \item{grid}{\code{sf} with POLYGON geometry representing the grid for the study area or
@@ -71,6 +73,25 @@ input_sdm <- function(...) {
     class = "input_sdm"
   )
   return(inp)
+}
+
+#' @rdname input_sdm
+#' @export
+add_input_sdm <- function(i1, i2) {
+  assert_class_cli(i1, "input_sdm")
+  assert_class_cli(i2, "input_sdm")
+
+  l <- list(
+    occurrences = add_occurrences(i1$occurrences, i2$occurrences),
+    predictors = add_predictors(i1$predictors, i2$predictors),
+    scenarios = add_scenarios(i1$scenarios, i2$scenarios),
+    models = add_models(i1$models, i2$models),
+    predictions = add_predictions(i1$predictions, i2$predictions)
+  )
+  i <- structure(l,
+    class = "input_sdm"
+  )
+  return(i)
 }
 
 #' Print method for input_sdm

@@ -11,6 +11,8 @@
 \alias{mapview_predictors}
 \alias{mapview_scenarios}
 \alias{mapview_predictions}
+\alias{plot_background}
+\alias{plot_niche}
 \title{S3 Methods for plot and mapview}
 \usage{
 plot_occurrences(i, spp_name = NULL, pa = TRUE)
@@ -45,6 +47,19 @@ mapview_predictions(
   id = NULL,
   ensemble = TRUE,
   ensemble_type = "mean_occ_prob"
+)
+
+plot_background(i, variables_selected = NULL)
+
+plot_niche(
+  i,
+  spp_name = NULL,
+  variables_selected = NULL,
+  scenario = NULL,
+  id = NULL,
+  ensemble = TRUE,
+  ensemble_type = "mean_occ_prob",
+  raster = FALSE
 )
 }
 \arguments{

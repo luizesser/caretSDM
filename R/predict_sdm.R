@@ -26,6 +26,8 @@
 #' @param file File to sabe predictions.
 #' @param add.current If current scenario is not available, predictors will be used as the current
 #' scenario.
+#' @param p1 A \code{predictions} object.
+#' @param p2 A \code{predictions} object.
 #'
 #' @returns A \code{input_sdm} or a \code{predictions} object.
 #'
@@ -274,6 +276,28 @@ get_ensembles <- function(i) {
     return(i$predictions$ensembles)
   }
   return(NULL)
+}
+
+#' @rdname predict_sdm
+#' @export
+add_predictions <- function(p1, p2) {
+  assert_class_cli(p1, "predictions", null.ok = TRUE)
+  assert_class_cli(p2, "predictions", null.ok = TRUE)
+  if(is.null(p1)) {return(p2)}
+  if(is.null(p2)) {return(p1)}
+  grd <- rbind(p1$grid, p2$grid)
+  grd$cell_id <- c(p1$grid$cell_id, max(p1$grid$cell_id)+p2$grid$cell_id)
+  p <- list(thresholds = list(values = c(p1$thresholds$values, p2$thresholds$values),
+                              method = unique(c(p1$thresholds$method, p2$thresholds$method)),
+                              criteria = unique(c(p1$thresholds$criteria, p2$thresholds$criteria))),
+            predictions = c(p1$predictions, p2$predictions),
+            models = add_input_sdm(p1$models, p2$models),
+            file = c(p1$file, p2$file),
+            ensembles = rbind(p1$ensembles, p2$ensembles),
+            grid = grd
+  )
+  pred <- .predictions(p)
+  return(pred)
 }
 
 .predictions <- function(x) {

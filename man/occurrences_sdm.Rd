@@ -25,6 +25,8 @@ get_coords(i)
 occurrences_as_df(i)
 
 add_occurrences(oc1, oc2)
+
+add_occurrences(oc1, oc2)
 }
 \arguments{
 \item{x}{A \code{data.frame}, \code{tibble} or \code{sf} with species records.}

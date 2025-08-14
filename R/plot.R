@@ -26,9 +26,10 @@
 #' @author Luíz Fernando Esser (luizesser@gmail.com)
 #' https://luizfesser.wordpress.com
 #'
-#'
 #' @importFrom mapview mapview
 #' @importFrom ggplot2 ggplot geom_sf aes scale_fill_viridis_c xlab ylab ggtitle theme_minimal unit
+#' scale_color_viridis_c geom_point scale_y_continuous scale_x_continuous stat_density_2d_filled
+#' after_stat stat_summary_2d
 #' @importFrom ggspatial annotation_scale north_arrow_fancy_orienteering annotation_north_arrow
 #' @importFrom dplyr filter select
 #' @importFrom gtools mixedsort
@@ -37,7 +38,7 @@
 #' @importFrom sf st_as_sf st_geometry_type
 #' @importFrom tidyr pivot_longer
 #'
-#' @global species result value
+#' @global species result value var1 var2 density
 #'
 #' @export
 plot_occurrences <- function(i, spp_name = NULL, pa = TRUE) {
@@ -425,4 +426,130 @@ plot.input_sdm <- function(x, ...) {
   if ("occurrences" %in% names(i)) {
     return(plot_occurrences(i))
   }
+}
+
+#' @rdname plot_occurrences
+#' @export
+plot_background <- function(i, variables_selected = NULL) {
+  assert_class_cli(i, "input_sdm")
+  pred <- i$predictors$grid
+
+  if (is.null(variables_selected)) {
+    variables_selected <- get_predictor_names(i)
+  } else if ("vif" %in% variables_selected) {
+    variables_selected <- pred$variable_selection$vif$selected_variables
+  } else if ("pca" %in% variables_selected) {
+    variables_selected <- pred$variable_selection$pca$selected_variables
+  } else {
+    assert_choice_cli(variables_selected, get_predictor_names(i))
+  }
+
+  pred_df <- as.data.frame(pred)[,variables_selected]
+  colnames(pred_df) <- c("var1", "var2")
+  background <- ggplot2::ggplot(pred_df, ggplot2::aes(x = var1,
+                                                      y = var2,
+                                                      fill = ggplot2::after_stat(density))) +
+    ggplot2::stat_density_2d_filled(bins=50, show.legend = FALSE, contour = FALSE, geom="raster") +
+    ggplot2::scale_fill_viridis_c() +
+    ggplot2::ggtitle("Background Data for the Study Area") +
+    ggplot2::xlab(variables_selected[1]) +
+    ggplot2::ylab(variables_selected[2]) +
+    ggplot2::scale_x_continuous(expand = c(0, 0)) +
+    ggplot2::scale_y_continuous(expand = c(0, 0)) +
+    ggplot2::theme_minimal()
+  return(background)
+}
+
+#' @rdname plot_occurrences
+#' @export
+plot_niche <- function(i, spp_name = NULL, variables_selected = NULL, scenario = NULL, id = NULL,
+                       ensemble = TRUE, ensemble_type = "mean_occ_prob", raster = FALSE) {
+  assert_logical_cli(ensemble)
+  assert_logical_cli(raster)
+  ens <- ifelse(ensemble, "ensembles", "predictions")
+
+  if (ensemble) {
+    valid_scen <- i$predictions[[ens]] |> colnames()
+  } else {
+    valid_scen <- scenarios_names(i)
+  }
+
+  if (is.null(variables_selected)) {
+    variables_selected <- get_predictor_names(i)
+  } else if ("vif" %in% variables_selected) {
+    variables_selected <- pred$variable_selection$vif$selected_variables
+  } else if ("pca" %in% variables_selected) {
+    variables_selected <- pred$variable_sselection$pca$selected_variables
+  } else {
+    assert_choice_cli(variables_selected, get_predictor_names(i))
+  }
+  if (!is.null(scenario)) {
+    scenario <- valid_scen[which.min(stringdist::stringdist(scenario, valid_scen))]
+  } else {
+    scenario <- valid_scen[1]
+  }
+  valid_spp <- species_names(i)
+  if (!is.null(spp_name)) {
+    spp_name <- valid_spp[which.min(stringdist::stringdist(spp_name, valid_spp))]
+  } else {
+    spp_name <- valid_spp[1]
+  }
+
+  grd <- i$predictions$predictions[[scenario]][[spp_name]][[1]]
+  while (is.null(grd)) {
+    valid_scen <- valid_scen[! valid_scen %in% scenario]
+    scenario2 <- valid_scen[which.min(stringdist::stringdist(scenario, valid_scen))]
+    grd <- i$predictions$predictions[[scenario2]][[spp_name]][[1]]
+  }
+
+  if (ensemble) {
+    cell_id <- i$predictions[[ens]][[spp_name, scenario]][, "cell_id"]
+    v <- i$predictions[[ens]][[spp_name, scenario]][, ensemble_type]
+    grd <- dplyr::filter(grd, grd$cell_id == cell_id)
+    grd[grd$cell_id %in% cell_id, "result"] <- v
+    if (ensemble_type == "mean_occ_prob") {
+      et <- "Mean Occurrence Probability"
+    }
+    if (ensemble_type == "wmean_AUC") {
+      et <- "Mean Occurrence Probability Weighted by ROC/AUC"
+    }
+    if (ensemble_type == "committee_avg") {
+      et <- "Committee Average"
+    }
+    subtitle <- paste0("Ensemble type: ", et)
+  } else {
+    cell_id <- i$predictions[["predictions"]][[scenario]][[spp_name]][[1]]$cell_id
+    v <- i$predictions[[ens]][[scenario]][[spp_name]][[id]]$presence
+    grd <- dplyr::filter(grd, grd$cell_id == cell_id)
+    grd[grd$cell_id %in% cell_id, "result"] <- v
+    subtitle <- NULL
+  }
+  grd2 <- as.data.frame(grd)[,c(variables_selected, "result")]
+  colnames(grd2) <- c("var1", "var2", "result")
+  # As a raster:
+  if(raster) {
+    p <- ggplot2::ggplot() +
+      ggplot2::stat_summary_2d(
+        data = grd,
+        ggplot2::aes(x = bio1, y = bio12, z = presence),
+        fun = mean,  # Averages presence probability
+        geom = "raster"
+      ) +
+      ggplot2::scale_fill_viridis_c(name = "Presence Probability") +
+      ggplot2::ggtitle(paste0(spp_name, " Niche for the ", scenario, " scenario"), subtitle = subtitle) +
+      ggplot2::theme_minimal()
+  } else {
+    p <- ggplot2::ggplot() +
+      ggplot2::geom_point(data = grd2,
+                          ggplot2::aes(x = var1, y = var2, color = result),
+                          size = 3,
+                          alpha = 0.4,
+                          stroke = 1) +
+      ggplot2::scale_color_viridis_c(name = "Presence Probability") +
+      ggplot2::xlab(variables_selected[1]) +
+      ggplot2::ylab(variables_selected[2]) +
+      ggplot2::ggtitle(paste0(spp_name, " Niche for the ", scenario, " scenario"), subtitle = subtitle) +
+      ggplot2::theme_minimal()
+  }
+  return(p)
 }

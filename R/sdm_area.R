@@ -10,20 +10,28 @@
 #' @param cell_size \code{numeric}. The cell size to be used in models.
 #' @param crs \code{numeric}. Indicates which EPSG should the output grid be in. If \code{NULL},
 #' epsg from \code{x} is used.
-#' @param variables_selected A \code{character} vector with variables in \code{x} to be used in models.
+#' @param variables_selected A \code{character} vector with variables in \code{x} to be used in
+#' models.
 #' If \code{NULL} (standard), all variables in \code{x} are used.
 #' @param gdal Boolean. Force the use or not of GDAL when available. See details.
 #' @param crop_by A shape from \code{sf} to crop \code{x}.
-#' @param lines_as_sdm_area Boolean. If \code{x} is a \code{sf} with LINESTRING geometry, it can be used
+#' @param lines_as_sdm_area Boolean. If \code{x} is a \code{sf} with LINESTRING geometry, it can be
+#' used
 #' to model species distribution in lines and not grid cells.
 #' @param i A \code{sdm_area} or a \code{input_sdm} object.
+#' @param sa1 A \code{sdm_area} object.
+#' @param sa2 A \code{sdm_area} object.
 #'
 #' @details
 #' The function returns a \code{sdm_area} object with a grid built upon the \code{x} parameter.
 #' There are two ways to make the grid and resample the variables in \code{sdm_area}: with and
-#' without gdal. As standard, if gdal is available in you machine it will be used (\code{gdal = TRUE}),
+#' without gdal. As standard, if gdal is available in you machine it will be used
+#' (\code{gdal = TRUE}),
 #' otherwise sf/stars will be used.
 #' \code{get_sdm_area} will return the grid built by \code{sdm_area}.
+#' \code{add_sdm_area} will sum two \code{sdm_area} objects. As geoprocessing in \code{caretSDM} is
+#' performed using \code{sf} objects, \code{add_sdm_area} simply applies a \code{rbind} in the two
+#' different areas.
 #'
 #' @returns A \code{sdm_area} object containing:
 #'    \item{grid}{\code{sf} with \code{POLYGON} geometry representing the grid for the study area.}
@@ -1279,6 +1287,32 @@ get_sdm_area <- function(i) {
   return(x)
 }
 
+#' @rdname sdm_area
+#' @export
+add_sdm_area <- function(sa1, sa2) {
+  assert_class_cli(sa1, "sdm_area", null.ok = TRUE)
+  assert_class_cli(sa2, "sdm_area", null.ok = TRUE)
+  if(is.null(sa1)) {return(sa2)}
+  if(is.null(sa2)) {return(sa1)}
+  assert_true_cli(sa1$parameters$gdal == sa2$parameters$gdal)
+  assert_true_cli(sa1$parameters$lines_as_sdm_area == sa2$parameters$lines_as_sdm_area)
+  assert_true_cli(sa1$cell_size == sa2$cell_size)
+  grd <- rbind(sa1$grid, sa2$grid)
+  grd$cell_id <- c(sa1$grid$cell_id, max(sa1$grid$cell_id)+sa2$grid$cell_id)
+  if("scenarios" %in% names(sa1)){
+    if("scenarios" %in% names(sa2)){
+      dt <- c(sa1$scenarios$data, sa2$scenarios$data)
+    } else {
+      dt <- sa1$scenarios$data
+    }
+  }
+  l <- list( grid = grd,
+             cell_size = sa1$cell_size,
+             parameters = sa1$parameters)
+  sa <- .sdm_area(l)
+  if(exists("dt")){sa$data <- dt}
+  return(sa)
+}
 
 #' @exportS3Method base::print
 print.sdm_area <- function(x, ...) {

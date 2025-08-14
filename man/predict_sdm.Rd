@@ -4,6 +4,7 @@
 \alias{predict_sdm}
 \alias{get_predictions}
 \alias{get_ensembles}
+\alias{add_predictions}
 \title{Predict SDM models in new data}
 \usage{
 predict_sdm(m,
@@ -18,6 +19,8 @@ predict_sdm(m,
 get_predictions(i)
 
 get_ensembles(i)
+
+add_predictions(p1, p2)
 }
 \arguments{
 \item{m}{A \code{input_sdm} or a \code{models} object.}
@@ -42,6 +45,10 @@ are obtained. See details.}
 scenario.}
 
 \item{i}{A \code{input_sdm} or a \code{predictions} object.}
+
+\item{p1}{A \code{predictions} object.}
+
+\item{p2}{A \code{predictions} object.}
 }
 \value{
 A \code{input_sdm} or a \code{predictions} object.

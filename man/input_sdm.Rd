@@ -2,12 +2,19 @@
 % Please edit documentation in R/input_sdm.R
 \name{input_sdm}
 \alias{input_sdm}
+\alias{add_input_sdm}
 \title{\code{input_sdm}}
 \usage{
 input_sdm(...)
+
+add_input_sdm(i1, i2)
 }
 \arguments{
 \item{...}{Data to be used in SDMs. Can be a \code{occurrences} and/or a \code{sdm_area} object.}
+
+\item{i1}{A \code{input_sdm} object.}
+
+\item{i2}{A \code{input_sdm} object.}
 }
 \value{
 A \code{input_sdm} object containing:

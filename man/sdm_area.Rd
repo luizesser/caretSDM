@@ -3,12 +3,15 @@
 \name{sdm_area}
 \alias{sdm_area}
 \alias{get_sdm_area}
+\alias{add_sdm_area}
 \title{Create a \code{sdm_area} object}
 \usage{
 sdm_area(x, cell_size = NULL, crs = NULL, variables_selected = NULL,
                 gdal = TRUE, crop_by = NULL, lines_as_sdm_area = FALSE)
 
 get_sdm_area(i)
+
+add_sdm_area(sa1, sa2)
 }
 \arguments{
 \item{x}{A shape or a raster. Usually a shape from \code{sf} class, but rasters from
@@ -19,17 +22,23 @@ get_sdm_area(i)
 \item{crs}{\code{numeric}. Indicates which EPSG should the output grid be in. If \code{NULL},
 epsg from \code{x} is used.}
 
-\item{variables_selected}{A \code{character} vector with variables in \code{x} to be used in models.
+\item{variables_selected}{A \code{character} vector with variables in \code{x} to be used in
+models.
 If \code{NULL} (standard), all variables in \code{x} are used.}
 
 \item{gdal}{Boolean. Force the use or not of GDAL when available. See details.}
 
 \item{crop_by}{A shape from \code{sf} to crop \code{x}.}
 
-\item{lines_as_sdm_area}{Boolean. If \code{x} is a \code{sf} with LINESTRING geometry, it can be used
+\item{lines_as_sdm_area}{Boolean. If \code{x} is a \code{sf} with LINESTRING geometry, it can be
+used
 to model species distribution in lines and not grid cells.}
 
 \item{i}{A \code{sdm_area} or a \code{input_sdm} object.}
+
+\item{sa1}{A \code{sdm_area} object.}
+
+\item{sa2}{A \code{sdm_area} object.}
 }
 \value{
 A \code{sdm_area} object containing:
@@ -43,9 +52,13 @@ This function creates a new \code{sdm_area} object.
 \details{
 The function returns a \code{sdm_area} object with a grid built upon the \code{x} parameter.
 There are two ways to make the grid and resample the variables in \code{sdm_area}: with and
-without gdal. As standard, if gdal is available in you machine it will be used (\code{gdal = TRUE}),
+without gdal. As standard, if gdal is available in you machine it will be used
+(\code{gdal = TRUE}),
 otherwise sf/stars will be used.
 \code{get_sdm_area} will return the grid built by \code{sdm_area}.
+\code{add_sdm_area} will sum two \code{sdm_area} objects. As geoprocessing in \code{caretSDM} is
+performed using \code{sf} objects, \code{add_sdm_area} simply applies a \code{rbind} in the two
+different areas.
 }
 \examples{
 # Create sdm_area object:

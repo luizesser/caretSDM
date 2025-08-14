@@ -7,6 +7,7 @@
 \alias{get_models}
 \alias{get_validation_metrics}
 \alias{mean_validation_metrics}
+\alias{add_models}
 \title{Train SDM models}
 \usage{
 train_sdm(occ,
@@ -26,6 +27,8 @@ get_models(i)
 get_validation_metrics(i)
 
 mean_validation_metrics(i)
+
+add_models(m1, m2)
 }
 \arguments{
 \item{occ}{A \code{occurrences} or a \code{input_sdm} object.}
@@ -47,6 +50,10 @@ predictors names from \code{pred} will be used. Can also be a selection method (
 \item{...}{Additional arguments to be passed to \code{caret::train} function.}
 
 \item{i}{A \code{models} or a \code{input_sdm} object.}
+
+\item{m1}{A \code{models} object.}
+
+\item{m2}{A \code{models} object.}
 }
 \value{
 A \code{models} or a \code{input_sdm} object.

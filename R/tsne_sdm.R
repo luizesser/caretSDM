@@ -48,17 +48,15 @@ tsne_sdm <- function(occ, pred = NULL, variables_selected = NULL) {
     p <- y$occurrences[y$occurrences$species == sp, ]$cell_id
     env <- pred$grid
     p <- dplyr::filter(env, env$cell_id %in% p)
-    Presence <- c(rep("Presence", nrow(p)), rep("Pseudoabsence", length(pa_id[[1]])))
 
-    df_tsne <- lapply(pa_id, function(id) {
+    plot_list <- lapply(pa_id, function(id) {
+      Presence <- c(rep("Presence", nrow(p)), rep("Pseudoabsence", length(id)))
       pa <- dplyr::filter(env, env$cell_id %in% id)
       df <- rbind(p, pa)
-      df <- cbind(Presence, df)
-    })
+      df_tsne <- cbind(Presence, df)
+      perp <- round((nrow(df_tsne)^(1 / 2)), digits = 0)
 
-    perp <- round((nrow(df_tsne[[1]])^(1 / 2)), digits = 0)
-    plot_list <- lapply(df_tsne, function(ts) {
-      ts2 <- dplyr::select(as.data.frame(ts), dplyr::all_of(variables_selected))
+      ts2 <- dplyr::select(as.data.frame(df_tsne), dplyr::all_of(variables_selected))
       ts2 <- as.matrix(ts2[, variables_selected])
       tsne_bg <- Rtsne::Rtsne(ts2, perplexity = perp)
       df <- as.data.frame(tsne_bg$Y)

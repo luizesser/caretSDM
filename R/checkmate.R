@@ -201,6 +201,18 @@ assert_choice_cli <- function(x, ..., .var.name = vname(x), add = NULL){
   ))
 }
 
+
+assert_true_cli <- function(x, ..., .var.name = vname(x), add = NULL){
+  return(invisible(
+    make_assertion(
+      x,
+      checkmate::check_true(x, ...),
+      .var.name,
+      add
+    )
+  ))
+}
+
 sanitize_cli <- function(res){
   if (isTRUE(res)){
     return(res)

@@ -23,6 +23,9 @@
 #' @param ... Additional arguments to be passed to \code{caret::train} function.
 #' @param parallel Should a paralelization method be used (not yet implemented)?
 #' @param i A \code{models} or a \code{input_sdm} object.
+#' @param m1 A \code{models} object.
+#' @param m2 A \code{models} object.
+#'
 #'
 #' @return A \code{models} or a \code{input_sdm} object.
 #'
@@ -365,6 +368,26 @@ mean_validation_metrics <- function(i) {
     return(v)
   }, simplify = FALSE, USE.NAMES = TRUE)
   return(res)
+}
+
+#' @rdname train_sdm
+#' @export
+add_models <- function(m1, m2) {
+  assert_class_cli(m1, "models", null.ok = TRUE)
+  assert_class_cli(m2, "models", null.ok = TRUE)
+  if(is.null(m1)) {return(m2)}
+  if(is.null(m2)) {return(m1)}
+  m <- list(validation = list(method = unique(c(m1$validation$method, m2$validation$method)),
+                              number = unique(c(m1$validation$number, m2$validation$number)),
+                              metrics = c(m1$validation$metrics, m2$validation$metrics)
+  ),
+  predictors = unique(c(m1$predictors, m2$predictors)),
+  algorithms = unique(c(m1$algorithms, m2$algorithms)),
+  models = c(m1$models, m2$models),
+  tuning = unique(c(m1$tuning, m2$tuning))
+  )
+  msum <- .models(m)
+  return(msum)
 }
 
 .models <- function(x) {
