@@ -433,9 +433,6 @@ pre-processing steps of a typical SDM analysis.</p>
 <span><span class="co"># Format occurrences</span></span>
 <span><span class="va">oc</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/occurrences_sdm.html">occurrences_sdm</a></span><span class="op">(</span><span class="va">occ</span>, crs <span class="op">=</span> <span class="fl">6933</span><span class="op">)</span></span>
 <span><span class="va">oc</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/join_area.html">join_area</a></span><span class="op">(</span><span class="va">oc</span>, <span class="va">sa</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Warning: Some records from `occ` do not fall in `pred`.</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 3 elements from `occ` were excluded.</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> If this seems too much, check how `occ` and `pred` intersect.</span></span>
 <span></span>
 <span><span class="co"># Create the final input_sdm object</span></span>
 <span><span class="va">i</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/input_sdm.html">input_sdm</a></span><span class="op">(</span><span class="va">oc</span>, <span class="va">sa</span><span class="op">)</span></span>
@@ -482,11 +479,11 @@ Distance” was successfully trained and evaluated.</p>
 <span><span class="co">#&gt; Class                         : input_sdm</span></span>
 <span><span class="co">#&gt; --------  Occurrences  --------</span></span>
 <span><span class="co">#&gt; Species Names                 : Araucaria angustifolia </span></span>
-<span><span class="co">#&gt; Number of presences           : 417 </span></span>
+<span><span class="co">#&gt; Number of presences           : 420 </span></span>
 <span><span class="co">#&gt; Pseudoabsence methods         :</span></span>
 <span><span class="co">#&gt;     Method to obtain PAs      : bioclim </span></span>
 <span><span class="co">#&gt;     Number of PA sets         : 3 </span></span>
-<span><span class="co">#&gt;     Number of PAs in each set : 417 </span></span>
+<span><span class="co">#&gt;     Number of PAs in each set : 420 </span></span>
 <span><span class="co">#&gt; --------  Predictors  ---------</span></span>
 <span><span class="co">#&gt; Number of Predictors          : 7 </span></span>
 <span><span class="co">#&gt; Predictors Names              : GID0, CODIGOIB1, NOMEUF2, SIGLAUF3, bio1, bio4, bio12 </span></span>
@@ -499,7 +496,7 @@ Distance” was successfully trained and evaluated.</p>
 <span><span class="co">#&gt;     Metrics                   :</span></span>
 <span><span class="co">#&gt; $`Araucaria angustifolia`</span></span>
 <span><span class="co">#&gt;           algo       ROC       TSS Sensitivity Specificity</span></span>
-<span><span class="co">#&gt; 1 mahal.custom 0.9986297 0.8968825   0.8967778           1</span></span></code></pre></div>
+<span><span class="co">#&gt; 1 mahal.custom 0.9886724 0.8060847   0.8244444           1</span></span></code></pre></div>
 <p>Note that the algorithm name will be set as the name of the object
 passed to <code>algo</code>:</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
@@ -512,7 +509,7 @@ passed to <code>algo</code>:</p>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 1 × 53</span></span></span>
 <span><span class="co">#&gt;   algo       ROC   TSS Sensitivity Specificity `Pos Pred Value` `Neg Pred Value`</span></span>
 <span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> mahal.c… 0.999 0.897       0.897           1                1            0.337</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> mahal.c… 0.989 0.806       0.824           1                1            0.318</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># ℹ 46 more variables: Precision &lt;dbl&gt;, Recall &lt;dbl&gt;, F1 &lt;dbl&gt;,</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;">#   Prevalence &lt;dbl&gt;, `Detection Rate` &lt;dbl&gt;, `Detection Prevalence` &lt;dbl&gt;,</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;">#   `Balanced Accuracy` &lt;dbl&gt;, Accuracy &lt;dbl&gt;, Kappa &lt;dbl&gt;,</span></span></span>
@@ -538,9 +535,7 @@ build models using the mahal.dismo method.</p>
 <span>                      n_set <span class="op">=</span> <span class="fl">3</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>      <span class="fu"><a href="../reference/train_sdm.html">train_sdm</a></span><span class="op">(</span>algo <span class="op">=</span> <span class="va">mahal.dismo</span>, </span>
 <span>                variables_selected <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"bio1"</span>, <span class="st">"bio4"</span>, <span class="st">"bio12"</span><span class="op">)</span>, <span class="co"># Using only two variables for simplicity</span></span>
-<span>                ctrl <span class="op">=</span> <span class="va">ctrl_sdm</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Warning in nominalTrainWorkflow(x = x, y = y, wts = weights, info = trainInfo,</span></span>
-<span><span class="co">#&gt; : There were missing values in resampled performance measures.</span></span></code></pre></div>
+<span>                ctrl <span class="op">=</span> <span class="va">ctrl_sdm</span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">i2</span></span>
 <span><span class="co">#&gt;             caretSDM           </span></span>
@@ -548,11 +543,11 @@ build models using the mahal.dismo method.</p>
 <span><span class="co">#&gt; Class                         : input_sdm</span></span>
 <span><span class="co">#&gt; --------  Occurrences  --------</span></span>
 <span><span class="co">#&gt; Species Names                 : Araucaria angustifolia </span></span>
-<span><span class="co">#&gt; Number of presences           : 417 </span></span>
+<span><span class="co">#&gt; Number of presences           : 420 </span></span>
 <span><span class="co">#&gt; Pseudoabsence methods         :</span></span>
 <span><span class="co">#&gt;     Method to obtain PAs      : bioclim </span></span>
 <span><span class="co">#&gt;     Number of PA sets         : 3 </span></span>
-<span><span class="co">#&gt;     Number of PAs in each set : 417 </span></span>
+<span><span class="co">#&gt;     Number of PAs in each set : 420 </span></span>
 <span><span class="co">#&gt; --------  Predictors  ---------</span></span>
 <span><span class="co">#&gt; Number of Predictors          : 7 </span></span>
 <span><span class="co">#&gt; Predictors Names              : GID0, CODIGOIB1, NOMEUF2, SIGLAUF3, bio1, bio4, bio12 </span></span>
@@ -565,7 +560,7 @@ build models using the mahal.dismo method.</p>
 <span><span class="co">#&gt;     Metrics                   :</span></span>
 <span><span class="co">#&gt; $`Araucaria angustifolia`</span></span>
 <span><span class="co">#&gt;          algo       ROC       TSS Sensitivity Specificity</span></span>
-<span><span class="co">#&gt; 1 mahal.dismo 0.9957748 0.9338815   0.9815556   0.9682222</span></span></code></pre></div>
+<span><span class="co">#&gt; 1 mahal.dismo 0.9913901 0.8488215   0.9794444   0.8821111</span></span></code></pre></div>
 <p>Plotting the result of mahal.dismo.</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">i2</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/add_scenarios.html">add_scenarios</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/predict_sdm.html">predict_sdm</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/plot_occurrences.html">plot_predictions</a></span><span class="op">(</span><span class="op">)</span></span>
@@ -604,7 +599,7 @@ and reproducible environment of <code>caretSDM</code>.</p>
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by Dayani Bailly, Edivando Couto, José Hilário Delconte Ferreira, Reginaldo Ré, Valéria Batista, Luíz Fernando Esser.</p>
+  <p>Developed by Dayani Bailly, Edivando Couto, José Hilário Delconte Ferreira, Marcos R. Lima, Reginaldo Ré, Valéria Batista, Luíz Fernando Esser.</p>
 </div>
 
 <div class="pkgdown-footer-right">

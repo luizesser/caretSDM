@@ -93,15 +93,15 @@ https://luizfesser.wordpress.com</p>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Create occurrences:</span></span></span>
 <span class="r-in"><span><span class="va">oc</span> <span class="op">&lt;-</span> <span class="fu"><a href="occurrences_sdm.html">occurrences_sdm</a></span><span class="op">(</span><span class="va">occ</span>, crs <span class="op">=</span> <span class="fl">6933</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="join_area.html">join_area</a></span><span class="op">(</span><span class="va">sa</span><span class="op">)</span></span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Some records from `occ` do not fall in `pred`.</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> 2 elements from `occ` were excluded.</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> If this seems too much, check how `occ` and `pred` intersect.</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Create input_sdm:</span></span></span>
 <span class="r-in"><span><span class="va">i</span> <span class="op">&lt;-</span> <span class="fu"><a href="input_sdm.html">input_sdm</a></span><span class="op">(</span><span class="va">oc</span>, <span class="va">sa</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Pseudoabsence generation:</span></span></span>
 <span class="r-in"><span><span class="va">i</span> <span class="op">&lt;-</span> <span class="fu"><a href="pseudoabsences.html">pseudoabsences</a></span><span class="op">(</span><span class="va">i</span>, method<span class="op">=</span><span class="st">"bioclim"</span><span class="op">)</span></span></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in FUN(X[[i]], ...):</span> bioclim envelope for</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> Araucaria angustifolia</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> covered all the study area. Change th argument or change the method.</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Custom trainControl:</span></span></span>
 <span class="r-in"><span><span class="va">ctrl_sdm</span> <span class="op">&lt;-</span> <span class="fu">caret</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/caret/man/trainControl.html" class="external-link">trainControl</a></span><span class="op">(</span>method <span class="op">=</span> <span class="st">"repeatedcv"</span>,</span></span>
@@ -115,14 +115,14 @@ https://luizfesser.wordpress.com</p>
 <span class="r-in"><span><span class="co"># Train models:</span></span></span>
 <span class="r-in"><span><span class="va">i</span> <span class="op">&lt;-</span> <span class="fu"><a href="train_sdm.html">train_sdm</a></span><span class="op">(</span><span class="va">i</span>, algo <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"naive_bayes"</span><span class="op">)</span>, ctrl<span class="op">=</span><span class="va">ctrl_sdm</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/warning.html" class="external-link">suppressWarnings</a></span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in dplyr::select(as.data.frame(x), dplyr::all_of(selected_vars)):</span> <span style="color: #00BBBB;">ℹ</span> In argument: `dplyr::all_of(selected_vars)`.</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">Caused by error in `dplyr::all_of()`:</span></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> Can't subset elements that don't exist.</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span style="color: #BB0000;">✖</span> Elements `bio1` and `bio12` don't exist.</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Variable importance:</span></span></span>
 <span class="r-in"><span><span class="fu">varImp_sdm</span><span class="op">(</span><span class="va">i</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $`Araucaria angustifolia`</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>       mean sd</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> bio1   100  0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> bio12    0  0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> list()</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
@@ -131,7 +131,7 @@ https://luizfesser.wordpress.com</p>
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by Dayani Bailly, Edivando Couto, José Hilário Delconte Ferreira, Reginaldo Ré, Valéria Batista, Luíz Fernando Esser.</p>
+  <p>Developed by Dayani Bailly, Edivando Couto, José Hilário Delconte Ferreira, Marcos R. Lima, Reginaldo Ré, Valéria Batista, Luíz Fernando Esser.</p>
 </div>
 
 <div class="pkgdown-footer-right">

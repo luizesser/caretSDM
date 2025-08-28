@@ -167,9 +167,6 @@ https://luizfesser.wordpress.com</p>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Create occurrences:</span></span></span>
 <span class="r-in"><span><span class="va">oc</span> <span class="op">&lt;-</span> <span class="fu"><a href="occurrences_sdm.html">occurrences_sdm</a></span><span class="op">(</span><span class="va">occ</span>, crs <span class="op">=</span> <span class="fl">6933</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="join_area.html">join_area</a></span><span class="op">(</span><span class="va">sa</span><span class="op">)</span></span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Some records from `occ` do not fall in `pred`.</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> 2 elements from `occ` were excluded.</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> If this seems too much, check how `occ` and `pred` intersect.</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Create input_sdm:</span></span></span>
 <span class="r-in"><span><span class="va">i</span> <span class="op">&lt;-</span> <span class="fu"><a href="input_sdm.html">input_sdm</a></span><span class="op">(</span><span class="va">oc</span>, <span class="va">sa</span><span class="op">)</span></span></span>
@@ -203,11 +200,11 @@ https://luizfesser.wordpress.com</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Class                         : input_sdm</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> --------  Occurrences  --------</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Species Names                 : Araucaria angustifolia </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Number of presences           : 418 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Number of presences           : 420 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Pseudoabsence methods         :</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     Method to obtain PAs      : random </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     Number of PA sets         : 2 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     Number of PAs in each set : 418 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     Number of PAs in each set : 420 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> --------  Predictors  ---------</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Number of Predictors          : 2 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Predictors Names              : bio1, bio12 </span>
@@ -223,7 +220,7 @@ https://luizfesser.wordpress.com</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     Metrics                   :</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $`Araucaria angustifolia`</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>          algo       ROC       TSS Sensitivity Specificity</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1 naive_bayes 0.8567781 0.4410403       0.974         0.5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 naive_bayes 0.8799581 0.4247848       0.974       0.451</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> --------  Predictions  --------</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Ensembles                     :</span>
@@ -240,7 +237,7 @@ https://luizfesser.wordpress.com</p>
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by Dayani Bailly, Edivando Couto, José Hilário Delconte Ferreira, Reginaldo Ré, Valéria Batista, Luíz Fernando Esser.</p>
+  <p>Developed by Dayani Bailly, Edivando Couto, José Hilário Delconte Ferreira, Marcos R. Lima, Reginaldo Ré, Valéria Batista, Luíz Fernando Esser.</p>
 </div>
 
 <div class="pkgdown-footer-right">
