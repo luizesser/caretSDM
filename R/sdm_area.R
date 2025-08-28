@@ -926,19 +926,6 @@ sdm_area.sf <- function(x, cell_size = NULL, crs = NULL, variables_selected = NU
   return(final_sf)
 }
 
-.sdm_area <- function(x) {
-  sa <- structure(
-    list(
-      grid = x$grid,
-      cell_size = x$cell_size,
-      parameters = x$parameters
-    ),
-    class = "sdm_area"
-  )
-  .check_sdm_area(sa)
-  return(sa)
-}
-
 .check_sdm_area <- function(x) {
   error_collection <- checkmate::makeAssertCollection()
 
@@ -1297,6 +1284,14 @@ add_sdm_area <- function(sa1, sa2) {
   assert_true_cli(sa1$parameters$gdal == sa2$parameters$gdal)
   assert_true_cli(sa1$parameters$lines_as_sdm_area == sa2$parameters$lines_as_sdm_area)
   assert_true_cli(sa1$cell_size == sa2$cell_size)
+  test <- suppressWarnings(all(colnames(sa1$grid) == colnames(sa2$grid)))
+  if(!test) {
+    cli::cli_abort(c("All variables in {.var sa1} must also be present in {.var sa2}.",
+                     "x" = "{.var sa1} has variables {get_predictor_names(sa1)},
+                     while {.var sa2} has variables {get_predictor_names(sa2)}.",
+                     "i" = "You can use the function select_predictors to subset variables in a sdm_area object."))
+  }
+
   grd <- rbind(sa1$grid, sa2$grid)
   grd$cell_id <- c(sa1$grid$cell_id, max(sa1$grid$cell_id)+sa2$grid$cell_id)
   if("scenarios" %in% names(sa1)){
@@ -1311,6 +1306,19 @@ add_sdm_area <- function(sa1, sa2) {
              parameters = sa1$parameters)
   sa <- .sdm_area(l)
   if(exists("dt")){sa$data <- dt}
+  return(sa)
+}
+
+.sdm_area <- function(x) {
+  sa <- structure(
+    list(
+      grid = x$grid,
+      cell_size = x$cell_size,
+      parameters = x$parameters
+    ),
+    class = "sdm_area"
+  )
+  .check_sdm_area(sa)
   return(sa)
 }
 

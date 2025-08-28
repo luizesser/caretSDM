@@ -3,9 +3,9 @@ sa <- sdm_area(parana, cell_size = 100000, crs = 6933)
 sa <- add_predictors(sa, bioc)
 sa <- select_predictors(sa, c("bio1", "bio12"))
 oc <- occurrences_sdm(occ, crs=6933)
-suppressWarnings(oc <- join_area(oc, sa))
+oc <- join_area(oc, sa)
 i <- input_sdm(oc, sa)
-suppressWarnings(i <- pseudoabsences(i, method = "bioclim"))
+suppressWarnings(i <- pseudoabsences(i, method = "random"))
 ctrl <- caret::trainControl(
   method = "cv", number = 2, classProbs = TRUE, returnResamp = "all",
   summaryFunction = caret::twoClassSummary, savePredictions = "all"

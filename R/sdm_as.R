@@ -71,15 +71,19 @@
 sdm_as_stars <- function(x, what = NULL, spp = NULL, scen = NULL, id = NULL, ens = NULL) {
   if (is.null(what)) {
     if ("predictions" %in% names(x)) {
-      if ("ensembles" %in% names(x$predictions) & !is.null(x$predictions$ensembles)) {
-        what <- "ensembles"
+      if ("ensembles" %in% names(x$predictions)) {
+        if(is.null(x$predictions$ensembles)) {
+          what <- "predictions"
+        } else {
+          what <- "ensembles"
+        }
       } else {
         what <- "predictions"
       }
-    } else if ("scenarios" %in% names(x)) {
-      what <- "scenarios"
     } else if ("predictors" %in% names(x)) {
       what <- "predictors"
+    } else if ("scenarios" %in% names(x)) {
+      what <- "scenarios"
     }
   }
   if (is_input_sdm(x)) {
@@ -130,7 +134,11 @@ sdm_as_raster <- function(x, what = NULL, spp = NULL, scen = NULL, id = NULL, en
   if (is.null(what)) {
     if ("predictions" %in% names(x)) {
       if ("ensembles" %in% names(x$predictions)) {
-        what <- "ensembles"
+        if(is.null(x$predictions$ensembles)) {
+          what <- "predictions"
+        } else {
+          what <- "ensembles"
+        }
       } else {
         what <- "predictions"
       }
@@ -146,12 +154,12 @@ sdm_as_raster <- function(x, what = NULL, spp = NULL, scen = NULL, id = NULL, en
         scen <- names(x$scenarios$data)[1]
         print(paste0("scen not detected. Using scen=", scen))
       }
-      result <- methods::as(stars::st_rasterize(sf::st_as_sf(x$scenarios$data[scen])), "Raster")
+      result <- methods::as(stars::st_rasterize(sf::st_as_sf(x$scenarios$data[[scen]])), "Raster")
       return(result)
     }
     if (what == "predictors") {
-      result <- methods::as(stars::st_rasterize(sf::st_as_sf(x$predictors$data[scen])), "Raster")
-      return()
+      result <- methods::as(stars::st_rasterize(sf::st_as_sf(x$predictors$grid)), "Raster")
+      return(result)
     }
     if (what == "predictions") {
       if (is.null(spp)) {
@@ -166,9 +174,8 @@ sdm_as_raster <- function(x, what = NULL, spp = NULL, scen = NULL, id = NULL, en
         id <- names(x$predictions$predictions[[1]][[1]])[1]
         print(paste0("id not detected. Using id=", id))
       }
-      grd <- x$predictors$grid
       v <- dplyr::select(x$predictions$predictions[[scen]][[spp]][[id]], -"pseudoabsence")
-      result <- methods::as(stars::st_rasterize(sf::st_as_sf(dplyr::select(stars::st_as_stars(merge(grd, v, by = "cell_id")), -"cell_id"))), "Raster")
+      result <- methods::as(stars::st_rasterize(v), "Raster")
       return(result)
     }
     if (what == "ensembles") {
@@ -198,7 +205,11 @@ sdm_as_terra <- function(x, what = NULL, spp = NULL, scen = NULL, id = NULL, ens
   if (is.null(what)) {
     if ("predictions" %in% names(x)) {
       if ("ensembles" %in% names(x$predictions)) {
-        what <- "ensembles"
+        if(is.null(x$predictions$ensembles)) {
+          what <- "predictions"
+        } else {
+          what <- "ensembles"
+        }
       } else {
         what <- "predictions"
       }
@@ -214,12 +225,12 @@ sdm_as_terra <- function(x, what = NULL, spp = NULL, scen = NULL, id = NULL, ens
         scen <- names(x$scenarios$data)[1]
         print(paste0("scen not detected. Using scen=", scen))
       }
-      result <- terra::rast(methods::as(stars::st_rasterize(sf::st_as_sf(x$scenarios$data[scen])), "Raster"))
+      result <- terra::rast(methods::as(stars::st_rasterize(sf::st_as_sf(x$scenarios$data[[scen]])), "Raster"))
       return(result)
     }
     if (what == "predictors") {
-      result <- terra::rast(methods::as(stars::st_rasterize(sf::st_as_sf(x$predictors$data[scen])), "Raster"))
-      return()
+      result <- terra::rast(methods::as(stars::st_rasterize(sf::st_as_sf(x$predictors$grid)), "Raster"))
+      return(result)
     }
     if (what == "predictions") {
       if (is.null(spp)) {
@@ -234,9 +245,8 @@ sdm_as_terra <- function(x, what = NULL, spp = NULL, scen = NULL, id = NULL, ens
         id <- names(x$predictions$predictions[[1]][[1]])[1]
         print(paste0("id not detected. Using id=", id))
       }
-      grd <- x$predictors$grid
       v <- dplyr::select(x$predictions$predictions[[scen]][[spp]][[id]], -"pseudoabsence")
-      result <- terra::rast(methods::as(stars::st_rasterize(sf::st_as_sf(dplyr::select(stars::st_as_stars(merge(grd, v, by = "cell_id")), -"cell_id"))), "Raster"))
+      result <- terra::rast(methods::as(stars::st_rasterize(v), "Raster"))
       return(result)
     }
     if (what == "ensembles") {

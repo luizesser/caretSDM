@@ -234,7 +234,7 @@ add_scenarios.stars <- function(sa, scen=NULL, scenarios_names = NULL, pred_as_s
           suppressWarnings() |>
           cbind(stationary_grd) |>
           dplyr::select(-"geometry.1") |>
-          dplyr::relocate(c("cell_id", variables_selected, stationary, "geometry"))
+          dplyr::relocate(c("cell_id", all_of(c(variables_selected, stationary)), "geometry"))
       }
     } else {
       stationary_grd <- sf::st_transform(stationary_grd, sf::st_crs(scen))
@@ -343,7 +343,7 @@ add_scenarios.stars <- function(sa, scen=NULL, scenarios_names = NULL, pred_as_s
       }
     }
 
-    if (pred_as_scen) {
+    if (pred_as_scen & !"current" %in% scenarios_names(sa_data)) {
       l[["current"]] <- sa$grid |>
         dplyr::select(c(cell_id, dplyr::all_of(variables_selected)))
     }

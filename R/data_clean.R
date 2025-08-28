@@ -101,7 +101,7 @@ data_clean <- function(occ, pred = NULL,
     message("Cell_ids identified, removing duplicated cell_id.")
     y$occurrences <- y$occurrences[!duplicated(y$occurrences$cell_id),]
   }
-  if(sf::st_crs(y) !=4326){
+  if(y$crs !=4326){
     sf_t <- sf::st_transform(y$occurrences, 4326)
     x <- .sf_to_df_sdm(sf_t)
   } else {
@@ -168,6 +168,13 @@ data_clean <- function(occ, pred = NULL,
     nearest <- st_nearest_feature(x, select(pred$grid, "cell_id"))
     cell_id <- pred$grid[nearest, "cell_id"]
     x <- cbind(x, cell_id)|> # or cbind(cell_id, x)?
+      dplyr::relocate("cell_id") |>
+      dplyr::select(-"geometry.1")
+  }
+  if(!"cell_id" %in% names(x) & is.null(pred) & "cell_id" %in% colnames(y$occurrences)) {
+    nearest <- st_nearest_feature(x, select(y$occurrences, "cell_id"))
+    cell_id <- y$occurrences[nearest, "cell_id"]
+    x <- cbind(x, cell_id) |> # or cbind(cell_id, x)?
       dplyr::relocate("cell_id") |>
       dplyr::select(-"geometry.1")
   }

@@ -29,6 +29,10 @@ test_that("sdm_area - sf/predictors", {
   expect_true("cell_id" %in% colnames(sa$grid))
   expect_true("geometry" %in% colnames(sa$grid))
   expect_equal(as.character(unique(sf::st_geometry_type(sa$grid))), "POLYGON")
+  expect_no_error(grd <- get_sdm_area(sa))
+  expect_true(all(c("cell_id", "geometry") %in% colnames(grd)))
+  expect_no_error(grd <- get_sdm_area(input_sdm(sa)))
+  expect_true(all(c("cell_id", "geometry") %in% colnames(grd)))
 })
 
 test_that("sdm_area - sf/predictors no variables selected", {
@@ -37,6 +41,8 @@ test_that("sdm_area - sf/predictors no variables selected", {
   expect_true("cell_id" %in% colnames(sa$grid))
   expect_true("geometry" %in% colnames(sa$grid))
   expect_equal(as.character(unique(sf::st_geometry_type(sa$grid))), "POLYGON")
+  expect_no_error(grd <- get_sdm_area(sa))
+  expect_true(all(c("cell_id", "geometry") %in% colnames(grd)))
 })
 
 test_that("sdm_area - sf/predictors no variables selected", {
@@ -274,7 +280,7 @@ test_that("sdm_area - sdm_area para ser detectado", {
   sa <- sdm_area(pr_gpkg, cell_size = 100000, crs = 6933, gdal = TRUE, lines_as_sdm_area = FALSE)
   expect_snapshot(
     expect_equal(
-      .detect_sdm_area(sa$grid, 100000, 6933, gdal = TRUE, lines_as_sdm_area = FALSE),
+      caretSDM:::.detect_sdm_area(sa$grid, 100000, 6933, gdal = TRUE, lines_as_sdm_area = FALSE),
       sa
     )
   )
@@ -282,7 +288,7 @@ test_that("sdm_area - sdm_area para ser detectado", {
 
 test_that("sdm_area - gpkg para retornar NULL", {
   expect_equal(
-    .detect_sdm_area(pr_gpkg, 100000, 6933, gdal = TRUE, lines_as_sdm_area = FALSE),
+    caretSDM:::.detect_sdm_area(pr_gpkg, 100000, 6933, gdal = TRUE, lines_as_sdm_area = FALSE),
     c(
       "Variable 'grid': Names must include the elements {'cell_id','geometry'}, but is missing elements {'cell_id','geometry'}",
       "Variable 'geometry': Must inherit from class 'sfc', but has class 'NULL'",
@@ -296,7 +302,7 @@ test_that("sdm_area - sdm_area para ser detectado com parametros diferentes", {
   sa <- sdm_area(pr_gpkg, cell_size = 100000, crs = 6933, gdal = TRUE, lines_as_sdm_area = FALSE)
   expect_snapshot(
     expect_equal(
-      .detect_sdm_area(sa$grid, 90000, 5839, gdal = TRUE, lines_as_sdm_area = FALSE),
+      caretSDM:::.detect_sdm_area(sa$grid, 90000, 5839, gdal = TRUE, lines_as_sdm_area = FALSE),
       sa
     )
   )
@@ -304,7 +310,7 @@ test_that("sdm_area - sdm_area para ser detectado com parametros diferentes", {
 
 test_that("sdm_area - sf/predictors try detect lines instead of polygons", {
   expect_equal(
-    .detect_sdm_area(rivs |> dplyr::mutate(cell_id=rep(1:nrow(rivs))),
+    caretSDM:::.detect_sdm_area(rivs |> dplyr::mutate(cell_id=rep(1:nrow(rivs))),
                      cell_size = 100000,
                      crs = 6933,
                      gdal = TRUE,
@@ -381,6 +387,10 @@ test_that("sdm_area - stars+gdal=F", {
   skip_on_cran()
   sa <- sdm_area(pr_tif, cell_size = 100000, crs=6933, gdal=F)
   expect_snapshot(sa)
+  expect_no_error(grd <- get_sdm_area(sa))
+  expect_true(all(c("cell_id", "geometry") %in% colnames(grd)))
+  expect_no_error(grd <- get_sdm_area(input_sdm(sa)))
+  expect_true(all(c("cell_id", "geometry") %in% colnames(grd)))
 })
 
 test_that("sdm_area - stars+gdal=F areas do not intersect", {
@@ -411,4 +421,19 @@ test_that("sdm_area - cell_size=NULL", {
   #expect_equal(sf::st_crs(sa$grid), sf::st_crs(bioc))
   expect_equal(class(sa$grid)[1], "sf")
   expect_equal(as.character(unique(sf::st_geometry_type(sa$grid))), "POLYGON")
+})
+
+test_that("add_sdm_area", {
+  sa1 <- sdm_area(bioc, cell_size = 1)
+  sa2 <- sdm_area(scen_rs, cell_size = 1)
+  expect_error(add_sdm_area(sa1, sa2))
+  sa2 <- sdm_area(bioc, cell_size = 100000, crs = 6933)
+  expect_error(add_sdm_area(sa1, sa2))
+  sa2 <- sdm_area(scen_rs, cell_size = 1) |>
+    select_predictors(c("current.bio1", "current.bio4", "current.bio12")) |>
+    set_predictor_names(get_predictor_names(sa1))
+  expect_no_error(sa <- add_sdm_area(sa1, sa2))
+  expect_no_error(add_sdm_area(sa1, sa2 = NULL))
+  expect_no_error(add_sdm_area(sa1 = NULL, sa2))
+  expect_true(all(c(sf::st_bbox(sa2$grid)[1:2], sf::st_bbox(sa1$grid)[3:4]) == sf::st_bbox(sa$grid)))
 })

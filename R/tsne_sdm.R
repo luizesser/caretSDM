@@ -58,13 +58,13 @@ tsne_sdm <- function(occ, pred = NULL, variables_selected = NULL) {
 
       ts2 <- dplyr::select(as.data.frame(df_tsne), dplyr::all_of(variables_selected))
       ts2 <- as.matrix(ts2[, variables_selected])
-      tsne_bg <- Rtsne::Rtsne(ts2, perplexity = perp)
+      tsne_bg <- Rtsne::Rtsne(ts2[!duplicated(ts2),], perplexity = perp)
       df <- as.data.frame(tsne_bg$Y)
       tsne_result <- ggplot2::ggplot(df, ggplot2::aes(x = V1, y = V2)) +
         ggplot2::xlab("tSNE Dim 1") +
         ggplot2::ylab("tSNE Dim 2") +
         ggplot2::ggtitle("Presences and Pseudoabsences's t-SNE") +
-        ggplot2::geom_point(ggplot2::aes(col = Presence)) +
+        ggplot2::geom_point(ggplot2::aes(col = Presence[!duplicated(ts2)])) +
         ggplot2::scale_color_manual(values = c("gold", "darkblue"))
     })
   }, simplify = FALSE, USE.NAMES = TRUE)

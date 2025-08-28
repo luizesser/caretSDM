@@ -4,8 +4,6 @@
 \alias{is_input_sdm}
 \alias{is_sdm_area}
 \alias{is_occurrences}
-\alias{is_predictors}
-\alias{is_scenarios}
 \alias{is_models}
 \alias{is_predictions}
 \title{\code{is_class} functions to check caretSDM data classes.}
@@ -15,10 +13,6 @@ is_input_sdm(x)
 is_sdm_area(x)
 
 is_occurrences(x)
-
-is_predictors(x)
-
-is_scenarios(x)
 
 is_models(x)
 

@@ -30,7 +30,7 @@
 #' https://luizfesser.wordpress.com
 #'
 #' @importFrom sf st_join st_write st_coordinates st_centroid
-#' @importFrom stars write_stars
+#' @importFrom stars write_stars st_rasterize
 #' @importFrom fs path_file path_dir path
 #' @importFrom cli cli_inform
 #' @importFrom dplyr select
@@ -66,12 +66,10 @@ write_ensembles <- function(x, path = NULL, ext = ".tif", centroid = FALSE) {
           dir.create(paste0(path, "/", sp), recursive = TRUE)
         }
         if (ext == ".tif" | ext == ".asc") {
-          result <- merge(st_rasterize(result))
+          result <- merge(stars::st_rasterize(result))
           stars::write_stars(result, paste0(path, "/", sp, "/", sc, ext))
         } else if (ext %in% ext_sf) {
           sf::st_write(result, paste0(path, "/", sp, "/", sc, ext))
-        } else if (ext == ".csv") {
-          utils::write.csv(result, paste0(path, "/", sp, "/", sc, ".csv"))
         }
       }
     }
@@ -86,33 +84,29 @@ write_predictions <- function(x, path = NULL, ext = ".tif", centroid = FALSE) {
   } else {
     y <- x
   }
-  assert_character_cli(path, null.ok = FALSE)
+  #assert_character_cli(path, null.ok = FALSE)
   ext_sf <- c(".bna", ".csv", ".e00", ".gdb", ".geojson", ".gml", ".gmt", ".gpkg", ".gps", ".gtm", ".gxt", ".jml",
               ".map", ".mdb", ".nc", ".ods", ".osm", ".pbf", ".shp", ".sqlite", ".vdv", ".xls", ".xlsx")
   scen <- names(y$predictions)
   spp <- names(y$predictions[[1]])
-  grd <- y$grid
-  if(centroid){
-    cent <- sf::st_coordinates(sf::st_centroid(grd))
-    colnames(cent) <- c("x_centroid", "y_centroid")
-    grd <- cbind(grd, cent)
-  }
+
   for (sp in spp) {
     for (sc in scen) {
-      cell_id <- y[["predictions"]][[sc]][[sp]][[1]]$cell_id
       for (id in names(y$predictions[[sc]][[sp]])) {
-        v <- dplyr::select(y$predictions[[sc]][[sp]][[id]], -"pseudoabsence")
-        result <- merge(grd, v, by = "cell_id")
-        if (!dir.exists(paste0(path, "/", sp))) {
-          dir.create(paste0(path, "/", sp), recursive = TRUE)
+        result <- dplyr::select(y$predictions[[sc]][[sp]][[id]], -"pseudoabsence")
+        if(centroid){
+          cent <- sf::st_coordinates(sf::st_centroid(result))
+          colnames(cent) <- c("x_centroid", "y_centroid")
+          result <- cbind(result, cent)
+        }
+        if (!dir.exists(paste0(path, "/", sp, "/", sc, "/predictions"))) {
+          dir.create(paste0(path, "/", sp, "/", sc, "/predictions"), recursive = TRUE)
         }
         if (ext == ".tif" | ext == ".asc") {
-          result <- merge(st_rasterize(result))
-          stars::write_stars(result, paste0(path, "/", sp, "/", sc, ext))
+          result <- merge(stars::st_rasterize(result))
+          stars::write_stars(result, paste0(path, "/", sp, "/", sc, "/predictions/", id, ext))
         } else if (ext %in% ext_sf) {
-          sf::st_write(result, paste0(path, "/", sp, "/", sc, ext))
-        } else if (ext == ".csv") {
-          utils::write.csv(result, paste0(path, "/", sp, "/", sc, ".csv"))
+          sf::st_write(result, paste0(path, "/", sp, "/", sc, "/predictions/", id, ext))
         }
       }
     }
@@ -131,22 +125,18 @@ write_predictors <- function(x, path = NULL, ext = ".tif", centroid = FALSE) {
 
   ext_sf <- c(".bna", ".csv", ".e00", ".gdb", ".geojson", ".gml", ".gmt", ".gpkg", ".gps", ".gtm", ".gxt", ".jml",
               ".map", ".mdb", ".nc", ".ods", ".osm", ".pbf", ".shp", ".sqlite", ".vdv", ".xls", ".xlsx")
-  grd <- y$grid
+  grd <- y$grid[,get_predictor_names(y)]
   if(centroid){
     cent <- sf::st_coordinates(sf::st_centroid(grd))
     colnames(cent) <- c("x_centroid", "y_centroid")
-    grd2 <- cbind(grd, cent)
+    grd <- cbind(grd, cent)
   }
-  if (!dir.exists(paste0(path, "/", sp))) {
-    dir.create(paste0(path, "/", sp), recursive = TRUE)
-  }
+
   if (ext == ".tif" | ext == ".asc") {
-    result <- merge(st_rasterize(result))
-    stars::write_stars(result, paste0(path, "/", sp, "/", sc, ext))
+    grd <- merge(stars::st_rasterize(grd))
+    stars::write_stars(grd, paste0(path, "/predictors", ext))
   } else if (ext %in% ext_sf) {
-    sf::st_write(result, paste0(path, "/", sp, "/", sc, ext))
-  } else if (ext == ".csv") {
-    utils::write.csv(result, paste0(path, "/", sp, "/", sc, ".csv"))
+    sf::st_write(grd, paste0(path, "/predictors", ext))
   }
 }
 
@@ -262,12 +252,10 @@ write_pseudoabsences <- function(x, path = NULL, ext = ".csv", centroid = FALSE)
         dir.create(paste0(path, "/", sp), recursive = TRUE)
       }
       if (ext == ".tif" | ext == ".asc") {
-        result <- merge(st_rasterize(result))
+        result <- merge(stars::st_rasterize(result))
         stars::write_stars(result, paste0(path, "/", sp, "/pseudoabsences_", n, ext))
       } else if (ext %in% ext_sf) {
         sf::st_write(result, paste0(path, "/", sp, "/pseudoabsences_", n, ext))
-      } else if (ext == ".csv") {
-        utils::write.csv(result, paste0(path, "/", sp, "/pseudoabsences_", n, ".csv"))
       }
     }
   }

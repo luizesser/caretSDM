@@ -9,6 +9,8 @@ Authors@R: c(
            comment = c(ORCID = "0000-0003-4264-8449")),
     person("José", "Hilário Delconte Ferreira", role = "aut",
            comment = c(ORCID = "0000-0002-7116-2600")),
+    person("Marcos", "R. Lima", role = "aut",
+           comment = c(ORCID = "0000-0002-5901-0911")),
     person("Reginaldo", "Ré", role = "aut",
            comment = c(ORCID = "0000-0001-6452-3466")),
     person("Valéria", "Batista", role = "aut",

@@ -42,13 +42,13 @@
 # sdm_area - sdm_area para ser detectado
 
     Code
-      expect_equal(.detect_sdm_area(sa$grid, 1e+05, 6933, gdal = TRUE,
+      expect_equal(caretSDM:::.detect_sdm_area(sa$grid, 1e+05, 6933, gdal = TRUE,
       lines_as_sdm_area = FALSE), sa)
 
 # sdm_area - sdm_area para ser detectado com parametros diferentes
 
     Code
-      expect_equal(.detect_sdm_area(sa$grid, 90000, 5839, gdal = TRUE,
+      expect_equal(caretSDM:::.detect_sdm_area(sa$grid, 90000, 5839, gdal = TRUE,
       lines_as_sdm_area = FALSE), sa)
     Condition
       Warning:

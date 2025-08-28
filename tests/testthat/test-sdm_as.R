@@ -1,7 +1,7 @@
 test_that("sdm_as_stars", {
   sa <- sdm_area(parana, 100000, crs=6933) |>
     add_predictors(bioc) |>
-    select(c("bio1", "bio12"))
+    select_predictors(c("bio1", "bio12"))
 
   expect_null(sdm_as_stars(sa))
   expect_null(sdm_as_terra(sa))
@@ -12,14 +12,20 @@ test_that("sdm_as_stars", {
   i <- input_sdm(oc, sa)
   #predictors
   expect_equal(class(sdm_as_stars(i)), "stars")
+  expect_equal(class(sdm_as_terra(i))[1], "SpatRaster")
+  expect_equal(class(sdm_as_raster(i))[1], "RasterBrick")
 
   i <- add_scenarios(i)
   #scenarios
-  expect_equal(class(sdm_as_stars(i)), "list")
-  expect_equal(names(sdm_as_stars(i)), "current")
-  expect_equal(class(sdm_as_stars(i)$current), "stars")
+  expect_equal(class(sdm_as_stars(i)), "stars")
+  expect_equal(class(sdm_as_terra(i))[1], "SpatRaster")
+  expect_equal(class(sdm_as_raster(i))[1], "RasterBrick")
+  expect_equal(class(sdm_as_raster(i, what="scenarios"))[1], "RasterBrick")
+  expect_equal(class(sdm_as_raster(i, what="scenarios", scen="current"))[1], "RasterBrick")
+  expect_equal(class(sdm_as_terra(i, what="scenarios"))[1], "SpatRaster")
+  expect_equal(class(sdm_as_terra(i, what="scenarios", scen="current"))[1], "SpatRaster")
 
-  suppressWarnings(i <- pseudoabsences(i, method = "bioclim", n_set = 3))
+  suppressWarnings(i <- pseudoabsences(i, method = "random", n_set = 3))
   ctrl <- caret::trainControl(
     method = "cv", number = 2, classProbs = TRUE, returnResamp = "all",
     summaryFunction = caret::twoClassSummary, savePredictions = "all"
@@ -27,15 +33,23 @@ test_that("sdm_as_stars", {
   suppressWarnings(i <- train_sdm(i,
                                   algo = c("naive_bayes", "kknn"),
                                   ctrl = ctrl))
-  p <- predict_sdm(i, ensembles = FALSE)
+  p <- predict_sdm(i, th = 0.5, ensembles = FALSE)
   # predictions
   expect_equal(class(sdm_as_stars(p)), "stars")
   expect_true(all(c("cell_id", "presence", "pseudoabsence") %in% names(sdm_as_stars(p))))
+  expect_equal(class(sdm_as_terra(p))[1], "SpatRaster")
+  expect_equal(class(sdm_as_raster(p))[1], "RasterBrick")
+  expect_true(all(c("cell_id", "presence") %in% names(sdm_as_terra(p))))
+  expect_true(all(c("cell_id", "presence") %in% names(sdm_as_raster(p))))
 
-  p <- predict_sdm(i)
+  p <- predict_sdm(i, th = 0.5)
   # ensembles
   expect_equal(class(sdm_as_stars(p)), "stars")
   expect_true(all(c("cell_id", "mean_occ_prob") %in% names(sdm_as_stars(p))))
+  expect_equal(class(sdm_as_terra(p))[1], "SpatRaster")
+  expect_true(all(c("mean_occ_prob") %in% names(sdm_as_terra(p))))
+  expect_equal(class(sdm_as_raster(p))[1], "RasterBrick")
+  expect_true(all(c("mean_occ_prob") %in% names(sdm_as_raster(p))))
 
   # what
   expect_equal(class(sdm_as_stars(p, what="predictors")), "stars")
@@ -46,5 +60,12 @@ test_that("sdm_as_stars", {
   expect_true(all(c("cell_id", "presence", "pseudoabsence") %in% names(sdm_as_stars(p, what="predictions"))))
   expect_equal(class(sdm_as_stars(p, what="ensembles")), "stars")
   expect_true(all(c("cell_id", "mean_occ_prob") %in% names(sdm_as_stars(p, what="ensembles"))))
+
+  # classes
+  expect_true(is_input_sdm(p))
+  expect_true(is_sdm_area(p$predictors))
+  expect_true(is_occurrences(p$occurrences))
+  expect_true(is_models(p$models))
+  expect_true(is_predictions(p$predictions))
 })
 

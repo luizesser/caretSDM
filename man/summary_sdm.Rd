@@ -14,6 +14,12 @@ summary_sdm(data, lev = NULL, model = NULL, custom_fun=NULL)
 \item{model}{Models names taken from \code{train} object.}
 
 \item{custom_fun}{A custom function to be applied in models (not yet implemented).}
+
+\item{data_independent}{independent data.frame to calculate metrics.}
+
+\item{obs_col_name}{The name of the column with observed values.}
+
+\item{threshold}{Threshold for presence-only models.}
 }
 \value{
 A \code{input_sdm} or a \code{predictions} object.

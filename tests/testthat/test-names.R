@@ -44,3 +44,13 @@ test_that("predictors - set/get invalid rename predictors", {
   )
 })
 
+test_that("names stars", {
+  scen2 <- set_variables_names(scen, new_names = c("a", "b", "c"))
+  expect_true(all(stars::st_get_dimension_values(scen2, "band") == c("a", "b", "c")))
+  scen2 <- set_variables_names(scen2, bioc)
+  expect_true(all(stars::st_get_dimension_values(scen2, "band") == c("bio1", "bio4", "bio12")))
+  sa <- sdm_area(bioc, cell_size = 100000, crs = 6933)
+  scen2 <- set_variables_names(scen, new_names = c("a", "b", "c"))
+  scen2 <- set_variables_names(scen2, sa)
+  expect_true(all(stars::st_get_dimension_values(scen2, "band") == c("bio1", "bio4", "bio12")))
+})

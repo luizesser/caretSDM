@@ -76,9 +76,9 @@ select.input_sdm <- function(.data, ...){
   x$grid <- grd
   i$predictors <- x
 
-  if("scenarios" %in% names(x)){
-    .check_sdm_area(x$scenarios)
-    x$scenarios$data <- sapply(x$scenarios$data, function(y) {
+  if("scenarios" %in% names(i)){
+    .check_sdm_area(i$scenarios)
+    i$scenarios$data <- sapply(i$scenarios$data, function(y) {
       grd <- dplyr::select(y, ...)
       grd_col_names <- colnames(grd)
       if (!("cell_id" %in% grd_col_names)) {
@@ -87,7 +87,7 @@ select.input_sdm <- function(.data, ...){
       grd <- grd |> dplyr::relocate(cell_id, ...)
       return(grd)
     }, simplify = FALSE, USE.NAMES = TRUE)
-    x$scenarios$grid <- x$scenarios$data[[1]]
+    i$scenarios$grid <- i$scenarios$data[[1]]
   }
 
   return(i)
@@ -187,6 +187,7 @@ filter.occurrences <- function(.data, ..., .by, .preserve){
 #' @rdname tidyverse-methods
 #' @export
 filter_species <- function(x, spp = NULL, ...) {
+  assert_subset_cli(spp, species_names(x), empty.ok = FALSE)
   if (is.null(spp)) {
     cli::cli_abort(c("No species selected."))
   }
@@ -215,6 +216,12 @@ filter_species <- function(x, spp = NULL, ...) {
       for (j in 1:length(x$predictions$predictions)){
         x$predictions$predictions[[j]] <- x$predictions$predictions[[j]][spp]
       }
+      if("ensembles" %in% names(x$predictions)) {
+        ens <- as.matrix(x$predictions$ensembles[spp,])
+        colnames(ens) <- scenarios_names(x)
+        rownames(ens) <- spp
+        x$predictions$ensembles <- ens
+      }
     }
   }
   if(is_occurrences(x)){
@@ -224,6 +231,5 @@ filter_species <- function(x, spp = NULL, ...) {
       x$n_presences <- x$n_presences[spp]
     }
   }
-
   return(x)
 }

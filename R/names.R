@@ -129,8 +129,8 @@ set_predictor_names.input_sdm <- function(x, new_names) {
 
   i$predictors <- x
 
-  if("scenarios" %in% names(x)){
-    i$scenarios$data <- sapply(x$scenarios$data, function(y) {
+  if("scenarios" %in% names(i)){
+    i$scenarios$data <- sapply(i$scenarios$data, function(y) {
       grd_spatial <- y |>
         dplyr::select(c(cell_id, geometry))
       grd_data <- y |>
@@ -142,6 +142,7 @@ set_predictor_names.input_sdm <- function(x, new_names) {
         dplyr::bind_cols(grd_data) |>
         dplyr::relocate(geometry, .after = dplyr::last_col())
     }, simplify = FALSE, USE.NAMES = TRUE)
+    i$scenarios$grid <- i$scenarios$data[[1]]
   }
 
   return(i)

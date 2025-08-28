@@ -31,7 +31,7 @@
 #' scale_color_viridis_c geom_point scale_y_continuous scale_x_continuous stat_density_2d_filled
 #' after_stat stat_summary_2d
 #' @importFrom ggspatial annotation_scale north_arrow_fancy_orienteering annotation_north_arrow
-#' @importFrom dplyr filter select
+#' @importFrom dplyr filter select all_of
 #' @importFrom gtools mixedsort
 #' @importFrom data.table rbindlist
 #' @importFrom stringdist stringdist
@@ -116,6 +116,9 @@ plot_scenarios <- function(i, variables_selected = NULL, scenario = NULL) {
 
 #' @exportS3Method base::plot
 plot.sdm_area <- function(x, variables_selected = NULL, scenario = NULL, ...) {
+  if(is.null(scenario)){
+    scenario <- scenarios_names(x)[1]
+  }
   if(scenario=="grid"){
     tmp <- ggplot2::ggplot(x$grid)
     if(!unique(sf::st_geometry_type(x$grid)) == "LINESTRING"){
@@ -150,8 +153,8 @@ plot.sdm_area <- function(x, variables_selected = NULL, scenario = NULL, ...) {
   }
 
  if(scenario=="predictors"){
-    st <- x$grid |> dplyr::select(all_of(variables_selected))
-    teste <- tidyr::pivot_longer(st, all_of(variables_selected))
+    st <- x$grid |> dplyr::select(dplyr::all_of(variables_selected))
+    teste <- tidyr::pivot_longer(st, dplyr::all_of(variables_selected))
 
     tmp <- ggplot2::ggplot(teste) +
       ggplot2::facet_grid(. ~ name) +
@@ -170,11 +173,8 @@ plot.sdm_area <- function(x, variables_selected = NULL, scenario = NULL, ...) {
       ) +
       ggspatial::annotation_scale(height = ggplot2::unit(0.2, "cm"))
   } else {
-    if(is.null(scenario)){
-      scenario <- scenarios_names(x)[1]
-    }
-    st <- x$data[[scenario]] |> dplyr::select(all_of(variables_selected))
-    teste <- tidyr::pivot_longer(st, all_of(variables_selected))
+    st <- x$data[[scenario]] |> dplyr::select(dplyr::all_of(variables_selected))
+    teste <- tidyr::pivot_longer(st, dplyr::all_of(variables_selected))
 
     tmp <- ggplot2::ggplot(teste) +
       ggplot2::facet_grid(. ~ name) +
@@ -345,7 +345,7 @@ mapview_predictors <- function(i, variables_selected = NULL) {
     variables_selected <- get_predictor_names(x)[1]
   }
 
-  st <- x$grid |> dplyr::select(all_of(variables_selected))
+  st <- x$grid |> dplyr::select(dplyr::all_of(variables_selected))
   mapview::mapview(st, layer.name=variables_selected)
 }
 
@@ -356,25 +356,21 @@ mapview_scenarios <- function(i, variables_selected = NULL, scenario = NULL) {
   assert_subset_cli(variables_selected, c(get_predictor_names(i), "vif", "pca"))
   assert_subset_cli(scenario, scenarios_names(i))
 
-  if(is_input_sdm(i)){
-    x <- i$predictors
-  } else if(is_sdm_area(i)){
-    x <- i
-  }
+  x <- i$scenarios
 
   if ("vif" %in% variables_selected) {
     variables_selected <- x$variable_selection$vif$selected_variables
   } else if ("pca" %in% variables_selected) {
     variables_selected <- x$variable_selection$pca$selected_variables
   } else if (is.null(variables_selected)) {
-    variables_selected <- get_predictor_names(x)
+    variables_selected <- get_predictor_names(x)[1]
   }
 
   if(is.null(scenario)){
     scenario <- scenarios_names(x)[1]
   }
-  st <- x$data[[scenario]] |> dplyr::select(all_of(variables_selected))
-  mapview::mapview(st, layer.name = paste0(scenario,"\n",variables_selected))
+  st <- x$data[[scenario]] |> dplyr::select(dplyr::all_of(variables_selected))
+  mapview::mapview(st, layer.name = paste0(scenario," ",variables_selected))
 }
 
 #' @rdname plot_occurrences
@@ -437,9 +433,9 @@ plot_background <- function(i, variables_selected = NULL) {
   if (is.null(variables_selected)) {
     variables_selected <- get_predictor_names(i)
   } else if ("vif" %in% variables_selected) {
-    variables_selected <- pred$variable_selection$vif$selected_variables
+    variables_selected <- selected_variables(i)
   } else if ("pca" %in% variables_selected) {
-    variables_selected <- pred$variable_selection$pca$selected_variables
+    variables_selected <- selected_variables(i)
   } else {
     assert_choice_cli(variables_selected, get_predictor_names(i))
   }
@@ -467,6 +463,7 @@ plot_niche <- function(i, spp_name = NULL, variables_selected = NULL, scenario =
   assert_logical_cli(ensemble)
   assert_logical_cli(raster)
   ens <- ifelse(ensemble, "ensembles", "predictions")
+  assert_class_cli(i$predictions, "predictions")
 
   if (ensemble) {
     valid_scen <- i$predictions[[ens]] |> colnames()
@@ -476,12 +473,10 @@ plot_niche <- function(i, spp_name = NULL, variables_selected = NULL, scenario =
 
   if (is.null(variables_selected)) {
     variables_selected <- get_predictor_names(i)
-  } else if ("vif" %in% variables_selected) {
-    variables_selected <- pred$variable_selection$vif$selected_variables
-  } else if ("pca" %in% variables_selected) {
-    variables_selected <- pred$variable_sselection$pca$selected_variables
+  } else if (any(c("vif", "pca") %in% variables_selected)) {
+    variables_selected <- selected_variables(i)
   } else {
-    assert_choice_cli(variables_selected, get_predictor_names(i))
+    assert_subset_cli(variables_selected, get_predictor_names(i))
   }
   if (!is.null(scenario)) {
     scenario <- valid_scen[which.min(stringdist::stringdist(scenario, valid_scen))]
@@ -530,12 +525,14 @@ plot_niche <- function(i, spp_name = NULL, variables_selected = NULL, scenario =
   if(raster) {
     p <- ggplot2::ggplot() +
       ggplot2::stat_summary_2d(
-        data = grd,
-        ggplot2::aes(x = bio1, y = bio12, z = presence),
+        data = grd2,
+        ggplot2::aes(x = var1, y = var2, z = result),
         fun = mean,  # Averages presence probability
         geom = "raster"
       ) +
       ggplot2::scale_fill_viridis_c(name = "Presence Probability") +
+      ggplot2::xlab(variables_selected[1]) +
+      ggplot2::ylab(variables_selected[2]) +
       ggplot2::ggtitle(paste0(spp_name, " Niche for the ", scenario, " scenario"), subtitle = subtitle) +
       ggplot2::theme_minimal()
   } else {

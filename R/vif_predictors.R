@@ -114,6 +114,5 @@ selected_variables <- function(i){
   assert_class_cli(i, "input_sdm")
   assert_subset_cli("predictors", names(i), empty.ok = FALSE)
   assert_subset_cli("variable_selection", names(i$predictors), empty.ok = FALSE)
-  assert_subset_cli("vif", names(i$predictors$variable_selection), empty.ok = FALSE)
-  return(i$predictors$variable_selection$vif$selected_variables)
+  return(i$predictors$variable_selection[[1]]$selected_variables)
 }

@@ -146,21 +146,6 @@ occurrences_as_df <- function(i) {
   return(res)
 }
 
-#' @rdname occurrences_sdm
-#' @export
-add_occurrences <- function(oc1, oc2) {
-  assert_class_cli(oc1, "occurrences")
-  if(is.data.frame(oc2)){
-    oc2 <- .occurrences(oc2)
-  }
-  assert_class_cli(oc2, "occurrences")
-  oc1_st <- oc1$occurrences
-  oc2_st <- oc2$occurrences
-  x <- rbind(oc1_st, oc2_st)
-  res <- occurrences_sdm(x)
-  return(res)
-}
-
 .occurrences <- function(x, independent_test = NULL, p = 0.1, crs = NULL,
                          independent_test_crs = NULL, ...) {
   assert_int_cli(crs, lower = 1024, upper = 32766, null.ok = TRUE)

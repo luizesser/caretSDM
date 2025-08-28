@@ -40,18 +40,6 @@ is_occurrences <- function(x) {
 
 #' @rdname is_input_sdm
 #' @export
-is_predictors <- function(x) {
-  return(checkmate::test_class(x, classes = "predictors", null.ok = FALSE))
-}
-
-#' @rdname is_input_sdm
-#' @export
-is_scenarios <- function(x) {
-  return(checkmate::test_class(x, classes = "scenarios", null.ok = FALSE))
-}
-
-#' @rdname is_input_sdm
-#' @export
 is_models <- function(x) {
   return(checkmate::test_class(x, classes = "models", null.ok = FALSE))
 }

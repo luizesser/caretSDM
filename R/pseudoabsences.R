@@ -282,16 +282,15 @@ pseudoabsences <- function(occ, pred = NULL, method = "random", n_set = 10, n_pa
     )
     if (is_input_sdm(occ)) {
       l <- sapply(y$spp_names, function(sp) {
-
         occ2 <- df[df$cell_id %in% y$occurrences[y$occurrences$species == sp, ]$cell_id, ]
         model <- caret::train(dplyr::select(as.data.frame(occ2), dplyr::all_of(selected_vars)),
                      rep("presence", nrow(occ2)),
                      method = mahal.dist) |>
           suppressWarnings()
 
-        p1 <- predict(model, as.data.frame(df))
+        p1 <- predict(model, as.data.frame(df)) # classification in Presence and NA
         p <- data.frame(cell_id = df$cell_id, pred = p1)
-        p <- p[is.na(p1), ]
+        p <- p[is.na(p1), ] # Maintain only areas with NA, removing areas with presence.
         l <- list()
         if (nrow(p) == 0) {
           cli::cli_abort(c("Mahalanobis envelope for ", sp, " covered all the study area."))

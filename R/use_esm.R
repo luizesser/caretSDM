@@ -40,20 +40,25 @@
 #' # Use MEM:
 #' i <- use_esm(i)
 #'
+#' @importFrom cli cli_abort
 #' @export
 use_esm <- function(x, spp = NULL, n_records = 20) {
-  assert_class_cli(x, "input_sdm")
-  assert_subset_cli(spp, species_names(x))
-  assert_numeric_cli(n_records, lower = 0, len = 1, any.missing = FALSE)
+  caretSDM:::assert_subset_cli(class(x), c("input_sdm", "occurrences"))
+  caretSDM:::assert_subset_cli(spp, species_names(x))
+  caretSDM:::assert_numeric_cli(n_records, lower = 0, len = 1, any.missing = FALSE)
 
   if (is_input_sdm(x)) {
     y <- x$occurrences
   } else if (is_occurrences(x)) {
     y <- x
-  } else {
-    stop("x must be of class input_sdm or occurrences")
   }
 
+  if(is.null(spp)) {
+    spp <- names(n_records(y))[n_records(y) <= n_records]
+  }
+  if(length(spp) == 0) {
+    cli::cli_abort(c("x" = "No species with number of records =< {n_records}."))
+  }
   y$esm$spp <- spp
   y$esm$n_records <- n_records
 

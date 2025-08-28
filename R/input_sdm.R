@@ -83,8 +83,8 @@ add_input_sdm <- function(i1, i2) {
 
   l <- list(
     occurrences = add_occurrences(i1$occurrences, i2$occurrences),
-    predictors = add_predictors(i1$predictors, i2$predictors),
-    scenarios = add_scenarios(i1$scenarios, i2$scenarios),
+    predictors = add_sdm_area(i1$predictors, i2$predictors),
+    scenarios = add_sdm_area(i1$scenarios, i2$scenarios),
     models = add_models(i1$models, i2$models),
     predictions = add_predictions(i1$predictions, i2$predictions)
   )

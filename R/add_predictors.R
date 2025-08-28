@@ -39,8 +39,9 @@
 #'
 #' @importFrom cli cli_abort
 #' @importFrom dplyr inner_join join_by select
-#' @importFrom sf st_crs st_bbox st_intersection st_cast
+#' @importFrom sf st_crs st_bbox st_intersection st_cast st_join st_nearest_feature st_centroid
 #' @importFrom tidyr drop_na
+#' @importFrom stats na.omit
 #'
 #' @global cell_id geometry
 #'
@@ -131,13 +132,20 @@ add_predictors.sf <- function(sa, pred, variables_selected = NULL, gdal = TRUE) 
       suppressWarnings()
     grd$cell_id <- 1:nrow(grd)
   } else {
-    grd <- sa$grid |>
-      dplyr::inner_join(
-        pred_sa$grid |>
-          as.data.frame() |>
-          dplyr::select(-geometry),
-        dplyr::join_by(cell_id)
-      )
+    #grd <- sa$grid |>
+    #  dplyr::inner_join(
+    #    pred_sa$grid |>
+    #      as.data.frame() |>
+    #      dplyr::select(-geometry),
+    #    dplyr::join_by(cell_id)
+    #  )
+    grd <- pred_sa$grid[sf::st_nearest_feature(sf::st_centroid(sa$grid), sf::st_centroid(pred_sa$grid)),] |>
+      suppressWarnings()
+    grd <- sf::st_join(sa$grid, grd) |>
+      na.omit()
+    grd <- grd[!duplicated(grd$cell_id.x),]
+    grd <- select(grd, -"cell_id.y")
+    colnames(grd)[1] <- "cell_id"
   }
 
   var_names <- colnames(grd)
