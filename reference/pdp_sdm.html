@@ -116,10 +116,7 @@ https://luizfesser.wordpress.com</p>
 <span class="r-in"><span><span class="va">i</span> <span class="op">&lt;-</span> <span class="fu"><a href="input_sdm.html">input_sdm</a></span><span class="op">(</span><span class="va">oc</span>, <span class="va">sa</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Pseudoabsence generation:</span></span></span>
-<span class="r-in"><span><span class="va">i</span> <span class="op">&lt;-</span> <span class="fu"><a href="pseudoabsences.html">pseudoabsences</a></span><span class="op">(</span><span class="va">i</span>, method<span class="op">=</span><span class="st">"bioclim"</span>, n_set<span class="op">=</span><span class="fl">3</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in FUN(X[[i]], ...):</span> bioclim envelope for</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> Araucaria angustifolia</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> covered all the study area. Change th argument or change the method.</span>
+<span class="r-in"><span><span class="va">i</span> <span class="op">&lt;-</span> <span class="fu"><a href="pseudoabsences.html">pseudoabsences</a></span><span class="op">(</span><span class="va">i</span>, method<span class="op">=</span><span class="st">"random"</span>, n_set<span class="op">=</span><span class="fl">3</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Custom trainControl:</span></span></span>
 <span class="r-in"><span><span class="va">ctrl_sdm</span> <span class="op">&lt;-</span> <span class="fu">caret</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/caret/man/trainControl.html" class="external-link">trainControl</a></span><span class="op">(</span>method <span class="op">=</span> <span class="st">"repeatedcv"</span>,</span></span>
@@ -131,16 +128,27 @@ https://luizfesser.wordpress.com</p>
 <span class="r-in"><span>                                savePredictions <span class="op">=</span> <span class="st">"all"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="co"># Train models:</span></span></span>
 <span class="r-in"><span><span class="va">i</span> <span class="op">&lt;-</span> <span class="fu"><a href="train_sdm.html">train_sdm</a></span><span class="op">(</span><span class="va">i</span>, algo <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"naive_bayes"</span><span class="op">)</span>, ctrl<span class="op">=</span><span class="va">ctrl_sdm</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in dplyr::select(as.data.frame(x), dplyr::all_of(selected_vars)):</span> <span style="color: #00BBBB;">ℹ</span> In argument: `dplyr::all_of(selected_vars)`.</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">Caused by error in `dplyr::all_of()`:</span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> Can't subset elements that don't exist.</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span style="color: #BB0000;">✖</span> Elements `bio1` and `bio12` don't exist.</span>
 <span class="r-in"><span><span class="co"># PDP plots:</span></span></span>
 <span class="r-in"><span><span class="fu">pdp_sdm</span><span class="op">(</span><span class="va">i</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in dplyr::group_by(l2, variable):</span> Must group by variables found in `.data`.</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span style="color: #BB0000;">✖</span> Column `variable` is not found.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> `geom_smooth()` using method = 'loess' and formula = 'y ~ x'</span>
+<span class="r-plt img"><img src="pdp_sdm-1.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span><span class="fu">get_pdp_sdm</span><span class="op">(</span><span class="va">i</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> list()</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $naive_bayes</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 132 × 4</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    id     yhat variable value</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> m1.1  0.967 bio1      16.6</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> m1.1  0.981 bio1      16.9</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> m1.1  0.990 bio1      17.1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> m1.1  0.992 bio1      17.4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> m1.1  0.989 bio1      17.7</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> m1.1  0.973 bio1      17.9</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> m1.1  0.951 bio1      18.2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> m1.1  0.962 bio1      18.4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> m1.1  0.969 bio1      18.7</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> m1.1  0.967 bio1      18.9</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 122 more rows</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

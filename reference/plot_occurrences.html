@@ -100,7 +100,8 @@
 
 
 <dl><dt id="arg-i">i<a class="anchor" aria-label="anchor" href="#arg-i"></a></dt>
-<dd><p>Object to be plotted. Can be a <code>input_sdm</code>, but also <code>occurrences</code> or <code>sdm_area</code>.</p></dd>
+<dd><p>Object to be plotted. Can be a <code>input_sdm</code>, but also <code>occurrences</code> or
+<code>sdm_area</code>.</p></dd>
 
 
 <dt id="arg-spp-name">spp_name<a class="anchor" aria-label="anchor" href="#arg-spp-name"></a></dt>
@@ -120,17 +121,23 @@
 
 
 <dt id="arg-id">id<a class="anchor" aria-label="anchor" href="#arg-id"></a></dt>
-<dd><p>The id of models to be plotted (only used when <code>ensemble = FALSE</code>). Possible values
-are row names of get_validation_metrics(i).</p></dd>
+<dd><p>The id of models to be plotted (only used when <code>ensemble = FALSE</code>). Possible
+values are row names of get_validation_metrics(i).</p></dd>
 
 
 <dt id="arg-ensemble">ensemble<a class="anchor" aria-label="anchor" href="#arg-ensemble"></a></dt>
-<dd><p>Boolean. Should the ensemble be plotted (TRUE)? Otherwise a prediction will be plotted</p></dd>
+<dd><p>Boolean. Should the ensemble be plotted (TRUE)? Otherwise a prediction will be
+plotted</p></dd>
 
 
 <dt id="arg-ensemble-type">ensemble_type<a class="anchor" aria-label="anchor" href="#arg-ensemble-type"></a></dt>
 <dd><p>Character of the type of ensemble to be plotted. One of: "mean_occ_prob",
 "wmean_AUC" or "committee_avg"</p></dd>
+
+
+<dt id="arg-raster">raster<a class="anchor" aria-label="anchor" href="#arg-raster"></a></dt>
+<dd><p>Should the niche be extrapolated to a raster covering all possibe values in the
+environmental space?</p></dd>
 
 </dl></div>
     <div class="section level2">
