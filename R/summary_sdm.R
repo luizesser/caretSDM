@@ -44,7 +44,7 @@
 #' i <- input_sdm(oc, sa)
 #'
 #' # Pseudoabsence generation:
-#' i <- pseudoabsences(i, method="bioclim")
+#' i <- pseudoabsences(i, method = "random")
 #'
 #' # Custom trainControl:
 #' ctrl_sdm <- caret::trainControl(method = "repeatedcv",
@@ -103,6 +103,7 @@ summary_sdm <- function (data, lev = NULL, model = NULL, custom_fun=NULL) {
   return(out)
 }
 
+#' @rdname summary_sdm
 #' @export
 summary_sdm_presence_only <- function(data, lev, threshold) {
 
@@ -131,6 +132,7 @@ summary_sdm_presence_only <- function(data, lev, threshold) {
   return(round(out, 3))
 }
 
+#' @rdname summary_sdm
 #' @export
 validate_on_independent_data <- function(model, data_independent, obs_col_name) {
   # Extract the true observed outcomes

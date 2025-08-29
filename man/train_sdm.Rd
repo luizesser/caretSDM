@@ -96,7 +96,7 @@ oc <- occurrences_sdm(occ, crs = 6933) |> join_area(sa)
 i <- input_sdm(oc, sa)
 
 # Pseudoabsence generation:
-i <- pseudoabsences(i, method="bioclim")
+i <- pseudoabsences(i, method = "random")
 
 # Custom trainControl:
 ctrl_sdm <- caret::trainControl(method = "repeatedcv",
@@ -108,7 +108,7 @@ ctrl_sdm <- caret::trainControl(method = "repeatedcv",
                                 savePredictions = "all")
 
 # Train models:
-i <- train_sdm(i, algo = c("naive_bayes"), ctrl=ctrl_sdm) |>
+i <- train_sdm(i, algo = c("naive_bayes"), ctrl = ctrl_sdm) |>
 suppressWarnings()
 
 }

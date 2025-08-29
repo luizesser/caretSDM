@@ -16,5 +16,5 @@
 
 # caretSDM 1.1.4
 
--   Inclusion of functions to add different classes together, as well as plots for niche and background. First attempts to include independent test data. Inclusion of testing to improve code coverage.
+-   Inclusion of functions to add different classes together, as well as plots for niche and background. First attempts to include independent test data. tSNE is also working properly now. Inclusion of testing to improve code coverage.
 

@@ -66,7 +66,7 @@
 #' i <- input_sdm(oc, sa)
 #'
 #' # Pseudoabsence generation:
-#' i <- pseudoabsences(i, method="bioclim")
+#' i <- pseudoabsences(i, method="random")
 #'
 #' @importFrom sf st_as_sf st_crs st_transform st_intersection st_geometry_type
 #' @importFrom dplyr select all_of filter

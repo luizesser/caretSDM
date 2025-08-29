@@ -5,16 +5,20 @@
 #' @usage
 #' plot_occurrences(i, spp_name = NULL, pa = TRUE)
 #'
-#' @param i Object to be plotted. Can be a \code{input_sdm}, but also \code{occurrences} or \code{sdm_area}.
+#' @param i Object to be plotted. Can be a \code{input_sdm}, but also \code{occurrences} or
+#' \code{sdm_area}.
 #' @param spp_name A character with species to be plotted. If NULL, the first species is plotted.
 #' @param pa Boolean. Should pseudoabsences be plotted together? (not implemented yet.)
 #' @param variables_selected A character vector with names of variables to be plotted.
 #' @param scenario description
-#' @param id The id of models to be plotted (only used when \code{ensemble = FALSE}). Possible values
-#' are row names of get_validation_metrics(i).
-#' @param ensemble Boolean. Should the ensemble be plotted (TRUE)? Otherwise a prediction will be plotted
+#' @param id The id of models to be plotted (only used when \code{ensemble = FALSE}). Possible
+#' values are row names of get_validation_metrics(i).
+#' @param ensemble Boolean. Should the ensemble be plotted (TRUE)? Otherwise a prediction will be
+#' plotted
 #' @param ensemble_type Character of the type of ensemble to be plotted. One of: "mean_occ_prob",
 #' "wmean_AUC" or "committee_avg"
+#' @param raster Should the niche be extrapolated to a raster covering all possibe values in the
+#' environmental space?
 #'
 #' @details We implemented a bestiary of plots to help visualizing the process and results. If you
 #' are not familiar with mapview, consider using it to better visualize maps.

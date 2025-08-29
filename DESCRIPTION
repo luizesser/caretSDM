@@ -80,3 +80,7 @@ Depends:
     R (>= 4.2.0)
 URL: https://luizesser.github.io/caretSDM/
 Config/Needs/website: rmarkdown
+Roxygen: list(roclets = c("collate", "namespace", "rd",
+    "roxyglobals::global_roclet"))
+Config/roxyglobals/filename: generated-globals.R
+Config/roxyglobals/unique: FALSE

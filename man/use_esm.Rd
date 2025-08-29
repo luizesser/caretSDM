@@ -43,7 +43,7 @@ oc <- occurrences_sdm(occ, crs = 6933) |> join_area(sa)
 i <- input_sdm(oc, sa)
 
 # Use MEM:
-i <- use_esm(i)
+i <- use_esm(i, n_records = 999)
 
 }
 \author{

@@ -63,7 +63,8 @@ plot_niche(
 )
 }
 \arguments{
-\item{i}{Object to be plotted. Can be a \code{input_sdm}, but also \code{occurrences} or \code{sdm_area}.}
+\item{i}{Object to be plotted. Can be a \code{input_sdm}, but also \code{occurrences} or
+\code{sdm_area}.}
 
 \item{spp_name}{A character with species to be plotted. If NULL, the first species is plotted.}
 
@@ -73,13 +74,17 @@ plot_niche(
 
 \item{scenario}{description}
 
-\item{id}{The id of models to be plotted (only used when \code{ensemble = FALSE}). Possible values
-are row names of get_validation_metrics(i).}
+\item{id}{The id of models to be plotted (only used when \code{ensemble = FALSE}). Possible
+values are row names of get_validation_metrics(i).}
 
-\item{ensemble}{Boolean. Should the ensemble be plotted (TRUE)? Otherwise a prediction will be plotted}
+\item{ensemble}{Boolean. Should the ensemble be plotted (TRUE)? Otherwise a prediction will be
+plotted}
 
 \item{ensemble_type}{Character of the type of ensemble to be plotted. One of: "mean_occ_prob",
 "wmean_AUC" or "committee_avg"}
+
+\item{raster}{Should the niche be extrapolated to a raster covering all possibe values in the
+environmental space?}
 }
 \value{
 The plot or mapview desired.

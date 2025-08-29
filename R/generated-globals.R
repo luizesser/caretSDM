@@ -12,6 +12,9 @@ utils::globalVariables(c(
   "species", # <plot_occurrences>
   "result", # <plot_occurrences>
   "value", # <plot_occurrences>
+  "var1", # <plot_occurrences>
+  "var2", # <plot_occurrences>
+  "density", # <plot_occurrences>
   "algo", # <predict_sdm>
   ".data", # <predict_sdm>
   "Sensitivity", # <predict_sdm>
@@ -26,5 +29,6 @@ utils::globalVariables(c(
   "species", # <write_ensembles>
   "sp", # <write_ensembles>
   "sc", # <write_ensembles>
+  "geometry", # <write_ensembles>
   NULL
 ))

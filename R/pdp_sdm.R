@@ -38,7 +38,7 @@
 #' i <- input_sdm(oc, sa)
 #'
 #' # Pseudoabsence generation:
-#' i <- pseudoabsences(i, method="bioclim", n_set=3)
+#' i <- pseudoabsences(i, method="random", n_set=3)
 #'
 #' # Custom trainControl:
 #' ctrl_sdm <- caret::trainControl(method = "repeatedcv",

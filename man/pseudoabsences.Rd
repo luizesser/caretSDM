@@ -83,7 +83,7 @@ oc <- occurrences_sdm(occ, crs = 6933) |> join_area(sa)
 i <- input_sdm(oc, sa)
 
 # Pseudoabsence generation:
-i <- pseudoabsences(i, method="bioclim")
+i <- pseudoabsences(i, method="random")
 
 }
 \seealso{

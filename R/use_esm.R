@@ -38,14 +38,14 @@
 #' i <- input_sdm(oc, sa)
 #'
 #' # Use MEM:
-#' i <- use_esm(i)
+#' i <- use_esm(i, n_records = 999)
 #'
 #' @importFrom cli cli_abort
 #' @export
 use_esm <- function(x, spp = NULL, n_records = 20) {
-  caretSDM:::assert_subset_cli(class(x), c("input_sdm", "occurrences"))
-  caretSDM:::assert_subset_cli(spp, species_names(x))
-  caretSDM:::assert_numeric_cli(n_records, lower = 0, len = 1, any.missing = FALSE)
+  assert_subset_cli(class(x), c("input_sdm", "occurrences"))
+  assert_subset_cli(spp, species_names(x))
+  assert_numeric_cli(n_records, lower = 0, len = 1, any.missing = FALSE)
 
   if (is_input_sdm(x)) {
     y <- x$occurrences

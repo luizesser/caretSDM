@@ -2,9 +2,15 @@
 % Please edit documentation in R/summary_sdm.R
 \name{summary_sdm}
 \alias{summary_sdm}
+\alias{summary_sdm_presence_only}
+\alias{validate_on_independent_data}
 \title{Calculates performance across resamples}
 \usage{
 summary_sdm(data, lev = NULL, model = NULL, custom_fun=NULL)
+
+summary_sdm_presence_only(data, lev, threshold)
+
+validate_on_independent_data(model, data_independent, obs_col_name)
 }
 \arguments{
 \item{data}{A \code{data.frame} with observed and predicted values.}
@@ -15,11 +21,11 @@ summary_sdm(data, lev = NULL, model = NULL, custom_fun=NULL)
 
 \item{custom_fun}{A custom function to be applied in models (not yet implemented).}
 
+\item{threshold}{Threshold for presence-only models.}
+
 \item{data_independent}{independent data.frame to calculate metrics.}
 
 \item{obs_col_name}{The name of the column with observed values.}
-
-\item{threshold}{Threshold for presence-only models.}
 }
 \value{
 A \code{input_sdm} or a \code{predictions} object.
@@ -49,7 +55,7 @@ oc <- occurrences_sdm(occ, crs = 6933) |> join_area(sa)
 i <- input_sdm(oc, sa)
 
 # Pseudoabsence generation:
-i <- pseudoabsences(i, method="bioclim")
+i <- pseudoabsences(i, method = "random")
 
 # Custom trainControl:
 ctrl_sdm <- caret::trainControl(method = "repeatedcv",
