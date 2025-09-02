@@ -85,15 +85,12 @@ add_scenarios.NULL <- function(sa, scen = NULL, scenarios_names = NULL, pred_as_
                                variables_selected = NULL, stationary = NULL, crop_area = NULL) {
   if(is_sdm_area(sa)){
     sa_teste <- sa
-    sa_teste$data <- list(current = sa_teste$grid)
-    sa$scenarios <- sa_teste
-    return(sa)
   } else if (is_input_sdm(sa)){
     sa_teste <- sa$predictors
-    sa_teste$data <- list(current = sa_teste$grid)
-    sa$scenarios <- sa_teste
-    return(sa)
   }
+  sa_teste$data[["current"]] <- sa_teste$grid
+  sa$scenarios <- sa_teste
+  return(sa)
 }
 
 #' @export

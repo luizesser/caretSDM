@@ -1,5 +1,4 @@
 test_that("data_clean - normal path with sdm_area", {
-  skip_on_cran()
   set.seed(1)
   sa <- sdm_area(parana, cell_size = 100000, crs = 6933)
   sa <- add_predictors(sa, bioc)

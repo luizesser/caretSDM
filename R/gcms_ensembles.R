@@ -71,10 +71,7 @@ gcms_ensembles <- function(i, gcms=NULL) {
   for (g in gcms) {
     cols <- gsub(g,"",cols)
   }
-
   scen_names <- names(table(cols)[table(cols)>1])
-
-  out <- matrix(nrow=nrow(y), ncol = length(scen_names), dimnames = list(rownames(y), scen_names))
   l <- list()
   for(sp in rownames(y)){
     for(sc in scen_names){

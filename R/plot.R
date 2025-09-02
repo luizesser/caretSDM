@@ -233,12 +233,13 @@ plot.predictions <- function(x, spp_name = NULL, scenario = NULL, id = NULL, ens
     spp_name <- valid_spp[1]
   }
 
-  grd <- x$predictions[[scenario]][[spp_name]][[1]]
-  while (is.null(grd)) {
-    valid_scen <- valid_scen[! valid_scen %in% scenario]
-    scenario2 <- valid_scen[which.min(stringdist::stringdist(scenario, valid_scen))]
-    grd <- x$predictions[[scenario2]][[spp_name]][[1]]
-  }
+  grd <- x$predictions[[grep(scenario, names(x$predictions))[1]]][[spp_name]][[1]]
+  #grd <- x$predictions[[scenario]][[spp_name]][[1]]
+  #while (is.null(grd) & !ensemble) {
+  #  valid_scen <- valid_scen[! valid_scen %in% scenario]
+  #  scenario2 <- valid_scen[which.min(stringdist::stringdist(scenario, valid_scen))]
+  #  grd <- x$predictions[[scenario2]][[spp_name]][[1]]
+  #}
 
   if (ensemble) {
     cell_id <- x[[ens]][[spp_name, scenario]][, "cell_id"]
