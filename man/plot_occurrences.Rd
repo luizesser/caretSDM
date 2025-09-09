@@ -15,7 +15,7 @@
 \alias{plot_niche}
 \title{S3 Methods for plot and mapview}
 \usage{
-plot_occurrences(i, spp_name = NULL, pa = TRUE)
+plot_occurrences(i, spp_name = NULL, pa = TRUE, pa_id = 1)
 
 plot_grid(i)
 

@@ -3,7 +3,7 @@
 #' This function creates different plots depending on the input.
 #'
 #' @usage
-#' plot_occurrences(i, spp_name = NULL, pa = TRUE)
+#' plot_occurrences(i, spp_name = NULL, pa = TRUE, pa_id = 1)
 #'
 #' @param i Object to be plotted. Can be a \code{input_sdm}, but also \code{occurrences} or
 #' \code{sdm_area}.
@@ -47,7 +47,7 @@
 #' @global species result value var1 var2 density
 #'
 #' @export
-plot_occurrences <- function(i, spp_name = NULL, pa = TRUE, pa_id=1) {
+plot_occurrences <- function(i, spp_name = NULL, pa = TRUE, pa_id = 1) {
   assert_subset_cli(class(i), c("occurrences", "input_sdm"))
   assert_subset_cli(spp_name, species_names(i))
   assert_logical_cli(pa)
@@ -61,7 +61,7 @@ plot_occurrences <- function(i, spp_name = NULL, pa = TRUE, pa_id=1) {
 }
 
 #' @exportS3Method base::plot
-plot.occurrences <- function(x, spp_name = NULL, pa = TRUE, pa_id=1, ...) {
+plot.occurrences <- function(x, spp_name = NULL, pa = TRUE, pa_id = 1, ...) {
   grd <- x$occurrences
   valid_spp <- species_names(x)
   if (!is.null(spp_name)) {

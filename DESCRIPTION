@@ -23,6 +23,7 @@ Description: Use machine learning algorithms and advanced geographic information
 License: MIT + file LICENSE
 BugReports: https://github.com/luizesser/caretSDM/issues
 Imports:
+    blockCV,
     caret,
     checkmate,
     cli,
