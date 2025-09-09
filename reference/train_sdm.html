@@ -88,7 +88,7 @@
 
 <dt id="arg-ctrl">ctrl<a class="anchor" aria-label="anchor" href="#arg-ctrl"></a></dt>
 <dd><p>A <code>trainControl</code> object to be used to build models. See
-<code><a href="https://rdrr.io/pkg/caret/man/trainControl.html" class="external-link">?caret::trainControl</a></code>.</p></dd>
+<code><a href="https://rdrr.io/pkg/caret/man/trainControl.html" class="external-link">?caret::trainControl</a></code> and details.</p></dd>
 
 
 <dt id="arg-variables-selected">variables_selected<a class="anchor" aria-label="anchor" href="#arg-variables-selected"></a></dt>
@@ -124,7 +124,12 @@ predictors names from <code>pred</code> will be used. Can also be a selection me
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>The object <code><a href="algorithms.html">algorithms</a></code> has a table comparing algorithms available. If the function
 detects that the necessary packages are not available it will ask for installation. This will
-happen just in the first time you use the algorithm.</p>
+happen just in the first time you use the algorithm.
+<code><a href="https://rdrr.io/pkg/caret/man/trainControl.html" class="external-link">caret::trainControl</a></code> holds multiple resources for validation and model tuning. Make sure
+to understand its parameters beforehand. As it is a key function in the modeling process, we also
+implemented spatial crossvalidation on it. You can set <code>methods</code> to be <code>cv_spatial</code> or
+<code>cv_cluster</code> and <code>train_sdm</code> will detect that and apply the method according to
+<code>blockCV</code> package.</p>
 <p><code>get_tune_length</code> return the length used in grid-search for tunning.</p>
 <p><code>algorithms_used</code> return the names of the algorithms used in the modeling process.</p>
 <p><code>get_models</code> returns a <code>list</code> with trained models (class <code>train</code>) to each species.</p>

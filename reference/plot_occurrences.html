@@ -47,7 +47,7 @@
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">plot_occurrences</span><span class="op">(</span><span class="va">i</span>, spp_name <span class="op">=</span> <span class="cn">NULL</span>, pa <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">plot_occurrences</span><span class="op">(</span><span class="va">i</span>, spp_name <span class="op">=</span> <span class="cn">NULL</span>, pa <span class="op">=</span> <span class="cn">TRUE</span>, pa_id <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">plot_grid</span><span class="op">(</span><span class="va">i</span><span class="op">)</span></span>
 <span></span>
@@ -110,6 +110,11 @@
 
 <dt id="arg-pa">pa<a class="anchor" aria-label="anchor" href="#arg-pa"></a></dt>
 <dd><p>Boolean. Should pseudoabsences be plotted together? (not implemented yet.)</p></dd>
+
+
+<dt id="arg-pa-id">pa_id<a class="anchor" aria-label="anchor" href="#arg-pa-id"></a></dt>
+<dd><p>The id of pseudoabsences to be plotted (only used when <code>pa = TRUE</code>). Possible
+values are numeric values from 1 to number of PA sets.</p></dd>
 
 
 <dt id="arg-variables-selected">variables_selected<a class="anchor" aria-label="anchor" href="#arg-variables-selected"></a></dt>
