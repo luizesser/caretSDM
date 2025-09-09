@@ -9,6 +9,8 @@
 #' \code{sdm_area}.
 #' @param spp_name A character with species to be plotted. If NULL, the first species is plotted.
 #' @param pa Boolean. Should pseudoabsences be plotted together? (not implemented yet.)
+#' @param pa_id The id of pseudoabsences to be plotted (only used when \code{pa = TRUE}). Possible
+#' values are numeric values from 1 to number of PA sets.
 #' @param variables_selected A character vector with names of variables to be plotted.
 #' @param scenario description
 #' @param id The id of models to be plotted (only used when \code{ensemble = FALSE}). Possible
@@ -35,30 +37,31 @@
 #' scale_color_viridis_c geom_point scale_y_continuous scale_x_continuous stat_density_2d_filled
 #' after_stat stat_summary_2d
 #' @importFrom ggspatial annotation_scale north_arrow_fancy_orienteering annotation_north_arrow
-#' @importFrom dplyr filter select all_of
+#' @importFrom dplyr filter select all_of mutate
 #' @importFrom gtools mixedsort
 #' @importFrom data.table rbindlist
 #' @importFrom stringdist stringdist
-#' @importFrom sf st_as_sf st_geometry_type
+#' @importFrom sf st_as_sf st_geometry_type st_centroid
 #' @importFrom tidyr pivot_longer
 #'
 #' @global species result value var1 var2 density
 #'
 #' @export
-plot_occurrences <- function(i, spp_name = NULL, pa = TRUE) {
+plot_occurrences <- function(i, spp_name = NULL, pa = TRUE, pa_id=1) {
   assert_subset_cli(class(i), c("occurrences", "input_sdm"))
   assert_subset_cli(spp_name, species_names(i))
   assert_logical_cli(pa)
+  assert_numeric_cli(pa_id)
   assert_subset_cli("occurrences", names(i))
   if(is_input_sdm(i)){
-      return(plot(i$occurrences, spp_name, pa))
+      return(plot(i$occurrences, spp_name, pa, pa_id))
   } else if (is_occurrences(i)){
-    return(plot(i, spp_name, pa))
+    return(plot(i, spp_name, pa, pa_id))
   }
 }
 
 #' @exportS3Method base::plot
-plot.occurrences <- function(x, spp_name = NULL, pa = TRUE, ...) {
+plot.occurrences <- function(x, spp_name = NULL, pa = TRUE, pa_id=1, ...) {
   grd <- x$occurrences
   valid_spp <- species_names(x)
   if (!is.null(spp_name)) {
@@ -67,22 +70,53 @@ plot.occurrences <- function(x, spp_name = NULL, pa = TRUE, ...) {
     spp_name <- valid_spp[1]
   }
   grd <- dplyr::filter(grd, species %in% spp_name) |> dplyr::select(species)
-
-  tmp <- ggplot2::ggplot() +
-    ggplot2::geom_sf(data = grd, ggplot2::aes(fill = species)) +
-    ggplot2::scale_fill_viridis_d(name = paste0("Species")) +
-    ggplot2::xlab("Longitude") +
-    ggplot2::ylab("Latitude") +
-    ggplot2::ggtitle("Species occurrence records") +
-    ggplot2::theme_minimal() +
-    ggspatial::annotation_north_arrow(
-      height = ggplot2::unit(1, "cm"),
-      width = ggplot2::unit(1, "cm"),
-      style = ggspatial::north_arrow_fancy_orienteering,
-      pad_x = ggplot2::unit(0.2, "cm"),
-      pad_y = ggplot2::unit(0.7, "cm")
-    ) +
-    ggspatial::annotation_scale(height = ggplot2::unit(0.2, "cm"))
+  if(!"pseudoabsences" %in% names(x)) {
+    pa <- FALSE
+  }
+  if(pa) {
+    grd_pa <- do.call(rbind, x$pseudoabsences$data[[spp_name]][pa_id])
+    grd_pa <-  grd_pa |>
+      dplyr::mutate(presence = rep(0, nrow(grd_pa))) |>
+      dplyr::select("presence") |>
+      sf::st_centroid()
+    grd <- grd |>
+      dplyr::mutate(presence = rep(1, nrow(grd))) |>
+      dplyr::select("presence")
+    grd_final <- rbind(grd, grd_pa)
+    grd_final$presence <- as.factor(grd_final$presence)
+    tmp <- ggplot2::ggplot() +
+      ggplot2::geom_sf(data = grd_final, ggplot2::aes(color = .data$presence)) +
+      ggplot2::scale_fill_viridis_d(name = paste0("Presence")) +
+      ggplot2::xlab("Longitude") +
+      ggplot2::ylab("Latitude") +
+      ggplot2::ggtitle("Species occurrence records and Pseudoabsences") +
+      ggplot2::theme_minimal() +
+      ggspatial::annotation_north_arrow(
+        height = ggplot2::unit(1, "cm"),
+        width = ggplot2::unit(1, "cm"),
+        style = ggspatial::north_arrow_fancy_orienteering,
+        pad_x = ggplot2::unit(0.2, "cm"),
+        pad_y = ggplot2::unit(0.7, "cm")
+      ) +
+      ggspatial::annotation_scale(height = ggplot2::unit(0.2, "cm"))
+    tmp
+  } else {
+    tmp <- ggplot2::ggplot() +
+      ggplot2::geom_sf(data = grd, ggplot2::aes(fill = species)) +
+      ggplot2::scale_fill_viridis_d(name = paste0("Species")) +
+      ggplot2::xlab("Longitude") +
+      ggplot2::ylab("Latitude") +
+      ggplot2::ggtitle("Species occurrence records") +
+      ggplot2::theme_minimal() +
+      ggspatial::annotation_north_arrow(
+        height = ggplot2::unit(1, "cm"),
+        width = ggplot2::unit(1, "cm"),
+        style = ggspatial::north_arrow_fancy_orienteering,
+        pad_x = ggplot2::unit(0.2, "cm"),
+        pad_y = ggplot2::unit(0.7, "cm")
+      ) +
+      ggspatial::annotation_scale(height = ggplot2::unit(0.2, "cm"))
+  }
   return(tmp)
 }
 

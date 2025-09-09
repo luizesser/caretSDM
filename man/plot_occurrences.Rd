@@ -70,6 +70,9 @@ plot_niche(
 
 \item{pa}{Boolean. Should pseudoabsences be plotted together? (not implemented yet.)}
 
+\item{pa_id}{The id of pseudoabsences to be plotted (only used when \code{pa = TRUE}). Possible
+values are numeric values from 1 to number of PA sets.}
+
 \item{variables_selected}{A character vector with names of variables to be plotted.}
 
 \item{scenario}{description}

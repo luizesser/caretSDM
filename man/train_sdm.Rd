@@ -40,7 +40,7 @@ add_models(m1, m2)
 (https://topepo.github.io/caret/available-models.html) or in caretSDM::algorithms.}
 
 \item{ctrl}{A \code{trainControl} object to be used to build models. See
-\code{?caret::trainControl}.}
+\code{?caret::trainControl} and details.}
 
 \item{variables_selected}{A \code{vector} of variables to be used as predictors. If \code{NULL},
 predictors names from \code{pred} will be used. Can also be a selection method (e.g. 'vif').}
@@ -65,6 +65,11 @@ This function is a wrapper to fit models in caret using caretSDM data.
 The object \code{\link{algorithms}} has a table comparing algorithms available. If the function
 detects that the necessary packages are not available it will ask for installation. This will
 happen just in the first time you use the algorithm.
+\code{caret::trainControl} holds multiple resources for validation and model tuning. Make sure
+to understand its parameters beforehand. As it is a key function in the modeling process, we also
+implemented spatial crossvalidation on it. You can set \code{methods} to be \code{cv_spatial} or
+\code{cv_cluster} and \code{train_sdm} will detect that and apply the method according to
+\code{blockCV} package.
 
 \code{get_tune_length} return the length used in grid-search for tunning.
 

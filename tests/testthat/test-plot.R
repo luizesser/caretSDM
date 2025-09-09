@@ -11,6 +11,10 @@ test_that("plot works with i", {
 i <- input_sdm(oc, sa)
 test_that("plot works with i", {
   expect_no_error(plot(i))
+  expect_no_error(plot_occurrences(i))
+  expect_no_error(ggplot2::is_ggplot(plot_occurrences(i)))
+  expect_no_error(plot_occurrences(i, spp_name = "Araucaria angustifolia"))
+
 })
 suppressWarnings(i <- pseudoabsences(i, method = "random", n_set = 3))
 ctrl_sdm <- caret::trainControl(method = "repeatedcv", number = 4, repeats = 2, classProbs = TRUE,
@@ -25,9 +29,9 @@ test_that("plot works with i", {
   expect_no_error(plot_grid(i))
   expect_no_error(ggplot2::is_ggplot(plot_grid(i)))
   expect_no_error(mapview_grid(i))
-  expect_no_error(plot_occurrences(i))
-  expect_no_error(ggplot2::is_ggplot(plot_occurrences(i)))
-  expect_no_error(plot_occurrences(i, spp_name = "Araucaria angustifolia"))
+  expect_warning(plot_occurrences(i))
+  expect_warning(ggplot2::is_ggplot(plot_occurrences(i)))
+  expect_warning(plot_occurrences(i, spp_name = "Araucaria angustifolia"))
   expect_error(plot_occurrences(i, spp_name = "a"))
   expect_no_error(mapview_occurrences(i))
   expect_no_error(mapview_occurrences(i, spp_name = "Araucaria angustifolia"))
