@@ -41,6 +41,7 @@ Imports:
     httr,
     lwgeom,
     mapview,
+    maxnet,
     methods,
     parallelly,
     pdp,
