@@ -246,13 +246,14 @@ train_sdm <- function(occ, pred = NULL, algo, ctrl = NULL, variables_selected = 
         }
       } else if(is.character(algo)) {
         m <- lapply(algo, function(a) {
-          if (a == "mahal.dist") { a <- caretSDM:::.mahal.dist } else
-          if (a == "maxent") { a <- caretSDM:::.maxent }
+          if (a == "mahal.dist") { a <- .mahal.dist } else
+          if (a == "maxent") { a <- .maxent }
           caret::train(
             df~.,
             data = cbind(df,x),
             method = a,
-            trControl = ctrl
+            trControl = ctrl,
+            ...
           ) # lapply retorna diferentes valores de tuning (padronizar com seed?)
         })
       } else if (is.list(algo)) {
