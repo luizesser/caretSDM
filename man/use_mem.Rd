@@ -18,7 +18,7 @@ the output should have only the summed records (\code{FALSE})? Standard is \code
 A \code{input_sdm} or \code{occurrences} object with MEM data.
 }
 \description{
-This functions sums all species records into one.
+This function sums all species records into one.
 Should be used before the data cleaning routine.
 }
 \examples{

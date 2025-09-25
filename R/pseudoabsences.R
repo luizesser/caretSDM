@@ -9,12 +9,15 @@
 #'                n_set = 10,
 #'                n_pa = NULL,
 #'                variables_selected = NULL,
-#'                th = 0)
+#'                th = 0,
+#'                size = 1,
+#'                crs = 4326)
 #'
 #' @param occ A \code{occurrences_sdm} or \code{input_sdm} object.
 #' @param pred A \code{sdm_area} object. If \code{NULL} and \code{occ} is a \code{input_sdm},
 #' \code{pred} will be retrieved from \code{occ}.
-#' @param method Method to create pseudoabsences. One of: "random", "bioclim" or "mahal.dist".
+#' @param method Method to create pseudoabsences. One of: "random", "bioclim", "mahal.dist" or
+#' "buffer_sdm".
 #' @param n_set \code{numeric}. Number of datasets of pseudoabsence to create.
 #' @param n_pa \code{numeric}. Number of pseudoabsences to be generated in each dataset created.
 #' If \code{NULL} then the function prevents imbalance by using the same number of presence records
@@ -23,6 +26,10 @@
 #' @param variables_selected A vector with variables names to be used while building pseudoabsences.
 #' Only used when method is not "random".
 #' @param th \code{numeric} Threshold to be applied in bioclim/mahal.dist projections. See details.
+#' @param size \code{numeric} The distance between the record and the margin of the buffer (i.e.
+#' buffer radius).
+#' @param crs \code{numeric} Indicates which EPSG it the size in.
+#'
 #' @param i A \code{input_sdm} object.
 #'
 #' @returns A \code{occurrences_sdm} or \code{input_sdm} object with pseudoabsence data.
@@ -30,9 +37,9 @@
 #' @details
 #' \code{pseudoabsences} is used in the SDM workflow to obtain pseudoabsences, a step necessary for
 #' most of the algorithms to run. We implemented three methods so far: \code{"random"}, which is
-#' self-explanatory, \code{"bioclim"} and \code{"mahal.dist"}. The two last are built with the idea
-#' that pseudoabsences should be environmentally different from presences. Thus, we implemented
-#' two presence-only methods to infer the distribution of the species. \code{"bioclim"} uses an
+#' self-explanatory, \code{"bioclim"}, \code{"mahal.dist"} and \code{"buffer_sdm"}. The two last are
+#' built with the idea that pseudoabsences should be environmentally different from presences. Thus,
+#' we implemented two presence-only methods to infer the distribution of the species. \code{"bioclim"} uses an
 #' envelope approach (bioclimatic envelope), while \code{"mahal.dist"} uses a distance approach
 #' (mahalanobis distance). \code{th} parameter enters here as a threshold to binarize those results.
 #' Pseudoabsences are retrieved outside the projected distribution of the species.
@@ -68,23 +75,23 @@
 #' # Pseudoabsence generation:
 #' i <- pseudoabsences(i, method="random")
 #'
-#' @importFrom sf st_as_sf st_crs st_transform st_intersection st_geometry_type
+#' @importFrom sf st_as_sf st_crs st_transform st_intersection st_geometry_type st_difference
 #' @importFrom dplyr select all_of filter
 #' @importFrom stars st_extract
 #' @importFrom dismo bioclim predict
 #' @importFrom cli cli_abort cli_warn
-#' @importFrom caret train
+#' @importFrom caret train getModelInfo
 #' @importFrom stats pchisq cov mahalanobis
 #'
 #' @export
-pseudoabsences <- function(occ, pred = NULL, method = "random", n_set = 10, n_pa = NULL, variables_selected = NULL, th = 0) {
+pseudoabsences <- function(occ, pred = NULL, method = "random", n_set = 10, n_pa = NULL, variables_selected = NULL, th = 0, size = 1, crs = 4326) {
   assert_class_cli(occ, "input_sdm")
   if (is_input_sdm(occ)) {
     y <- occ$occurrences
     pred <- occ$predictors
   }
   assert_class_cli(pred, "sdm_area")
-  assert_choice_cli(method, c("random", "bioclim", "mahal.dist"))
+  assert_choice_cli(method, c("random", "bioclim", "mahal.dist", "buffer_sdm"))
   assert_int_cli(n_set)
   assert_int_cli(n_pa, null.ok = TRUE)
   if(length(n_pa)!=1){assert_numeric_cli(n_pa, len = length(species_names(y)), null.ok=T)}
@@ -185,107 +192,12 @@ pseudoabsences <- function(occ, pred = NULL, method = "random", n_set = 10, n_pa
     pa <- .pseudoabsences(y, l, method, n_set, n_pa)
   }
   if (method == "mahal.dist") {
-    mahal.dist <- list(
-      label = "Mahalanobis Distance Classifier",
-      library = NULL,
-      type = "Classification",
-      parameters = data.frame(
-        parameter = c("abs"),
-        class = c("logical"),
-        label = c("Absolute Binarization")
-      ),
-      grid = function(x, y, len = NULL, search = "grid") {
-        # We define a simple grid that will test both TRUE and FALSE
-        # for the 'abs' parameter. Here, search can be anything that
-        # the output is the same. But in other implementations the user
-        # may want to change when search is not "grid".
-        if (search == "grid") {
-          out <- expand.grid(abs = c(TRUE, FALSE))
-        } else {
-          out <- expand.grid(abs = c(TRUE, FALSE))
-        }
-        return(out)
-      },
-      fit = function(x, y, wts, param, lev, last, classProbs, ...) {
-        # The 'fit' function is trained only on presence data.
-        # It calculates and stores the mean vector and inverse covariance matrix.
-        presence_data <- x[y == "presence", , drop = FALSE]
-
-        if (nrow(presence_data) < 2) {
-          stop("Not enough 'presence' data points to calculate covariance.")
-        }
-
-        # Calculate model parameters
-        center_vec <- colMeans(presence_data, na.rm = TRUE)
-        inv_cov_matrix <- solve(stats::cov(presence_data))
-
-        # The model object here is just a list of parameters.
-        result <- list(
-          center = center_vec,
-          inv_cov = inv_cov_matrix,
-          df = ncol(x), # Correction demonstrated by Etherington 2019.
-          abs = param$abs,
-          levels = lev # Retain data information dor consistency.
-        )
-        return(result)
-      },
-      # Prediction function (must match caret's expected signature)
-      predict = function(modelFit, newdata, preProc = NULL, submodels = NULL) {
-        # 'predict' generates class labels based on the probabilities.
-        # 1. Get the probabilities by calling the 'prob' function.
-        probs <- mahal.dist$prob(modelFit, newdata)
-
-        # 2. The 'abs' parameter determines the binarization type.
-        if (modelFit$abs) {
-          # For "Absolute Binarization", we threshold the p-value.
-          # A common choice is alpha = 0.05. If p-value >= 0.05, the point is
-          # considered within the "presence" environment.
-          pred <- ifelse(probs[, modelFit$levels[1]] >= 0.05,
-                         modelFit$levels[1], # presence
-                         modelFit$levels[2]) # pseudoabsence
-        } else {
-          # Standard method: assign the class with the highest probability.
-          pred <- colnames(probs)[apply(probs, 1, which.max)]
-        }
-
-        # 3. Return a factor with the correct levels.
-        pred <- factor(pred, levels = modelFit$levels)
-        return(pred)
-      },
-
-      predictors = function(x, ...) {
-        # This correctly extracts predictor names from the fitted model.
-        names(x$center)
-      },
-
-      # Optional: Specify if probabilities are supported
-      prob = function(modelFit, newdata, preProc = NULL, submodels = NULL) {
-        # 'prob' calculates class probabilities using the fitted model.
-        # 1. Calculate the squared Mahalanobis distance (D^2) for newdata.
-        d2 <- stats::mahalanobis(x = newdata,
-                                 center = modelFit$center,
-                                 cov = modelFit$inv_cov,
-                                 inverted = TRUE) # Use inverted = TRUE for efficiency ######################
-
-        # 2. Convert distance to a p-value using the chi-squared distribution.
-        # This p-value can be interpreted as the probability of "presence".
-        p_presence <- 1 - stats::pchisq(q = d2, df = modelFit$df)
-
-        # 3. The output is a data frame of probabilities for both classes.
-        prob_df <- data.frame(
-          presence = p_presence,
-          pseudoabsence = 1 - p_presence
-        )
-        colnames(prob_df) <- modelFit$levels # Ensure column names match levels
-        return(prob_df)
-      }
-    )
     if (is_input_sdm(occ)) {
       l <- sapply(y$spp_names, function(sp) {
         occ2 <- df[df$cell_id %in% y$occurrences[y$occurrences$species == sp, ]$cell_id, ]
         model <- caret::train(dplyr::select(as.data.frame(occ2), dplyr::all_of(selected_vars)),
                      rep("presence", nrow(occ2)),
-                     method = mahal.dist) |>
+                     method = .mahal.dist) |>
           suppressWarnings()
 
         p1 <- predict(model, as.data.frame(df)) # classification in Presence and NA
@@ -307,6 +219,31 @@ pseudoabsences <- function(occ, pred = NULL, method = "random", n_set = 10, n_pa
         return(l)
       }, simplify = FALSE, USE.NAMES = TRUE)
     }
+    pa <- .pseudoabsences(y, l, method, n_set, n_pa)
+  }
+  if (method == "buffer_sdm") {
+    l <- sapply(y$spp_names, function(sp) {
+      buf <- buffer_sdm(y, size, crs)
+      if(!sf::st_crs(buf) == sf::st_crs(df)) {
+        buf <- sf::st_transform(buf, sf::st_crs(df))
+      }
+      p <- sf::st_difference(df, buf) |>
+        suppressWarnings()
+      l <- list()
+      if (nrow(p) == 0) {
+        cli::cli_abort(c("Buffer for ", sp, " covered all the study area."))
+      } else {
+        for (j in 1:n_set) {
+          if (n_pa[sp] < length(p$cell_id)) {
+            samp <- sample(p$cell_id, n_pa[sp])
+          } else {
+            samp <- sample(p$cell_id, n_pa[sp], replace = TRUE)
+          }
+          l[[j]] <- df[df$cell_id %in% samp, ]
+        }
+      }
+      return(l)
+    }, simplify = FALSE, USE.NAMES = TRUE)
     pa <- .pseudoabsences(y, l, method, n_set, n_pa)
   }
 

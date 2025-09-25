@@ -13,7 +13,9 @@ pseudoabsences(occ,
                n_set = 10,
                n_pa = NULL,
                variables_selected = NULL,
-               th = 0)
+               th = 0,
+               size = 1,
+               crs = 4326)
 
 n_pseudoabsences(i)
 
@@ -27,7 +29,8 @@ pseudoabsence_data(i)
 \item{pred}{A \code{sdm_area} object. If \code{NULL} and \code{occ} is a \code{input_sdm},
 \code{pred} will be retrieved from \code{occ}.}
 
-\item{method}{Method to create pseudoabsences. One of: "random", "bioclim" or "mahal.dist".}
+\item{method}{Method to create pseudoabsences. One of: "random", "bioclim", "mahal.dist" or
+"buffer_sdm".}
 
 \item{n_set}{\code{numeric}. Number of datasets of pseudoabsence to create.}
 
@@ -41,6 +44,11 @@ Only used when method is not "random".}
 
 \item{th}{\code{numeric} Threshold to be applied in bioclim/mahal.dist projections. See details.}
 
+\item{size}{\code{numeric} The distance between the record and the margin of the buffer (i.e.
+buffer radius).}
+
+\item{crs}{\code{numeric} Indicates which EPSG it the size in.}
+
 \item{i}{A \code{input_sdm} object.}
 }
 \value{
@@ -52,9 +60,9 @@ This function obtains pseudoabsences given a set of predictors.
 \details{
 \code{pseudoabsences} is used in the SDM workflow to obtain pseudoabsences, a step necessary for
 most of the algorithms to run. We implemented three methods so far: \code{"random"}, which is
-self-explanatory, \code{"bioclim"} and \code{"mahal.dist"}. The two last are built with the idea
-that pseudoabsences should be environmentally different from presences. Thus, we implemented
-two presence-only methods to infer the distribution of the species. \code{"bioclim"} uses an
+self-explanatory, \code{"bioclim"}, \code{"mahal.dist"} and \code{"buffer_sdm"}. The two last are
+built with the idea that pseudoabsences should be environmentally different from presences. Thus,
+we implemented two presence-only methods to infer the distribution of the species. \code{"bioclim"} uses an
 envelope approach (bioclimatic envelope), while \code{"mahal.dist"} uses a distance approach
 (mahalanobis distance). \code{th} parameter enters here as a threshold to binarize those results.
 Pseudoabsences are retrieved outside the projected distribution of the species.

@@ -21,3 +21,9 @@
 # caretSDM 1.1.5
 
 -   Plotting ensemble predictions is working. Added blockCV methods for crossvalidation.
+
+# caretSDM 1.2
+
+-   Inclusion of MaxEnt and Mahalanobis Distance directly on caretSDM. 
+-   Pseudoabsences can now be retrieved outside a buffer. 
+-   Inclusion of functions: correlate_sdm and tuneGrid_sdm.

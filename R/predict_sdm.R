@@ -108,7 +108,7 @@
 #'
 #' @export
 predict_sdm <- function(m, scen = NULL, metric = "ROC", th = 0.9, tp = "prob", ensembles = TRUE, file = NULL, add.current = TRUE) {
-  if (is_input_sdm(m)) {
+  if (is_input_sdm(m) & is.null(scen)) {
     scen <- m$scenarios
   }
   UseMethod("predict_sdm", scen)

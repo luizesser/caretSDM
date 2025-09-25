@@ -139,9 +139,9 @@ train_sdm <- function(occ, pred = NULL, algo, ctrl = NULL, variables_selected = 
   }
 
   algo2 <- algo
-  custom_algo <- c("label", "library", "loop", "type", "levels", "parameters", "grid", "fit",
-                   "predict", "prob", "predictors", "varImp", "tags")
-  if(is.list(algo) && all(names(algo) %in% custom_algo)) {
+  custom_algo <- c("library", "type", "parameters", "grid",
+                   "fit", "predict", "prob")
+  if(is.list(algo) && all(custom_algo %in% names(algo))) {
     algo2 <- deparse(substitute(algo))
   }
 
@@ -220,11 +220,14 @@ train_sdm <- function(occ, pred = NULL, algo, ctrl = NULL, variables_selected = 
         if(is.character(algo)) {
           for (vars in 1:ncol(vars_comb)) {
             m1[[vars]] <- lapply(algo, function(a) {
+              if (a == "mahal.dist") { a <- .mahal.dist } else
+              if (a == "maxent") { a <- .maxent }
               caret::train(
                 df~.,
                 data = cbind(df,x[,vars_comb[,vars]]),
                 method = a,
-                trControl = ctrl
+                trControl = ctrl,
+                ...
               )
             })
           }
@@ -235,14 +238,16 @@ train_sdm <- function(occ, pred = NULL, algo, ctrl = NULL, variables_selected = 
               df~.,
               data = cbind(df,x),
               method = algo,
-              trControl = ctrl
+              trControl = ctrl,
+              ...
             ) |> list()
           }
           m <- unlist(m1, recursive = FALSE)
         }
       } else if(is.character(algo)) {
-        #cli::cli_progress_message("ESM not applied (records do not match condition)")
         m <- lapply(algo, function(a) {
+          if (a == "mahal.dist") { a <- caretSDM:::.mahal.dist } else
+          if (a == "maxent") { a <- caretSDM:::.maxent }
           caret::train(
             df~.,
             data = cbind(df,x),
@@ -255,7 +260,8 @@ train_sdm <- function(occ, pred = NULL, algo, ctrl = NULL, variables_selected = 
           df~.,
           data = cbind(df,x),
           method = algo,
-          trControl = ctrl
+          trControl = ctrl,
+          ...
         ) |> list()
       }
       l[[paste0("m", j, ".")]] <- m
@@ -276,7 +282,14 @@ train_sdm <- function(occ, pred = NULL, algo, ctrl = NULL, variables_selected = 
   metrics <- sapply(z$spp_names, function(sp) {
     metrics <- lapply(m[[sp]], function(x) {
       if(x$method == "custom") {
-        x$method <- algo2
+        if(x$modelInfo$tags[1] == "maxent") {
+          x$method <- "maxent"
+        } else
+        if(x$modelInfo$tags[1] == "mahalanobis") {
+          x$method <- "mahal.dist"
+        } else {
+          x$method <- algo2
+        }
       }
       bt <- names(x$bestTune)
       res <- x$results[, !colnames(x$results) %in% bt]

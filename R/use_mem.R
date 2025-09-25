@@ -1,6 +1,6 @@
 #' MacroEcological Models (MEM) in caretSDM
 #'
-#' This functions sums all species records into one.
+#' This function sums all species records into one.
 #' Should be used before the data cleaning routine.
 #'
 #' @usage use_mem(x, add = TRUE, name = "MEM")
