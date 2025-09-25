@@ -4,7 +4,7 @@
 \alias{tuneGrid_sdm}
 \title{Retrieve tuneGrid from models}
 \usage{
-tuneGrid_sdm(i, model_id = NULL)
+tuneGrid_sdm(i)
 }
 \arguments{
 \item{i}{A \code{input_sdm} object containing models.}
@@ -13,8 +13,7 @@ tuneGrid_sdm(i, model_id = NULL)
 A \code{list} with \code{data.frames} each one representing the table of a given model.
 }
 \description{
-This function aims to unveil the correlation of different algorithms outputs.
-For that, it uses the predictions on current scenario, but other scenarios can be tested.
+This function aims to retrieve the tune grid used to build models.
 }
 \examples{
 # Create sdm_area object:

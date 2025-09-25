@@ -283,11 +283,13 @@ train_sdm <- function(occ, pred = NULL, algo, ctrl = NULL, variables_selected = 
   metrics <- sapply(z$spp_names, function(sp) {
     metrics <- lapply(m[[sp]], function(x) {
       if(x$method == "custom") {
-        if(x$modelInfo$tags[1] == "maxent") {
-          x$method <- "maxent"
-        } else
-        if(x$modelInfo$tags[1] == "mahalanobis") {
-          x$method <- "mahal.dist"
+        if("tags" %in% names(x$modelInfo)){
+          if(x$modelInfo$tags[1] == "maxent") {
+            x$method <- "maxent"
+          } else
+          if(x$modelInfo$tags[1] == "mahalanobis") {
+            x$method <- "mahal.dist"
+          }
         } else {
           x$method <- algo2
         }

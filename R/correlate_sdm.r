@@ -53,6 +53,7 @@
 #' # Check correlations:
 #' correlate_sdm(i)
 #'
+#' @importFrom stats cor
 #' @export
 correlate_sdm <- function(i, scenario = "current") {
   if (!is_input_sdm(i)) {
@@ -66,13 +67,8 @@ correlate_sdm <- function(i, scenario = "current") {
   scen <- i$predictions$predictions[[scenario]]
   spp <- species_names(i)
 
-  #sp <- spp[1]
-  #algo <- algorithms_used(i)
-  #algo_id <- rownames(get_validation_metrics(i)[[sp]])[get_validation_metrics(i)[[sp]][,"algo"] == algo[1]]
-  #scen[[sp]]
-
   x <- sapply(spp, function(sp) {
-    do.call(cbind, lapply(scen[[sp]], function(x){x$presence})) |> cor()
+    do.call(cbind, lapply(scen[[sp]], function(x){x$presence})) |> stats::cor()
   }, simplify = FALSE, USE.NAMES = TRUE)
 
   return(x)

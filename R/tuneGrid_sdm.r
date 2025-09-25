@@ -1,9 +1,8 @@
 #' Retrieve tuneGrid from models
 #'
-#' This function aims to unveil the correlation of different algorithms outputs.
-#' For that, it uses the predictions on current scenario, but other scenarios can be tested.
+#' This function aims to retrieve the tune grid used to build models.
 #'
-#' @usage tuneGrid_sdm(i, model_id = NULL)
+#' @usage tuneGrid_sdm(i)
 #'
 #' @param i A \code{input_sdm} object containing models.
 #'
