@@ -25,7 +25,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">caretSDM</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.5</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -559,8 +559,8 @@ build models using the mahal.dismo method.</p>
 <span><span class="co">#&gt;     Number                    : 3 </span></span>
 <span><span class="co">#&gt;     Metrics                   :</span></span>
 <span><span class="co">#&gt; $`Araucaria angustifolia`</span></span>
-<span><span class="co">#&gt;          algo       ROC       TSS Sensitivity Specificity</span></span>
-<span><span class="co">#&gt; 1 mahal.dismo 0.9913901 0.8488215   0.9794444   0.8821111</span></span></code></pre></div>
+<span><span class="co">#&gt;     algo       ROC       TSS Sensitivity Specificity</span></span>
+<span><span class="co">#&gt; 1 custom 0.9913901 0.8488215   0.9794444   0.8821111</span></span></code></pre></div>
 <p>Plotting the result of mahal.dismo.</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">i2</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/add_scenarios.html">add_scenarios</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/predict_sdm.html">predict_sdm</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/plot_occurrences.html">plot_predictions</a></span><span class="op">(</span><span class="op">)</span></span>

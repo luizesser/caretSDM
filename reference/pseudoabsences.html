@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">caretSDM</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.5</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -53,7 +53,9 @@
 <span>               n_set <span class="op">=</span> <span class="fl">10</span>,</span>
 <span>               n_pa <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>               variables_selected <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>               th <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></span>
+<span>               th <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>               size <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>               crs <span class="op">=</span> <span class="fl">4326</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">n_pseudoabsences</span><span class="op">(</span><span class="va">i</span><span class="op">)</span></span>
 <span></span>
@@ -76,7 +78,8 @@
 
 
 <dt id="arg-method">method<a class="anchor" aria-label="anchor" href="#arg-method"></a></dt>
-<dd><p>Method to create pseudoabsences. One of: "random", "bioclim" or "mahal.dist".</p></dd>
+<dd><p>Method to create pseudoabsences. One of: "random", "bioclim", "mahal.dist" or
+"buffer_sdm".</p></dd>
 
 
 <dt id="arg-n-set">n_set<a class="anchor" aria-label="anchor" href="#arg-n-set"></a></dt>
@@ -99,6 +102,15 @@ Only used when method is not "random".</p></dd>
 <dd><p><code>numeric</code> Threshold to be applied in bioclim/mahal.dist projections. See details.</p></dd>
 
 
+<dt id="arg-size">size<a class="anchor" aria-label="anchor" href="#arg-size"></a></dt>
+<dd><p><code>numeric</code> The distance between the record and the margin of the buffer (i.e.
+buffer radius).</p></dd>
+
+
+<dt id="arg-crs">crs<a class="anchor" aria-label="anchor" href="#arg-crs"></a></dt>
+<dd><p><code>numeric</code> Indicates which EPSG it the size in.</p></dd>
+
+
 <dt id="arg-i">i<a class="anchor" aria-label="anchor" href="#arg-i"></a></dt>
 <dd><p>A <code>input_sdm</code> object.</p></dd>
 
@@ -111,9 +123,9 @@ Only used when method is not "random".</p></dd>
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p><code>pseudoabsences</code> is used in the SDM workflow to obtain pseudoabsences, a step necessary for
 most of the algorithms to run. We implemented three methods so far: <code>"random"</code>, which is
-self-explanatory, <code>"bioclim"</code> and <code>"mahal.dist"</code>. The two last are built with the idea
-that pseudoabsences should be environmentally different from presences. Thus, we implemented
-two presence-only methods to infer the distribution of the species. <code>"bioclim"</code> uses an
+self-explanatory, <code>"bioclim"</code>, <code>"mahal.dist"</code> and <code>"buffer_sdm"</code>. The two last are
+built with the idea that pseudoabsences should be environmentally different from presences. Thus,
+we implemented two presence-only methods to infer the distribution of the species. <code>"bioclim"</code> uses an
 envelope approach (bioclimatic envelope), while <code>"mahal.dist"</code> uses a distance approach
 (mahalanobis distance). <code>th</code> parameter enters here as a threshold to binarize those results.
 Pseudoabsences are retrieved outside the projected distribution of the species.</p>

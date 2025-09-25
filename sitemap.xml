@@ -19,6 +19,7 @@
 <url><loc>https://luizesser.github.io/caretSDM/reference/bioc.html</loc></url>
 <url><loc>https://luizesser.github.io/caretSDM/reference/buffer_sdm.html</loc></url>
 <url><loc>https://luizesser.github.io/caretSDM/reference/caretSDM-package.html</loc></url>
+<url><loc>https://luizesser.github.io/caretSDM/reference/correlate_sdm.html</loc></url>
 <url><loc>https://luizesser.github.io/caretSDM/reference/data_clean.html</loc></url>
 <url><loc>https://luizesser.github.io/caretSDM/reference/gcms_ensembles.html</loc></url>
 <url><loc>https://luizesser.github.io/caretSDM/reference/index.html</loc></url>
@@ -48,6 +49,7 @@
 <url><loc>https://luizesser.github.io/caretSDM/reference/tidyverse-methods.html</loc></url>
 <url><loc>https://luizesser.github.io/caretSDM/reference/train_sdm.html</loc></url>
 <url><loc>https://luizesser.github.io/caretSDM/reference/tsne_sdm.html</loc></url>
+<url><loc>https://luizesser.github.io/caretSDM/reference/tuneGrid_sdm.html</loc></url>
 <url><loc>https://luizesser.github.io/caretSDM/reference/use_esm.html</loc></url>
 <url><loc>https://luizesser.github.io/caretSDM/reference/use_mem.html</loc></url>
 <url><loc>https://luizesser.github.io/caretSDM/reference/varImp_sdm.html</loc></url>
