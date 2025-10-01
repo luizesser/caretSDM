@@ -3,6 +3,8 @@
 utils::globalVariables(c(
   "cell_id", # <add_predictors>
   "geometry", # <add_predictors>
+  "result_current", # <prediction_change_sdm>
+  "result_future", # <prediction_change_sdm>
   "X", # <occurrences_sdm>
   "Y", # <occurrences_sdm>
   "value", # <pdp_sdm>

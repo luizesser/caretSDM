@@ -284,24 +284,27 @@
            AccuracyUpper AccuracyNull AccuracyPValue McnemarPValue Positive Negative
       m1.1         0.821        0.690          0.732         0.343       20        9
       m2.1         0.925        0.609          0.264         0.074       14        9
-           True Positive False Positive True Negative False Negative ROCSD TSSSD
-      m1.1            18              3             2              8    NA    NA
-      m2.1            14              0             4              7    NA    NA
-           SensitivitySD SpecificitySD Pos Pred ValueSD Neg Pred ValueSD PrecisionSD
-      m1.1            NA            NA               NA               NA          NA
-      m2.1            NA            NA               NA               NA          NA
-           RecallSD F1SD PrevalenceSD Detection RateSD Detection PrevalenceSD
-      m1.1       NA   NA           NA               NA                     NA
-      m2.1       NA   NA           NA               NA                     NA
-           Balanced AccuracySD AccuracySD KappaSD AccuracyLowerSD AccuracyUpperSD
-      m1.1                  NA         NA      NA              NA              NA
-      m2.1                  NA         NA      NA              NA              NA
-           AccuracyNullSD AccuracyPValueSD McnemarPValueSD PositiveSD NegativeSD
-      m1.1             NA               NA              NA         NA         NA
-      m2.1             NA               NA              NA         NA         NA
-           True PositiveSD False PositiveSD True NegativeSD False NegativeSD
-      m1.1              NA               NA              NA               NA
-      m2.1              NA               NA              NA               NA
+           True Positive False Positive True Negative False Negative   CBI pAUC
+      m1.1            18              3             2              8 0.462  NaN
+      m2.1            14              0             4              7 0.400  NaN
+           Omission_10pct ROCSD TSSSD SensitivitySD SpecificitySD Pos Pred ValueSD
+      m1.1          0.100    NA    NA            NA            NA               NA
+      m2.1          0.143    NA    NA            NA            NA               NA
+           Neg Pred ValueSD PrecisionSD RecallSD F1SD PrevalenceSD Detection RateSD
+      m1.1               NA          NA       NA   NA           NA               NA
+      m2.1               NA          NA       NA   NA           NA               NA
+           Detection PrevalenceSD Balanced AccuracySD AccuracySD KappaSD
+      m1.1                     NA                  NA         NA      NA
+      m2.1                     NA                  NA         NA      NA
+           AccuracyLowerSD AccuracyUpperSD AccuracyNullSD AccuracyPValueSD
+      m1.1              NA              NA             NA               NA
+      m2.1              NA              NA             NA               NA
+           McnemarPValueSD PositiveSD NegativeSD True PositiveSD False PositiveSD
+      m1.1              NA         NA         NA              NA               NA
+      m2.1              NA         NA         NA              NA               NA
+           True NegativeSD False NegativeSD CBISD pAUCSD Omission_10pctSD
+      m1.1              NA               NA    NA     NA               NA
+      m2.1              NA               NA    NA     NA               NA
       
       $`Araucaria angustifolia`
                   algo       ROC       TSS Sensitivity Specificity Pos Pred Value
@@ -316,24 +319,27 @@
            AccuracyUpper AccuracyNull AccuracyPValue McnemarPValue Positive Negative
       m1.1         0.987        0.942          0.326         0.724      161       10
       m2.1         0.966        0.945          0.882         0.773      156        9
-           True Positive False Positive True Negative False Negative ROCSD TSSSD
-      m1.1           160              3             5              5    NA    NA
-      m2.1           149              7             5              5    NA    NA
-           SensitivitySD SpecificitySD Pos Pred ValueSD Neg Pred ValueSD PrecisionSD
-      m1.1            NA            NA               NA               NA          NA
-      m2.1            NA            NA               NA               NA          NA
-           RecallSD F1SD PrevalenceSD Detection RateSD Detection PrevalenceSD
-      m1.1       NA   NA           NA               NA                     NA
-      m2.1       NA   NA           NA               NA                     NA
-           Balanced AccuracySD AccuracySD KappaSD AccuracyLowerSD AccuracyUpperSD
-      m1.1                  NA         NA      NA              NA              NA
-      m2.1                  NA         NA      NA              NA              NA
-           AccuracyNullSD AccuracyPValueSD McnemarPValueSD PositiveSD NegativeSD
-      m1.1             NA               NA              NA         NA         NA
-      m2.1             NA               NA              NA         NA         NA
-           True PositiveSD False PositiveSD True NegativeSD False NegativeSD
-      m1.1              NA               NA              NA               NA
-      m2.1              NA               NA              NA               NA
+           True Positive False Positive True Negative False Negative   CBI pAUC
+      m1.1           160              3             5              5 0.304  NaN
+      m2.1           149              7             5              5 0.495  NaN
+           Omission_10pct ROCSD TSSSD SensitivitySD SpecificitySD Pos Pred ValueSD
+      m1.1          0.075    NA    NA            NA            NA               NA
+      m2.1          0.083    NA    NA            NA            NA               NA
+           Neg Pred ValueSD PrecisionSD RecallSD F1SD PrevalenceSD Detection RateSD
+      m1.1               NA          NA       NA   NA           NA               NA
+      m2.1               NA          NA       NA   NA           NA               NA
+           Detection PrevalenceSD Balanced AccuracySD AccuracySD KappaSD
+      m1.1                     NA                  NA         NA      NA
+      m2.1                     NA                  NA         NA      NA
+           AccuracyLowerSD AccuracyUpperSD AccuracyNullSD AccuracyPValueSD
+      m1.1              NA              NA             NA               NA
+      m2.1              NA              NA             NA               NA
+           McnemarPValueSD PositiveSD NegativeSD True PositiveSD False PositiveSD
+      m1.1              NA         NA         NA              NA               NA
+      m2.1              NA         NA         NA              NA               NA
+           True NegativeSD False NegativeSD CBISD pAUCSD Omission_10pctSD
+      m1.1              NA               NA    NA     NA               NA
+      m2.1              NA               NA    NA     NA               NA
       
 
 ---
@@ -363,24 +369,27 @@
            AccuracyUpper AccuracyNull AccuracyPValue McnemarPValue Positive Negative
       m1.1         0.821        0.690          0.732         0.343       20        9
       m2.1         0.925        0.609          0.264         0.074       14        9
-           True Positive False Positive True Negative False Negative ROCSD TSSSD
-      m1.1            18              3             2              8    NA    NA
-      m2.1            14              0             4              7    NA    NA
-           SensitivitySD SpecificitySD Pos Pred ValueSD Neg Pred ValueSD PrecisionSD
-      m1.1            NA            NA               NA               NA          NA
-      m2.1            NA            NA               NA               NA          NA
-           RecallSD F1SD PrevalenceSD Detection RateSD Detection PrevalenceSD
-      m1.1       NA   NA           NA               NA                     NA
-      m2.1       NA   NA           NA               NA                     NA
-           Balanced AccuracySD AccuracySD KappaSD AccuracyLowerSD AccuracyUpperSD
-      m1.1                  NA         NA      NA              NA              NA
-      m2.1                  NA         NA      NA              NA              NA
-           AccuracyNullSD AccuracyPValueSD McnemarPValueSD PositiveSD NegativeSD
-      m1.1             NA               NA              NA         NA         NA
-      m2.1             NA               NA              NA         NA         NA
-           True PositiveSD False PositiveSD True NegativeSD False NegativeSD
-      m1.1              NA               NA              NA               NA
-      m2.1              NA               NA              NA               NA
+           True Positive False Positive True Negative False Negative   CBI pAUC
+      m1.1            18              3             2              8 0.462  NaN
+      m2.1            14              0             4              7 0.400  NaN
+           Omission_10pct ROCSD TSSSD SensitivitySD SpecificitySD Pos Pred ValueSD
+      m1.1          0.100    NA    NA            NA            NA               NA
+      m2.1          0.143    NA    NA            NA            NA               NA
+           Neg Pred ValueSD PrecisionSD RecallSD F1SD PrevalenceSD Detection RateSD
+      m1.1               NA          NA       NA   NA           NA               NA
+      m2.1               NA          NA       NA   NA           NA               NA
+           Detection PrevalenceSD Balanced AccuracySD AccuracySD KappaSD
+      m1.1                     NA                  NA         NA      NA
+      m2.1                     NA                  NA         NA      NA
+           AccuracyLowerSD AccuracyUpperSD AccuracyNullSD AccuracyPValueSD
+      m1.1              NA              NA             NA               NA
+      m2.1              NA              NA             NA               NA
+           McnemarPValueSD PositiveSD NegativeSD True PositiveSD False PositiveSD
+      m1.1              NA         NA         NA              NA               NA
+      m2.1              NA         NA         NA              NA               NA
+           True NegativeSD False NegativeSD CBISD pAUCSD Omission_10pctSD
+      m1.1              NA               NA    NA     NA               NA
+      m2.1              NA               NA    NA     NA               NA
       
       $`Araucaria angustifolia`
                   algo       ROC       TSS Sensitivity Specificity Pos Pred Value
@@ -395,24 +404,27 @@
            AccuracyUpper AccuracyNull AccuracyPValue McnemarPValue Positive Negative
       m1.1         0.987        0.942          0.326         0.724      161       10
       m2.1         0.966        0.945          0.882         0.773      156        9
-           True Positive False Positive True Negative False Negative ROCSD TSSSD
-      m1.1           160              3             5              5    NA    NA
-      m2.1           149              7             5              5    NA    NA
-           SensitivitySD SpecificitySD Pos Pred ValueSD Neg Pred ValueSD PrecisionSD
-      m1.1            NA            NA               NA               NA          NA
-      m2.1            NA            NA               NA               NA          NA
-           RecallSD F1SD PrevalenceSD Detection RateSD Detection PrevalenceSD
-      m1.1       NA   NA           NA               NA                     NA
-      m2.1       NA   NA           NA               NA                     NA
-           Balanced AccuracySD AccuracySD KappaSD AccuracyLowerSD AccuracyUpperSD
-      m1.1                  NA         NA      NA              NA              NA
-      m2.1                  NA         NA      NA              NA              NA
-           AccuracyNullSD AccuracyPValueSD McnemarPValueSD PositiveSD NegativeSD
-      m1.1             NA               NA              NA         NA         NA
-      m2.1             NA               NA              NA         NA         NA
-           True PositiveSD False PositiveSD True NegativeSD False NegativeSD
-      m1.1              NA               NA              NA               NA
-      m2.1              NA               NA              NA               NA
+           True Positive False Positive True Negative False Negative   CBI pAUC
+      m1.1           160              3             5              5 0.304  NaN
+      m2.1           149              7             5              5 0.495  NaN
+           Omission_10pct ROCSD TSSSD SensitivitySD SpecificitySD Pos Pred ValueSD
+      m1.1          0.075    NA    NA            NA            NA               NA
+      m2.1          0.083    NA    NA            NA            NA               NA
+           Neg Pred ValueSD PrecisionSD RecallSD F1SD PrevalenceSD Detection RateSD
+      m1.1               NA          NA       NA   NA           NA               NA
+      m2.1               NA          NA       NA   NA           NA               NA
+           Detection PrevalenceSD Balanced AccuracySD AccuracySD KappaSD
+      m1.1                     NA                  NA         NA      NA
+      m2.1                     NA                  NA         NA      NA
+           AccuracyLowerSD AccuracyUpperSD AccuracyNullSD AccuracyPValueSD
+      m1.1              NA              NA             NA               NA
+      m2.1              NA              NA             NA               NA
+           McnemarPValueSD PositiveSD NegativeSD True PositiveSD False PositiveSD
+      m1.1              NA         NA         NA              NA               NA
+      m2.1              NA         NA         NA              NA               NA
+           True NegativeSD False NegativeSD CBISD pAUCSD Omission_10pctSD
+      m1.1              NA               NA    NA     NA               NA
+      m2.1              NA               NA    NA     NA               NA
       
 
 ---
@@ -442,24 +454,27 @@
            AccuracyUpper AccuracyNull AccuracyPValue McnemarPValue Positive Negative
       m1.1         0.821        0.690          0.732         0.343       20        9
       m2.1         0.925        0.609          0.264         0.074       14        9
-           True Positive False Positive True Negative False Negative ROCSD TSSSD
-      m1.1            18              3             2              8    NA    NA
-      m2.1            14              0             4              7    NA    NA
-           SensitivitySD SpecificitySD Pos Pred ValueSD Neg Pred ValueSD PrecisionSD
-      m1.1            NA            NA               NA               NA          NA
-      m2.1            NA            NA               NA               NA          NA
-           RecallSD F1SD PrevalenceSD Detection RateSD Detection PrevalenceSD
-      m1.1       NA   NA           NA               NA                     NA
-      m2.1       NA   NA           NA               NA                     NA
-           Balanced AccuracySD AccuracySD KappaSD AccuracyLowerSD AccuracyUpperSD
-      m1.1                  NA         NA      NA              NA              NA
-      m2.1                  NA         NA      NA              NA              NA
-           AccuracyNullSD AccuracyPValueSD McnemarPValueSD PositiveSD NegativeSD
-      m1.1             NA               NA              NA         NA         NA
-      m2.1             NA               NA              NA         NA         NA
-           True PositiveSD False PositiveSD True NegativeSD False NegativeSD
-      m1.1              NA               NA              NA               NA
-      m2.1              NA               NA              NA               NA
+           True Positive False Positive True Negative False Negative   CBI pAUC
+      m1.1            18              3             2              8 0.462  NaN
+      m2.1            14              0             4              7 0.400  NaN
+           Omission_10pct ROCSD TSSSD SensitivitySD SpecificitySD Pos Pred ValueSD
+      m1.1          0.100    NA    NA            NA            NA               NA
+      m2.1          0.143    NA    NA            NA            NA               NA
+           Neg Pred ValueSD PrecisionSD RecallSD F1SD PrevalenceSD Detection RateSD
+      m1.1               NA          NA       NA   NA           NA               NA
+      m2.1               NA          NA       NA   NA           NA               NA
+           Detection PrevalenceSD Balanced AccuracySD AccuracySD KappaSD
+      m1.1                     NA                  NA         NA      NA
+      m2.1                     NA                  NA         NA      NA
+           AccuracyLowerSD AccuracyUpperSD AccuracyNullSD AccuracyPValueSD
+      m1.1              NA              NA             NA               NA
+      m2.1              NA              NA             NA               NA
+           McnemarPValueSD PositiveSD NegativeSD True PositiveSD False PositiveSD
+      m1.1              NA         NA         NA              NA               NA
+      m2.1              NA         NA         NA              NA               NA
+           True NegativeSD False NegativeSD CBISD pAUCSD Omission_10pctSD
+      m1.1              NA               NA    NA     NA               NA
+      m2.1              NA               NA    NA     NA               NA
       
 
 ---
@@ -489,23 +504,26 @@
            AccuracyUpper AccuracyNull AccuracyPValue McnemarPValue Positive Negative
       m1.1         0.987        0.942          0.326         0.724      161       10
       m2.1         0.966        0.945          0.882         0.773      156        9
-           True Positive False Positive True Negative False Negative ROCSD TSSSD
-      m1.1           160              3             5              5    NA    NA
-      m2.1           149              7             5              5    NA    NA
-           SensitivitySD SpecificitySD Pos Pred ValueSD Neg Pred ValueSD PrecisionSD
-      m1.1            NA            NA               NA               NA          NA
-      m2.1            NA            NA               NA               NA          NA
-           RecallSD F1SD PrevalenceSD Detection RateSD Detection PrevalenceSD
-      m1.1       NA   NA           NA               NA                     NA
-      m2.1       NA   NA           NA               NA                     NA
-           Balanced AccuracySD AccuracySD KappaSD AccuracyLowerSD AccuracyUpperSD
-      m1.1                  NA         NA      NA              NA              NA
-      m2.1                  NA         NA      NA              NA              NA
-           AccuracyNullSD AccuracyPValueSD McnemarPValueSD PositiveSD NegativeSD
-      m1.1             NA               NA              NA         NA         NA
-      m2.1             NA               NA              NA         NA         NA
-           True PositiveSD False PositiveSD True NegativeSD False NegativeSD
-      m1.1              NA               NA              NA               NA
-      m2.1              NA               NA              NA               NA
+           True Positive False Positive True Negative False Negative   CBI pAUC
+      m1.1           160              3             5              5 0.304  NaN
+      m2.1           149              7             5              5 0.495  NaN
+           Omission_10pct ROCSD TSSSD SensitivitySD SpecificitySD Pos Pred ValueSD
+      m1.1          0.075    NA    NA            NA            NA               NA
+      m2.1          0.083    NA    NA            NA            NA               NA
+           Neg Pred ValueSD PrecisionSD RecallSD F1SD PrevalenceSD Detection RateSD
+      m1.1               NA          NA       NA   NA           NA               NA
+      m2.1               NA          NA       NA   NA           NA               NA
+           Detection PrevalenceSD Balanced AccuracySD AccuracySD KappaSD
+      m1.1                     NA                  NA         NA      NA
+      m2.1                     NA                  NA         NA      NA
+           AccuracyLowerSD AccuracyUpperSD AccuracyNullSD AccuracyPValueSD
+      m1.1              NA              NA             NA               NA
+      m2.1              NA              NA             NA               NA
+           McnemarPValueSD PositiveSD NegativeSD True PositiveSD False PositiveSD
+      m1.1              NA         NA         NA              NA               NA
+      m2.1              NA         NA         NA              NA               NA
+           True NegativeSD False NegativeSD CBISD pAUCSD Omission_10pctSD
+      m1.1              NA               NA    NA     NA               NA
+      m2.1              NA               NA    NA     NA               NA
       
 

@@ -26,4 +26,4 @@
 
 -   Inclusion of MaxEnt and Mahalanobis Distance directly on caretSDM. 
 -   Pseudoabsences can now be retrieved outside a buffer. 
--   Inclusion of functions: correlate_sdm and tuneGrid_sdm.
+-   Inclusion of functions: correlate_sdm, prediction_change_sdm and tuneGrid_sdm.

@@ -55,7 +55,7 @@
 #' # Predict models:
 #' i  <- predict_sdm(i, th=0.8)
 #'
-#' #' # Ensemble GCMs:
+#' # Ensemble GCMs:
 #' i <- gcms_ensembles(i, gcms = c("ca", "mi"))
 #' i
 #'

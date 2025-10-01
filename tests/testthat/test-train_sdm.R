@@ -244,7 +244,8 @@ test_that("mahal.dist train", {
   i2 <- train_sdm(i,
                  algo = mahal.custom,
                  variables_selected = c("bio1", "bio4", "bio12"), # Using only two variables for simplicity
-                 ctrl = ctrl_sdm)
+                 ctrl = ctrl_sdm) |>
+    suppressWarnings()
   expect_true("models" %in% names(i2))
   expect_equal(10, get_tune_length(i2))
   expect_equal(c("mahal.custom"), algorithms_used(i2))
