@@ -52,7 +52,7 @@ plot_occurrences <- function(i, spp_name = NULL, pa = TRUE, pa_id = 1) {
   assert_subset_cli(spp_name, species_names(i))
   assert_logical_cli(pa)
   assert_numeric_cli(pa_id)
-  assert_subset_cli("occurrences", names(i))
+  assert_names_cli(names(i), must.include = "occurrences")
   if(is_input_sdm(i)){
       return(plot(i$occurrences, spp_name, pa, pa_id))
   } else if (is_occurrences(i)){
@@ -148,7 +148,7 @@ plot_scenarios <- function(i, variables_selected = NULL, scenario = NULL) {
   assert_subset_cli(class(i), c("sdm_area", "input_sdm"))
   assert_subset_cli(variables_selected, c(get_predictor_names(i), "vif", "pca"))
   assert_subset_cli(scenario, scenarios_names(i))
-  assert_subset_cli("predictors", names(i))
+  assert_names_cli(names(i), must.include = "predictors")
   return(plot(i$scenarios, variables_selected, scenario))
 }
 
@@ -241,7 +241,7 @@ plot_predictions <- function(i, spp_name = NULL, scenario = NULL, id = NULL, ens
                              ensemble_type = "mean_occ_prob") {
   assert_class_cli(i, "input_sdm")
   assert_subset_cli(spp_name, species_names(i))
-  assert_subset_cli("predictions", names(i))
+  assert_names_cli(names(i), must.include = "predictions")
   return(plot(i$predictions, spp_name, scenario, id, ensemble, ensemble_type))
 }
 
@@ -344,7 +344,7 @@ mapview_occurrences <- function(i, spp_name = NULL, pa = TRUE) {
   assert_subset_cli(class(i), c("occurrences", "input_sdm"))
   assert_subset_cli(spp_name, species_names(i))
   assert_logical_cli(pa)
-  assert_subset_cli("occurrences", names(i))
+  assert_names_cli(names(i), must.include = "occurrences")
 
   if(is_input_sdm(i)) {
     x <- i$occurrences
@@ -502,6 +502,7 @@ plot_niche <- function(i, spp_name = NULL, variables_selected = NULL, scenario =
   assert_logical_cli(ensemble)
   assert_logical_cli(raster)
   ens <- ifelse(ensemble, "ensembles", "predictions")
+  assert_names_cli(names(i), must.include = "predictions")
   assert_class_cli(i$predictions, "predictions")
 
   if (ensemble) {
