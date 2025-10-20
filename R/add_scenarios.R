@@ -135,6 +135,9 @@ add_scenarios.stars <- function(sa, scen=NULL, scenarios_names = NULL, pred_as_s
 
   if(!is.null(crop_area)){
     assert_class_cli(crop_area, "sf")
+    if(sf::st_crs(scen) != sf::st_crs(crop_area)) {
+      crop_area <- sf::st_transform(crop_area, sf::st_crs(scen))
+    }
     scen <- sf::st_crop(scen, crop_area)
   }
 

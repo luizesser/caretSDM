@@ -31,3 +31,7 @@
 # caretSDM 1.2.1
 
 -   A error on plots assertion was corrected to better describe assertion problems.
+
+# caretSDM 1.2.2
+
+-   A CRS correction for add_scenarios function was missing for the crop_area parameter.

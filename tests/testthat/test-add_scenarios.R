@@ -344,3 +344,17 @@ test_that("add_scenarios", {
   expect_equal(class(scenarios$a), c("sf", "data.frame"))
   expect_null(get_scenarios_data(occ))
 })
+
+test_that("add_scenarios - crop_area with different crs", {
+  bioc <- bioc[,,,c(1,3)]
+  parana2 <- sf::st_transform(parana, 6933)
+  expect_true(sf::st_crs(parana2) != sf::st_crs(scen))
+  sa_pred <- add_scenarios(sa, scen, crop_area = parana2)
+  expect_equal(
+    scenarios_names(sa_pred),
+    c("ca_ssp245_2090", "ca_ssp585_2090", "mi_ssp245_2090", "mi_ssp585_2090", "current")
+  )
+  expect_true(sum(na.omit(as.data.frame(bioc))$band == "bio1") > sa_pred$scenarios$data$current |> nrow())
+  expect_true(sum(na.omit(as.data.frame(scen["ca_ssp245_2090"]))$band == "bio1") >
+                sa_pred$scenarios$data$ca_ssp245_2090 |> nrow())
+})
