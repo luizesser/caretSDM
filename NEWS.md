@@ -35,3 +35,7 @@
 # caretSDM 1.2.2
 
 -   A CRS correction for add_scenarios function was missing for the crop_area parameter.
+
+# caretSDM 1.2.3
+
+-   There was a problem with add_scenarios function when adding a stars with a crop_by.

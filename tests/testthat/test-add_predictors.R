@@ -1,3 +1,5 @@
+# incluir teste testado argumento variables_selected
+
 if (fs::dir_exists(here::here("tests", "testthat", "testdata"))) {
   pr_stars <-
     here::here("tests", "testthat", "testdata", "parana.tiff") |>

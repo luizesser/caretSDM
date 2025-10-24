@@ -50,7 +50,7 @@
 #' # Create sdm_area using a subset of rivs (lines):
 #' sa_rivers <- sdm_area(rivs[c(1:100),], cell_size = 100000, crs = 6933, lines_as_sdm_area = TRUE)
 #'
-#' @importFrom stars st_as_stars read_stars write_stars st_dimensions
+#' @importFrom stars st_as_stars read_stars write_stars st_dimensions st_warp
 #' @importFrom sf st_crs st_read st_bbox st_as_sf gdal_utils st_crop st_make_valid st_transform
 #' st_write st_intersects st_length st_intersection st_join st_area sf_extSoftVersion
 #' st_geometry_type st_as_sfc st_centroid st_geometry st_drop_geometry st_cast
@@ -122,30 +122,6 @@ sdm_area <- function(x, cell_size = NULL, crs = NULL, variables_selected = NULL,
     len = 1,
     null.ok = FALSE
   )
-
-  if (!is.null(crop_by)) {
-    assert_class_cli(
-      try(sf::st_bbox(crop_by), silent = TRUE),
-      classes = "bbox",
-      null.ok = FALSE,
-      .var.name = "crop_by"
-    )
-    if (is.null(crs)){
-      if (sf::st_crs(x) != sf::st_crs(crop_by)){
-        cli::cli_abort(
-          c(
-            "x" = "The CRS of crop_by must be equal to CRS of x."
-          ))
-      }
-    } else {
-      if (sf::st_crs(crs) != sf::st_crs(crop_by)){
-        cli::cli_abort(
-          c(
-            "x" = "The CRS of crop_by must be equal to CRS of parameter crs."
-          ))
-      }
-    }
-  }
 
   UseMethod("sdm_area")
 }
@@ -245,6 +221,32 @@ sdm_area.stars <- function(x, cell_size = NULL, crs = NULL, variables_selected =
 
   if (is.na(crs) || is.na(crs$input)){
     cli_abort(c("x" = "crs is invalid."))
+  }
+
+
+  if (!is.null(crop_by)) {
+    assert_class_cli(
+      try(sf::st_bbox(crop_by), silent = TRUE),
+      classes = "bbox",
+      null.ok = FALSE,
+      .var.name = "crop_by"
+    )
+    if (is.null(crs)){
+      if (sf::st_crs(x) != sf::st_crs(crop_by)){
+        cli::cli_abort(
+          c(
+            "x" = "The CRS of crop_by must be equal to CRS of x."
+          ))
+      }
+    } else {
+      if (sf::st_crs(crs) != sf::st_crs(crop_by)){
+        #crop_by <- sf::st_transform(crop_by, crs = sf::st_crs(crs))
+        cli::cli_abort(
+          c(
+            "x" = "The CRS of crop_by must be equal to CRS of parameter crs."
+          ))
+      }
+    }
   }
 
   if (.is_gdal_installed() && gdal){
@@ -364,8 +366,15 @@ sdm_area.stars <- function(x, cell_size = NULL, crs = NULL, variables_selected =
             "-ot", "Float32"
           )
           if (!is.null(crop_by)){
+            ## Write crop_by to a temporary file
+            #temp_shp <- tempfile(fileext = ".gpkg")
+            #sf::st_write(crop_by, temp_shp, quiet = TRUE)
+
             options <- c(
               options,
+              #"-cutline", temp_shp,
+              #"-crop_to_cutline",
+              #"-wo", "CUTLINE_ALL_TOUCHED=TRUE",  # Include partially covered cells
               "-te", c(sf::st_bbox(crop_by) |> methods::as("vector"))
             )
           }
@@ -421,7 +430,7 @@ sdm_area.stars <- function(x, cell_size = NULL, crs = NULL, variables_selected =
 
 .sdm_area_from_stars_using_stars <- function(x, cell_size = NULL, crs = NULL, crop_by = NULL) {
   if (sf::st_crs(crs) != sf::st_crs(x)) {
-    x <- sf::st_transform(x, sf::st_crs(crs))
+    x <- stars::st_warp(x, crs = sf::st_crs(crs))
   }
 
   x <- x |>
@@ -431,7 +440,7 @@ sdm_area.stars <- function(x, cell_size = NULL, crs = NULL, variables_selected =
   if (!is.null(crop_by)){
     suppressWarnings(
       tmp_x <- x |>
-        sf::st_crop(crop_by |> sf::st_bbox())
+        sf::st_crop(crop_by)# |> sf::st_bbox())
     )
     if (nrow(tmp_x) > 0) {
       x <- tmp_x

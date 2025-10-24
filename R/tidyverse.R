@@ -20,7 +20,7 @@
 #' # Include predictors:
 #' sa <- add_predictors(sa, bioc) |> select_predictors(c("bio1", "bio4", "bio12"))
 #'
-#' @importFrom dplyr select relocate mutate filter
+#' @importFrom dplyr select relocate mutate filter all_of
 #'
 #' @global species
 #'
@@ -35,7 +35,7 @@ select_predictors <- function(x, ...) {
 select.sdm_area <- function(.data, ...){
   x <- .data
   .check_sdm_area(x)
-  grd <- dplyr::select(x$grid, ...)
+  grd <- dplyr::select(x$grid, dplyr::all_of(...))
   grd_col_names <- colnames(grd)
   if (!("cell_id" %in% grd_col_names)) {
     grd[["cell_id"]] <- x$grid[["cell_id"]]
@@ -67,7 +67,7 @@ select.input_sdm <- function(.data, ...){
   i <- x
   x <- x$predictors
   .check_sdm_area(x)
-  grd <- dplyr::select(x$grid, ...)
+  grd <- dplyr::select(x$grid, dplyr::all_of(...))
   grd_col_names <- colnames(grd)
   if (!("cell_id" %in% grd_col_names)) {
     grd[["cell_id"]] <- x$grid[["cell_id"]]
@@ -79,7 +79,7 @@ select.input_sdm <- function(.data, ...){
   if("scenarios" %in% names(i)){
     .check_sdm_area(i$scenarios)
     i$scenarios$data <- sapply(i$scenarios$data, function(y) {
-      grd <- dplyr::select(y, ...)
+      grd <- dplyr::select(y, dplyr::all_of(...))
       grd_col_names <- colnames(grd)
       if (!("cell_id" %in% grd_col_names)) {
         grd[["cell_id"]] <- y[["cell_id"]]

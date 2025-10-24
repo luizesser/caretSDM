@@ -88,7 +88,7 @@
                 caretSDM         
       ...........................
       Class                     : sdm_area
-      Extent                    : -5286881 -3291876 -4586881 -2691876 (xmin, xmax, ymin, ymax)
+      Extent                    : -5288678 -3292030 -4588678 -2692030 (xmin, xmax, ymin, ymax)
       CRS                       : EPSG:6933 
       Resolution                : (1e+05, 1e+05) (x, y)
       Number of Predictors      : 2 

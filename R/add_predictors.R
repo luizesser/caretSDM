@@ -56,8 +56,7 @@ add_predictors <- function(sa, pred, variables_selected = NULL, gdal = TRUE) {
     check_character_cli(
       variables_selected,
       unique = TRUE,
-      null.ok = TRUE,
-      len = 1
+      null.ok = TRUE
     )
   )
   assert_logical_cli(
