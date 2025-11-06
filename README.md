@@ -1,7 +1,7 @@
 # caretSDM
 
 <!-- badges: start -->
-
+[![CRAN downloads](https://cranlogs.r-pkg.org/badges/caretSDM)](https://cran.r-project.org/package=caretSDM)
 [![R-CMD-check](https://github.com/luizesser/chooseGCM/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/luizesser/chooseGCM/actions/workflows/R-CMD-check.yaml)
 [![CRAN status](https://www.r-pkg.org/badges/version/caretSDM)](https://CRAN.R-project.org/package=caretSDM)
 [![Codecov test coverage](https://app.codecov.io/gh/luizesser/caretSDM/graph/badge.svg)](https://app.codecov.io/gh/luizesser/caretSDM)
