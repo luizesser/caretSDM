@@ -25,7 +25,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">caretSDM</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.2.3</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.2.4</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -68,7 +68,7 @@
       <img src="../logo.png" class="logo" alt=""><h1>Adding New Algorithms to caretSDM</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/luizesser/caretSDM/blob/v1.2.3/vignettes/articles/Add-Algorithm.Rmd" class="external-link"><code>vignettes/articles/Add-Algorithm.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/luizesser/caretSDM/blob/main/vignettes/articles/Add-Algorithm.Rmd" class="external-link"><code>vignettes/articles/Add-Algorithm.Rmd</code></a></small>
       <div class="d-none name"><code>Add-Algorithm.Rmd</code></div>
     </div>
 
@@ -584,7 +584,7 @@ passed to <code>algo</code>:</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/pdp_sdm.html">pdp_sdm</a></span><span class="op">(</span><span class="va">i</span><span class="op">)</span></span>
 <span><span class="co">#&gt; `geom_smooth()` using method = 'loess' and formula = 'y ~ x'</span></span></code></pre></div>
-<p><img src="Add-Algorithm_files/figure-html/pdp-1.png" width="700"></p>
+<p><img src="Add-Algorithm_files/figure-html/pdp-1.png" class="r-plt" width="700"></p>
 </div>
 <div class="section level3">
 <h3 id="comparing-both-results">2. Comparing both results<a class="anchor" aria-label="anchor" href="#comparing-both-results"></a>
@@ -697,7 +697,7 @@ build models using the mahal.dismo method.</p>
 <span><span class="co">#&gt; [1] "Ensembling..."</span></span>
 <span><span class="co">#&gt; [1] "current"</span></span>
 <span><span class="co">#&gt; [1] "Araucaria angustifolia"</span></span></code></pre></div>
-<p><img src="Add-Algorithm_files/figure-html/mahal.dismo_plot-1.png" width="700"></p>
+<p><img src="Add-Algorithm_files/figure-html/mahal.dismo_plot-1.png" class="r-plt" width="700"></p>
 <p>Plotting the result of mahal.custom.</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">i</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/add_scenarios.html">add_scenarios</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/predict_sdm.html">predict_sdm</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/plot_occurrences.html">plot_predictions</a></span><span class="op">(</span><span class="op">)</span></span>
@@ -705,7 +705,7 @@ build models using the mahal.dismo method.</p>
 <span><span class="co">#&gt; [1] "Ensembling..."</span></span>
 <span><span class="co">#&gt; [1] "current"</span></span>
 <span><span class="co">#&gt; [1] "Araucaria angustifolia"</span></span></code></pre></div>
-<p><img src="Add-Algorithm_files/figure-html/mahal.custom_plot-1.png" width="700"></p>
+<p><img src="Add-Algorithm_files/figure-html/mahal.custom_plot-1.png" class="r-plt" width="700"></p>
 </div>
 </div>
 <div class="section level2">
@@ -732,7 +732,7 @@ and reproducible environment of <code>caretSDM</code>.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
     </footer>

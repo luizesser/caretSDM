@@ -25,7 +25,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">caretSDM</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.2.3</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.2.4</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -68,7 +68,7 @@
       <img src="../logo.png" class="logo" alt=""><h1>Projecting Non-native Distribution using SDMs</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/luizesser/caretSDM/blob/v1.2.3/vignettes/articles/InvasiveSpp.Rmd" class="external-link"><code>vignettes/articles/InvasiveSpp.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/luizesser/caretSDM/blob/main/vignettes/articles/InvasiveSpp.Rmd" class="external-link"><code>vignettes/articles/InvasiveSpp.Rmd</code></a></small>
       <div class="d-none name"><code>InvasiveSpp.Rmd</code></div>
     </div>
 
@@ -256,7 +256,7 @@ available in caretSDM as the <code>parana</code> object (see
 <span><span class="co">#&gt; 1   19        41  PARANA       PR MULTIPOLYGON (((-52.06416 -...</span></span></code></pre></div>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">parana</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/tidyverse-methods.html">select_predictors</a></span><span class="op">(</span><span class="va">NOMEUF2</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/base/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<p><img src="InvasiveSpp_files/figure-html/parana_view-1.png" width="700"></p>
+<p><img src="InvasiveSpp_files/figure-html/parana_view-1.png" class="r-plt" width="700"></p>
 <p>The <code>sdm_area</code> function is responsible to create a grid to
 build models, a key aspect of caretSDM workflow. With a grid built,
 modelers can pass multiple rasters with different resolutions, CRSs and
@@ -310,7 +310,7 @@ them further. You can explore the grid generated and stored in the
 <code><a href="../reference/plot_occurrences.html">mapview_grid()</a></code> or <code><a href="../reference/plot_occurrences.html">plot_grid()</a></code>.</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_occurrences.html">plot_grid</a></span><span class="op">(</span><span class="va">sa</span><span class="op">)</span></span></code></pre></div>
-<p><img src="InvasiveSpp_files/figure-html/plot_sdm_area-1.png" width="700"></p>
+<p><img src="InvasiveSpp_files/figure-html/plot_sdm_area-1.png" class="r-plt" width="700"></p>
 <p>Now that we have a study area, we can assign predictor variables to
 it. To do that, we use the <code>add_predictors</code> function, which
 usually will only use the fist two arguments, which are the
@@ -420,7 +420,7 @@ data).</p>
 <span><span class="co">#&gt; 6 Araucaria angustifolia POINT (-4755861 -3139607)</span></span></code></pre></div>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_occurrences.html">plot_occurrences</a></span><span class="op">(</span><span class="va">oc</span><span class="op">)</span></span></code></pre></div>
-<p><img src="InvasiveSpp_files/figure-html/plot_occurrences-1.png" width="700"></p>
+<p><img src="InvasiveSpp_files/figure-html/plot_occurrences-1.png" class="r-plt" width="700"></p>
 <p>This next step assigns occurrences into a study area, excluding
 records outside the study area or with NAs as predictors.</p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
@@ -1098,7 +1098,7 @@ above to retrieve models ids).</p>
 <span>                 id <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>                 ensemble <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>                 ensemble_type <span class="op">=</span> <span class="st">"mean_occ_prob"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="InvasiveSpp_files/figure-html/plot_current_results-1.png" width="700"></p>
+<p><img src="InvasiveSpp_files/figure-html/plot_current_results-1.png" class="r-plt" width="700"></p>
 <div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_occurrences.html">plot_predictions</a></span><span class="op">(</span><span class="va">i</span>,</span>
 <span>                 spp_name <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -1106,7 +1106,7 @@ above to retrieve models ids).</p>
 <span>                 id <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>                 ensemble <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>                 ensemble_type <span class="op">=</span> <span class="st">"mean_occ_prob"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="InvasiveSpp_files/figure-html/ssp245_2090-1.png" width="700"></p>
+<p><img src="InvasiveSpp_files/figure-html/ssp245_2090-1.png" class="r-plt" width="700"></p>
 <p>Another plot widely used in SDM studies is the Partial Dependence
 Plot, which informs the response curves to each variable. Here we are
 using PCA axes as predictors, so there is not much sense in plotting
@@ -1115,7 +1115,7 @@ these curves, but if someone want to do that, it is possible through the
 <div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/pdp_sdm.html">pdp_sdm</a></span><span class="op">(</span><span class="va">i</span><span class="op">)</span></span>
 <span><span class="co">#&gt; `geom_smooth()` using method = 'gam' and formula = 'y ~ s(x, bs = "cs")'</span></span></code></pre></div>
-<p><img src="InvasiveSpp_files/figure-html/pdp_sdm-1.png" width="700"></p>
+<p><img src="InvasiveSpp_files/figure-html/pdp_sdm-1.png" class="r-plt" width="700"></p>
 </div>
 <div class="section level3">
 <h3 id="writing-results">Writing results<a class="anchor" aria-label="anchor" href="#writing-results"></a>
@@ -1144,7 +1144,7 @@ simplefeatures object instead of cells in a grid.</p>
 <div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">end_time</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">end_time</span> <span class="op">-</span> <span class="va">start_time</span></span>
-<span><span class="co">#&gt; Time difference of 1.895055 mins</span></span></code></pre></div>
+<span><span class="co">#&gt; Time difference of 1.875676 mins</span></span></code></pre></div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>
@@ -1157,7 +1157,7 @@ simplefeatures object instead of cells in a grid.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
     </footer>

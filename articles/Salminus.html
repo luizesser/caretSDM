@@ -25,7 +25,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">caretSDM</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.2.3</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.2.4</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -68,7 +68,7 @@
       <img src="../logo.png" class="logo" alt=""><h1>Modeling Species Distributions in Continental Water Bodies</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/luizesser/caretSDM/blob/v1.2.3/vignettes/articles/Salminus.Rmd" class="external-link"><code>vignettes/articles/Salminus.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/luizesser/caretSDM/blob/main/vignettes/articles/Salminus.Rmd" class="external-link"><code>vignettes/articles/Salminus.Rmd</code></a></small>
       <div class="d-none name"><code>Salminus.Rmd</code></div>
     </div>
 
@@ -209,7 +209,7 @@ the data)..</p>
 <span><span class="co">#&gt; 10     11.24     2320.3 LINESTRING (-51.93542 -22.5...</span></span></code></pre></div>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">rivs</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/tidyverse-methods.html">select_predictors</a></span><span class="op">(</span><span class="va">LENGTH_KM</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/base/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<p><img src="Salminus_files/figure-html/rivs_view-1.png" width="700"></p>
+<p><img src="Salminus_files/figure-html/rivs_view-1.png" class="r-plt" width="700"></p>
 <p>The <code>sdm_area</code> function is responsible to create a grid to
 build models, a key aspect of caretSDM workflow. With a grid built,
 modelers can pass multiple rasters with different resolutions, CRSs and
@@ -275,7 +275,7 @@ distribution. You can explore the grid generated and stored in the
 function used here is the same to plot grids and lines.</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_occurrences.html">plot_grid</a></span><span class="op">(</span><span class="va">sa</span><span class="op">)</span></span></code></pre></div>
-<p><img src="Salminus_files/figure-html/plot_sdm_area-1.png" width="700"></p>
+<p><img src="Salminus_files/figure-html/plot_sdm_area-1.png" class="r-plt" width="700"></p>
 <p>Now that we have a study area, we can assign predictor variables to
 it. To do that, we use the <code>add_predictors</code> function, which
 usually will only use the fist two arguments, which are the
@@ -421,7 +421,7 @@ data).</p>
 <span><span class="co">#&gt; 6 Salminus brasiliensis POINT (-5172118 -3156734)</span></span></code></pre></div>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_occurrences.html">plot_occurrences</a></span><span class="op">(</span><span class="va">oc</span><span class="op">)</span></span></code></pre></div>
-<p><img src="Salminus_files/figure-html/plot_occurrences-1.png" width="700"></p>
+<p><img src="Salminus_files/figure-html/plot_occurrences-1.png" class="r-plt" width="700"></p>
 <p>This next step assigns occurrences into a study area, excluding
 records outside the study area or with NAs as predictors. When
 <code>sdm_area</code> is a grid, it will assign records to each cell.
@@ -1118,7 +1118,7 @@ above to retrieve models ids).</p>
 <span>                 id <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>                 ensemble <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>                 ensemble_type <span class="op">=</span> <span class="st">"mean_occ_prob"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="Salminus_files/figure-html/plot_current_results-1.png" width="700"></p>
+<p><img src="Salminus_files/figure-html/plot_current_results-1.png" class="r-plt" width="700"></p>
 <div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_occurrences.html">plot_predictions</a></span><span class="op">(</span><span class="va">i</span>,</span>
 <span>                 spp_name <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -1126,7 +1126,7 @@ above to retrieve models ids).</p>
 <span>                 id <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>                 ensemble <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>                 ensemble_type <span class="op">=</span> <span class="st">"mean_occ_prob"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="Salminus_files/figure-html/ssp245_2090-1.png" width="700"></p>
+<p><img src="Salminus_files/figure-html/ssp245_2090-1.png" class="r-plt" width="700"></p>
 <p>Another plot widely used in SDM studies is the Partial Dependence
 Plot, which informs the response curves to each variable. In
 <code>caretSDM</code> these plots can be plotted using the
@@ -1134,7 +1134,7 @@ Plot, which informs the response curves to each variable. In
 <div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/pdp_sdm.html">pdp_sdm</a></span><span class="op">(</span><span class="va">i</span><span class="op">)</span></span>
 <span><span class="co">#&gt; `geom_smooth()` using method = 'loess' and formula = 'y ~ x'</span></span></code></pre></div>
-<p><img src="Salminus_files/figure-html/pdp_sdm-1.png" width="700"></p>
+<p><img src="Salminus_files/figure-html/pdp_sdm-1.png" class="r-plt" width="700"></p>
 </div>
 <div class="section level3">
 <h3 id="writting-results">Writting results<a class="anchor" aria-label="anchor" href="#writting-results"></a>
@@ -1164,7 +1164,7 @@ instead of lines.</p>
 <div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">end_time</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">end_time</span> <span class="op">-</span> <span class="va">start_time</span></span>
-<span><span class="co">#&gt; Time difference of 2.100497 mins</span></span></code></pre></div>
+<span><span class="co">#&gt; Time difference of 2.083683 mins</span></span></code></pre></div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>
@@ -1177,7 +1177,7 @@ instead of lines.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
     </footer>
