@@ -45,6 +45,7 @@
 #' i <- input_sdm(oc, sa)
 #'
 #' @importFrom stats sd
+#' @importFrom cli cli_abort
 #'
 #' @export
 input_sdm <- function(...) {
@@ -55,9 +56,19 @@ input_sdm <- function(...) {
 
 .input_sdm <- function(x) {
   classes <- lapply(x, class)
+  if (!length(unique(classes)) == length(classes)){
+    cli::cli_abort(c("x" = "There are two objects or more with the same class.",
+                     "i" = "Provide only unique object classes."))
+  }
   l <- list()
   if ("occurrences" %in% classes) {
-    l$occurrences <- x[classes %in% "occurrences"][[1]]
+    if("sdm_area" %in% classes &
+       "cell_id" %in% colnames(x[classes %in% "occurrences"][[1]]$occurrences)) {
+      l$occurrences <- x[classes %in% "occurrences"][[1]]
+    } else {
+      l$occurrences <- join_area(x[classes %in% "occurrences"][[1]],
+                                 x[classes %in% "sdm_area"][[1]])
+    }
   }
   if ("sdm_area" %in% classes) {
     sa <- x[classes %in% "sdm_area"][[1]]

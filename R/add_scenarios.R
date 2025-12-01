@@ -94,6 +94,37 @@ add_scenarios.NULL <- function(sa, scen = NULL, scenarios_names = NULL, pred_as_
 }
 
 #' @export
+add_scenarios.character <- function(sa, scen = NULL, scenarios_names = NULL, pred_as_scen = TRUE,
+                               variables_selected = NULL, stationary = NULL, crop_area = NULL) {
+  # check folder or document
+  #scen = "/Users/luizesser/Documents/Mapas/Rasters/WorldClim 2.1/future_10m"
+  if(checkmate::testDirectory(scen)) {
+    files <- list.files(scen, pattern = ".tif", full.names = TRUE)
+  } else if(checkmate::testFile(scen, extension = ".tif")) {
+    files <- scen
+  } else {
+    stop()
+  }
+
+  if(!is.null(crop_area)) {
+    s <- stars::read_stars(files, proxy = TRUE)
+    if(sf::st_crs(s) != sf::st_crs(crop_area)) {
+      crop_area <- sf::st_transform(crop_area, crs=sf::st_crs(s))
+      crop_area <- adjust_bbox(crop_area)   # crop/ mudar bbox
+    }
+    s <- sf::st_crop(s, crop_area)
+  } else {
+    s <- stars::read_stars(files, proxy = FALSE)
+  }
+
+  # st_warp / gdal_warp (testar presença de GDAL)
+  scen <- stars::st_as_stars(scen)
+  sa <- add_scenarios(sa, s, scenarios_names, pred_as_scen, variables_selected, stationary,
+                      crop_area)
+  return(sa)
+}
+
+#' @export
 add_scenarios.RasterStack <- function(sa, scen = NULL, scenarios_names = NULL, pred_as_scen = TRUE,
                                       variables_selected = NULL, stationary = NULL,
                                       crop_area = NULL) {

@@ -39,3 +39,7 @@
 # caretSDM 1.2.3
 
 -   There was a problem with add_scenarios function when adding a stars with a crop_by.
+
+# caretSDM 1.2.4
+
+-   input_sdm now checks if user passed occurrences to join_area.
