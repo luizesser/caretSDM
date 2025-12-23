@@ -1,5 +1,5 @@
 
-set.seed(1)
+set.seed(2)
 sa <- sdm_area(parana, 100000, crs=6933)
 sa <- add_predictors(sa, bioc)
 sa <- select_predictors(sa, c("bio1", "bio12"))
@@ -100,7 +100,7 @@ test_that("train_sdm - selecting vars", {
 })
 
 test_that("train_sdm - ESM", {
-  set.seed(1)
+  set.seed(2)
   sa <- sdm_area(parana, 100000, crs=6933)
   sa <- add_predictors(sa, bioc)
   sa <- select(sa, c("bio1", "bio4", "bio12"))
@@ -261,7 +261,7 @@ test_that("mahal.dist train", {
 
 test_that("train_sdm - one species ESM", {
   skip_on_cran()
-  set.seed(1)
+  set.seed(2)
   sa <- sdm_area(parana,
                  cell_size = 25000,
                  crs = 6933,
@@ -309,7 +309,7 @@ test_that("train_sdm - one species ESM", {
 
 test_that("train_sdm - independent data", {
   skip_on_cran()
-  set.seed(1)
+  set.seed(2)
   sa <- sdm_area(parana,
                  cell_size = 25000,
                  crs = 6933,
