@@ -103,9 +103,12 @@ i  <- predict_sdm(i, th = 0.8)
 sdm_as_stars(i)
 #> stars object with 1 dimensions and 2 attributes
 #> attribute(s):
-#>                     Min.    1st Qu.     Median      Mean    3rd Qu.       Max.
-#> cell_id        2.0000000 10.5000000 19.0000000 18.677419 26.5000000 35.0000000
-#> mean_occ_prob  0.2405757  0.3470299  0.5679969  0.639218  0.9434904  0.9922233
+#>                       Min.    1st Qu.     Median       Mean    3rd Qu.
+#> cell_id        2.000000000 10.5000000 19.0000000 18.6774194 26.5000000
+#> mean_occ_prob  0.002866807  0.2308136  0.5716561  0.5970531  0.9804122
+#>                     Max.
+#> cell_id        35.000000
+#> mean_occ_prob   0.999509
 #> dimension(s):
 #>          from to                       refsys point
 #> geometry    1 31 WGS 84 / NSIDC EASE-Grid ... FALSE

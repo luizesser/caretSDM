@@ -5,7 +5,7 @@ Create buffer around records in `occ_data` to be used as study area
 ## Usage
 
 ``` r
-buffer_sdm(occ_data, size = NULL, crs = NULL)
+buffer_sdm(occ_data, size = NULL, crs = NULL, mcp = FALSE)
 ```
 
 ## Arguments
@@ -23,6 +23,11 @@ buffer_sdm(occ_data, size = NULL, crs = NULL)
 - crs:
 
   `numeric`. Indicates which EPSG it the `occ_data` in.
+
+- mcp:
+
+  `boolean`. Should the buffer be applied in each record (FALSE) or in a
+  minimum convex polygon/convex hull (TRUE)? Standard is `FALSE`.
 
 ## Value
 

@@ -100,7 +100,7 @@ i
 #> Class                         : input_sdm
 #> --------  Occurrences  --------
 #> Species Names                 : Araucaria angustifolia 
-#> Number of presences           : 418 
+#> Number of presences           : 417 
 #> --------  Predictors  ---------
 #> Number of Predictors          : 3 
 #> Predictors Names              : bio1, bio4, bio12 

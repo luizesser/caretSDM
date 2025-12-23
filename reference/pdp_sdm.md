@@ -89,15 +89,12 @@ i <- train_sdm(i, algo = c("naive_bayes"), ctrl=ctrl_sdm)
 #> Warning: Partial AUC correction not defined for ROC curves below the diagonal.
 #> Warning: Partial AUC correction not defined for ROC curves below the diagonal.
 #> Warning: Partial AUC correction not defined for ROC curves below the diagonal.
-#> Warning: Partial AUC correction not defined for ROC curves below the diagonal.
 #> Warning: There were missing values in resampled performance measures.
 #> Warning: Partial AUC correction not defined for ROC curves below the diagonal.
 #> Warning: Partial AUC correction not defined for ROC curves below the diagonal.
 #> Warning: Partial AUC correction not defined for ROC curves below the diagonal.
 #> Warning: Partial AUC correction not defined for ROC curves below the diagonal.
-#> Warning: Partial AUC correction not defined for ROC curves below the diagonal.
 #> Warning: There were missing values in resampled performance measures.
-#> Warning: Partial AUC correction not defined for ROC curves below the diagonal.
 #> Warning: Partial AUC correction not defined for ROC curves below the diagonal.
 #> Warning: Partial AUC correction not defined for ROC curves below the diagonal.
 #> Warning: Partial AUC correction not defined for ROC curves below the diagonal.
@@ -116,7 +113,7 @@ get_pdp_sdm(i)
 #>  2 m1.1  0.981 bio1      16.9
 #>  3 m1.1  0.990 bio1      17.1
 #>  4 m1.1  0.992 bio1      17.4
-#>  5 m1.1  0.989 bio1      17.7
+#>  5 m1.1  0.988 bio1      17.7
 #>  6 m1.1  0.973 bio1      17.9
 #>  7 m1.1  0.951 bio1      18.2
 #>  8 m1.1  0.962 bio1      18.4

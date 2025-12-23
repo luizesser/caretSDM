@@ -87,8 +87,8 @@ i  <- predict_sdm(i, th = 0.8)
 # Check correlations:
 correlate_sdm(i)
 #> $`Araucaria angustifolia`
-#>      m1.1 m2.1
-#> m1.1    1    1
-#> m2.1    1    1
+#>           m1.1      m2.1
+#> m1.1 1.0000000 0.5364783
+#> m2.1 0.5364783 1.0000000
 #> 
 ```

@@ -165,11 +165,11 @@ i
 #> Class                         : input_sdm
 #> --------  Occurrences  --------
 #> Species Names                 : Araucaria angustifolia 
-#> Number of presences           : 420 
+#> Number of presences           : 419 
 #> Pseudoabsence methods         :
 #>     Method to obtain PAs      : random 
 #>     Number of PA sets         : 2 
-#>     Number of PAs in each set : 420 
+#>     Number of PAs in each set : 419 
 #> --------  Predictors  ---------
 #> Number of Predictors          : 2 
 #> Predictors Names              : bio1, bio12 
@@ -185,7 +185,7 @@ i
 #>     Metrics                   :
 #> $`Araucaria angustifolia`
 #>          algo       ROC       TSS Sensitivity Specificity
-#> 1 naive_bayes 0.8799581 0.4247848       0.974       0.451
+#> 1 naive_bayes 0.8323889 0.2460904      0.9665      0.2865
 #> 
 #> --------  Predictions  --------
 #> Ensembles                     :

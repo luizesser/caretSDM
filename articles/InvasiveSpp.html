@@ -25,7 +25,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">caretSDM</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.2.4</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.2.5</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -131,13 +131,13 @@ our study area. Note that coordinates are in a metric CRS (EPSG:
 6933).</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">occ</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt;                  species decimalLongitude decimalLatitude</span></span>
-<span><span class="co">#&gt; 1 Araucaria angustifolia         -5071809        -3259770</span></span>
-<span><span class="co">#&gt; 2 Araucaria angustifolia         -4983891        -3283348</span></span>
-<span><span class="co">#&gt; 3 Araucaria angustifolia         -4748996        -3142075</span></span>
-<span><span class="co">#&gt; 4 Araucaria angustifolia         -4883188        -3092641</span></span>
-<span><span class="co">#&gt; 5 Araucaria angustifolia         -4766386        -3227445</span></span>
-<span><span class="co">#&gt; 6 Araucaria angustifolia         -4755861        -3139607</span></span></code></pre></div>
+<span><span class="co">#&gt;                    species decimalLongitude decimalLatitude</span></span>
+<span><span class="co">#&gt; 327 Araucaria angustifolia         -4700678        -3065133</span></span>
+<span><span class="co">#&gt; 405 Araucaria angustifolia         -4711827        -3146727</span></span>
+<span><span class="co">#&gt; 404 Araucaria angustifolia         -4711885        -3147170</span></span>
+<span><span class="co">#&gt; 310 Araucaria angustifolia         -4717665        -3142767</span></span>
+<span><span class="co">#&gt; 49  Araucaria angustifolia         -4726011        -3148963</span></span>
+<span><span class="co">#&gt; 124 Araucaria angustifolia         -4727265        -3148517</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="obtaining-climatic-data">Obtaining climatic data<a class="anchor" aria-label="anchor" href="#obtaining-climatic-data"></a>
@@ -256,7 +256,7 @@ available in caretSDM as the <code>parana</code> object (see
 <span><span class="co">#&gt; 1   19        41  PARANA       PR MULTIPOLYGON (((-52.06416 -...</span></span></code></pre></div>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">parana</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/tidyverse-methods.html">select_predictors</a></span><span class="op">(</span><span class="va">NOMEUF2</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/base/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<p><img src="InvasiveSpp_files/figure-html/parana_view-1.png" class="r-plt" width="700"></p>
+<p><img src="InvasiveSpp_files/figure-html/parana_view-1.png" class="r-plt" alt="" width="700"></p>
 <p>The <code>sdm_area</code> function is responsible to create a grid to
 build models, a key aspect of caretSDM workflow. With a grid built,
 modelers can pass multiple rasters with different resolutions, CRSs and
@@ -310,7 +310,7 @@ them further. You can explore the grid generated and stored in the
 <code><a href="../reference/plot_occurrences.html">mapview_grid()</a></code> or <code><a href="../reference/plot_occurrences.html">plot_grid()</a></code>.</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_occurrences.html">plot_grid</a></span><span class="op">(</span><span class="va">sa</span><span class="op">)</span></span></code></pre></div>
-<p><img src="InvasiveSpp_files/figure-html/plot_sdm_area-1.png" class="r-plt" width="700"></p>
+<p><img src="InvasiveSpp_files/figure-html/plot_sdm_area-1.png" class="r-plt" alt="" width="700"></p>
 <p>Now that we have a study area, we can assign predictor variables to
 it. To do that, we use the <code>add_predictors</code> function, which
 usually will only use the fist two arguments, which are the
@@ -403,24 +403,24 @@ data).</p>
 <span><span class="co">#&gt; .......................</span></span>
 <span><span class="co">#&gt; Class                 : occurrences</span></span>
 <span><span class="co">#&gt; Species Names         : Araucaria angustifolia </span></span>
-<span><span class="co">#&gt; Number of presences   : 420 </span></span>
+<span><span class="co">#&gt; Number of presences   : 419 </span></span>
 <span><span class="co">#&gt; =================================</span></span>
 <span><span class="co">#&gt; Data:</span></span>
 <span><span class="co">#&gt; Simple feature collection with 6 features and 1 field</span></span>
 <span><span class="co">#&gt; Geometry type: POINT</span></span>
 <span><span class="co">#&gt; Dimension:     XY</span></span>
-<span><span class="co">#&gt; Bounding box:  xmin: -5071809 ymin: -3283348 xmax: -4748996 ymax: -3092641</span></span>
+<span><span class="co">#&gt; Bounding box:  xmin: -4727265 ymin: -3148963 xmax: -4700678 ymax: -3065133</span></span>
 <span><span class="co">#&gt; Projected CRS: WGS 84 / NSIDC EASE-Grid 2.0 Global</span></span>
-<span><span class="co">#&gt;                  species                  geometry</span></span>
-<span><span class="co">#&gt; 1 Araucaria angustifolia POINT (-5071809 -3259770)</span></span>
-<span><span class="co">#&gt; 2 Araucaria angustifolia POINT (-4983891 -3283348)</span></span>
-<span><span class="co">#&gt; 3 Araucaria angustifolia POINT (-4748996 -3142075)</span></span>
-<span><span class="co">#&gt; 4 Araucaria angustifolia POINT (-4883188 -3092641)</span></span>
-<span><span class="co">#&gt; 5 Araucaria angustifolia POINT (-4766386 -3227445)</span></span>
-<span><span class="co">#&gt; 6 Araucaria angustifolia POINT (-4755861 -3139607)</span></span></code></pre></div>
+<span><span class="co">#&gt;                    species                  geometry</span></span>
+<span><span class="co">#&gt; 327 Araucaria angustifolia POINT (-4700678 -3065133)</span></span>
+<span><span class="co">#&gt; 405 Araucaria angustifolia POINT (-4711827 -3146727)</span></span>
+<span><span class="co">#&gt; 404 Araucaria angustifolia POINT (-4711885 -3147170)</span></span>
+<span><span class="co">#&gt; 310 Araucaria angustifolia POINT (-4717665 -3142767)</span></span>
+<span><span class="co">#&gt; 49  Araucaria angustifolia POINT (-4726011 -3148963)</span></span>
+<span><span class="co">#&gt; 124 Araucaria angustifolia POINT (-4727265 -3148517)</span></span></code></pre></div>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_occurrences.html">plot_occurrences</a></span><span class="op">(</span><span class="va">oc</span><span class="op">)</span></span></code></pre></div>
-<p><img src="InvasiveSpp_files/figure-html/plot_occurrences-1.png" class="r-plt" width="700"></p>
+<p><img src="InvasiveSpp_files/figure-html/plot_occurrences-1.png" class="r-plt" alt="" width="700"></p>
 <p>This next step assigns occurrences into a study area, excluding
 records outside the study area or with NAs as predictors.</p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
@@ -449,7 +449,7 @@ occurrences and the sdm_area.</p>
 <span><span class="co">#&gt; Class                         : input_sdm</span></span>
 <span><span class="co">#&gt; --------  Occurrences  --------</span></span>
 <span><span class="co">#&gt; Species Names                 : Araucaria angustifolia </span></span>
-<span><span class="co">#&gt; Number of presences           : 418 </span></span>
+<span><span class="co">#&gt; Number of presences           : 417 </span></span>
 <span><span class="co">#&gt; --------  Predictors  ---------</span></span>
 <span><span class="co">#&gt; Number of Predictors          : 3 </span></span>
 <span><span class="co">#&gt; Predictors Names              : bio1, bio4, bio12 </span></span>
@@ -493,7 +493,7 @@ This method is only possible when we have both the
 <span><span class="co">#&gt; Testing equal lat/lon</span></span>
 <span><span class="co">#&gt; Removed 0 records.</span></span>
 <span><span class="co">#&gt; Testing biodiversity institutions</span></span>
-<span><span class="co">#&gt; Removed 1 records.</span></span>
+<span><span class="co">#&gt; Removed 0 records.</span></span>
 <span><span class="co">#&gt; Testing coordinate validity</span></span>
 <span><span class="co">#&gt; Removed 0 records.</span></span>
 <span><span class="co">#&gt; Testing sea coordinates</span></span>
@@ -552,11 +552,11 @@ method.</p>
 <span><span class="co">#&gt; Class                         : input_sdm</span></span>
 <span><span class="co">#&gt; --------  Occurrences  --------</span></span>
 <span><span class="co">#&gt; Species Names                 : Araucaria angustifolia </span></span>
-<span><span class="co">#&gt; Number of presences           : 84 </span></span>
+<span><span class="co">#&gt; Number of presences           : 82 </span></span>
 <span><span class="co">#&gt; Pseudoabsence methods         :</span></span>
 <span><span class="co">#&gt;     Method to obtain PAs      : bioclim </span></span>
 <span><span class="co">#&gt;     Number of PA sets         : 10 </span></span>
-<span><span class="co">#&gt;     Number of PAs in each set : 84 </span></span>
+<span><span class="co">#&gt;     Number of PAs in each set : 82 </span></span>
 <span><span class="co">#&gt; Data Cleaning                 : NAs, Capitals, Centroids, Geographically Duplicated, Identical Lat/Long, Institutions, Invalid, Non-terrestrial, Duplicated Cell (grid) </span></span>
 <span><span class="co">#&gt; --------  Predictors  ---------</span></span>
 <span><span class="co">#&gt; Number of Predictors          : 3 </span></span>
@@ -617,11 +617,11 @@ algorithm.</p>
 <span><span class="co">#&gt; Class                         : input_sdm</span></span>
 <span><span class="co">#&gt; --------  Occurrences  --------</span></span>
 <span><span class="co">#&gt; Species Names                 : Araucaria angustifolia </span></span>
-<span><span class="co">#&gt; Number of presences           : 84 </span></span>
+<span><span class="co">#&gt; Number of presences           : 82 </span></span>
 <span><span class="co">#&gt; Pseudoabsence methods         :</span></span>
 <span><span class="co">#&gt;     Method to obtain PAs      : bioclim </span></span>
 <span><span class="co">#&gt;     Number of PA sets         : 10 </span></span>
-<span><span class="co">#&gt;     Number of PAs in each set : 84 </span></span>
+<span><span class="co">#&gt;     Number of PAs in each set : 82 </span></span>
 <span><span class="co">#&gt; Data Cleaning                 : NAs, Capitals, Centroids, Geographically Duplicated, Identical Lat/Long, Institutions, Invalid, Non-terrestrial, Duplicated Cell (grid) </span></span>
 <span><span class="co">#&gt; --------  Predictors  ---------</span></span>
 <span><span class="co">#&gt; Number of Predictors          : 3 </span></span>
@@ -640,9 +640,9 @@ algorithm.</p>
 <span><span class="co">#&gt;     Number                    : 4 </span></span>
 <span><span class="co">#&gt;     Metrics                   :</span></span>
 <span><span class="co">#&gt; $`Araucaria angustifolia`</span></span>
-<span><span class="co">#&gt;          algo       ROC       TSS Sensitivity Specificity</span></span>
-<span><span class="co">#&gt; 1        kknn 0.9857309 0.9703630      0.9928    0.977475</span></span>
-<span><span class="co">#&gt; 2 naive_bayes 0.9978861 0.9578601      0.9964    0.965025</span></span></code></pre></div>
+<span><span class="co">#&gt;          algo       ROC      TSS Sensitivity Specificity</span></span>
+<span><span class="co">#&gt; 1        kknn 0.9846174 0.968089      0.9890    0.979075</span></span>
+<span><span class="co">#&gt; 2 naive_bayes 0.9979933 0.962443      0.9963    0.966125</span></span></code></pre></div>
 </div>
 </div>
 <div class="section level2">
@@ -687,11 +687,11 @@ will be used in predictions and ensembles.</p>
 <span><span class="co">#&gt; Class                         : input_sdm</span></span>
 <span><span class="co">#&gt; --------  Occurrences  --------</span></span>
 <span><span class="co">#&gt; Species Names                 : Araucaria angustifolia </span></span>
-<span><span class="co">#&gt; Number of presences           : 84 </span></span>
+<span><span class="co">#&gt; Number of presences           : 82 </span></span>
 <span><span class="co">#&gt; Pseudoabsence methods         :</span></span>
 <span><span class="co">#&gt;     Method to obtain PAs      : bioclim </span></span>
 <span><span class="co">#&gt;     Number of PA sets         : 10 </span></span>
-<span><span class="co">#&gt;     Number of PAs in each set : 84 </span></span>
+<span><span class="co">#&gt;     Number of PAs in each set : 82 </span></span>
 <span><span class="co">#&gt; Data Cleaning                 : NAs, Capitals, Centroids, Geographically Duplicated, Identical Lat/Long, Institutions, Invalid, Non-terrestrial, Duplicated Cell (grid) </span></span>
 <span><span class="co">#&gt; --------  Predictors  ---------</span></span>
 <span><span class="co">#&gt; Number of Predictors          : 3 </span></span>
@@ -710,9 +710,9 @@ will be used in predictions and ensembles.</p>
 <span><span class="co">#&gt;     Number                    : 4 </span></span>
 <span><span class="co">#&gt;     Metrics                   :</span></span>
 <span><span class="co">#&gt; $`Araucaria angustifolia`</span></span>
-<span><span class="co">#&gt;          algo       ROC       TSS Sensitivity Specificity</span></span>
-<span><span class="co">#&gt; 1        kknn 0.9857309 0.9703630      0.9928    0.977475</span></span>
-<span><span class="co">#&gt; 2 naive_bayes 0.9978861 0.9578601      0.9964    0.965025</span></span>
+<span><span class="co">#&gt;          algo       ROC      TSS Sensitivity Specificity</span></span>
+<span><span class="co">#&gt; 1        kknn 0.9846174 0.968089      0.9890    0.979075</span></span>
+<span><span class="co">#&gt; 2 naive_bayes 0.9979933 0.962443      0.9963    0.966125</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; --------  Predictions  --------</span></span>
 <span><span class="co">#&gt; Ensembles                     :</span></span>
@@ -734,257 +734,257 @@ model using the following code before commit to “ROC”:</p>
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/train_sdm.html">get_validation_metrics</a></span><span class="op">(</span><span class="va">i</span><span class="op">)</span></span>
 <span><span class="co">#&gt; $`Araucaria angustifolia`</span></span>
 <span><span class="co">#&gt;              algo       ROC       TSS Sensitivity Specificity Pos Pred Value</span></span>
-<span><span class="co">#&gt; m1.2         kknn 1.0000000 1.0000000       1.000     1.00000        1.00000</span></span>
-<span><span class="co">#&gt; m2.2         kknn 0.9903846 0.9807692       1.000     0.98075        0.98875</span></span>
-<span><span class="co">#&gt; m3.2         kknn 0.9844322 0.9688645       0.988     0.98075        0.98875</span></span>
-<span><span class="co">#&gt; m4.2         kknn 0.9748168 0.9496337       0.988     0.96150        0.97750</span></span>
-<span><span class="co">#&gt; m5.2         kknn 1.0000000 1.0000000       1.000     1.00000        1.00000</span></span>
-<span><span class="co">#&gt; m6.2         kknn 0.9732143 0.9464286       0.988     0.95825        0.97825</span></span>
-<span><span class="co">#&gt; m7.2         kknn 0.9732143 0.9464286       0.988     0.95825        0.97825</span></span>
-<span><span class="co">#&gt; m8.2         kknn 0.9772727 0.9426407       0.988     0.95450        0.97825</span></span>
-<span><span class="co">#&gt; m9.2         kknn 0.9899267 0.9807692       1.000     0.98075        0.98875</span></span>
-<span><span class="co">#&gt; m10.2        kknn 0.9940476 0.9880952       0.988     1.00000        1.00000</span></span>
-<span><span class="co">#&gt; m1.1  naive_bayes 1.0000000 0.9791667       1.000     0.97925        0.98875</span></span>
-<span><span class="co">#&gt; m2.1  naive_bayes 0.9990079 0.9791667       1.000     0.97925        0.98875</span></span>
-<span><span class="co">#&gt; m3.1  naive_bayes 1.0000000 0.9672619       1.000     0.97925        0.98875</span></span>
-<span><span class="co">#&gt; m4.1  naive_bayes 0.9954212 0.9496337       1.000     0.96150        0.97675</span></span>
-<span><span class="co">#&gt; m5.1  naive_bayes 1.0000000 0.9807692       1.000     0.98075        0.98875</span></span>
-<span><span class="co">#&gt; m6.1  naive_bayes 0.9950397 0.9445346       0.988     0.95650        0.97750</span></span>
-<span><span class="co">#&gt; m7.1  naive_bayes 1.0000000 0.9111722       0.988     0.92300        0.95650</span></span>
-<span><span class="co">#&gt; m8.1  naive_bayes 0.9940476 0.9380952       0.988     0.95000        0.97750</span></span>
-<span><span class="co">#&gt; m9.1  naive_bayes 0.9963370 0.9615385       1.000     0.96150        0.97750</span></span>
-<span><span class="co">#&gt; m10.1 naive_bayes 0.9990079 0.9672619       1.000     0.97925        0.98875</span></span>
+<span><span class="co">#&gt; m1.2         kknn 0.9940476 0.9880952      0.9880     1.00000        1.00000</span></span>
+<span><span class="co">#&gt; m2.2         kknn 0.9895833 0.9791667      1.0000     0.97925        0.98875</span></span>
+<span><span class="co">#&gt; m3.2         kknn 0.9836310 0.9672619      0.9880     0.97925        0.98800</span></span>
+<span><span class="co">#&gt; m4.2         kknn 0.9737179 0.9474359      0.9875     0.96000        0.97675</span></span>
+<span><span class="co">#&gt; m5.2         kknn 0.9895833 0.9791667      1.0000     0.97925        0.98800</span></span>
+<span><span class="co">#&gt; m6.2         kknn 0.9675424 0.9361264      0.9760     0.96000        0.97600</span></span>
+<span><span class="co">#&gt; m7.2         kknn 0.9823864 0.9647727      0.9875     0.97725        0.98875</span></span>
+<span><span class="co">#&gt; m8.2         kknn 0.9875000 0.9625000      0.9875     0.97500        0.98875</span></span>
+<span><span class="co">#&gt; m9.2         kknn 1.0000000 1.0000000      1.0000     1.00000        1.00000</span></span>
+<span><span class="co">#&gt; m10.2        kknn 0.9781822 0.9563645      0.9755     0.98075        0.98750</span></span>
+<span><span class="co">#&gt; m1.1  naive_bayes 1.0000000 1.0000000      1.0000     1.00000        1.00000</span></span>
+<span><span class="co">#&gt; m2.1  naive_bayes 0.9990079 0.9791667      1.0000     0.97925        0.98875</span></span>
+<span><span class="co">#&gt; m3.1  naive_bayes 0.9990079 0.9791667      1.0000     0.97925        0.98800</span></span>
+<span><span class="co">#&gt; m4.1  naive_bayes 0.9990385 0.9458333      0.9875     0.95825        0.97825</span></span>
+<span><span class="co">#&gt; m5.1  naive_bayes 0.9990079 0.9599359      1.0000     0.96000        0.97750</span></span>
+<span><span class="co">#&gt; m6.1  naive_bayes 0.9981685 0.9682692      0.9875     0.98075        0.98875</span></span>
+<span><span class="co">#&gt; m7.1  naive_bayes 0.9936147 0.9237013      0.9880     0.93550        0.96525</span></span>
+<span><span class="co">#&gt; m8.1  naive_bayes 0.9930032 0.9068182      1.0000     0.90675        0.95675</span></span>
+<span><span class="co">#&gt; m9.1  naive_bayes 1.0000000 0.9807692      1.0000     0.98075        0.98875</span></span>
+<span><span class="co">#&gt; m10.1 naive_bayes 0.9990842 0.9807692      1.0000     0.98075        0.98875</span></span>
 <span><span class="co">#&gt;       Neg Pred Value Precision Recall      F1 Prevalence Detection Rate</span></span>
-<span><span class="co">#&gt; m1.2         1.00000   1.00000  1.000 1.00000    0.64600        0.64600</span></span>
-<span><span class="co">#&gt; m2.2         1.00000   0.98875  1.000 0.99425    0.63150        0.63150</span></span>
-<span><span class="co">#&gt; m3.2         0.98075   0.98875  0.988 0.98825    0.62700        0.61950</span></span>
-<span><span class="co">#&gt; m4.2         0.98225   0.97750  0.988 0.98250    0.61800        0.61050</span></span>
-<span><span class="co">#&gt; m5.2         1.00000   1.00000  1.000 1.00000    0.62250        0.62250</span></span>
-<span><span class="co">#&gt; m6.2         0.97925   0.97825  0.988 0.98275    0.64100        0.63325</span></span>
-<span><span class="co">#&gt; m7.2         0.98075   0.97825  0.988 0.98275    0.62700        0.61950</span></span>
-<span><span class="co">#&gt; m8.2         0.97725   0.97825  0.988 0.98275    0.67175        0.66375</span></span>
-<span><span class="co">#&gt; m9.2         1.00000   0.98875  1.000 0.99425    0.61800        0.61800</span></span>
-<span><span class="co">#&gt; m10.2        0.98075   1.00000  0.988 0.99400    0.64100        0.63350</span></span>
-<span><span class="co">#&gt; m1.1         1.00000   0.98875  1.000 0.99425    0.64600        0.64600</span></span>
-<span><span class="co">#&gt; m2.1         1.00000   0.98875  1.000 0.99425    0.63150        0.63150</span></span>
-<span><span class="co">#&gt; m3.1         1.00000   0.98875  1.000 0.98875    0.62700        0.62700</span></span>
-<span><span class="co">#&gt; m4.1         1.00000   0.97675  1.000 0.98275    0.61800        0.61800</span></span>
-<span><span class="co">#&gt; m5.1         1.00000   0.98875  1.000 0.99425    0.62250        0.62250</span></span>
-<span><span class="co">#&gt; m6.1         0.98075   0.97750  0.988 0.98250    0.64100        0.63350</span></span>
-<span><span class="co">#&gt; m7.1         0.98075   0.95650  0.988 0.97150    0.62700        0.61950</span></span>
-<span><span class="co">#&gt; m8.1         0.97725   0.97750  0.988 0.98250    0.67175        0.66375</span></span>
-<span><span class="co">#&gt; m9.1         1.00000   0.97750  1.000 0.98850    0.61800        0.61800</span></span>
-<span><span class="co">#&gt; m10.1        1.00000   0.98875  1.000 0.98825    0.64100        0.64100</span></span>
+<span><span class="co">#&gt; m1.2         0.97925   1.00000 0.9880 0.99400    0.64050        0.63275</span></span>
+<span><span class="co">#&gt; m2.2         1.00000   0.98875 1.0000 0.99425    0.62600        0.62600</span></span>
+<span><span class="co">#&gt; m3.2         0.98225   0.98800 0.9880 0.98800    0.62600        0.61850</span></span>
+<span><span class="co">#&gt; m4.2         0.98225   0.97675 0.9875 0.98175    0.61675        0.60925</span></span>
+<span><span class="co">#&gt; m5.2         1.00000   0.98800 1.0000 0.99400    0.62150        0.62150</span></span>
+<span><span class="co">#&gt; m6.2         0.96450   0.97600 0.9760 0.97600    0.61675        0.60175</span></span>
+<span><span class="co">#&gt; m7.2         0.98075   0.98875 0.9875 0.98775    0.64050        0.63275</span></span>
+<span><span class="co">#&gt; m8.2         0.97925   0.98875 0.9875 0.98775    0.65575        0.64775</span></span>
+<span><span class="co">#&gt; m9.2         1.00000   1.00000 1.0000 1.00000    0.61650        0.61650</span></span>
+<span><span class="co">#&gt; m10.2        0.96150   0.98750 0.9755 0.98150    0.62125        0.60625</span></span>
+<span><span class="co">#&gt; m1.1         1.00000   1.00000 1.0000 1.00000    0.64050        0.64050</span></span>
+<span><span class="co">#&gt; m2.1         1.00000   0.98875 1.0000 0.99425    0.62575        0.62575</span></span>
+<span><span class="co">#&gt; m3.1         1.00000   0.98800 1.0000 0.99400    0.62575        0.62575</span></span>
+<span><span class="co">#&gt; m4.1         0.98225   0.97825 0.9875 0.98225    0.61650        0.60900</span></span>
+<span><span class="co">#&gt; m5.1         1.00000   0.97750 1.0000 0.98850    0.62125        0.62125</span></span>
+<span><span class="co">#&gt; m6.1         0.98075   0.98875 0.9875 0.98775    0.61675        0.60900</span></span>
+<span><span class="co">#&gt; m7.1         0.97725   0.96525 0.9880 0.97650    0.64050        0.63300</span></span>
+<span><span class="co">#&gt; m8.1         1.00000   0.95675 1.0000 0.97725    0.65600        0.65600</span></span>
+<span><span class="co">#&gt; m9.1         1.00000   0.98875 1.0000 0.99425    0.61650        0.61650</span></span>
+<span><span class="co">#&gt; m10.1        1.00000   0.98875 1.0000 0.99425    0.62125        0.62125</span></span>
 <span><span class="co">#&gt;       Detection Prevalence Balanced Accuracy Accuracy   Kappa AccuracyLower</span></span>
-<span><span class="co">#&gt; m1.2               0.64600           1.00000  1.00000 1.00000       0.89250</span></span>
-<span><span class="co">#&gt; m2.2               0.63875           0.99050  0.99275 0.98425       0.88225</span></span>
-<span><span class="co">#&gt; m3.2               0.62675           0.98450  0.98525 0.96825       0.87000</span></span>
-<span><span class="co">#&gt; m4.2               0.62500           0.97500  0.97825 0.95325       0.85950</span></span>
-<span><span class="co">#&gt; m5.2               0.62250           1.00000  1.00000 1.00000       0.89625</span></span>
-<span><span class="co">#&gt; m6.2               0.64850           0.97325  0.97700 0.94900       0.85600</span></span>
-<span><span class="co">#&gt; m7.2               0.63475           0.97325  0.97725 0.95000       0.85850</span></span>
-<span><span class="co">#&gt; m8.2               0.67950           0.97125  0.97650 0.94575       0.85025</span></span>
-<span><span class="co">#&gt; m9.2               0.62525           0.99050  0.99275 0.98425       0.88450</span></span>
-<span><span class="co">#&gt; m10.2              0.63350           0.99400  0.99250 0.98400       0.88025</span></span>
-<span><span class="co">#&gt; m1.1               0.66175           0.98950  0.99250 0.98325       0.87950</span></span>
-<span><span class="co">#&gt; m2.1               0.64700           0.98950  0.99250 0.98325       0.88175</span></span>
-<span><span class="co">#&gt; m3.1               0.64225           0.98350  0.98525 0.96800       0.87150</span></span>
-<span><span class="co">#&gt; m4.1               0.63975           0.97500  0.97825 0.95300       0.86100</span></span>
-<span><span class="co">#&gt; m5.1               0.62975           0.99050  0.99275 0.98425       0.88375</span></span>
-<span><span class="co">#&gt; m6.1               0.64925           0.97225  0.97725 0.94950       0.85400</span></span>
-<span><span class="co">#&gt; m7.1               0.64850           0.95550  0.96300 0.92000       0.83550</span></span>
-<span><span class="co">#&gt; m8.1               0.68025           0.96900  0.97600 0.94400       0.84750</span></span>
-<span><span class="co">#&gt; m9.1               0.63250           0.98100  0.98550 0.96850       0.87200</span></span>
-<span><span class="co">#&gt; m10.1              0.66400           0.98350  0.98500 0.96725       0.86725</span></span>
+<span><span class="co">#&gt; m1.2               0.63275           0.99400  0.99225 0.98300       0.87775</span></span>
+<span><span class="co">#&gt; m2.2               0.63375           0.98950  0.99250 0.98325       0.88025</span></span>
+<span><span class="co">#&gt; m3.2               0.62625           0.98350  0.98500 0.96775       0.86750</span></span>
+<span><span class="co">#&gt; m4.2               0.62425           0.97375  0.97750 0.95150       0.85600</span></span>
+<span><span class="co">#&gt; m5.2               0.62925           0.98950  0.99225 0.98300       0.88075</span></span>
+<span><span class="co">#&gt; m6.2               0.61700           0.96800  0.97025 0.93650       0.84350</span></span>
+<span><span class="co">#&gt; m7.2               0.64075           0.98250  0.98450 0.96575       0.86450</span></span>
+<span><span class="co">#&gt; m8.2               0.65600           0.98125  0.98400 0.96375       0.86125</span></span>
+<span><span class="co">#&gt; m9.2               0.61650           1.00000  1.00000 1.00000       0.89475</span></span>
+<span><span class="co">#&gt; m10.2              0.61375           0.97825  0.97725 0.95225       0.85700</span></span>
+<span><span class="co">#&gt; m1.1               0.65625           1.00000  1.00000 1.00000       0.89100</span></span>
+<span><span class="co">#&gt; m2.1               0.64125           0.98950  0.99250 0.98325       0.88025</span></span>
+<span><span class="co">#&gt; m3.1               0.63350           0.98950  0.99225 0.98300       0.88000</span></span>
+<span><span class="co">#&gt; m4.1               0.62425           0.97300  0.97725 0.95025       0.85775</span></span>
+<span><span class="co">#&gt; m5.1               0.63625           0.98000  0.98525 0.96750       0.86850</span></span>
+<span><span class="co">#&gt; m6.1               0.62375           0.98425  0.98500 0.96775       0.86900</span></span>
+<span><span class="co">#&gt; m7.1               0.66400           0.96200  0.96925 0.93200       0.84300</span></span>
+<span><span class="co">#&gt; m8.1               0.68775           0.95350  0.96825 0.92525       0.83925</span></span>
+<span><span class="co">#&gt; m9.1               0.62375           0.99050  0.99275 0.98425       0.88225</span></span>
+<span><span class="co">#&gt; m10.1              0.62850           0.99050  0.99275 0.98425       0.88150</span></span>
 <span><span class="co">#&gt;       AccuracyUpper AccuracyNull AccuracyPValue McnemarPValue Positive Negative</span></span>
-<span><span class="co">#&gt; m1.2        1.00000      0.64600              0           NaN       21    11.50</span></span>
-<span><span class="co">#&gt; m2.2        0.99975      0.63150              0     1.0000000       21    12.25</span></span>
-<span><span class="co">#&gt; m3.2        0.99950      0.62700              0     1.0000000       21    12.50</span></span>
-<span><span class="co">#&gt; m4.2        0.99925      0.61800              0     1.0000000       21    13.00</span></span>
-<span><span class="co">#&gt; m5.2        1.00000      0.62250              0           NaN       21    12.75</span></span>
-<span><span class="co">#&gt; m6.2        0.99800      0.64100              0     0.7400000       21    11.75</span></span>
-<span><span class="co">#&gt; m7.2        0.99800      0.62700              0     0.7400000       21    12.50</span></span>
-<span><span class="co">#&gt; m8.2        0.99775      0.67175              0     0.7400000       21    10.25</span></span>
-<span><span class="co">#&gt; m9.2        0.99975      0.61800              0     1.0000000       21    13.00</span></span>
-<span><span class="co">#&gt; m10.2       0.99975      0.64100              0     1.0000000       21    11.75</span></span>
-<span><span class="co">#&gt; m1.1        0.99975      0.64600              0     1.0000000       21    11.50</span></span>
-<span><span class="co">#&gt; m2.1        0.99975      0.63150              0     1.0000000       21    12.25</span></span>
-<span><span class="co">#&gt; m3.1        0.99950      0.62700              0     1.0000000       21    12.50</span></span>
-<span><span class="co">#&gt; m4.1        0.99925      0.61800              0     1.0000000       21    13.00</span></span>
-<span><span class="co">#&gt; m5.1        0.99975      0.62250              0     1.0000000       21    12.75</span></span>
-<span><span class="co">#&gt; m6.1        0.99925      0.64100              0     1.0000000       21    11.75</span></span>
-<span><span class="co">#&gt; m7.1        0.99625      0.62700              0     0.6533333       21    12.50</span></span>
-<span><span class="co">#&gt; m8.1        0.99925      0.67175              0     1.0000000       21    10.25</span></span>
-<span><span class="co">#&gt; m9.1        0.99950      0.61800              0     1.0000000       21    13.00</span></span>
-<span><span class="co">#&gt; m10.1       0.99950      0.64100              0     1.0000000       21    11.75</span></span>
-<span><span class="co">#&gt;       True Positive False Positive True Negative False Negative     CBI pAUC</span></span>
-<span><span class="co">#&gt; m1.2          21.00           0.00         11.50           0.00     NaN  NaN</span></span>
-<span><span class="co">#&gt; m2.2          21.00           0.00         12.00           0.25     NaN  NaN</span></span>
-<span><span class="co">#&gt; m3.2          20.75           0.25         12.25           0.25     NaN  NaN</span></span>
-<span><span class="co">#&gt; m4.2          20.75           0.25         12.50           0.50     NaN  NaN</span></span>
-<span><span class="co">#&gt; m5.2          21.00           0.00         12.75           0.00     NaN  NaN</span></span>
-<span><span class="co">#&gt; m6.2          20.75           0.25         11.25           0.50 1.00000  NaN</span></span>
-<span><span class="co">#&gt; m7.2          20.75           0.25         12.00           0.50     NaN  NaN</span></span>
-<span><span class="co">#&gt; m8.2          20.75           0.25          9.75           0.50 1.00000  NaN</span></span>
-<span><span class="co">#&gt; m9.2          21.00           0.00         12.75           0.25 1.00000  NaN</span></span>
-<span><span class="co">#&gt; m10.2         20.75           0.50         11.75           0.00     NaN  NaN</span></span>
-<span><span class="co">#&gt; m1.1          21.00           0.00         11.25           0.50 1.00000  NaN</span></span>
-<span><span class="co">#&gt; m2.1          21.00           0.00         12.00           0.50 1.00000  NaN</span></span>
-<span><span class="co">#&gt; m3.1          21.00           0.25         12.25           0.50 1.00000  NaN</span></span>
-<span><span class="co">#&gt; m4.1          21.00           0.25         12.50           0.75 1.00000  NaN</span></span>
-<span><span class="co">#&gt; m5.1          21.00           0.00         12.50           0.25     NaN  NaN</span></span>
-<span><span class="co">#&gt; m6.1          20.75           0.25         11.25           0.50 1.00000  NaN</span></span>
-<span><span class="co">#&gt; m7.1          20.75           0.25         11.50           1.00 1.00000  NaN</span></span>
-<span><span class="co">#&gt; m8.1          20.75           0.25          9.75           0.50 1.00000  NaN</span></span>
-<span><span class="co">#&gt; m9.1          21.00           0.00         12.50           0.50 1.00000  NaN</span></span>
-<span><span class="co">#&gt; m10.1         21.00           0.25         11.50           0.75 0.86175  NaN</span></span>
+<span><span class="co">#&gt; m1.2        0.99975      0.64050        0.00000        1.0000     20.5    11.50</span></span>
+<span><span class="co">#&gt; m2.2        0.99975      0.62600        0.00000        1.0000     20.5    12.25</span></span>
+<span><span class="co">#&gt; m3.2        0.99950      0.62600        0.00000        1.0000     20.5    12.25</span></span>
+<span><span class="co">#&gt; m4.2        0.99925      0.61675        0.00000        1.0000     20.5    12.75</span></span>
+<span><span class="co">#&gt; m5.2        0.99975      0.62150        0.00000        1.0000     20.5    12.50</span></span>
+<span><span class="co">#&gt; m6.2        0.99900      0.61675        0.00000        1.0000     20.5    12.75</span></span>
+<span><span class="co">#&gt; m7.2        0.99950      0.64050        0.00000        1.0000     20.5    11.50</span></span>
+<span><span class="co">#&gt; m8.2        0.99950      0.65575        0.00000        1.0000     20.5    10.75</span></span>
+<span><span class="co">#&gt; m9.2        1.00000      0.61650        0.00000           NaN     20.5    12.75</span></span>
+<span><span class="co">#&gt; m10.2       0.99800      0.62125        0.00000        1.0000     20.5    12.50</span></span>
+<span><span class="co">#&gt; m1.1        1.00000      0.64050        0.00000           NaN     20.5    11.50</span></span>
+<span><span class="co">#&gt; m2.1        0.99975      0.62575        0.00000        1.0000     20.5    12.25</span></span>
+<span><span class="co">#&gt; m3.1        0.99975      0.62575        0.00000        1.0000     20.5    12.25</span></span>
+<span><span class="co">#&gt; m4.1        0.99800      0.61650        0.00000        0.7400     20.5    12.75</span></span>
+<span><span class="co">#&gt; m5.1        0.99950      0.62125        0.00000        1.0000     20.5    12.50</span></span>
+<span><span class="co">#&gt; m6.1        0.99950      0.61675        0.00000        1.0000     20.5    12.75</span></span>
+<span><span class="co">#&gt; m7.1        0.99500      0.64050        0.00000        1.0000     20.5    11.50</span></span>
+<span><span class="co">#&gt; m8.1        0.99475      0.65600        0.00125        0.8085     20.5    10.75</span></span>
+<span><span class="co">#&gt; m9.1        0.99975      0.61650        0.00000        1.0000     20.5    12.75</span></span>
+<span><span class="co">#&gt; m10.1       0.99975      0.62125        0.00000        1.0000     20.5    12.50</span></span>
+<span><span class="co">#&gt;       True Positive False Positive True Negative False Negative       CBI pAUC</span></span>
+<span><span class="co">#&gt; m1.2          20.25           0.25         11.50           0.00       NaN  NaN</span></span>
+<span><span class="co">#&gt; m2.2          20.50           0.00         12.00           0.25       NaN  NaN</span></span>
+<span><span class="co">#&gt; m3.2          20.25           0.25         12.00           0.25       NaN  NaN</span></span>
+<span><span class="co">#&gt; m4.2          20.25           0.25         12.25           0.50       NaN  NaN</span></span>
+<span><span class="co">#&gt; m5.2          20.50           0.00         12.25           0.25       NaN  NaN</span></span>
+<span><span class="co">#&gt; m6.2          20.00           0.50         12.25           0.50 1.0000000  NaN</span></span>
+<span><span class="co">#&gt; m7.2          20.25           0.25         11.25           0.25 1.0000000  NaN</span></span>
+<span><span class="co">#&gt; m8.2          20.25           0.25         10.50           0.25       NaN  NaN</span></span>
+<span><span class="co">#&gt; m9.2          20.50           0.00         12.75           0.00       NaN  NaN</span></span>
+<span><span class="co">#&gt; m10.2         20.00           0.50         12.25           0.25       NaN  NaN</span></span>
+<span><span class="co">#&gt; m1.1          20.50           0.00         11.50           0.50 1.0000000  NaN</span></span>
+<span><span class="co">#&gt; m2.1          20.50           0.00         12.00           0.50 1.0000000  NaN</span></span>
+<span><span class="co">#&gt; m3.1          20.50           0.25         12.00           0.25 0.7757500  NaN</span></span>
+<span><span class="co">#&gt; m4.1          20.25           0.25         12.25           0.50 0.8136667  NaN</span></span>
+<span><span class="co">#&gt; m5.1          20.50           0.00         12.00           0.50 1.0000000  NaN</span></span>
+<span><span class="co">#&gt; m6.1          20.25           0.25         12.50           0.50 1.0000000  NaN</span></span>
+<span><span class="co">#&gt; m7.1          20.25           0.25         10.75           1.00 0.7237500  NaN</span></span>
+<span><span class="co">#&gt; m8.1          20.50           0.25          9.75           1.00 0.8750000  NaN</span></span>
+<span><span class="co">#&gt; m9.1          20.50           0.25         12.50           0.25 1.0000000  NaN</span></span>
+<span><span class="co">#&gt; m10.1         20.50           0.00         12.25           0.25 1.0000000  NaN</span></span>
 <span><span class="co">#&gt;       Omission_10pct       ROCSD      TSSSD SensitivitySD SpecificitySD</span></span>
-<span><span class="co">#&gt; m1.2         0.00000 0.000000000 0.00000000    0.00000000    0.00000000</span></span>
-<span><span class="co">#&gt; m2.2         0.00000 0.019230769 0.03846154    0.00000000    0.03850000</span></span>
-<span><span class="co">#&gt; m3.2         0.03575 0.018945202 0.03789040    0.02400000    0.03850000</span></span>
-<span><span class="co">#&gt; m4.2         0.02400 0.018154055 0.03630811    0.02400000    0.04445597</span></span>
-<span><span class="co">#&gt; m5.2         0.00000 0.000000000 0.00000000    0.00000000    0.00000000</span></span>
-<span><span class="co">#&gt; m6.2         0.02400 0.039333785 0.07866757    0.02400000    0.08350000</span></span>
-<span><span class="co">#&gt; m7.2         0.01200 0.039333785 0.07866757    0.02400000    0.08350000</span></span>
-<span><span class="co">#&gt; m8.2         0.02375 0.045454545 0.08595554    0.02400000    0.09100000</span></span>
-<span><span class="co">#&gt; m9.2         0.03575 0.020146520 0.03846154    0.00000000    0.03850000</span></span>
-<span><span class="co">#&gt; m10.2        0.03575 0.011904762 0.02749287    0.02771281    0.00000000</span></span>
-<span><span class="co">#&gt; m1.1         0.09500 0.000000000 0.05039445    0.00000000    0.05033554</span></span>
-<span><span class="co">#&gt; m2.1         0.09500 0.011904762 0.04811252    0.00000000    0.04792007</span></span>
-<span><span class="co">#&gt; m3.1         0.09500 0.000000000 0.08333333    0.02400000    0.08350000</span></span>
-<span><span class="co">#&gt; m4.1         0.09500 0.009157509 0.06132113    0.02400000    0.04445597</span></span>
-<span><span class="co">#&gt; m5.1         0.09500 0.000000000 0.03846154    0.00000000    0.03850000</span></span>
-<span><span class="co">#&gt; m6.1         0.09500 0.009920635 0.04151647    0.02400000    0.05033554</span></span>
-<span><span class="co">#&gt; m7.1         0.09500 0.010521177 0.07755280    0.02400000    0.08891194</span></span>
-<span><span class="co">#&gt; m8.1         0.09500 0.014285714 0.04809288    0.02400000    0.05773503</span></span>
-<span><span class="co">#&gt; m9.1         0.09500 0.010521177 0.04441156    0.00000000    0.04445597</span></span>
-<span><span class="co">#&gt; m10.1        0.09500 0.003968254 0.07978559    0.02400000    0.07990202</span></span>
+<span><span class="co">#&gt; m1.2         0.01200 0.011904762 0.02380952    0.02400000    0.00000000</span></span>
+<span><span class="co">#&gt; m2.2         0.00000 0.020833333 0.04166667    0.00000000    0.04150000</span></span>
+<span><span class="co">#&gt; m3.2         0.01200 0.020258510 0.04051702    0.02400000    0.04150000</span></span>
+<span><span class="co">#&gt; m4.2         0.01250 0.018950956 0.03790191    0.02500000    0.04625293</span></span>
+<span><span class="co">#&gt; m5.2         0.00000 0.020833333 0.04166667    0.00000000    0.04150000</span></span>
+<span><span class="co">#&gt; m6.2         0.03650 0.010216719 0.01895073    0.02771281    0.04625293</span></span>
+<span><span class="co">#&gt; m7.2         0.02500 0.021986018 0.04397204    0.02500000    0.04550000</span></span>
+<span><span class="co">#&gt; m8.2         0.03700 0.025000000 0.04787136    0.02500000    0.05000000</span></span>
+<span><span class="co">#&gt; m9.2         0.03625 0.000000000 0.00000000    0.00000000    0.00000000</span></span>
+<span><span class="co">#&gt; m10.2        0.02450 0.029945510 0.05989102    0.02830194    0.03850000</span></span>
+<span><span class="co">#&gt; m1.1         0.09750 0.000000000 0.05039445    0.00000000    0.05033554</span></span>
+<span><span class="co">#&gt; m2.1         0.09750 0.009920635 0.04811252    0.00000000    0.04792007</span></span>
+<span><span class="co">#&gt; m3.1         0.09750 0.002083333 0.04166667    0.02400000    0.04150000</span></span>
+<span><span class="co">#&gt; m4.1         0.09750 0.002256376 0.07861651    0.02500000    0.08350000</span></span>
+<span><span class="co">#&gt; m5.1         0.09750 0.009920635 0.04633600    0.00000000    0.04625293</span></span>
+<span><span class="co">#&gt; m6.1         0.09750 0.005769231 0.03825264    0.02500000    0.04445597</span></span>
+<span><span class="co">#&gt; m7.1         0.09750 0.024496056 0.10148376    0.02400000    0.08068251</span></span>
+<span><span class="co">#&gt; m8.1         0.09750 0.008120843 0.15105077    0.02400000    0.12877209</span></span>
+<span><span class="co">#&gt; m9.1         0.09750 0.000000000 0.03846154    0.02400000    0.03850000</span></span>
+<span><span class="co">#&gt; m10.1        0.09750 0.007326007 0.03846154    0.00000000    0.03850000</span></span>
 <span><span class="co">#&gt;       Pos Pred ValueSD Neg Pred ValueSD PrecisionSD   RecallSD       F1SD</span></span>
-<span><span class="co">#&gt; m1.2        0.00000000       0.00000000  0.00000000 0.00000000 0.00000000</span></span>
+<span><span class="co">#&gt; m1.2        0.00000000       0.04150000  0.00000000 0.02400000 0.01200000</span></span>
 <span><span class="co">#&gt; m2.2        0.02250000       0.00000000  0.02250000 0.00000000 0.01150000</span></span>
-<span><span class="co">#&gt; m3.2        0.02250000       0.03850000  0.02250000 0.02400000 0.01357387</span></span>
-<span><span class="co">#&gt; m4.2        0.02598076       0.03550000  0.02598076 0.02400000 0.01167619</span></span>
-<span><span class="co">#&gt; m5.2        0.00000000       0.00000000  0.00000000 0.00000000 0.00000000</span></span>
-<span><span class="co">#&gt; m6.2        0.04350000       0.04150000  0.04350000 0.02400000 0.02168525</span></span>
-<span><span class="co">#&gt; m7.2        0.04350000       0.03850000  0.04350000 0.02400000 0.02168525</span></span>
-<span><span class="co">#&gt; m8.2        0.04350000       0.04550000  0.04350000 0.02400000 0.02168525</span></span>
-<span><span class="co">#&gt; m9.2        0.02250000       0.00000000  0.02250000 0.00000000 0.01150000</span></span>
-<span><span class="co">#&gt; m10.2       0.00000000       0.04625293  0.00000000 0.02771281 0.01385641</span></span>
-<span><span class="co">#&gt; m1.1        0.02598076       0.00000000  0.02598076 0.00000000 0.01327906</span></span>
+<span><span class="co">#&gt; m3.2        0.02400000       0.03550000  0.02400000 0.02400000 0.01385641</span></span>
+<span><span class="co">#&gt; m4.2        0.02687471       0.03550000  0.02687471 0.02500000 0.01223043</span></span>
+<span><span class="co">#&gt; m5.2        0.02400000       0.00000000  0.02400000 0.00000000 0.01200000</span></span>
+<span><span class="co">#&gt; m6.2        0.02771281       0.04099187  0.02771281 0.02771281 0.00000000</span></span>
+<span><span class="co">#&gt; m7.2        0.02250000       0.03850000  0.02250000 0.02500000 0.01419800</span></span>
+<span><span class="co">#&gt; m8.2        0.02250000       0.04150000  0.02250000 0.02500000 0.01419800</span></span>
+<span><span class="co">#&gt; m9.2        0.00000000       0.00000000  0.00000000 0.00000000 0.00000000</span></span>
+<span><span class="co">#&gt; m10.2       0.02500000       0.04445597  0.02500000 0.02830194 0.02385372</span></span>
+<span><span class="co">#&gt; m1.1        0.02687471       0.00000000  0.02687471 0.00000000 0.01357387</span></span>
 <span><span class="co">#&gt; m2.1        0.02598076       0.00000000  0.02598076 0.00000000 0.01327906</span></span>
-<span><span class="co">#&gt; m3.1        0.04350000       0.03550000  0.04350000 0.02400000 0.02250000</span></span>
-<span><span class="co">#&gt; m4.1        0.02687471       0.03850000  0.02687471 0.02400000 0.02289651</span></span>
-<span><span class="co">#&gt; m5.1        0.02250000       0.00000000  0.02250000 0.00000000 0.01150000</span></span>
-<span><span class="co">#&gt; m6.1        0.02598076       0.03850000  0.02598076 0.02400000 0.01167619</span></span>
-<span><span class="co">#&gt; m7.1        0.05022947       0.03850000  0.05022947 0.02400000 0.02142429</span></span>
-<span><span class="co">#&gt; m8.1        0.02598076       0.04550000  0.02598076 0.02400000 0.01167619</span></span>
-<span><span class="co">#&gt; m9.1        0.02598076       0.00000000  0.02598076 0.00000000 0.01327906</span></span>
-<span><span class="co">#&gt; m10.1       0.04178516       0.03850000  0.04178516 0.02400000 0.02158703</span></span>
+<span><span class="co">#&gt; m3.1        0.02400000       0.03850000  0.02400000 0.02400000 0.01385641</span></span>
+<span><span class="co">#&gt; m4.1        0.04350000       0.03550000  0.04350000 0.02500000 0.02191461</span></span>
+<span><span class="co">#&gt; m5.1        0.02598076       0.00000000  0.02598076 0.00000000 0.01327906</span></span>
+<span><span class="co">#&gt; m6.1        0.02687471       0.03850000  0.02687471 0.02500000 0.01419800</span></span>
+<span><span class="co">#&gt; m7.1        0.04379783       0.04550000  0.04379783 0.02400000 0.03300000</span></span>
+<span><span class="co">#&gt; m8.1        0.06132699       0.05550000  0.06132699 0.02400000 0.04301453</span></span>
+<span><span class="co">#&gt; m9.1        0.02250000       0.03850000  0.02250000 0.02400000 0.01357387</span></span>
+<span><span class="co">#&gt; m10.1       0.02250000       0.00000000  0.02250000 0.00000000 0.01150000</span></span>
 <span><span class="co">#&gt;       PrevalenceSD Detection RateSD Detection PrevalenceSD Balanced AccuracySD</span></span>
-<span><span class="co">#&gt; m1.2    0.01154701       0.01154701             0.01154701          0.00000000</span></span>
-<span><span class="co">#&gt; m2.2    0.00900000       0.00900000             0.00550000          0.01900000</span></span>
-<span><span class="co">#&gt; m3.2    0.01039230       0.01236932             0.01828251          0.01878829</span></span>
-<span><span class="co">#&gt; m4.2    0.00000000       0.01500000             0.02820165          0.01792577</span></span>
-<span><span class="co">#&gt; m5.2    0.00900000       0.00900000             0.00900000          0.00000000</span></span>
-<span><span class="co">#&gt; m6.2    0.01000000       0.00550000             0.03274650          0.03916950</span></span>
-<span><span class="co">#&gt; m7.2    0.01039230       0.01236932             0.04188377          0.03916950</span></span>
-<span><span class="co">#&gt; m8.2    0.01050000       0.01594522             0.03034798          0.04301453</span></span>
-<span><span class="co">#&gt; m9.2    0.00000000       0.00000000             0.01450000          0.01900000</span></span>
-<span><span class="co">#&gt; m10.2   0.01000000       0.02061553             0.02061553          0.01385641</span></span>
-<span><span class="co">#&gt; m1.1    0.01154701       0.01154701             0.02170061          0.02514458</span></span>
-<span><span class="co">#&gt; m2.1    0.00900000       0.00900000             0.02423496          0.02424871</span></span>
-<span><span class="co">#&gt; m3.1    0.01039230       0.02264950             0.03747332          0.04150000</span></span>
-<span><span class="co">#&gt; m4.1    0.00000000       0.01500000             0.01450000          0.03048497</span></span>
-<span><span class="co">#&gt; m5.1    0.00900000       0.00900000             0.01429161          0.01900000</span></span>
-<span><span class="co">#&gt; m6.1    0.01000000       0.02061553             0.03588291          0.02069420</span></span>
-<span><span class="co">#&gt; m7.1    0.01039230       0.01236932             0.03403430          0.03878574</span></span>
-<span><span class="co">#&gt; m8.1    0.01050000       0.01594522             0.03464462          0.02402776</span></span>
-<span><span class="co">#&gt; m9.1    0.00000000       0.00000000             0.01674316          0.02193931</span></span>
-<span><span class="co">#&gt; m10.1   0.01000000       0.02061553             0.02677530          0.03977751</span></span>
-<span><span class="co">#&gt;       AccuracySD    KappaSD AccuracyLowerSD AccuracyUpperSD AccuracyNullSD</span></span>
-<span><span class="co">#&gt; m1.2  0.00000000 0.00000000     0.001732051    0.0000000000     0.01154701</span></span>
-<span><span class="co">#&gt; m2.2  0.01450000 0.03150000     0.023500000    0.0005000000     0.00900000</span></span>
-<span><span class="co">#&gt; m3.2  0.01703673 0.03666402     0.029540932    0.0005773503     0.01039230</span></span>
-<span><span class="co">#&gt; m4.2  0.01450000 0.03118092     0.025000000    0.0005000000     0.00000000</span></span>
-<span><span class="co">#&gt; m5.2  0.00000000 0.00000000     0.001500000    0.0000000000     0.00900000</span></span>
-<span><span class="co">#&gt; m6.2  0.02924608 0.06510504     0.046818800    0.0033665016     0.01000000</span></span>
-<span><span class="co">#&gt; m7.2  0.02915905 0.06478683     0.047947888    0.0033665016     0.01039230</span></span>
-<span><span class="co">#&gt; m8.2  0.02977135 0.06937038     0.046693147    0.0038622101     0.01050000</span></span>
-<span><span class="co">#&gt; m9.2  0.01450000 0.03150000     0.025000000    0.0005000000     0.00000000</span></span>
-<span><span class="co">#&gt; m10.2 0.01761391 0.03814009     0.031219652    0.0005773503     0.01000000</span></span>
-<span><span class="co">#&gt; m1.1  0.01761391 0.03987062     0.030379544    0.0005773503     0.01154701</span></span>
-<span><span class="co">#&gt; m2.1  0.01732051 0.03868247     0.030912511    0.0005773503     0.00900000</span></span>
-<span><span class="co">#&gt; m3.1  0.03050000 0.06800000     0.049020404    0.0035000000     0.01039230</span></span>
-<span><span class="co">#&gt; m4.1  0.02820165 0.05988322     0.045284287    0.0033665016     0.00000000</span></span>
-<span><span class="co">#&gt; m5.1  0.01450000 0.03150000     0.024540782    0.0005000000     0.00900000</span></span>
-<span><span class="co">#&gt; m6.1  0.01517399 0.03378856     0.026733250    0.0005000000     0.01000000</span></span>
-<span><span class="co">#&gt; m7.1  0.02820165 0.06127533     0.043116122    0.0037749172     0.01039230</span></span>
-<span><span class="co">#&gt; m8.1  0.01600000 0.03738092     0.029000000    0.0005000000     0.01050000</span></span>
-<span><span class="co">#&gt; m9.1  0.01674316 0.03637307     0.028867513    0.0005773503     0.00000000</span></span>
-<span><span class="co">#&gt; m10.1 0.02915905 0.06501987     0.045565886    0.0033665016     0.01000000</span></span>
+<span><span class="co">#&gt; m1.2   0.013178265      0.009673848            0.009673848         0.012000000</span></span>
+<span><span class="co">#&gt; m2.2   0.007438638      0.007438638            0.022410935         0.021000000</span></span>
+<span><span class="co">#&gt; m3.2   0.007438638      0.020984121            0.028546745         0.020420578</span></span>
+<span><span class="co">#&gt; m4.2   0.007889867      0.022410935            0.036021984         0.018945096</span></span>
+<span><span class="co">#&gt; m5.2   0.004041452      0.004041452            0.018136060         0.021000000</span></span>
+<span><span class="co">#&gt; m6.2   0.007889867      0.017670597            0.034467376         0.009380832</span></span>
+<span><span class="co">#&gt; m7.2   0.017897858      0.029680240            0.040409364         0.021794495</span></span>
+<span><span class="co">#&gt; m8.2   0.015085865      0.026700499            0.040356743         0.023935678</span></span>
+<span><span class="co">#&gt; m9.2   0.014177447      0.014177447            0.014177447         0.000000000</span></span>
+<span><span class="co">#&gt; m10.2  0.012579746      0.021639085            0.009394147         0.029736341</span></span>
+<span><span class="co">#&gt; m1.1   0.013178265      0.013178265            0.022529610         0.025144582</span></span>
+<span><span class="co">#&gt; m2.1   0.014150972      0.014150972            0.030728651         0.024248711</span></span>
+<span><span class="co">#&gt; m3.1   0.014150972      0.014840822            0.024494897         0.021000000</span></span>
+<span><span class="co">#&gt; m4.1   0.014177447      0.025219040            0.051616373         0.039149287</span></span>
+<span><span class="co">#&gt; m5.1   0.012579746      0.012579746            0.026474831         0.023151674</span></span>
+<span><span class="co">#&gt; m6.1   0.007889867      0.011489125            0.023157072         0.018945096</span></span>
+<span><span class="co">#&gt; m7.1   0.005196152      0.018493242            0.018997807         0.050655701</span></span>
+<span><span class="co">#&gt; m8.1   0.008981462      0.017914147            0.047821718         0.075443135</span></span>
+<span><span class="co">#&gt; m9.1   0.014177447      0.014177447            0.020982135         0.019000000</span></span>
+<span><span class="co">#&gt; m10.1  0.012579746      0.012579746            0.017483325         0.019000000</span></span>
+<span><span class="co">#&gt;         AccuracySD     KappaSD AccuracyLowerSD AccuracyUpperSD AccuracyNullSD</span></span>
+<span><span class="co">#&gt; m1.2  0.0155000000 0.034000000     0.026612967    0.0005000000    0.013178265</span></span>
+<span><span class="co">#&gt; m2.2  0.0150000000 0.033500000     0.025656383    0.0005000000    0.007438638</span></span>
+<span><span class="co">#&gt; m3.2  0.0173397424 0.037348583     0.029126162    0.0005773503    0.007438638</span></span>
+<span><span class="co">#&gt; m4.2  0.0150222058 0.032419130     0.027580186    0.0005000000    0.007889867</span></span>
+<span><span class="co">#&gt; m5.2  0.0155000000 0.034000000     0.028640007    0.0005000000    0.004041452</span></span>
+<span><span class="co">#&gt; m6.2  0.0009574271 0.003316625     0.004358899    0.0000000000    0.007889867</span></span>
+<span><span class="co">#&gt; m7.2  0.0178978583 0.039601136     0.030599564    0.0005773503    0.017897858</span></span>
+<span><span class="co">#&gt; m8.2  0.0184752086 0.041955333     0.032643274    0.0005773503    0.015085865</span></span>
+<span><span class="co">#&gt; m9.2  0.0000000000 0.000000000     0.001500000    0.0000000000    0.014177447</span></span>
+<span><span class="co">#&gt; m10.2 0.0291590466 0.060840639     0.046411206    0.0033665016    0.012579746</span></span>
+<span><span class="co">#&gt; m1.1  0.0179164729 0.040177730     0.031106002    0.0005773503    0.013178265</span></span>
+<span><span class="co">#&gt; m2.1  0.0173205081 0.038682468     0.029181901    0.0005773503    0.014150972</span></span>
+<span><span class="co">#&gt; m3.1  0.0176139150 0.038140093     0.031219652    0.0005773503    0.014150972</span></span>
+<span><span class="co">#&gt; m4.1  0.0291590466 0.064716690     0.047161955    0.0033665016    0.014177447</span></span>
+<span><span class="co">#&gt; m5.1  0.0170367250 0.037563280     0.027814864    0.0005773503    0.012579746</span></span>
+<span><span class="co">#&gt; m6.1  0.0173397424 0.037259227     0.030843692    0.0005773503    0.007889867</span></span>
+<span><span class="co">#&gt; m7.1  0.0429059048 0.094318609     0.063566238    0.0093452305    0.005196152</span></span>
+<span><span class="co">#&gt; m8.1  0.0590846850 0.137060510     0.084630077    0.0173397424    0.008981462</span></span>
+<span><span class="co">#&gt; m9.1  0.0170367250 0.036664015     0.028651643    0.0005773503    0.014177447</span></span>
+<span><span class="co">#&gt; m10.1 0.0145000000 0.031500000     0.023043437    0.0005000000    0.012579746</span></span>
 <span><span class="co">#&gt;       AccuracyPValueSD McnemarPValueSD PositiveSD NegativeSD True PositiveSD</span></span>
-<span><span class="co">#&gt; m1.2                 0              NA          0  0.5773503       0.0000000</span></span>
-<span><span class="co">#&gt; m2.2                 0              NA          0  0.5000000       0.0000000</span></span>
-<span><span class="co">#&gt; m3.2                 0       0.0000000          0  0.5773503       0.5000000</span></span>
-<span><span class="co">#&gt; m4.2                 0       0.0000000          0  0.0000000       0.5000000</span></span>
-<span><span class="co">#&gt; m5.2                 0              NA          0  0.5000000       0.0000000</span></span>
-<span><span class="co">#&gt; m6.2                 0       0.3676955          0  0.5000000       0.5000000</span></span>
-<span><span class="co">#&gt; m7.2                 0       0.3676955          0  0.5773503       0.5000000</span></span>
-<span><span class="co">#&gt; m8.2                 0       0.3676955          0  0.5000000       0.5000000</span></span>
-<span><span class="co">#&gt; m9.2                 0              NA          0  0.0000000       0.0000000</span></span>
-<span><span class="co">#&gt; m10.2                0              NA          0  0.5000000       0.5773503</span></span>
-<span><span class="co">#&gt; m1.1                 0              NA          0  0.5773503       0.0000000</span></span>
-<span><span class="co">#&gt; m2.1                 0              NA          0  0.5000000       0.0000000</span></span>
-<span><span class="co">#&gt; m3.1                 0              NA          0  0.5773503       0.5000000</span></span>
-<span><span class="co">#&gt; m4.1                 0       0.0000000          0  0.0000000       0.5000000</span></span>
-<span><span class="co">#&gt; m5.1                 0              NA          0  0.5000000       0.0000000</span></span>
-<span><span class="co">#&gt; m6.1                 0       0.0000000          0  0.5000000       0.5000000</span></span>
-<span><span class="co">#&gt; m7.1                 0       0.3002221          0  0.5773503       0.5000000</span></span>
-<span><span class="co">#&gt; m8.1                 0       0.0000000          0  0.5000000       0.5000000</span></span>
-<span><span class="co">#&gt; m9.1                 0       0.0000000          0  0.0000000       0.0000000</span></span>
-<span><span class="co">#&gt; m10.1                0       0.3676955          0  0.5000000       0.5000000</span></span>
+<span><span class="co">#&gt; m1.2            0.0000              NA  0.5773503  0.5773503       0.5000000</span></span>
+<span><span class="co">#&gt; m2.2            0.0000              NA  0.5773503  0.5000000       0.5773503</span></span>
+<span><span class="co">#&gt; m3.2            0.0000       0.0000000  0.5773503  0.5000000       0.5000000</span></span>
+<span><span class="co">#&gt; m4.2            0.0000       0.0000000  0.5773503  0.5000000       0.9574271</span></span>
+<span><span class="co">#&gt; m5.2            0.0000              NA  0.5773503  0.5773503       0.5773503</span></span>
+<span><span class="co">#&gt; m6.2            0.0000       0.0000000  0.5773503  0.5000000       0.0000000</span></span>
+<span><span class="co">#&gt; m7.2            0.0000       0.0000000  0.5773503  0.5773503       0.9574271</span></span>
+<span><span class="co">#&gt; m8.2            0.0000       0.0000000  0.5773503  0.5000000       0.9574271</span></span>
+<span><span class="co">#&gt; m9.2            0.0000              NA  0.5773503  0.5000000       0.5773503</span></span>
+<span><span class="co">#&gt; m10.2           0.0000       0.0000000  0.5773503  0.5773503       0.8164966</span></span>
+<span><span class="co">#&gt; m1.1            0.0000              NA  0.5773503  0.5773503       0.5773503</span></span>
+<span><span class="co">#&gt; m2.1            0.0000              NA  0.5773503  0.5000000       0.5773503</span></span>
+<span><span class="co">#&gt; m3.1            0.0000              NA  0.5773503  0.5000000       0.5773503</span></span>
+<span><span class="co">#&gt; m4.1            0.0000       0.3676955  0.5773503  0.5000000       0.9574271</span></span>
+<span><span class="co">#&gt; m5.1            0.0000       0.0000000  0.5773503  0.5773503       0.5773503</span></span>
+<span><span class="co">#&gt; m6.1            0.0000       0.0000000  0.5773503  0.5000000       0.9574271</span></span>
+<span><span class="co">#&gt; m7.1            0.0000       0.0000000  0.5773503  0.5773503       0.5000000</span></span>
+<span><span class="co">#&gt; m8.1            0.0025       0.5317443  0.5773503  0.5000000       0.5773503</span></span>
+<span><span class="co">#&gt; m9.1            0.0000              NA  0.5773503  0.5000000       0.5773503</span></span>
+<span><span class="co">#&gt; m10.1           0.0000              NA  0.5773503  0.5773503       0.5773503</span></span>
 <span><span class="co">#&gt;       False PositiveSD True NegativeSD False NegativeSD     CBISD pAUCSD</span></span>
-<span><span class="co">#&gt; m1.2         0.0000000       0.5773503        0.0000000        NA     NA</span></span>
-<span><span class="co">#&gt; m2.2         0.0000000       0.0000000        0.5000000        NA     NA</span></span>
-<span><span class="co">#&gt; m3.2         0.5000000       0.5000000        0.5000000        NA     NA</span></span>
-<span><span class="co">#&gt; m4.2         0.5000000       0.5773503        0.5773503        NA     NA</span></span>
-<span><span class="co">#&gt; m5.2         0.0000000       0.5000000        0.0000000        NA     NA</span></span>
-<span><span class="co">#&gt; m6.2         0.5000000       0.9574271        1.0000000        NA     NA</span></span>
-<span><span class="co">#&gt; m7.2         0.5000000       1.4142136        1.0000000        NA     NA</span></span>
-<span><span class="co">#&gt; m8.2         0.5000000       0.5000000        1.0000000        NA     NA</span></span>
-<span><span class="co">#&gt; m9.2         0.0000000       0.5000000        0.5000000        NA     NA</span></span>
-<span><span class="co">#&gt; m10.2        0.5773503       0.5000000        0.0000000        NA     NA</span></span>
+<span><span class="co">#&gt; m1.2         0.5000000       0.5773503        0.0000000        NA     NA</span></span>
+<span><span class="co">#&gt; m2.2         0.0000000       0.8164966        0.5000000        NA     NA</span></span>
+<span><span class="co">#&gt; m3.2         0.5000000       0.8164966        0.5000000        NA     NA</span></span>
+<span><span class="co">#&gt; m4.2         0.5000000       0.9574271        0.5773503        NA     NA</span></span>
+<span><span class="co">#&gt; m5.2         0.0000000       0.9574271        0.5000000        NA     NA</span></span>
+<span><span class="co">#&gt; m6.2         0.5773503       0.9574271        0.5773503        NA     NA</span></span>
+<span><span class="co">#&gt; m7.2         0.5000000       0.9574271        0.5000000        NA     NA</span></span>
+<span><span class="co">#&gt; m8.2         0.5000000       1.0000000        0.5000000        NA     NA</span></span>
+<span><span class="co">#&gt; m9.2         0.0000000       0.5000000        0.0000000        NA     NA</span></span>
+<span><span class="co">#&gt; m10.2        0.5773503       0.5000000        0.5000000        NA     NA</span></span>
 <span><span class="co">#&gt; m1.1         0.0000000       0.8164966        0.5773503        NA     NA</span></span>
 <span><span class="co">#&gt; m2.1         0.0000000       0.9574271        0.5773503 0.3000000     NA</span></span>
-<span><span class="co">#&gt; m3.1         0.5000000       1.4142136        1.0000000 0.0000000     NA</span></span>
-<span><span class="co">#&gt; m4.1         0.5000000       0.5773503        0.5773503 0.3000000     NA</span></span>
-<span><span class="co">#&gt; m5.1         0.0000000       0.5773503        0.5000000        NA     NA</span></span>
-<span><span class="co">#&gt; m6.1         0.5000000       0.9574271        0.5773503 0.2500000     NA</span></span>
-<span><span class="co">#&gt; m7.1         0.5000000       0.5773503        1.1547005 0.3949076     NA</span></span>
-<span><span class="co">#&gt; m8.1         0.5000000       0.9574271        0.5773503 0.3066544     NA</span></span>
-<span><span class="co">#&gt; m9.1         0.0000000       0.5773503        0.5773503 0.2500000     NA</span></span>
-<span><span class="co">#&gt; m10.1        0.5000000       0.8164966        0.9574271 0.3535534     NA</span></span>
+<span><span class="co">#&gt; m3.1         0.5000000       0.8164966        0.5000000 0.4485000     NA</span></span>
+<span><span class="co">#&gt; m4.1         0.5000000       1.5000000        1.0000000 0.3949076     NA</span></span>
+<span><span class="co">#&gt; m5.1         0.0000000       0.8164966        0.5773503 0.3000000     NA</span></span>
+<span><span class="co">#&gt; m6.1         0.5000000       0.5773503        0.5773503 0.3000000     NA</span></span>
+<span><span class="co">#&gt; m7.1         0.5000000       0.9574271        0.9574271 0.5525000     NA</span></span>
+<span><span class="co">#&gt; m8.1         0.5000000       1.5000000        1.4142136 0.5000000     NA</span></span>
+<span><span class="co">#&gt; m9.1         0.5000000       0.5773503        0.5000000        NA     NA</span></span>
+<span><span class="co">#&gt; m10.1        0.0000000       0.5000000        0.5000000 0.2500000     NA</span></span>
 <span><span class="co">#&gt;       Omission_10pctSD</span></span>
-<span><span class="co">#&gt; m1.2        0.00000000</span></span>
-<span><span class="co">#&gt; m2.2        0.00000000</span></span>
-<span><span class="co">#&gt; m3.2        0.04552197</span></span>
-<span><span class="co">#&gt; m4.2        0.02771281</span></span>
-<span><span class="co">#&gt; m5.2        0.00000000</span></span>
-<span><span class="co">#&gt; m6.2        0.02771281</span></span>
-<span><span class="co">#&gt; m7.2        0.02400000</span></span>
-<span><span class="co">#&gt; m8.2        0.04750000</span></span>
-<span><span class="co">#&gt; m9.2        0.04552197</span></span>
-<span><span class="co">#&gt; m10.2       0.04552197</span></span>
-<span><span class="co">#&gt; m1.1        0.00000000</span></span>
-<span><span class="co">#&gt; m2.1        0.00000000</span></span>
-<span><span class="co">#&gt; m3.1        0.00000000</span></span>
-<span><span class="co">#&gt; m4.1        0.00000000</span></span>
-<span><span class="co">#&gt; m5.1        0.00000000</span></span>
-<span><span class="co">#&gt; m6.1        0.00000000</span></span>
-<span><span class="co">#&gt; m7.1        0.00000000</span></span>
-<span><span class="co">#&gt; m8.1        0.00000000</span></span>
-<span><span class="co">#&gt; m9.1        0.00000000</span></span>
-<span><span class="co">#&gt; m10.1       0.00000000</span></span></code></pre></div>
+<span><span class="co">#&gt; m1.2       0.024000000</span></span>
+<span><span class="co">#&gt; m2.2       0.000000000</span></span>
+<span><span class="co">#&gt; m3.2       0.024000000</span></span>
+<span><span class="co">#&gt; m4.2       0.025000000</span></span>
+<span><span class="co">#&gt; m5.2       0.000000000</span></span>
+<span><span class="co">#&gt; m6.2       0.024351591</span></span>
+<span><span class="co">#&gt; m7.2       0.028867513</span></span>
+<span><span class="co">#&gt; m8.2       0.047707442</span></span>
+<span><span class="co">#&gt; m9.2       0.045711961</span></span>
+<span><span class="co">#&gt; m10.2      0.028301943</span></span>
+<span><span class="co">#&gt; m1.1       0.002886751</span></span>
+<span><span class="co">#&gt; m2.1       0.002886751</span></span>
+<span><span class="co">#&gt; m3.1       0.002886751</span></span>
+<span><span class="co">#&gt; m4.1       0.002886751</span></span>
+<span><span class="co">#&gt; m5.1       0.002886751</span></span>
+<span><span class="co">#&gt; m6.1       0.002886751</span></span>
+<span><span class="co">#&gt; m7.1       0.002886751</span></span>
+<span><span class="co">#&gt; m8.1       0.002886751</span></span>
+<span><span class="co">#&gt; m9.1       0.002886751</span></span>
+<span><span class="co">#&gt; m10.1      0.002886751</span></span></code></pre></div>
 <p>Otherwise, the mean validation metric values per algorithm can also
 be obtained with the following code:</p>
 <div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
@@ -993,8 +993,8 @@ be obtained with the following code:</p>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 2 × 59</span></span></span>
 <span><span class="co">#&gt;   algo       ROC   TSS Sensitivity Specificity `Pos Pred Value` `Neg Pred Value`</span></span>
 <span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> kknn     0.986 0.970       0.993       0.977            0.988            0.988</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> naive_b… 0.998 0.958       0.996       0.965            0.981            0.994</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> kknn     0.985 0.968       0.989       0.979            0.988            0.983</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> naive_b… 0.998 0.962       0.996       0.966            0.982            0.994</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># ℹ 52 more variables: Precision &lt;dbl&gt;, Recall &lt;dbl&gt;, F1 &lt;dbl&gt;,</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;">#   Prevalence &lt;dbl&gt;, `Detection Rate` &lt;dbl&gt;, `Detection Prevalence` &lt;dbl&gt;,</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;">#   `Balanced Accuracy` &lt;dbl&gt;, Accuracy &lt;dbl&gt;, Kappa &lt;dbl&gt;,</span></span></span>
@@ -1035,11 +1035,11 @@ names generated in this last step and are included in object
 <span><span class="co">#&gt; Class                         : input_sdm</span></span>
 <span><span class="co">#&gt; --------  Occurrences  --------</span></span>
 <span><span class="co">#&gt; Species Names                 : Araucaria angustifolia </span></span>
-<span><span class="co">#&gt; Number of presences           : 84 </span></span>
+<span><span class="co">#&gt; Number of presences           : 82 </span></span>
 <span><span class="co">#&gt; Pseudoabsence methods         :</span></span>
 <span><span class="co">#&gt;     Method to obtain PAs      : bioclim </span></span>
 <span><span class="co">#&gt;     Number of PA sets         : 10 </span></span>
-<span><span class="co">#&gt;     Number of PAs in each set : 84 </span></span>
+<span><span class="co">#&gt;     Number of PAs in each set : 82 </span></span>
 <span><span class="co">#&gt; Data Cleaning                 : NAs, Capitals, Centroids, Geographically Duplicated, Identical Lat/Long, Institutions, Invalid, Non-terrestrial, Duplicated Cell (grid) </span></span>
 <span><span class="co">#&gt; --------  Predictors  ---------</span></span>
 <span><span class="co">#&gt; Number of Predictors          : 3 </span></span>
@@ -1058,9 +1058,9 @@ names generated in this last step and are included in object
 <span><span class="co">#&gt;     Number                    : 4 </span></span>
 <span><span class="co">#&gt;     Metrics                   :</span></span>
 <span><span class="co">#&gt; $`Araucaria angustifolia`</span></span>
-<span><span class="co">#&gt;          algo       ROC       TSS Sensitivity Specificity</span></span>
-<span><span class="co">#&gt; 1        kknn 0.9857309 0.9703630      0.9928    0.977475</span></span>
-<span><span class="co">#&gt; 2 naive_bayes 0.9978861 0.9578601      0.9964    0.965025</span></span>
+<span><span class="co">#&gt;          algo       ROC      TSS Sensitivity Specificity</span></span>
+<span><span class="co">#&gt; 1        kknn 0.9846174 0.968089      0.9890    0.979075</span></span>
+<span><span class="co">#&gt; 2 naive_bayes 0.9979933 0.962443      0.9963    0.966125</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; --------  Predictions  --------</span></span>
 <span><span class="co">#&gt; Ensembles                     :</span></span>
@@ -1098,7 +1098,7 @@ above to retrieve models ids).</p>
 <span>                 id <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>                 ensemble <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>                 ensemble_type <span class="op">=</span> <span class="st">"mean_occ_prob"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="InvasiveSpp_files/figure-html/plot_current_results-1.png" class="r-plt" width="700"></p>
+<p><img src="InvasiveSpp_files/figure-html/plot_current_results-1.png" class="r-plt" alt="" width="700"></p>
 <div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_occurrences.html">plot_predictions</a></span><span class="op">(</span><span class="va">i</span>,</span>
 <span>                 spp_name <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -1106,7 +1106,7 @@ above to retrieve models ids).</p>
 <span>                 id <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>                 ensemble <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>                 ensemble_type <span class="op">=</span> <span class="st">"mean_occ_prob"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="InvasiveSpp_files/figure-html/ssp245_2090-1.png" class="r-plt" width="700"></p>
+<p><img src="InvasiveSpp_files/figure-html/ssp245_2090-1.png" class="r-plt" alt="" width="700"></p>
 <p>Another plot widely used in SDM studies is the Partial Dependence
 Plot, which informs the response curves to each variable. Here we are
 using PCA axes as predictors, so there is not much sense in plotting
@@ -1115,7 +1115,7 @@ these curves, but if someone want to do that, it is possible through the
 <div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/pdp_sdm.html">pdp_sdm</a></span><span class="op">(</span><span class="va">i</span><span class="op">)</span></span>
 <span><span class="co">#&gt; `geom_smooth()` using method = 'gam' and formula = 'y ~ s(x, bs = "cs")'</span></span></code></pre></div>
-<p><img src="InvasiveSpp_files/figure-html/pdp_sdm-1.png" class="r-plt" width="700"></p>
+<p><img src="InvasiveSpp_files/figure-html/pdp_sdm-1.png" class="r-plt" alt="" width="700"></p>
 </div>
 <div class="section level3">
 <h3 id="writing-results">Writing results<a class="anchor" aria-label="anchor" href="#writing-results"></a>
@@ -1144,7 +1144,7 @@ simplefeatures object instead of cells in a grid.</p>
 <div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">end_time</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">end_time</span> <span class="op">-</span> <span class="va">start_time</span></span>
-<span><span class="co">#&gt; Time difference of 1.875676 mins</span></span></code></pre></div>
+<span><span class="co">#&gt; Time difference of 1.915308 mins</span></span></code></pre></div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>

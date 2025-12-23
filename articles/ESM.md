@@ -66,7 +66,7 @@ i_esm <- input_sdm(oc, sa) |>
 #> Testing equal lat/lon
 #> Removed 0 records.
 #> Testing biodiversity institutions
-#> Removed 1 records.
+#> Removed 0 records.
 #> Testing coordinate validity
 #> Removed 0 records.
 #> Testing sea coordinates
@@ -133,7 +133,7 @@ i_sdm <- input_sdm(oc, sa) |>
 #> Testing equal lat/lon
 #> Removed 0 records.
 #> Testing biodiversity institutions
-#> Removed 1 records.
+#> Removed 0 records.
 #> Testing coordinate validity
 #> Removed 0 records.
 #> Testing sea coordinates
@@ -206,5 +206,5 @@ bivariate models.
 ``` r
 end_time <- Sys.time()
 end_time - start_time
-#> Time difference of 2.305413 mins
+#> Time difference of 2.379702 mins
 ```

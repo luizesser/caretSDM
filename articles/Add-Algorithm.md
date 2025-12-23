@@ -376,9 +376,6 @@ i <- train_sdm(i,
                algo = mahal.custom, 
                variables_selected = c("bio1", "bio4", "bio12"), # Using only two variables for simplicity
                ctrl = ctrl_sdm)
-#> Warning in auc.roc(roc_obj, partial.auc = c(1, 0.9), partial.auc.focus =
-#> "specificity", : Partial AUC correction not defined for ROC curves below the
-#> diagonal.
 #> Loading required package: ggplot2
 #> Loading required package: lattice
 #> 
@@ -444,6 +441,9 @@ i <- train_sdm(i,
 #> Warning in auc.roc(roc_obj, partial.auc = c(1, 0.9), partial.auc.focus =
 #> "specificity", : Partial AUC correction not defined for ROC curves below the
 #> diagonal.
+#> Warning in auc.roc(roc_obj, partial.auc = c(1, 0.9), partial.auc.focus =
+#> "specificity", : Partial AUC correction not defined for ROC curves below the
+#> diagonal.
 #> Warning in nominalTrainWorkflow(x = x, y = y, wts = weights, info = trainInfo,
 #> : There were missing values in resampled performance measures.
 ```
@@ -458,11 +458,11 @@ i
 #> Class                         : input_sdm
 #> --------  Occurrences  --------
 #> Species Names                 : Araucaria angustifolia 
-#> Number of presences           : 420 
+#> Number of presences           : 419 
 #> Pseudoabsence methods         :
 #>     Method to obtain PAs      : bioclim 
 #>     Number of PA sets         : 3 
-#>     Number of PAs in each set : 420 
+#>     Number of PAs in each set : 419 
 #> --------  Predictors  ---------
 #> Number of Predictors          : 7 
 #> Predictors Names              : GID0, CODIGOIB1, NOMEUF2, SIGLAUF3, bio1, bio4, bio12 
@@ -475,7 +475,7 @@ i
 #>     Metrics                   :
 #> $`Araucaria angustifolia`
 #>           algo       ROC       TSS Sensitivity Specificity
-#> 1 mahal.custom 0.9886724 0.8060847   0.8244444           1
+#> 1 mahal.custom 0.9906817 0.8306326   0.8305556           1
 ```
 
 Note that the algorithm name will be set as the name of the object
@@ -494,7 +494,7 @@ mean_validation_metrics(i)
 #> # A tibble: 1 × 59
 #>   algo       ROC   TSS Sensitivity Specificity `Pos Pred Value` `Neg Pred Value`
 #>   <chr>    <dbl> <dbl>       <dbl>       <dbl>            <dbl>            <dbl>
-#> 1 mahal.c… 0.989 0.806       0.824           1                1            0.318
+#> 1 mahal.c… 0.991 0.831       0.831           1                1            0.336
 #> # ℹ 52 more variables: Precision <dbl>, Recall <dbl>, F1 <dbl>,
 #> #   Prevalence <dbl>, `Detection Rate` <dbl>, `Detection Prevalence` <dbl>,
 #> #   `Balanced Accuracy` <dbl>, Accuracy <dbl>, Kappa <dbl>,
@@ -526,9 +526,6 @@ i2 <- input_sdm(oc, sa) |>
       train_sdm(algo = mahal.dismo, 
                 variables_selected = c("bio1", "bio4", "bio12"), # Using only two variables for simplicity
                 ctrl = ctrl_sdm)
-#> Warning in auc.roc(roc_obj, partial.auc = c(1, 0.9), partial.auc.focus =
-#> "specificity", : Partial AUC correction not defined for ROC curves below the
-#> diagonal.
 #> Warning in auc.roc(roc_obj, partial.auc = c(1, 0.9), partial.auc.focus =
 #> "specificity", : Partial AUC correction not defined for ROC curves below the
 #> diagonal.
@@ -601,11 +598,11 @@ i2
 #> Class                         : input_sdm
 #> --------  Occurrences  --------
 #> Species Names                 : Araucaria angustifolia 
-#> Number of presences           : 420 
+#> Number of presences           : 419 
 #> Pseudoabsence methods         :
 #>     Method to obtain PAs      : bioclim 
 #>     Number of PA sets         : 3 
-#>     Number of PAs in each set : 420 
+#>     Number of PAs in each set : 419 
 #> --------  Predictors  ---------
 #> Number of Predictors          : 7 
 #> Predictors Names              : GID0, CODIGOIB1, NOMEUF2, SIGLAUF3, bio1, bio4, bio12 
@@ -618,7 +615,7 @@ i2
 #>     Metrics                   :
 #> $`Araucaria angustifolia`
 #>     algo       ROC       TSS Sensitivity Specificity
-#> 1 custom 0.9913901 0.8488215   0.9794444   0.8821111
+#> 1 custom 0.9907247 0.8527099   0.9826667   0.8821111
 ```
 
 Plotting the result of mahal.dismo.

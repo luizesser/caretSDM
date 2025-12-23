@@ -137,7 +137,7 @@ i <- data_clean(i, terrestrial = FALSE)
 #> Testing equal lat/lon
 #> Removed 0 records.
 #> Testing biodiversity institutions
-#> Removed 1 records.
+#> Removed 0 records.
 #> Testing coordinate validity
 #> Removed 0 records.
 #> Predictors identified, procceding with grid filter (removing NA and duplicated data).

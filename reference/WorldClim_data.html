@@ -9,7 +9,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">caretSDM</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.2.4</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.2.5</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -78,12 +78,12 @@
 
 <dt id="arg-year">year<a class="anchor" aria-label="anchor" href="#arg-year"></a></dt>
 <dd><p>Specify the year you want to retrieve data. Possible entries are:
-"2030", "2050", "2070" and/or "2090". You can  use a vector to provide more than one entry.</p></dd>
+"2030", "2050", "2070" and/or "2090". You can use a vector to provide more than one entry.</p></dd>
 
 
 <dt id="arg-gcm">gcm<a class="anchor" aria-label="anchor" href="#arg-gcm"></a></dt>
 <dd><p>GCMs to be considered in future scenarios. You can use a vector to provide more than
-one entry.</p><table class="table table"><tr><td><strong>CODE</strong></td><td><strong>GCM</strong></td></tr><tr><td>ac</td><td>ACCESS-CM2</td></tr><tr><td>ae</td><td>ACCESS-ESM1-5</td></tr><tr><td>bc</td><td>BCC-CSM2-MR</td></tr><tr><td>ca</td><td>CanESM5</td></tr><tr><td>cc</td><td>CanESM5-CanOE</td></tr><tr><td>ce</td><td>CMCC-ESM2</td></tr><tr><td>cn</td><td>CNRM-CM6-1</td></tr><tr><td>ch</td><td>CNRM-CM6-1-HR</td></tr><tr><td>cr</td><td>CNRM-ESM2-1</td></tr><tr><td>ec</td><td>EC-Earth3-Veg</td></tr><tr><td>ev</td><td>EC-Earth3-Veg-LR</td></tr><tr><td>fi</td><td>FIO-ESM-2-0</td></tr><tr><td>gf</td><td>GFDL-ESM4</td></tr><tr><td>gg</td><td>GISS-E2-1-G</td></tr><tr><td>gh</td><td>GISS-E2-1-H</td></tr><tr><td>hg</td><td>HadGEM3-GC31-LL</td></tr><tr><td>in</td><td>INM-CM4-8</td></tr><tr><td>ic</td><td>INM-CM5-0</td></tr><tr><td>ip</td><td>IPSL-CM6A-LR</td></tr><tr><td>me</td><td>MIROC-ES2L</td></tr><tr><td>mi</td><td>MIROC6</td></tr><tr><td>mp</td><td>MPI-ESM1-2-HR</td></tr><tr><td>ml</td><td>MPI-ESM1-2-LR</td></tr><tr><td>mr</td><td>MRI-ESM2-0</td></tr><tr><td>uk</td><td>UKESM1-0-LL</td></tr></table></dd>
+one entry.</p></dd>
 
 
 <dt id="arg-ssp">ssp<a class="anchor" aria-label="anchor" href="#arg-ssp"></a></dt>
@@ -97,24 +97,22 @@ You can use a vector to provide more than one entry.</p></dd>
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>If data is not downloaded, the function downloads the data and has no return value. If
-the data is downloaded, it imports the data as a <code>stack</code>.</p>
+    <p>If data is not downloaded, the function downloads the data and has no return value.</p>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>This function will create a folder entitled "input_data/WorldClim_data_current" or
-"input_data/WorldClim_data_future". All the data downloaded will be stored in this folder.
-Note that, despite being possible to retrieve a lot of data at once, it is not recommended to do
-so, since the data is very heavy.</p>
+    <p>This function will create a folder. All the data downloaded will be stored in this
+folder. Note that, despite being possible to retrieve a lot of data at once, it is not
+recommended to do so, since the data is very heavy.</p>
     </div>
     <div class="section level2">
     <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a></h2>
-    <p>https://www.worldclim.org/data/index.html</p>
+    <p>[https://www.worldclim.org/data/index.html](https://www.worldclim.org/data/index.html)</p>
     </div>
     <div class="section level2">
     <h2 id="author">Author<a class="anchor" aria-label="anchor" href="#author"></a></h2>
     <p>Luíz Fernando Esser (luizesser@gmail.com)
-https://luizfesser.wordpress.com</p>
+[https://luizfesser.wordpress.com](https://luizfesser.wordpress.com)</p>
     </div>
 
     <div class="section level2">
@@ -128,9 +126,10 @@ https://luizfesser.wordpress.com</p>
 <span class="r-in"><span>               gcm <span class="op">=</span> <span class="st">"mi"</span>,</span></span>
 <span class="r-in"><span>               ssp <span class="op">=</span> <span class="st">"126"</span>,</span></span>
 <span class="r-in"><span>               resolution <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "mi_ssp126_10_2050"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "mi_ssp126_10_2090"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> list()</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Downloading WorldClim future data: mi_ssp126_10_2050 from</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #0000BB; font-style: italic;">&lt;https://geodata.ucdavis.edu/cmip6/10m/MIROC6/ssp126/wc2.1_10m_bioc_MIROC6_ssp126_2041-2060.tif&gt;</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Downloading WorldClim future data: mi_ssp126_10_2090 from</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #0000BB; font-style: italic;">&lt;https://geodata.ucdavis.edu/cmip6/10m/MIROC6/ssp126/wc2.1_10m_bioc_MIROC6_ssp126_2081-2100.tif&gt;</span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># download data from one specific period</span></span></span>
 <span class="r-in"><span><span class="fu">WorldClim_data</span><span class="op">(</span>period <span class="op">=</span> <span class="st">"future"</span>,</span></span>
@@ -139,8 +138,8 @@ https://luizfesser.wordpress.com</p>
 <span class="r-in"><span>               gcm <span class="op">=</span> <span class="st">"mi"</span>,</span></span>
 <span class="r-in"><span>               ssp <span class="op">=</span> <span class="st">"585"</span>,</span></span>
 <span class="r-in"><span>               resolution <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "mi_ssp585_10_2070"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> list()</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Downloading WorldClim future data: mi_ssp585_10_2070 from</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #0000BB; font-style: italic;">&lt;https://geodata.ucdavis.edu/cmip6/10m/MIROC6/ssp585/wc2.1_10m_bioc_MIROC6_ssp585_2061-2080.tif&gt;</span></span>
 <span class="r-in"><span><span class="co"># }</span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>

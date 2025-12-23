@@ -42,35 +42,6 @@ WorldClim_data(path = NULL,
   GCMs to be considered in future scenarios. You can use a vector to
   provide more than one entry.
 
-  |          |                  |
-  |----------|------------------|
-  | **CODE** | **GCM**          |
-  | ac       | ACCESS-CM2       |
-  | ae       | ACCESS-ESM1-5    |
-  | bc       | BCC-CSM2-MR      |
-  | ca       | CanESM5          |
-  | cc       | CanESM5-CanOE    |
-  | ce       | CMCC-ESM2        |
-  | cn       | CNRM-CM6-1       |
-  | ch       | CNRM-CM6-1-HR    |
-  | cr       | CNRM-ESM2-1      |
-  | ec       | EC-Earth3-Veg    |
-  | ev       | EC-Earth3-Veg-LR |
-  | fi       | FIO-ESM-2-0      |
-  | gf       | GFDL-ESM4        |
-  | gg       | GISS-E2-1-G      |
-  | gh       | GISS-E2-1-H      |
-  | hg       | HadGEM3-GC31-LL  |
-  | in       | INM-CM4-8        |
-  | ic       | INM-CM5-0        |
-  | ip       | IPSL-CM6A-LR     |
-  | me       | MIROC-ES2L       |
-  | mi       | MIROC6           |
-  | mp       | MPI-ESM1-2-HR    |
-  | ml       | MPI-ESM1-2-LR    |
-  | mr       | MRI-ESM2-0       |
-  | uk       | UKESM1-0-LL      |
-
 - ssp:
 
   SSPs for future data. Possible entries are: "126", "245", "370" and/or
@@ -84,26 +55,23 @@ WorldClim_data(path = NULL,
 ## Value
 
 If data is not downloaded, the function downloads the data and has no
-return value. If the data is downloaded, it imports the data as a
-`stack`.
+return value.
 
 ## Details
 
-This function will create a folder entitled
-"input_data/WorldClim_data_current" or
-"input_data/WorldClim_data_future". All the data downloaded will be
+This function will create a folder. All the data downloaded will be
 stored in this folder. Note that, despite being possible to retrieve a
 lot of data at once, it is not recommended to do so, since the data is
 very heavy.
 
 ## References
 
-https://www.worldclim.org/data/index.html
+\[https://www.worldclim.org/data/index.html\](https://www.worldclim.org/data/index.html)
 
 ## Author
 
 Luíz Fernando Esser (luizesser@gmail.com)
-https://luizfesser.wordpress.com
+\[https://luizfesser.wordpress.com\](https://luizfesser.wordpress.com)
 
 ## Examples
 
@@ -117,9 +85,10 @@ WorldClim_data(period = "future",
                gcm = "mi",
                ssp = "126",
                resolution = 10)
-#> [1] "mi_ssp126_10_2050"
-#> [1] "mi_ssp126_10_2090"
-#> list()
+#> Downloading WorldClim future data: mi_ssp126_10_2050 from
+#> <https://geodata.ucdavis.edu/cmip6/10m/MIROC6/ssp126/wc2.1_10m_bioc_MIROC6_ssp126_2041-2060.tif>
+#> Downloading WorldClim future data: mi_ssp126_10_2090 from
+#> <https://geodata.ucdavis.edu/cmip6/10m/MIROC6/ssp126/wc2.1_10m_bioc_MIROC6_ssp126_2081-2100.tif>
 
 # download data from one specific period
 WorldClim_data(period = "future",
@@ -128,7 +97,7 @@ WorldClim_data(period = "future",
                gcm = "mi",
                ssp = "585",
                resolution = 10)
-#> [1] "mi_ssp585_10_2070"
-#> list()
+#> Downloading WorldClim future data: mi_ssp585_10_2070 from
+#> <https://geodata.ucdavis.edu/cmip6/10m/MIROC6/ssp585/wc2.1_10m_bioc_MIROC6_ssp585_2061-2080.tif>
 # }
 ```
