@@ -43,3 +43,8 @@
 # caretSDM 1.2.4
 
 -   input_sdm now checks if user passed occurrences to join_area.
+
+# caretSDM 1.2.5
+
+-   buffer_sdm function now has a convex hull argument, allowing a buffer to be created around it.
+-   WorldClim_data function now uses httr2 package to gracefully handle errors.

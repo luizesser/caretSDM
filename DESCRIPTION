@@ -1,7 +1,7 @@
 Type: Package
 Package: caretSDM
 Title: Build Species Distribution Modeling using 'caret'
-Version: 1.2.4
+Version: 1.2.5
 Authors@R: c(
     person("Dayani", "Bailly", role = "aut",
            comment = c(ORCID = "0000-0002-6954-9902")),
@@ -39,7 +39,7 @@ Imports:
     ggspatial,
     glue,
     gtools,
-    httr,
+    httr2,
     lwgeom,
     mapview,
     maxnet,
@@ -63,7 +63,7 @@ Imports:
     utils
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 7.3.2
+RoxygenNote: 7.3.3
 Suggests: 
     e1071,
     kknn,

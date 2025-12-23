@@ -8,11 +8,11 @@
       Class                         : input_sdm
       --------  Occurrences  --------
       Species Names                 : Araucaria angustifolia 
-      Number of presences           : 420 
+      Number of presences           : 419 
       Pseudoabsence methods         :
           Method to obtain PAs      : random 
           Number of PA sets         : 3 
-          Number of PAs in each set : 420 
+          Number of PAs in each set : 419 
       --------  Predictors  ---------
       Number of Predictors          : 2 
       Predictors Names              : bio1, bio12 
@@ -28,8 +28,8 @@
           Metrics                   :
       $`Araucaria angustifolia`
                algo       ROC      Sens       Spec      ROCSD
-      1        kknn 0.6025314 0.9865079 0.03333333 0.14949089
-      2 naive_bayes 0.8488211 0.9706349 0.43055556 0.06122881
+      1        kknn 0.5828637 0.9944179 0.03194444 0.09463642
+      2 naive_bayes 0.8525695 0.9737374 0.41180556 0.04199922
       
       --------  Predictions  --------
       Ensembles                     :
@@ -54,20 +54,20 @@
                Criteria : 0.5 
                Metrics  :
       $`Araucaria angustifolia`
-                  algo       ROC      Sens       Spec      ROCSD      SensSD
-      m1.2        kknn 0.5214286 0.9761905 0.06666667 0.03030458 0.033671751
-      m2.2        kknn 0.6622768 0.9952381 0.00000000 0.23622838 0.006734350
-      m3.2        kknn 0.6238889 0.9880952 0.03333333 0.18193970 0.003367175
-      m1.1 naive_bayes 0.8760020 0.9714286 0.42083333 0.05907989 0.026937401
-      m2.1 naive_bayes 0.8547569 0.9738095 0.45208333 0.02506441 0.016835876
-      m3.1 naive_bayes 0.8157044 0.9666667 0.41875000 0.09954212 0.090913729
-               SpecSD
-      m1.2 0.09428090
-      m2.2 0.00000000
-      m3.2 0.04714045
-      m1.1 0.15026019
-      m2.1 0.15026019
-      m3.1 0.07954951
+                  algo       ROC      Sens       Spec       ROCSD       SensSD
+      m1.2        kknn 0.6094911 0.9904306 0.03125000 0.124182775 1.353314e-02
+      m2.2        kknn 0.5287031 0.9928230 0.06458333 0.003601790 1.014986e-02
+      m3.2        kknn 0.6103968 1.0000000 0.00000000 0.156124688 1.683588e-02
+      m1.1 naive_bayes 0.8583184 0.9665414 0.45625000 0.026537650 2.711462e-02
+      m2.1 naive_bayes 0.8398397 0.9809068 0.38958333 0.001625186 8.055443e-05
+      m3.1 naive_bayes 0.8595505 0.9737640 0.38958333 0.097834831 1.003708e-02
+                SpecSD
+      m1.2 0.044194174
+      m2.2 0.002946278
+      m3.2 0.000000000
+      m1.1 0.203293200
+      m2.1 0.150260191
+      m3.1 0.109012295
       
 
 # predict_sdm - th 0
@@ -80,11 +80,11 @@
       Class                         : input_sdm
       --------  Occurrences  --------
       Species Names                 : Araucaria angustifolia 
-      Number of presences           : 420 
+      Number of presences           : 419 
       Pseudoabsence methods         :
           Method to obtain PAs      : random 
           Number of PA sets         : 3 
-          Number of PAs in each set : 420 
+          Number of PAs in each set : 419 
       --------  Predictors  ---------
       Number of Predictors          : 2 
       Predictors Names              : bio1, bio12 
@@ -100,8 +100,8 @@
           Metrics                   :
       $`Araucaria angustifolia`
                algo       ROC      Sens       Spec      ROCSD
-      1        kknn 0.6025314 0.9865079 0.03333333 0.14949089
-      2 naive_bayes 0.8488211 0.9706349 0.43055556 0.06122881
+      1        kknn 0.5828637 0.9944179 0.03194444 0.09463642
+      2 naive_bayes 0.8525695 0.9737374 0.41180556 0.04199922
       
       --------  Predictions  --------
       Ensembles                     :
@@ -126,20 +126,20 @@
                Criteria : 0 
                Metrics  :
       $`Araucaria angustifolia`
-                  algo       ROC      Sens       Spec      ROCSD      SensSD
-      m1.2        kknn 0.5214286 0.9761905 0.06666667 0.03030458 0.033671751
-      m2.2        kknn 0.6622768 0.9952381 0.00000000 0.23622838 0.006734350
-      m3.2        kknn 0.6238889 0.9880952 0.03333333 0.18193970 0.003367175
-      m1.1 naive_bayes 0.8760020 0.9714286 0.42083333 0.05907989 0.026937401
-      m2.1 naive_bayes 0.8547569 0.9738095 0.45208333 0.02506441 0.016835876
-      m3.1 naive_bayes 0.8157044 0.9666667 0.41875000 0.09954212 0.090913729
-               SpecSD
-      m1.2 0.09428090
-      m2.2 0.00000000
-      m3.2 0.04714045
-      m1.1 0.15026019
-      m2.1 0.15026019
-      m3.1 0.07954951
+                  algo       ROC      Sens       Spec       ROCSD       SensSD
+      m1.2        kknn 0.6094911 0.9904306 0.03125000 0.124182775 1.353314e-02
+      m2.2        kknn 0.5287031 0.9928230 0.06458333 0.003601790 1.014986e-02
+      m3.2        kknn 0.6103968 1.0000000 0.00000000 0.156124688 1.683588e-02
+      m1.1 naive_bayes 0.8583184 0.9665414 0.45625000 0.026537650 2.711462e-02
+      m2.1 naive_bayes 0.8398397 0.9809068 0.38958333 0.001625186 8.055443e-05
+      m3.1 naive_bayes 0.8595505 0.9737640 0.38958333 0.097834831 1.003708e-02
+                SpecSD
+      m1.2 0.044194174
+      m2.2 0.002946278
+      m3.2 0.000000000
+      m1.1 0.203293200
+      m2.1 0.150260191
+      m3.1 0.109012295
       
 
 # predict_sdm - th function
@@ -152,11 +152,11 @@
       Class                         : input_sdm
       --------  Occurrences  --------
       Species Names                 : Araucaria angustifolia 
-      Number of presences           : 420 
+      Number of presences           : 419 
       Pseudoabsence methods         :
           Method to obtain PAs      : random 
           Number of PA sets         : 3 
-          Number of PAs in each set : 420 
+          Number of PAs in each set : 419 
       --------  Predictors  ---------
       Number of Predictors          : 2 
       Predictors Names              : bio1, bio12 
@@ -172,8 +172,8 @@
           Metrics                   :
       $`Araucaria angustifolia`
                algo       ROC      Sens       Spec      ROCSD
-      1        kknn 0.6025314 0.9865079 0.03333333 0.14949089
-      2 naive_bayes 0.8488211 0.9706349 0.43055556 0.06122881
+      1        kknn 0.5828637 0.9944179 0.03194444 0.09463642
+      2 naive_bayes 0.8525695 0.9737374 0.41180556 0.04199922
       
       --------  Predictions  --------
       Ensembles                     :
@@ -198,10 +198,14 @@
                Criteria : function (x, ...)  UseMethod("mean") 
                Metrics  :
       $`Araucaria angustifolia`
-                  algo       ROC      Sens      Spec      ROCSD     SensSD     SpecSD
-      m1.1 naive_bayes 0.8760020 0.9714286 0.4208333 0.05907989 0.02693740 0.15026019
-      m2.1 naive_bayes 0.8547569 0.9738095 0.4520833 0.02506441 0.01683588 0.15026019
-      m3.1 naive_bayes 0.8157044 0.9666667 0.4187500 0.09954212 0.09091373 0.07954951
+                  algo       ROC      Sens      Spec       ROCSD       SensSD
+      m1.1 naive_bayes 0.8583184 0.9665414 0.4562500 0.026537650 2.711462e-02
+      m2.1 naive_bayes 0.8398397 0.9809068 0.3895833 0.001625186 8.055443e-05
+      m3.1 naive_bayes 0.8595505 0.9737640 0.3895833 0.097834831 1.003708e-02
+              SpecSD
+      m1.1 0.2032932
+      m2.1 0.1502602
+      m3.1 0.1090123
       
 
 # add_input_sdm
@@ -213,7 +217,7 @@
       .......................
       Class                 : occurrences
       Species Names         : Araucaria angustifolia Salminus brasiliensis 
-      Number of presences   : 420 46 
+      Number of presences   : 419 46 
       ========================================
       Data:
       Simple feature collection with 6 features and 2 fields
@@ -308,23 +312,23 @@
       
       $`Araucaria angustifolia`
                   algo       ROC       TSS Sensitivity Specificity Pos Pred Value
-      m1.1 naive_bayes 0.8763975 0.4937888       0.994       0.500          0.970
-      m2.1 naive_bayes 0.8222934 0.5106838       0.955       0.556          0.974
+      m1.1 naive_bayes 0.9004566 0.3264840       0.993       0.333          0.935
+      m2.1 naive_bayes 0.8329032 0.4548387       0.955       0.500          0.967
            Neg Pred Value Precision Recall    F1 Prevalence Detection Rate
-      m1.1          0.833     0.970  0.994 0.982      0.942          0.936
-      m2.1          0.417     0.974  0.955 0.964      0.945          0.903
+      m1.1          0.833     0.935  0.993 0.963      0.907          0.901
+      m2.1          0.417     0.967  0.955 0.961      0.939          0.897
            Detection Prevalence Balanced Accuracy Accuracy Kappa AccuracyLower
-      m1.1                0.965             0.747    0.965 0.608         0.925
-      m2.1                0.933             0.755    0.933 0.441         0.884
+      m1.1                0.963             0.663    0.932 0.447         0.881
+      m2.1                0.927             0.727    0.927 0.416         0.876
            AccuracyUpper AccuracyNull AccuracyPValue McnemarPValue Positive Negative
-      m1.1         0.987        0.942          0.326         0.724      161       10
-      m2.1         0.966        0.945          0.882         0.773      156        9
+      m1.1         0.965        0.907          0.669         0.211      146       15
+      m2.1         0.962        0.939          1.000         0.773      155       10
            True Positive False Positive True Negative False Negative   CBI pAUC
-      m1.1           160              3             5              5 0.304  NaN
-      m2.1           149              7             5              5 0.495  NaN
+      m1.1           145              5             5             11 0.890  NaN
+      m2.1           148             23             5              5 0.781  NaN
            Omission_10pct ROCSD TSSSD SensitivitySD SpecificitySD Pos Pred ValueSD
       m1.1          0.075    NA    NA            NA            NA               NA
-      m2.1          0.083    NA    NA            NA            NA               NA
+      m2.1          0.090    NA    NA            NA            NA               NA
            Neg Pred ValueSD PrecisionSD RecallSD F1SD PrevalenceSD Detection RateSD
       m1.1               NA          NA       NA   NA           NA               NA
       m2.1               NA          NA       NA   NA           NA               NA
@@ -393,23 +397,23 @@
       
       $`Araucaria angustifolia`
                   algo       ROC       TSS Sensitivity Specificity Pos Pred Value
-      m1.1 naive_bayes 0.8763975 0.4937888       0.994       0.500          0.970
-      m2.1 naive_bayes 0.8222934 0.5106838       0.955       0.556          0.974
+      m1.1 naive_bayes 0.9004566 0.3264840       0.993       0.333          0.935
+      m2.1 naive_bayes 0.8329032 0.4548387       0.955       0.500          0.967
            Neg Pred Value Precision Recall    F1 Prevalence Detection Rate
-      m1.1          0.833     0.970  0.994 0.982      0.942          0.936
-      m2.1          0.417     0.974  0.955 0.964      0.945          0.903
+      m1.1          0.833     0.935  0.993 0.963      0.907          0.901
+      m2.1          0.417     0.967  0.955 0.961      0.939          0.897
            Detection Prevalence Balanced Accuracy Accuracy Kappa AccuracyLower
-      m1.1                0.965             0.747    0.965 0.608         0.925
-      m2.1                0.933             0.755    0.933 0.441         0.884
+      m1.1                0.963             0.663    0.932 0.447         0.881
+      m2.1                0.927             0.727    0.927 0.416         0.876
            AccuracyUpper AccuracyNull AccuracyPValue McnemarPValue Positive Negative
-      m1.1         0.987        0.942          0.326         0.724      161       10
-      m2.1         0.966        0.945          0.882         0.773      156        9
+      m1.1         0.965        0.907          0.669         0.211      146       15
+      m2.1         0.962        0.939          1.000         0.773      155       10
            True Positive False Positive True Negative False Negative   CBI pAUC
-      m1.1           160              3             5              5 0.304  NaN
-      m2.1           149              7             5              5 0.495  NaN
+      m1.1           145              5             5             11 0.890  NaN
+      m2.1           148             23             5              5 0.781  NaN
            Omission_10pct ROCSD TSSSD SensitivitySD SpecificitySD Pos Pred ValueSD
       m1.1          0.075    NA    NA            NA            NA               NA
-      m2.1          0.083    NA    NA            NA            NA               NA
+      m2.1          0.090    NA    NA            NA            NA               NA
            Neg Pred ValueSD PrecisionSD RecallSD F1SD PrevalenceSD Detection RateSD
       m1.1               NA          NA       NA   NA           NA               NA
       m2.1               NA          NA       NA   NA           NA               NA
@@ -493,23 +497,23 @@
                Metrics  :
       $`Araucaria angustifolia`
                   algo       ROC       TSS Sensitivity Specificity Pos Pred Value
-      m1.1 naive_bayes 0.8763975 0.4937888       0.994       0.500          0.970
-      m2.1 naive_bayes 0.8222934 0.5106838       0.955       0.556          0.974
+      m1.1 naive_bayes 0.9004566 0.3264840       0.993       0.333          0.935
+      m2.1 naive_bayes 0.8329032 0.4548387       0.955       0.500          0.967
            Neg Pred Value Precision Recall    F1 Prevalence Detection Rate
-      m1.1          0.833     0.970  0.994 0.982      0.942          0.936
-      m2.1          0.417     0.974  0.955 0.964      0.945          0.903
+      m1.1          0.833     0.935  0.993 0.963      0.907          0.901
+      m2.1          0.417     0.967  0.955 0.961      0.939          0.897
            Detection Prevalence Balanced Accuracy Accuracy Kappa AccuracyLower
-      m1.1                0.965             0.747    0.965 0.608         0.925
-      m2.1                0.933             0.755    0.933 0.441         0.884
+      m1.1                0.963             0.663    0.932 0.447         0.881
+      m2.1                0.927             0.727    0.927 0.416         0.876
            AccuracyUpper AccuracyNull AccuracyPValue McnemarPValue Positive Negative
-      m1.1         0.987        0.942          0.326         0.724      161       10
-      m2.1         0.966        0.945          0.882         0.773      156        9
+      m1.1         0.965        0.907          0.669         0.211      146       15
+      m2.1         0.962        0.939          1.000         0.773      155       10
            True Positive False Positive True Negative False Negative   CBI pAUC
-      m1.1           160              3             5              5 0.304  NaN
-      m2.1           149              7             5              5 0.495  NaN
+      m1.1           145              5             5             11 0.890  NaN
+      m2.1           148             23             5              5 0.781  NaN
            Omission_10pct ROCSD TSSSD SensitivitySD SpecificitySD Pos Pred ValueSD
       m1.1          0.075    NA    NA            NA            NA               NA
-      m2.1          0.083    NA    NA            NA            NA               NA
+      m2.1          0.090    NA    NA            NA            NA               NA
            Neg Pred ValueSD PrecisionSD RecallSD F1SD PrevalenceSD Detection RateSD
       m1.1               NA          NA       NA   NA           NA               NA
       m2.1               NA          NA       NA   NA           NA               NA

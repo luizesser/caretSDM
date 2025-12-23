@@ -1,7 +1,7 @@
 test_that("input_sdm", {
   sa <- sdm_area(parana, cell_size = 0.25)
   sa <- add_predictors(sa, bioc)
-  sa <- select(sa, c("bio1", "bio12"))
+  sa <- select_predictors(sa, c("bio1", "bio12"))
   sa <- add_scenarios(sa, scen[,,,c("bio1", "bio12")])
   oc <- occurrences_sdm(occ, crs = 6933)
   expect_warning(i <- input_sdm(oc, sa))

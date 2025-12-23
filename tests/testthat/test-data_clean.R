@@ -21,18 +21,16 @@ test_that("data_clean - normal path with sdm_area", {
 test_that("data_clean - normal path with pred", {
   set.seed(1)
   pred <- sdm_area(bioc, cell_size = 1)
-  oc <- occurrences_sdm(occ, independent_test = TRUE, crs= 6933) |>
-    join_area(pred)
+  oc <- occurrences_sdm(occ, independent_test = TRUE, crs= 6933)
   i <- input_sdm(oc, pred)
   i <- data_clean(i, terrestrial=FALSE)
-  expect_true(sf::st_crs(i$occurrences$occurrences) == sf::st_crs(oc$occurrences))
+  expect_true(sf::st_crs(i$occurrences$occurrences) == sf::st_crs(bioc))
   expect_true(sf::st_geometry_type(oc$occurrences, by_geometry = FALSE) ==
                 sf::st_geometry_type(i$occurrences$occurrences, by_geometry = FALSE))
   expect_equal(class(i$occurrences$occurrences)[1], "sf")
   expect_true("cell_id" %in% colnames(i$occurrences$occurrences))
   expect_true("species" %in% colnames(i$occurrences$occurrences))
   expect_true("geometry" %in% colnames(i$occurrences$occurrences))
-  expect_true(ncol(i$occurrences$occurrences) == ncol(oc$occurrences))
   expect_true(nrow(oc$occurrences) >= nrow(i$occurrences$occurrences))
 })
 

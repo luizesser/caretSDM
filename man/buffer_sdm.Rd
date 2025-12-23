@@ -4,7 +4,7 @@
 \alias{buffer_sdm}
 \title{Create buffer around occurrences}
 \usage{
-buffer_sdm(occ_data, size = NULL, crs = NULL)
+buffer_sdm(occ_data, size = NULL, crs = NULL, mcp = FALSE)
 }
 \arguments{
 \item{occ_data}{A \code{data.frame} object with species, decimalLongitude and decimalLatitude columns.
@@ -14,6 +14,9 @@ Usually the output from \code{GBIF_data}.}
 buffer radius).}
 
 \item{crs}{\code{numeric}. Indicates which EPSG it the \code{occ_data} in.}
+
+\item{mcp}{\code{boolean}. Should the buffer be applied in each record (FALSE) or in a minimum
+convex polygon/convex hull (TRUE)? Standard is \code{FALSE}.}
 }
 \value{
 A \code{sf} buffer around \code{occ_data} records.

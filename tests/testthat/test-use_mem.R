@@ -1,7 +1,7 @@
 set.seed(1)
 sa <- sdm_area(parana, 0.1)
 sa <- add_predictors(sa, bioc)
-sa <- select(sa, c("bio1", "bio12"))
+sa <- select_predictors(sa, c("bio1", "bio12"))
 sa <- add_scenarios(sa)
 oc <- occurrences_sdm(occ, crs=6933)
 suppressWarnings(oc <- join_area(oc, sa))
@@ -13,12 +13,12 @@ test_that("use_mem works", {
 })
 
 set.seed(1)
-sa <- sdm_area(parana, 0.1)
+sa <- sdm_area(parana, 0.5)
 sa <- add_predictors(sa, bioc)
-sa <- select(sa, c("bio1", "bio12"))
+sa <- select_predictors(sa, c("bio1", "bio12"))
 sa <- add_scenarios(sa)
 occ <- rbind(occ, salm)
-oc <- occurrences_sdm(occ, crs=4326)
+oc <- occurrences_sdm(occ, crs=6933)
 i <- input_sdm(oc, sa)
 
 test_that("use_mem works", {

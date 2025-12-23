@@ -21,37 +21,10 @@ WorldClim_data(path = NULL,
 "tmax","tmin","prec" and/or "bioc".}
 
 \item{year}{Specify the year you want to retrieve data. Possible entries are:
-"2030", "2050", "2070" and/or "2090". You can  use a vector to provide more than one entry.}
+"2030", "2050", "2070" and/or "2090". You can use a vector to provide more than one entry.}
 
 \item{gcm}{GCMs to be considered in future scenarios. You can use a vector to provide more than
-one entry.\tabular{ll}{
-   \strong{CODE} \tab \strong{GCM} \cr
-   ac \tab ACCESS-CM2 \cr
-   ae \tab ACCESS-ESM1-5 \cr
-   bc \tab BCC-CSM2-MR \cr
-   ca \tab CanESM5 \cr
-   cc \tab CanESM5-CanOE \cr
-   ce \tab CMCC-ESM2 \cr
-   cn \tab CNRM-CM6-1 \cr
-   ch \tab CNRM-CM6-1-HR \cr
-   cr \tab CNRM-ESM2-1 \cr
-   ec \tab EC-Earth3-Veg \cr
-   ev \tab EC-Earth3-Veg-LR \cr
-   fi \tab FIO-ESM-2-0 \cr
-   gf \tab GFDL-ESM4 \cr
-   gg \tab GISS-E2-1-G \cr
-   gh \tab GISS-E2-1-H \cr
-   hg \tab HadGEM3-GC31-LL \cr
-   in \tab INM-CM4-8 \cr
-   ic \tab INM-CM5-0 \cr
-   ip \tab IPSL-CM6A-LR \cr
-   me \tab MIROC-ES2L \cr
-   mi \tab MIROC6 \cr
-   mp \tab MPI-ESM1-2-HR \cr
-   ml \tab MPI-ESM1-2-LR \cr
-   mr \tab MRI-ESM2-0 \cr
-   uk \tab UKESM1-0-LL \cr
-}}
+one entry.}
 
 \item{ssp}{SSPs for future data. Possible entries are: "126", "245", "370" and/or "585".
 You can use a vector to provide more than one entry.}
@@ -59,18 +32,16 @@ You can use a vector to provide more than one entry.}
 \item{resolution}{You can select one resolution from the following alternatives: 10, 5, 2.5 OR 30.}
 }
 \value{
-If data is not downloaded, the function downloads the data and has no return value. If
-the data is downloaded, it imports the data as a \code{stack}.
+If data is not downloaded, the function downloads the data and has no return value.
 }
 \description{
 This function allows to download data from WorldClim v.2.1
 (https://www.worldclim.org/data/index.html) considering multiple GCMs, time periods and SSPs.
 }
 \details{
-This function will create a folder entitled "input_data/WorldClim_data_current" or
-"input_data/WorldClim_data_future". All the data downloaded will be stored in this folder.
-Note that, despite being possible to retrieve a lot of data at once, it is not recommended to do
-so, since the data is very heavy.
+This function will create a folder. All the data downloaded will be stored in this
+folder. Note that, despite being possible to retrieve a lot of data at once, it is not
+recommended to do so, since the data is very heavy.
 }
 \examples{
 \donttest{
@@ -94,9 +65,9 @@ WorldClim_data(period = "future",
 
 }
 \references{
-https://www.worldclim.org/data/index.html
+[https://www.worldclim.org/data/index.html](https://www.worldclim.org/data/index.html)
 }
 \author{
 Luíz Fernando Esser (luizesser@gmail.com)
-https://luizfesser.wordpress.com
+[https://luizfesser.wordpress.com](https://luizfesser.wordpress.com)
 }

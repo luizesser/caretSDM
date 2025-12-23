@@ -66,8 +66,12 @@ input_sdm <- function(...) {
        "cell_id" %in% colnames(x[classes %in% "occurrences"][[1]]$occurrences)) {
       l$occurrences <- x[classes %in% "occurrences"][[1]]
     } else {
-      l$occurrences <- join_area(x[classes %in% "occurrences"][[1]],
-                                 x[classes %in% "sdm_area"][[1]])
+      if("sdm_area" %in% classes) {
+        l$occurrences <- join_area(x[classes %in% "occurrences"][[1]],
+                                   x[classes %in% "sdm_area"][[1]])
+      } else {
+        l$occurrences <- x[classes %in% "occurrences"][[1]]
+      }
     }
   }
   if ("sdm_area" %in% classes) {

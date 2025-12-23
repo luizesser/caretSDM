@@ -110,7 +110,7 @@ add_scenarios.character <- function(sa, scen = NULL, scenarios_names = NULL, pre
     s <- stars::read_stars(files, proxy = TRUE)
     if(sf::st_crs(s) != sf::st_crs(crop_area)) {
       crop_area <- sf::st_transform(crop_area, crs=sf::st_crs(s))
-      crop_area <- adjust_bbox(crop_area)   # crop/ mudar bbox
+      crop_area <- .adjust_bbox(x = crop_area, cell_size = sa$cell_size)   # crop/ mudar bbox
     }
     s <- sf::st_crop(s, crop_area)
   } else {
