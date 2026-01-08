@@ -262,6 +262,7 @@ test_that("add_scenarios - cell_size=NULL", {
 })
 
 test_that("add_scenarios", {
+  skip_on_cran()
   bioc <- bioc[,,,c(1,3)]
   expect_error(
     sdm_area(parana, cell_size = 100000, crs = 6933) |>

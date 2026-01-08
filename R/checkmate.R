@@ -14,6 +14,10 @@ assert_int_cli <- function(x, ..., .var.name = vname(x), add = NULL){
   ))
 }
 
+check_subset_cli <- function(...){
+  return(checkmate::check_subset(...))
+}
+
 assert_subset_cli <- function(x, ..., .var.name = vname(x), add = NULL){
   return(invisible(
     make_assertion(
@@ -40,7 +44,6 @@ assert_logical_cli <- function(x, ..., .var.name = vname(x), add = NULL){
   ))
 }
 
-
 check_directory_cli <- function(...){
   return(checkmate::checkDirectory(...))
 }
@@ -55,7 +58,6 @@ assert_directory_cli <- function(x, ..., .var.name = vname(x), add = NULL){
     )
   ))
 }
-
 
 check_numeric_cli <- function(...){
   return(checkmate::check_numeric(...))
@@ -87,7 +89,6 @@ assert_number_cli <- function(x, ..., .var.name = vname(x), add = NULL){
   ))
 }
 
-
 check_names_cli <- function(...){
   return(checkmate::check_names(...))
 }
@@ -118,7 +119,6 @@ assert_character_cli <- function(x, ..., .var.name = vname(x), add = NULL){
   ))
 }
 
-
 check_data_frame_cli <- function(...){
   return(checkmate::check_data_frame(...))
 }
@@ -133,7 +133,6 @@ assert_data_frame_cli <- function(x, ..., .var.name = vname(x), add = NULL){
     )
   ))
 }
-
 
 check_class_cli <- function(...){
   return(checkmate::check_class(...))
@@ -179,6 +178,10 @@ assert_list_cli <- function(x, ..., .var.name = vname(x), add = NULL){
   ))
 }
 
+check_file_exists_cli <- function(...) {
+  checkmate::check_file_exists(...)
+}
+
 assert_file_exists_cli <- function(x, ..., .var.name = vname(x), add = NULL){
   return(invisible(
     make_assertion(
@@ -188,6 +191,10 @@ assert_file_exists_cli <- function(x, ..., .var.name = vname(x), add = NULL){
       add
     )
   ))
+}
+
+check_choice_cli <- function(...) {
+  checkmate::check_choice(...)
 }
 
 assert_choice_cli <- function(x, ..., .var.name = vname(x), add = NULL){
@@ -201,6 +208,9 @@ assert_choice_cli <- function(x, ..., .var.name = vname(x), add = NULL){
   ))
 }
 
+check_true_cli <- function(...) {
+  checkmate::check_true(...)
+}
 
 assert_true_cli <- function(x, ..., .var.name = vname(x), add = NULL){
   return(invisible(
@@ -320,4 +330,481 @@ assert_cli <- function(..., combine = "or", .var.name = NULL, add = NULL) {
       call = parent.frame(n=2)
     )
   }
+}
+
+
+###################################################################################################
+### Scalars / atomic ####
+
+check_atomic_cli <- function(...) {
+  checkmate::check_atomic(...)
+}
+
+assert_atomic_cli <- function(x, ..., .var.name = vname(x), add = NULL) {
+  invisible(
+    make_assertion(
+      x,
+      checkmate::check_atomic(x, ...),
+      .var.name,
+      add
+    )
+  )
+}
+
+check_atomic_vector_cli <- function(...) {
+  checkmate::check_atomic_vector(...)
+}
+
+assert_atomic_vector_cli <- function(x, ..., .var.name = vname(x), add = NULL) {
+  invisible(
+    make_assertion(
+      x,
+      checkmate::check_atomic_vector(x, ...),
+      .var.name,
+      add
+    )
+  )
+}
+
+check_scalar_cli <- function(...) {
+  checkmate::check_scalar(...)
+}
+
+assert_scalar_cli <- function(x, ..., .var.name = vname(x), add = NULL) {
+  invisible(
+    make_assertion(
+      x,
+      checkmate::check_scalar(x, ...),
+      .var.name,
+      add
+    )
+  )
+}
+
+check_scalar_na_cli <- function(...) {
+  checkmate::check_scalar_na(...)
+}
+
+assert_scalar_na_cli <- function(x, ..., .var.name = vname(x), add = NULL) {
+  invisible(
+    make_assertion(
+      x,
+      checkmate::check_scalar_na(x, ...),
+      .var.name,
+      add
+    )
+  )
+}
+
+check_integer_cli <- function(...) {
+  checkmate::check_integer(...)
+}
+
+assert_integer_cli <- function(x, ..., .var.name = vname(x), add = NULL) {
+  invisible(
+    make_assertion(
+      x,
+      checkmate::check_integer(x, ...),
+      .var.name,
+      add
+    )
+  )
+}
+
+check_integerish_cli <- function(...) {
+  checkmate::check_integerish(...)
+}
+
+assert_integerish_cli <- function(x, ..., .var.name = vname(x), add = NULL) {
+  invisible(
+    make_assertion(
+      x,
+      checkmate::check_integerish(x, ...),
+      .var.name,
+      add
+    )
+  )
+}
+
+check_double_cli <- function(...) {
+  checkmate::check_double(...)
+}
+
+assert_double_cli <- function(x, ..., .var.name = vname(x), add = NULL) {
+  invisible(
+    make_assertion(
+      x,
+      checkmate::check_double(x, ...),
+      .var.name,
+      add
+    )
+  )
+}
+
+check_complex_cli <- function(...) {
+  checkmate::check_complex(...)
+}
+
+assert_complex_cli <- function(x, ..., .var.name = vname(x), add = NULL) {
+  invisible(
+    make_assertion(
+      x,
+      checkmate::check_complex(x, ...),
+      .var.name,
+      add
+    )
+  )
+}
+
+check_count_cli <- function(...) {
+  checkmate::check_count(...)
+}
+
+assert_count_cli <- function(x, ..., .var.name = vname(x), add = NULL) {
+  invisible(
+    make_assertion(
+      x,
+      checkmate::check_count(x, ...),
+      .var.name,
+      add
+    )
+  )
+}
+
+check_string_cli <- function(...) {
+  checkmate::check_string(...)
+}
+
+assert_string_cli <- function(x, ..., .var.name = vname(x), add = NULL) {
+  invisible(
+    make_assertion(
+      x,
+      checkmate::check_string(x, ...),
+      .var.name,
+      add
+    )
+  )
+}
+
+check_flag_cli <- function(...) {
+  checkmate::check_flag(...)
+}
+
+assert_flag_cli <- function(x, ..., .var.name = vname(x), add = NULL) {
+  invisible(
+    make_assertion(
+      x,
+      checkmate::check_flag(x, ...),
+      .var.name,
+      add
+    )
+  )
+}
+
+check_null_cli <- function(...) {
+  checkmate::check_null(...)
+}
+
+assert_null_cli <- function(x, ..., .var.name = vname(x), add = NULL) {
+  invisible(
+    make_assertion(
+      x,
+      checkmate::check_null(x, ...),
+      .var.name,
+      add
+    )
+  )
+}
+
+check_false_cli <- function(...) {
+  checkmate::check_false(...)
+}
+
+assert_false_cli <- function(x, ..., .var.name = vname(x), add = NULL) {
+  invisible(
+    make_assertion(
+      x,
+      checkmate::check_false(x, ...),
+      .var.name,
+      add
+    )
+  )
+}
+
+### Containers / data structures ####
+
+check_array_cli <- function(...) {
+  checkmate::check_array(...)
+}
+
+assert_array_cli <- function(x, ..., .var.name = vname(x), add = NULL) {
+  invisible(
+    make_assertion(
+      x,
+      checkmate::check_array(x, ...),
+      .var.name,
+      add
+    )
+  )
+}
+
+check_matrix_cli <- function(...) {
+  checkmate::check_matrix(...)
+}
+
+assert_matrix_cli <- function(x, ..., .var.name = vname(x), add = NULL) {
+  invisible(
+    make_assertion(
+      x,
+      checkmate::check_matrix(x, ...),
+      .var.name,
+      add
+    )
+  )
+}
+
+check_factor_cli <- function(...) {
+  checkmate::check_factor(...)
+}
+
+assert_factor_cli <- function(x, ..., .var.name = vname(x), add = NULL) {
+  invisible(
+    make_assertion(
+      x,
+      checkmate::check_factor(x, ...),
+      .var.name,
+      add
+    )
+  )
+}
+
+check_environment_cli <- function(...) {
+  checkmate::check_environment(...)
+}
+
+assert_environment_cli <- function(x, ..., .var.name = vname(x), add = NULL) {
+  invisible(
+    make_assertion(
+      x,
+      checkmate::check_environment(x, ...),
+      .var.name,
+      add
+    )
+  )
+}
+
+check_function_cli <- function(...) {
+  checkmate::check_function(...)
+}
+
+assert_function_cli <- function(x, ..., .var.name = vname(x), add = NULL) {
+  invisible(
+    make_assertion(
+      x,
+      checkmate::check_function(x, ...),
+      .var.name,
+      add
+    )
+  )
+}
+
+check_formula_cli <- function(...) {
+  checkmate::check_formula(...)
+}
+
+assert_formula_cli <- function(x, ..., .var.name = vname(x), add = NULL) {
+  invisible(
+    make_assertion(
+      x,
+      checkmate::check_formula(x, ...),
+      .var.name,
+      add
+    )
+  )
+}
+
+check_r6_cli <- function(...) {
+  checkmate::check_r6(...)
+}
+
+assert_r6_cli <- function(x, ..., .var.name = vname(x), add = NULL) {
+  invisible(
+    make_assertion(
+      x,
+      checkmate::check_r6(x, ...),
+      .var.name,
+      add
+    )
+  )
+}
+
+check_raw_cli <- function(...) {
+  checkmate::check_raw(...)
+}
+
+assert_raw_cli <- function(x, ..., .var.name = vname(x), add = NULL) {
+  invisible(
+    make_assertion(
+      x,
+      checkmate::check_raw(x, ...),
+      .var.name,
+      add
+    )
+  )
+}
+
+### Names, sets, OS ####
+
+check_named_cli <- function(...) {
+  checkmate::check_named(...)
+}
+
+assert_named_cli <- function(x, ..., .var.name = vname(x), add = NULL) {
+  invisible(
+    make_assertion(
+      x,
+      checkmate::check_named(x, ...),
+      .var.name,
+      add
+    )
+  )
+}
+
+check_set_equal_cli <- function(...) {
+  checkmate::check_set_equal(...)
+}
+
+assert_set_equal_cli <- function(x, y, ..., .var.name = vname(x), add = NULL) {
+  invisible(
+    make_assertion(
+      x,
+      checkmate::check_set_equal(x, y, ...),
+      .var.name,
+      add
+    )
+  )
+}
+
+check_disjunct_cli <- function(...) {
+  checkmate::check_disjunct(...)
+}
+
+assert_disjunct_cli <- function(x, y, ..., .var.name = vname(x), add = NULL) {
+  invisible(
+    make_assertion(
+      x,
+      checkmate::check_disjunct(x, y, ...),
+      .var.name,
+      add
+    )
+  )
+}
+
+check_os_cli <- function(...) {
+  checkmate::check_os(...)
+}
+
+assert_os_cli <- function(x, ..., .var.name = vname(x), add = NULL) {
+  invisible(
+    make_assertion(
+      x,
+      checkmate::check_os(x, ...),
+      .var.name,
+      add
+    )
+  )
+}
+
+### Files / directories / paths ####
+
+check_directory_exists_cli <- function(...) {
+  checkmate::check_directory_exists(...)
+}
+
+assert_directory_exists_cli <- function(x, ..., .var.name = vname(x), add = NULL) {
+  invisible(
+    make_assertion(
+      x,
+      checkmate::check_directory_exists(x, ...),
+      .var.name,
+      add
+    )
+  )
+}
+
+check_path_for_output_cli <- function(...) {
+  checkmate::check_path_for_output(...)
+}
+
+assert_path_for_output_cli <- function(x, ..., .var.name = vname(x), add = NULL) {
+  invisible(
+    make_assertion(
+      x,
+      checkmate::check_path_for_output(x, ...),
+      .var.name,
+      add
+    )
+  )
+}
+
+### Date / time and special classes ####
+
+check_date_cli <- function(...) {
+  checkmate::check_date(...)
+}
+
+assert_date_cli <- function(x, ..., .var.name = vname(x), add = NULL) {
+  invisible(
+    make_assertion(
+      x,
+      checkmate::check_date(x, ...),
+      .var.name,
+      add
+    )
+  )
+}
+
+check_posixct_cli <- function(...) {
+  checkmate::check_posixct(...)
+}
+
+assert_posixct_cli <- function(x, ..., .var.name = vname(x), add = NULL) {
+  invisible(
+    make_assertion(
+      x,
+      checkmate::check_posixct(x, ...),
+      .var.name,
+      add
+    )
+  )
+}
+
+check_multi_class_cli <- function(...) {
+  checkmate::check_multi_class(...)
+}
+
+assert_multi_class_cli <- function(x, ..., .var.name = vname(x), add = NULL) {
+  invisible(
+    make_assertion(
+      x,
+      checkmate::check_multi_class(x, ...),
+      .var.name,
+      add
+    )
+  )
+}
+
+check_permutation_cli <- function(...) {
+  checkmate::check_permutation(...)
+}
+
+assert_permutation_cli <- function(x, ..., .var.name = vname(x), add = NULL) {
+  invisible(
+    make_assertion(
+      x,
+      checkmate::check_permutation(x, ...),
+      .var.name,
+      add
+    )
+  )
 }

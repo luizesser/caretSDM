@@ -103,7 +103,7 @@ test_that("train_sdm - ESM", {
   set.seed(2)
   sa <- sdm_area(parana, 100000, crs=6933)
   sa <- add_predictors(sa, bioc)
-  sa <- select(sa, c("bio1", "bio4", "bio12"))
+  sa <- select_predictors(sa, c("bio1", "bio4", "bio12"))
   sa <- add_scenarios(sa)
   oc <- occurrences_sdm(occ, crs=6933)
   suppressWarnings(oc <- join_area(oc, sa))
@@ -226,6 +226,7 @@ mahal.custom <- list(
 
 
 test_that("mahal.dist train", {
+  skip_on_cran()
   sa <- sdm_area(parana,
                  cell_size = 50000, # Using a coarse resolution for speed
                  crs = 6933)

@@ -465,3 +465,4 @@ test_that("add_predictors - cell_size=NULL", {
     sa_pred$grid |> nrow() <=  sa$grid |> nrow()
   )
 })
+
