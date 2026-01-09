@@ -24,14 +24,14 @@ Source:
 [`DESCRIPTION`](https://github.com/luizesser/caretSDM/blob/main/DESCRIPTION)
 
 Bailly D, Couto E, Hilário Delconte Ferreira J, R. Lima M, Ré R, Batista
-V, Esser L (2025). *caretSDM: Build Species Distribution Modeling using
+V, Esser L (2026). *caretSDM: Build Species Distribution Modeling using
 'caret'*. R package version 1.2.5,
 <https://luizesser.github.io/caretSDM/>.
 
     @Manual{,
       title = {caretSDM: Build Species Distribution Modeling using 'caret'},
       author = {Dayani Bailly and Edivando Couto and José {Hilário Delconte Ferreira} and Marcos {R. Lima} and Reginaldo Ré and Valéria Batista and Luíz Fernando Esser},
-      year = {2025},
+      year = {2026},
       note = {R package version 1.2.5},
       url = {https://luizesser.github.io/caretSDM/},
     }

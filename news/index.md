@@ -64,6 +64,8 @@ CRAN release: 2025-11-06
 
 ## caretSDM 1.2.5
 
+CRAN release: 2026-01-08
+
 - buffer_sdm function now has a convex hull argument, allowing a buffer
   to be created around it.
 - WorldClim_data function now uses httr2 package to gracefully handle
