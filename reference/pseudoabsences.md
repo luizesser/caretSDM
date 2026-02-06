@@ -101,7 +101,7 @@ name will have a `list`s with pseudoabsences data from class `sf`.
 
 ## See also
 
-`link{input_sdm} `[`sdm_area`](https://luizesser.github.io/caretSDM/reference/sdm_area.md)` `[`occurrences_sdm`](https://luizesser.github.io/caretSDM/reference/occurrences_sdm.md)
+`link{input_sdm} `[`background`](https://luizesser.github.io/caretSDM/reference/background.md)` `[`occurrences_sdm`](https://luizesser.github.io/caretSDM/reference/occurrences_sdm.md)
 
 ## Author
 

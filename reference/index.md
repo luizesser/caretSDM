@@ -26,6 +26,11 @@
 - [`algorithms`](https://luizesser.github.io/caretSDM/reference/algorithms.md)
   : Caret Algorithms
 
+- [`background()`](https://luizesser.github.io/caretSDM/reference/background.md)
+  [`n_background()`](https://luizesser.github.io/caretSDM/reference/background.md)
+  [`background_data()`](https://luizesser.github.io/caretSDM/reference/background.md)
+  : Obtain Background data
+
 - [`bioc`](https://luizesser.github.io/caretSDM/reference/bioc.md) :
   Bioclimatic Variables
 
