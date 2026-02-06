@@ -51,7 +51,7 @@
 #' \code{pseudoabsence_data} returns a \code{list} of species names. Each species name will have a
 #' \code{list}s with pseudoabsences data from class \code{sf}.
 #'
-#' @seealso \code{link{input_sdm} \link{sdm_area} \link{occurrences_sdm}}
+#' @seealso \code{link{input_sdm} \link{background} \link{occurrences_sdm}}
 #'
 #' @author Luíz Fernando Esser (luizesser@gmail.com)
 #' https://luizfesser.wordpress.com
@@ -79,7 +79,7 @@
 #' @importFrom dplyr select all_of filter
 #' @importFrom stars st_extract
 #' @importFrom dismo bioclim predict
-#' @importFrom cli cli_abort cli_warn
+#' @importFrom cli cli_abort cli_warn cli_alert
 #' @importFrom caret train getModelInfo
 #' @importFrom stats pchisq cov mahalanobis
 #'
@@ -99,7 +99,7 @@ pseudoabsences <- function(occ, pred = NULL, method = "random", n_set = 10, n_pa
   assert_subset_cli(variables_selected, c(get_predictor_names(pred), "vif", "pca"), empty.ok = TRUE)
 
   if (!is.null(y$pseudoabsences)) {
-    cli::cli_warn("Previous pseudoabsence element on Occurrences object was overwrited.", call. = FALSE)
+    cli::cli_alert("Previous pseudoabsence element on Occurrences object will be overwritten.")
   }
   if (is.null(n_pa)) {
     n_pa <- y$n_presences

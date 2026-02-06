@@ -342,3 +342,68 @@ test_that("train_sdm - independent data", {
   expect_true(all(c("mean", "sd") %in% colnames(i1$models$independent_validation[[1]])))
 })
 
+# test maxent
+test_that("train_sdm - maxent test", {
+  skip_on_cran()
+  set.seed(2)
+  sa <- sdm_area(parana,
+                 cell_size = 25000,
+                 crs = 6933,
+                 gdal = T) |>
+    add_predictors(bioc) |>
+    add_scenarios() |>
+    select_predictors(c("bio1", "bio4", "bio12"))
+  oc <- occurrences_sdm(salm, crs = 6933) |>
+    join_area(sa) |>
+    suppressWarnings()
+  i <- input_sdm(oc, sa) |>
+    pseudoabsences(method = "bioclim")
+  expect_error(i1 <- i |>
+                    train_sdm(algo = c("maxent"),
+                              variables_selected = c("bio1", "bio4", "bio12"),
+                              ctrl = NULL))
+  i <- input_sdm(oc, sa) |>
+    background() |>
+    train_sdm(algo = c("maxent"),
+              variables_selected = c("bio1", "bio4", "bio12"),
+              ctrl = NULL) |>
+    suppressWarnings()
+  expect_true(algorithms_used(i) == "maxent")
+  expect_true(all(species_names(i
+                                ) == c("Salminus brasiliensis")))
+  m1 <- get_models(i)
+  expect_true(all(names(m1) == c("Salminus brasiliensis")))
+  expect_true(length(m1$`Salminus brasiliensis`) == 1)
+})
+
+test_that("train_sdm - background and pseudoabsence algorithms", {
+  skip_on_cran()
+  set.seed(2)
+  sa <- sdm_area(parana,
+                 cell_size = 25000,
+                 crs = 6933,
+                 gdal = T) |>
+    add_predictors(bioc) |>
+    add_scenarios() |>
+    select_predictors(c("bio1", "bio4", "bio12"))
+  oc <- occurrences_sdm(rbind(salm, occ), crs = 6933) |>
+    join_area(sa) |>
+    suppressWarnings()
+  i <- input_sdm(oc, sa) |>
+    pseudoabsences(method = "bioclim") |>
+    background()
+  i1 <- train_sdm(i, algo = c("maxent", "kknn")) |>
+    suppressWarnings()
+  expect_true(all(algorithms_used(i1) == c("maxent", "kknn")))
+  expect_true(all(species_names(i1) == c("Salminus brasiliensis", "Araucaria angustifolia")))
+  m1 <- get_models(i1)
+  expect_true(all(names(m1) == c("Salminus brasiliensis", "Araucaria angustifolia")))
+  expect_true(length(m1$`Araucaria angustifolia`) == 11)
+  expect_true(length(m1$`Salminus brasiliensis`) == 11)
+})
+
+
+
+
+
+

@@ -48,3 +48,8 @@
 
 -   buffer_sdm function now has a convex hull argument, allowing a buffer to be created around it.
 -   WorldClim_data function now uses httr2 package to gracefully handle errors.
+
+# caretSDM 1.3
+
+-   caretSDM now does not allow to run maxent without previously run the background function.
+

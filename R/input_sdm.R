@@ -131,7 +131,12 @@ print.input_sdm <- function(x, ...) {
       )
     }
     if (!is.null(x$occurrences$background)) {
-      cat("Background sets           :", length(x$occurrences$background), "\n")
+      cat(
+        "Background methods            :\n",
+        "   Number of Background sets :", x$occurrences$background$n_set, "\n",
+        "   Number of Bg in each set  :", as.numeric(x$occurrences$background$n), "\n",
+        "   Background proportion     :", as.numeric(x$occurrences$background$proportion), "\n"
+      )
     }
     if ("independent_test" %in% names(x$occurrences)) {
       cat("Independent Test              : TRUE (number of records = ", nrow(x$occurrences$independent_test), ")\n")

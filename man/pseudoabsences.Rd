@@ -95,7 +95,7 @@ i <- pseudoabsences(i, method="random")
 
 }
 \seealso{
-\code{link{input_sdm} \link{sdm_area} \link{occurrences_sdm}}
+\code{link{input_sdm} \link{background} \link{occurrences_sdm}}
 }
 \author{
 Luíz Fernando Esser (luizesser@gmail.com)
