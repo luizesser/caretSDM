@@ -21,6 +21,7 @@ utils::globalVariables(c(
   ".data", # <predict_sdm>
   "Sensitivity", # <predict_sdm>
   "Specificity", # <predict_sdm>
+  "scenario", # <predict_sdm>
   "original_id", # <sdm_area>
   "..weighting_factor", # <sdm_area>
   "species", # <select_predictors>

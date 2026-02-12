@@ -35,6 +35,7 @@
 #' @importFrom cli cli_inform
 #' @importFrom dplyr select
 #' @importFrom utils write.csv
+#' @import checkCLI
 #'
 #' @global cell_id.x species sp sc geometry
 #'

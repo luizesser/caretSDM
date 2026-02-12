@@ -81,7 +81,7 @@ test_that("write", {
     {
       sa <- sdm_area(parana, cell_size = 50000, crs = 6933)
       sa |> write_gpkg(file_path = ".", file_name = "parana")
-      expect_file_exists(fs::path("parana.gpkg"))
+      checkmate::expect_file_exists(fs::path("parana.gpkg"))
     },
     tmpdir = tmp_dir
   )

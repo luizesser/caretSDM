@@ -43,6 +43,7 @@
 #' @importFrom stringdist stringdist
 #' @importFrom sf st_as_sf st_geometry_type st_centroid
 #' @importFrom tidyr pivot_longer
+#' @import checkCLI
 #'
 #' @global species result value var1 var2 density
 #'

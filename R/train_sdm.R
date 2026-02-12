@@ -98,6 +98,7 @@
 #' @importFrom utils combn
 #' @importFrom blockCV cv_spatial cv_cluster
 #' @importFrom cli cli_abort
+#' @import checkCLI
 #'
 #' @global species
 #'
@@ -186,7 +187,7 @@ train_sdm <- function(occ, pred = NULL, algo, ctrl = NULL, variables_selected = 
           suppressWarnings()
         occ2 <- occ2[, names(occ2)[match(names(pa), names(occ2))]]
         x <- rbind(occ2, pa)
-
+        ctrl2 <- ctrl
         if ("cv_spatial" %in% ctrl$method) {
           test <- x |> dplyr::mutate(presence = c(rep(1, nrow(occ2)), rep(0, nrow(pa))))
           spatial_blocks <- blockCV::cv_spatial(
@@ -197,10 +198,10 @@ train_sdm <- function(occ, pred = NULL, algo, ctrl = NULL, variables_selected = 
             biomod2 = FALSE,
             progress = FALSE
           )
-          ctrl$method <- "cv"
-          ctrl$number <- NA
-          ctrl$index <- lapply(spatial_blocks$folds_list, function(x) x[[1]])
-          ctrl$indexOut <- lapply(spatial_blocks$folds_list, function(x) x[[2]])
+          ctrl2$method <- "cv"
+          ctrl2$number <- NA
+          ctrl2$index <- lapply(spatial_blocks$folds_list, function(x) x[[1]])
+          ctrl2$indexOut <- lapply(spatial_blocks$folds_list, function(x) x[[2]])
         }
         if ("cv_cluster" %in% ctrl$method) {
           test <- x |> dplyr::mutate(presence = c(rep(1, nrow(occ2)), rep(0, nrow(pa))))
@@ -212,10 +213,10 @@ train_sdm <- function(occ, pred = NULL, algo, ctrl = NULL, variables_selected = 
             biomod2 = FALSE,
             report = FALSE
           )
-          ctrl$method <- "cv"
-          ctrl$number <- NA
-          ctrl$index <- lapply(env_blocks$folds_list, function(x) x[[1]])
-          ctrl$indexOut <- lapply(env_blocks$folds_list, function(x) x[[2]])
+          ctrl2$method <- "cv"
+          ctrl2$number <- NA
+          ctrl2$index <- lapply(env_blocks$folds_list, function(x) x[[1]])
+          ctrl2$indexOut <- lapply(env_blocks$folds_list, function(x) x[[2]])
         }
 
         x <- dplyr::select(as.data.frame(x), dplyr::all_of(selected_vars))
@@ -231,11 +232,11 @@ train_sdm <- function(occ, pred = NULL, algo, ctrl = NULL, variables_selected = 
             for (vars in 1:ncol(vars_comb)) {
               m1[[vars]] <- lapply(algo_pa, function(a) {
                 if (a == "mahal.dist") { a <- .mahal.dist }
-                caret::train(
+                .safe_train(
                   df~.,
                   data = cbind(df,x[,vars_comb[,vars]]),
                   method = a,
-                  trControl = ctrl,
+                  trControl = ctrl2,
                   ...
                 )
               })
@@ -243,11 +244,11 @@ train_sdm <- function(occ, pred = NULL, algo, ctrl = NULL, variables_selected = 
             m <- unlist(m1, recursive = FALSE)
           } else if (is.list(algo)) {
             for (vars in 1:ncol(vars_comb)) {
-              m1[[vars]] <- caret::train(
+              m1[[vars]] <- .safe_train(
                 df~.,
                 data = cbind(df,x),
                 method = algo,
-                trControl = ctrl,
+                trControl = ctrl2,
                 ...
               ) |> list()
             }
@@ -257,20 +258,19 @@ train_sdm <- function(occ, pred = NULL, algo, ctrl = NULL, variables_selected = 
           algo_pa <- algo[!algo %in% c("maxent")]
           m <- lapply(algo_pa, function(a) {
             if (a == "mahal.dist") { a <- .mahal.dist }
-            caret::train(
+            .safe_train(
               df~.,
               data = cbind(df,x),
               method = a,
-              trControl = ctrl,
-              ...
+              trControl = ctrl2 ########### add ...
             ) # lapply retorna diferentes valores de tuning (padronizar com seed?)
           })
         } else if (is.list(algo)) {
-          m <- caret::train(
+          m <- .safe_train(
             df~.,
             data = cbind(df,x),
             method = algo,
-            trControl = ctrl,
+            trControl = ctrl2,
             ...
           ) |> list()
         }
@@ -285,7 +285,7 @@ train_sdm <- function(occ, pred = NULL, algo, ctrl = NULL, variables_selected = 
           suppressWarnings()
         occ2 <- occ2[, names(occ2)[match(names(pa), names(occ2))]]
         x <- rbind(occ2, pa)
-
+        ctrl2 <- ctrl
         if ("cv_spatial" %in% ctrl$method) {
           test <- x |> dplyr::mutate(presence = c(rep(1, nrow(occ2)), rep(0, nrow(pa))))
           spatial_blocks <- blockCV::cv_spatial(
@@ -296,10 +296,10 @@ train_sdm <- function(occ, pred = NULL, algo, ctrl = NULL, variables_selected = 
             biomod2 = FALSE,
             progress = FALSE
           )
-          ctrl$method <- "cv"
-          ctrl$number <- NA
-          ctrl$index <- lapply(spatial_blocks$folds_list, function(x) x[[1]])
-          ctrl$indexOut <- lapply(spatial_blocks$folds_list, function(x) x[[2]])
+          ctrl2$method <- "cv"
+          ctrl2$number <- NA
+          ctrl2$index <- lapply(spatial_blocks$folds_list, function(x) x[[1]])
+          ctrl2$indexOut <- lapply(spatial_blocks$folds_list, function(x) x[[2]])
         }
         if ("cv_cluster" %in% ctrl$method) {
           test <- x |> dplyr::mutate(presence = c(rep(1, nrow(occ2)), rep(0, nrow(pa))))
@@ -311,10 +311,10 @@ train_sdm <- function(occ, pred = NULL, algo, ctrl = NULL, variables_selected = 
             biomod2 = FALSE,
             report = FALSE
           )
-          ctrl$method <- "cv"
-          ctrl$number <- NA
-          ctrl$index <- lapply(env_blocks$folds_list, function(x) x[[1]])
-          ctrl$indexOut <- lapply(env_blocks$folds_list, function(x) x[[2]])
+          ctrl2$method <- "cv"
+          ctrl2$number <- NA
+          ctrl2$index <- lapply(env_blocks$folds_list, function(x) x[[1]])
+          ctrl2$indexOut <- lapply(env_blocks$folds_list, function(x) x[[2]])
         }
 
         x <- dplyr::select(as.data.frame(x), dplyr::all_of(selected_vars))
@@ -331,11 +331,11 @@ train_sdm <- function(occ, pred = NULL, algo, ctrl = NULL, variables_selected = 
               m1[[vars]] <- lapply(algo_bg, function(a) {
                 if (a == "mahal.dist") { a <- .mahal.dist } else
                   if (a == "maxent") { a <- .maxent }
-                caret::train(
+                .safe_train(
                   df~.,
                   data = cbind(df,x[,vars_comb[,vars]]),
                   method = a,
-                  trControl = ctrl,
+                  trControl = ctrl2,
                   ...
                 )
               })
@@ -343,11 +343,11 @@ train_sdm <- function(occ, pred = NULL, algo, ctrl = NULL, variables_selected = 
             m <- unlist(m1, recursive = FALSE)
           } else if (is.list(algo)) {
             for (vars in 1:ncol(vars_comb)) {
-              m1[[vars]] <- caret::train(
+              m1[[vars]] <- .safe_train(
                 df~.,
                 data = cbind(df,x),
                 method = algo,
-                trControl = ctrl,
+                trControl = ctrl2,
                 ...
               ) |> list()
             }
@@ -358,26 +358,26 @@ train_sdm <- function(occ, pred = NULL, algo, ctrl = NULL, variables_selected = 
           m <- lapply(algo_bg, function(a) {
             if (a == "mahal.dist") { a <- .mahal.dist } else
               if (a == "maxent") { a <- .maxent } ###########################################
-            caret::train(
+            .safe_train(
               df~.,
               data = cbind(df,x),
               method = a,
-              trControl = ctrl,
-              ...
+              trControl = ctrl2 ######### include ...
             ) # lapply retorna diferentes valores de tuning (padronizar com seed?)
           })
         } else if (is.list(algo)) {
-          m <- caret::train(
+          m <- .safe_train(
             df~.,
             data = cbind(df,x),
             method = algo,
-            trControl = ctrl,
+            trControl = ctrl2,
             ...
           ) |> list()
         }
         l2[[paste0("m", j, ".")]] <- m
       }
     }
+
     l <- append(l1, l2)
     names(l) <- paste0("m", 1:length(l), ".")
     return(l)
@@ -583,6 +583,28 @@ add_models <- function(m1, m2) {
     )
   }
   return(models)
+}
+
+.safe_train <- function(formula, data, method, trControl, ...) {
+  fit <- tryCatch(
+    suppressWarnings(
+      caret::train(
+        formula,
+        data = data,
+        method = method,
+        trControl = trControl,
+        ...
+      )
+    ),
+    error = function(e) {
+      message(e$message)
+      return(NULL)
+    }
+  )
+
+  if (is.null(fit)) return(NULL)
+  #if (any(is.na(fit$resample))) return(NULL)
+  return(fit)
 }
 
 #' Print method for models

@@ -32,7 +32,7 @@
       
       --------  Predictions  --------
       Ensembles                     :
-          Scenarios                 : ca_ssp245_2090 ca_ssp585_2090 mi_ssp245_2090 mi_ssp585_2090 current _ssp245_2090 _ssp585_2090 
+          Scenarios                 : current ca_ssp245_2090 ca_ssp585_2090 mi_ssp245_2090 mi_ssp585_2090 _ssp245_2090 _ssp585_2090 
           Methods                   : mean_occ_prob wmean_AUC committee_avg 
       Thresholds                    :
           Method                    : threshold 

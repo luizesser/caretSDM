@@ -59,6 +59,7 @@
 #' @importFrom pdp partial
 #' @importFrom ggplot2 ggplot aes geom_ribbon geom_smooth facet_wrap labs theme_minimal
 #' @importFrom utils combn
+#' @import checkCLI
 #'
 #' @global value variable yhat id
 #'

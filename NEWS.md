@@ -53,3 +53,10 @@
 
 -   caretSDM now does not allow to run maxent without previously run the background function.
 
+# caretSDM 1.4
+
+-   Package assertions is now performed by checkCLI package.
+
+# caretSDM 1.5
+
+-   Ensembles and projections performance were dramatically tunned to be more efficient.

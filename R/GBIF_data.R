@@ -33,6 +33,7 @@
 #' @importFrom dplyr bind_rows
 #' @importFrom stats na.omit
 #' @importFrom utils head write.csv read.csv
+#' @import checkCLI
 #'
 #' @export
 GBIF_data <- function(s, file = NULL, as_df = FALSE, ...) {

@@ -58,6 +58,7 @@
 #' @importFrom httr2 request req_url req_error req_perform resp_is_error resp_status
 #' @importFrom cli cli_alert_warning cli_abort cli_inform
 #' @importFrom utils unzip
+#' @import checkCLI
 #'
 #' @export
 WorldClim_data <- function(path = NULL,

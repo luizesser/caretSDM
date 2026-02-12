@@ -66,6 +66,7 @@
 #' @importFrom cli cli_abort cli_warn cli_alert
 #' @importFrom caret train getModelInfo
 #' @importFrom stats pchisq cov mahalanobis
+#' @import checkCLI
 #'
 #' @export
 background <- function(occ, pred = NULL, n = 10000, n_set = 1, proportion = NULL) {

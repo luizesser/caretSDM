@@ -42,6 +42,7 @@
 #' @importFrom sf st_crs st_bbox st_intersection st_cast st_join st_nearest_feature st_centroid
 #' @importFrom tidyr drop_na
 #' @importFrom stats na.omit
+#' @import checkCLI
 #'
 #' @global cell_id geometry
 #'

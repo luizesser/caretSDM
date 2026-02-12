@@ -96,15 +96,16 @@
 #' i  <- predict_sdm(i, th = 0.8)
 #' i
 #'
-#' @importFrom dplyr bind_cols select mutate all_of filter contains
+#' @importFrom dplyr bind_cols select mutate all_of filter contains bind_rows across row_number distinct left_join group_split
 #' @importFrom stringdist stringdist
 #' @importFrom gtools mixedsort
 #' @importFrom caret thresholder
 #' @importFrom stars st_dimensions
 #' @importFrom sf st_centroid st_as_sf st_coordinates
 #' @importFrom stats na.omit weighted.mean
+#' @import checkCLI
 #'
-#' @global algo .data Sensitivity Specificity
+#' @global algo .data Sensitivity Specificity scenario
 #'
 #' @export
 predict_sdm <- function(m, scen = NULL, metric = "ROC", th = 0.9, tp = "prob", ensembles = TRUE, file = NULL, add.current = TRUE) {
@@ -147,7 +148,7 @@ predict_sdm.sdm_area <- function(m, scen, metric = "ROC", th = 0.9, tp = "prob",
         return(res)
       }, simplify = FALSE, USE.NAMES = TRUE)
     } else {
-    assert_numeric(th, lower = 0, upper = 1, len = 1)
+    assert_numeric_cli(th, lower = 0, upper = 1, len = 1)
     }
   }
 
@@ -155,98 +156,283 @@ predict_sdm.sdm_area <- function(m, scen, metric = "ROC", th = 0.9, tp = "prob",
     subset(y$models[[sp]], names(y$models[[sp]]) %in% rownames(th1[[sp]]))
   }, simplify = FALSE, USE.NAMES = TRUE)
 
-  p <- list()
-  for (i in 1:length(scen$data)) {
-    print(paste0("Projecting: ", i, "/", length(scen$data)))
-    x <- scen$data[[i]] |>
-      as.data.frame() |>
-      stats::na.omit() |>
-      dplyr::select(dplyr::all_of(c(m$models$predictors, "cell_id")))
-    p[[i]] <- sapply(m1, function(m2) {
-      suppressWarnings(p2 <- predict(m2, newdata = x, type = tp))
-      cell_id <- scen$data[[i]] |>
-        stats::na.omit()
-      p2 <- sapply(p2, function(z) {
-        cbind(cell_id, stats::na.omit(z))
-      }, simplify = FALSE, USE.NAMES = TRUE)
-      return(p2)
-    }, simplify = FALSE, USE.NAMES = TRUE)
-  }
 
-  names(p) <- names(scen$data)
+  ####################### NEW REDUCED APPROACH #########################
+
+  env_list <- scen$data
+
+  env_long <- lapply(names(env_list), function(sc) {
+    df <- env_list[[sc]]
+    df$scenario  <- sc
+    df
+  }) |> dplyr::bind_rows()
+
+  pred_cols <- names(env_long)[!names(env_long) %in% c("cell_id", "geometry", "scenario")]
+
+  env_unique <- env_long |>
+    dplyr::distinct(dplyr::across(dplyr::all_of(pred_cols))) |>
+    dplyr::mutate(unique_id = dplyr::row_number())
+
+  # Join unique_id back to the long table
+  env_long <- env_long |>
+    dplyr::left_join(env_unique, by = pred_cols)
+
+  # Prepare data for prediction
+  newdata_for_pred <- env_unique |> dplyr::select(dplyr::all_of(pred_cols))
+
+  # Predict with your fitted model (e.g., a caret or caretSDM model)
+  # Example with a single model:
+  p <- lapply(m1, function(m2) {
+    p1 <- predict(m2,
+                  newdata = newdata_for_pred,
+                  type = "prob")
+    p0 <- lapply(p1, function(p2) {
+      p2 <- cbind(p2, env_unique$unique_id)[,c("env_unique$unique_id", "presence", "pseudoabsence")]
+      names(p2) <- c("unique_id", "presence", "pseudoabsence")
+      env_long2 <- env_long |>
+        dplyr::left_join(p2, by = "unique_id")
+      pred_by_scenario <- env_long2 |>
+        #dplyr::arrange(scenario, cell_id) |>
+        dplyr::group_split(scenario)
+      names(pred_by_scenario) <- sapply(pred_by_scenario, function(df) unique(df$scenario))
+      pred_by_scenario <- sapply(pred_by_scenario, function(pbs) dplyr::select(pbs, -c("scenario", "unique_id")), simplify = FALSE)
+      if ("current" %in% names(pred_by_scenario)) {
+        pred_by_scenario <- pred_by_scenario[c("current", names(pred_by_scenario)[!names(pred_by_scenario) %in% c("current")])]
+      }
+      return(pred_by_scenario)
+    })
+    return(p0)
+  })
+
+  # get scenario names from the first element
+  scenarios <- names(p[[1]][[1]])
+
+  # rebuild the list
+  p <- setNames(
+    lapply(scenarios, function(scn) {
+      lapply(p, function(sp) {
+        lapply(sp, function(mod) mod[[scn]])
+      })
+    }),
+    scenarios
+  )
+
+  ####################### OLD APPROACH  #######################
+#
+#  p <- list()
+#
+#
+#  for (i in 1:length(scen$data)) {
+#    print(paste0("Projecting: ", i, "/", length(scen$data)))
+#    x <- scen$data[[i]] |>
+#      as.data.frame() |>
+#      stats::na.omit() |>
+#      dplyr::select(dplyr::all_of(c(m$models$predictors, "cell_id")))
+#    p[[i]] <- sapply(m1, function(m2) {
+#      suppressWarnings(p2 <- predict(m2, newdata = x, type = tp))
+#      cell_id <- scen$data[[i]] |>
+#        stats::na.omit()
+#      p2 <- sapply(p2, function(z) {
+#        cbind(cell_id, stats::na.omit(z))
+#      }, simplify = FALSE, USE.NAMES = TRUE)
+#      return(p2)
+#    }, simplify = FALSE, USE.NAMES = TRUE)
+#  }
+#
+#  names(p) <- names(scen$data)
+#
+  #####################################################################
+
+  ####################### OLD ENSEMBLES APPROACH  #######################
+
+  #if (ensembles) {
+  #  print("Ensembling...")
+  #  e <- sapply(names(p), function(y) {
+  #    print(y)
+  #    y <- p[[y]]
+  #    e2 <- sapply(names(y), function(sp) {
+  #      print(sp)
+  #      x <- y[[sp]]
+  #      if (length(x) > 0) {
+  #        # Prepare data
+  #        suppressMessages(df <- dplyr::bind_cols(x))
+  #        df <- dplyr::select(df, dplyr::contains("presence"))
+  #        # mean_occ_prob
+  #        mean_occ_prob <- df |>
+  #          as.data.frame() |>
+  #          apply(2, function(x) {
+  #            as.numeric(gsub(NaN, NA, x))
+  #          }) |>
+  #          rowMeans()
+  #        # mean_occ_prob <- rowMeans(df)
+  #        # wmean_AUC
+  #        wmean_AUC <- apply(df, 1, function(x) {
+  #          stats::weighted.mean(x, th1[[sp]]$ROC)
+  #        })
+  #        # Obtain Thresholds:
+  #        suppressWarnings(th2 <- lapply(m1[[sp]], function(x) {
+  #          caret::thresholder(x,
+  #            threshold = seq(0, 1, by = 0.01),
+  #            final = TRUE,
+  #            statistics = "all"
+  #          )
+  #        }))
+  #        th2 <- lapply(th2, function(x) {
+  #          x <- x |> dplyr::mutate(th = Sensitivity + Specificity)
+  #          th <- x[x$th == max(x$th), "prob_threshold"]
+  #          if (length(th) > 1) {
+  #            th <- mean(th)
+  #          }
+  #          return(th)
+  #        })
+  #        # binary
+  #        for (i in 1:ncol(df)) {
+  #          df[, i] <- ifelse(df[, i][] > th2[i], 1, 0)
+  #        }
+  #        committee_avg <- rowMeans(df)
+  #
+  #        # save everything
+  #        df <- data.frame(cell_id = x[[1]]$cell_id, mean_occ_prob, wmean_AUC, committee_avg)
+  #        return(df)
+  #      }
+  #    }, simplify = FALSE, USE.NAMES = TRUE)
+  #  }, USE.NAMES = TRUE)
+  #  if (length(names(p[[1]])) == 1 & !any(class(e) == "matrix")) {
+  #    e <- t(as.matrix(e))
+  #    rownames(e) <- names(p[[1]])
+  #    colnames(e) <- gsub(paste0(".", names(p[[1]])), "", colnames(e))
+  #  }
+  #}
+
+  ####################### NEW ENSEMBLES APPROACH  #######################
 
   if (ensembles) {
-    print("Ensembling...")
-    e <- sapply(names(p), function(y) {
-      print(y)
-      y <- p[[y]]
-      e2 <- sapply(names(y), function(sp) {
-        print(sp)
-        x <- y[[sp]]
-        if (length(x) > 0) {
-          # Prepare data
-          suppressMessages(df <- dplyr::bind_cols(x))
-          df <- dplyr::select(df, dplyr::contains("presence"))
-          # mean_occ_prob
-          mean_occ_prob <- df |>
-            as.data.frame() |>
-            apply(2, function(x) {
-              as.numeric(gsub(NaN, NA, x))
-            }) |>
-            rowMeans()
-          # mean_occ_prob <- rowMeans(df)
-          # wmean_AUC
-          wmean_AUC <- apply(df, 1, function(x) {
-            stats::weighted.mean(x, th1[[sp]]$ROC)
-          })
-          # Obtain Thresholds:
-          suppressWarnings(th2 <- lapply(m1[[sp]], function(x) {
-            caret::thresholder(x,
-              threshold = seq(0, 1, by = 0.01),
-              final = TRUE,
-              statistics = "all"
-            )
-          }))
-          th2 <- lapply(th2, function(x) {
-            x <- x |> dplyr::mutate(th = Sensitivity + Specificity)
-            th <- x[x$th == max(x$th), "prob_threshold"]
-            if (length(th) > 1) {
-              th <- mean(th)
-            }
-            return(th)
-          })
-          # binary
-          for (i in 1:ncol(df)) {
-            df[, i] <- ifelse(df[, i][] > th2[i], 1, 0)
-          }
-          committee_avg <- rowMeans(df)
 
-          # save everything
-          df <- data.frame(cell_id = x[[1]]$cell_id, mean_occ_prob, wmean_AUC, committee_avg)
-          return(df)
-        }
-      }, simplify = FALSE, USE.NAMES = TRUE)
-    }, USE.NAMES = TRUE)
-    if (length(names(p[[1]])) == 1 & !any(class(e) == "matrix")) {
-      e <- t(as.matrix(e))
-      rownames(e) <- names(p[[1]])
-      colnames(e) <- gsub(paste0(".", names(p[[1]])), "", colnames(e))
+    message("Ensembling...")
+
+    ## ------------------------------------------------------------
+    ## 1. Precompute binary thresholds ONCE per species × model
+    ## ------------------------------------------------------------
+
+    bin_thresholds <- lapply(names(m1), function(sp) {
+      vapply(m1[[sp]], function(mod) {
+        th <- caret::thresholder(
+          mod,
+          threshold = seq(0, 1, by = 0.001),
+          final = TRUE,
+          statistics = c("Sensitivity", "Specificity")
+        )
+        th <- th$prob_threshold[which.max(th$Sensitivity + th$Specificity)] # max(sens+spec)
+        if (length(th) > 1) mean(th) else th
+      }, numeric(1))
+    })
+    names(bin_thresholds) <- names(m1)
+
+    ## ------------------------------------------------------------
+    ## 2. Ensemble per scenario × species (pure matrix ops)
+    ## ------------------------------------------------------------
+
+    e <- lapply(names(p), function(scn) {
+
+      message("  ", scn)
+      p_scn <- p[[scn]]
+
+      e1 <- lapply(names(p_scn), function(sp) {
+
+        x <- p_scn[[sp]]
+        if (length(x) == 0) return(NULL)
+
+        ## --------------------------------------------------------
+        ## Build prediction matrix [cells × models]
+        ## --------------------------------------------------------
+
+        pred_mat <- do.call(
+          cbind,
+          lapply(x, `[[`, "presence")
+        )
+
+        pred_mat <- as.matrix(pred_mat)
+        storage.mode(pred_mat) <- "double" # this accelerates calculations, since makes functions like
+                                           # rowMeans() skip a cohersion step, by granting that
+                                           # every value in pred_mat is a double.
+
+        ## --------------------------------------------------------
+        ## Mean occurrence probability
+        ## --------------------------------------------------------
+
+        mean_occ_prob <- rowMeans(pred_mat, na.rm = TRUE)
+
+        ## --------------------------------------------------------
+        ## Weighted mean (AUC)
+        ## --------------------------------------------------------
+
+        w <- th1[[sp]]$ROC
+        wmean_AUC <- rowSums(pred_mat * w[col(pred_mat)], na.rm = TRUE) /
+          sum(w, na.rm = TRUE)
+
+        ## --------------------------------------------------------
+        ## Committee average (binary, vectorized)
+        ## --------------------------------------------------------
+
+        th_bin <- bin_thresholds[[sp]]
+        committee_avg <- rowMeans(pred_mat > th_bin[col(pred_mat)])
+
+        ## --------------------------------------------------------
+        ## Output
+        ## --------------------------------------------------------
+
+        data.frame(
+          cell_id       = x[[1]]$cell_id,
+          mean_occ_prob = mean_occ_prob,
+          wmean_AUC     = wmean_AUC,
+          committee_avg = committee_avg
+        )
+      })
+      names(e1) <- names(p_scn)
+      return(e1)
+    })
+    names(e) <- names(p)
+
+    ## ------------------------------------------------------------
+    ## 3. Shape ensembles as species × scenario list-matrix
+    ## ------------------------------------------------------------
+
+    scenarios <- names(e)
+    species   <- names(e[[1]])
+
+    e0 <- matrix(
+      vector("list", length(species) * length(scenarios)),
+      nrow = length(species),
+      ncol = length(scenarios),
+      dimnames = list(species, scenarios)
+    )
+
+    for (scn in scenarios) {
+      for (sp in species) {
+        e0[sp, scn][[1]] <- e[[scn]][[sp]]
+      }
     }
+
   }
+
+  #####################################################################
+
+
+
   if(ensembles) {
     p2 <- list(
       thresholds = list(values = th1, method = tm, criteria = deparse(th)),
       predictions = p,
-      models = m,
+      #models = m,
       file = file,
-      ensembles = e,
+      ensembles = e0,
       grid = scen$grid
     )
   } else {
     p2 <- list(
       thresholds = list(values = th1, method = tm, criteria = deparse(th)),
       predictions = p,
-      models = m,
+      #models = m,
       file = file,
       grid = scen$grid
     )
@@ -291,7 +477,7 @@ add_predictions <- function(p1, p2) {
                               method = unique(c(p1$thresholds$method, p2$thresholds$method)),
                               criteria = unique(c(p1$thresholds$criteria, p2$thresholds$criteria))),
             predictions = c(p1$predictions, p2$predictions),
-            models = add_input_sdm(p1$models, p2$models),
+            #models = add_input_sdm(p1$models, p2$models),
             file = c(p1$file, p2$file),
             ensembles = rbind(p1$ensembles, p2$ensembles),
             grid = grd
@@ -305,7 +491,7 @@ add_predictions <- function(p1, p2) {
     list(
       thresholds = x$thresholds,
       predictions = x$predictions,
-      models = x$models,
+      #models = x$models,
       file = x$file,
       ensembles = x$ensembles,
       grid = x$grid

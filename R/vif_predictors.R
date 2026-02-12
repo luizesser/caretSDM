@@ -52,6 +52,7 @@
 #' @importFrom dplyr filter select mutate_if all_of
 #' @importFrom sf st_centroid st_as_sf
 #' @importFrom stars st_extract
+#' @import checkCLI
 #'
 #' @export
 vif_predictors <- function(pred, area = "all", th = 0.5, maxobservations = 5000, variables_selected = NULL) {

@@ -38,6 +38,7 @@
 #' @importFrom dplyr select relocate
 #' @importFrom cli cli_abort cli_warn
 #' @importFrom stats na.omit
+#' @import checkCLI
 #'
 #' @export
 join_area <- function(occ, pred) {

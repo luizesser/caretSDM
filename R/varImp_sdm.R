@@ -51,6 +51,7 @@
 #' @importFrom caret varImp
 #' @importFrom dplyr select bind_cols
 #' @importFrom stats sd
+#' @import checkCLI
 #'
 #' @export
 varImp_sdm <- function(m, id = NULL, ...) {

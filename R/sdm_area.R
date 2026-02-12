@@ -72,6 +72,7 @@
 #' @importFrom stats setNames
 #' @importFrom methods as
 #' @importFrom utils file_test
+#' @import checkCLI
 #'
 #' @global original_id ..weighting_factor
 #'

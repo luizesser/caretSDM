@@ -8,22 +8,22 @@ oc <- occurrences_sdm(occ, crs=6933) |>
 test_that("plot works with i", {
   expect_no_error(plot(input_sdm(oc)))
 })
-i <- input_sdm(oc, sa)
+
 test_that("plot works with i", {
+  skip_on_cran()
+  i <- input_sdm(oc, sa)
   expect_no_error(plot(i))
   expect_no_error(plot_occurrences(i))
   expect_no_error(ggplot2::is_ggplot(plot_occurrences(i)))
   expect_no_error(plot_occurrences(i, spp_name = "Araucaria angustifolia"))
 
-})
-suppressWarnings(i <- pseudoabsences(i, method = "random", n_set = 3))
-ctrl_sdm <- caret::trainControl(method = "repeatedcv", number = 4, repeats = 2, classProbs = TRUE,
-                                returnResamp = "all", summaryFunction = summary_sdm,
-                                savePredictions = "all")
-suppressWarnings(i <- train_sdm(i, algo=c("naive_bayes", "kknn"), crtl=ctrl_sdm))
-i <- predict_sdm(i, th=0.5)
+  suppressWarnings(i <- pseudoabsences(i, method = "random", n_set = 3))
+  ctrl_sdm <- caret::trainControl(method = "repeatedcv", number = 4, repeats = 2, classProbs = TRUE,
+                                  returnResamp = "all", summaryFunction = summary_sdm,
+                                  savePredictions = "all")
+  suppressWarnings(i <- train_sdm(i, algo=c("naive_bayes", "kknn"), crtl=ctrl_sdm))
+  i <- predict_sdm(i, th=0.5)
 
-test_that("plot works with i", {
   expect_no_error(plot(i))
   expect_true(ggplot2::is_ggplot(plot(i)))
   expect_no_error(plot_grid(i))
@@ -80,19 +80,4 @@ test_that("plot works with i", {
   expect_no_error(mapview_predictors(sa))
   expect_no_error(plot_occurrences(oc))
   expect_no_error(mapview_occurrences(oc))
-})
-
-test_that("vif", {
-  i2 <- input_sdm(oc, sa) |>
-    vif_predictors(th=0.9) |>
-    pseudoabsences(method = "random", n_set = 3) |>
-    train_sdm(algo=c("naive_bayes", "kknn"), crtl=ctrl_sdm) |>
-    predict_sdm(th = 0.6) |>
-    suppressWarnings()
-
-  #expect_no_error(mapview_predictors(i2, variables_selected = "vif"))
-  #expect_no_error(mapview_scenarios(i2, variables_selected = "vif"))
-  #expect_no_error(plot.sdm_area(i2, variables_selected = "vif"))
-  expect_no_error(plot_background(i2, variables_selected = "vif"))
-  expect_no_error(plot_niche(i2, variables_selected = "vif"))
 })

@@ -50,6 +50,7 @@
 #' @importFrom stringdist stringdist
 #' @importFrom cli cli_abort
 #' @importFrom methods is
+#' @import checkCLI
 #'
 #' @export
 #' @rdname predictor_names

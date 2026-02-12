@@ -54,6 +54,8 @@
 #' correlate_sdm(i)
 #'
 #' @importFrom stats cor
+#' @import checkCLI
+#'
 #' @export
 correlate_sdm <- function(i, scenario = "current") {
   if (!is_input_sdm(i)) {

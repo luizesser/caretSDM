@@ -1,0 +1,285 @@
+---
+title: "Benchmarking SDM Package Performance in R"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{runtime-benchmark}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+editor_options: 
+  markdown: 
+    wrap: 80
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+## Motivation
+
+Species distribution models (SDMs) are implemented in several R packages, each providing different workflows, abstractions, and computational strategies. Despite their widespread use, **direct and reproducible comparisons of computational performance are rare**, largely because differences in data preparation, validation strategies, and algorithm implementations obscure fair comparisons.
+
+This document provides a **fully reproducible benchmark** comparing the runtime performance of four widely used SDM frameworks:
+
+* **biomod2**
+* **sdm**
+* **dismo**
+* **caretSDM**
+
+All packages are evaluated under **identical conditions**, using the same data, algorithms, and validation structure.
+
+---
+
+## Benchmark design
+
+To ensure fairness and reproducibility, we enforced the following constraints:
+
+* Identical presence–absence data
+* Identical environmental predictors
+* Identical cross-validation folds (pre-defined)
+* Same algorithms across packages (GLM and Random Forest)
+* No parallelization
+* Runtime measured using the `bench` package
+
+Only model fitting and prediction steps are timed; plotting and file writing are excluded.
+
+---
+
+## Packages
+
+```{r packages}
+library(terra)
+library(sf)
+library(bench)
+
+library(biomod2)
+library(sdm)
+library(dismo)
+library(caretSDM)
+```
+
+---
+
+## Data
+
+### Presence–absence data
+
+```{r data-pa}
+head(occ)
+```
+
+### Environmental predictors
+
+```{r data-env}
+bioc
+```
+
+---
+
+## Package-specific benchmark functions
+
+### biomod2
+
+```{r biomod2}
+run_biomod2 <- function() {
+  occ_biomod <- occ
+  occ_biomod$species <- rep(1, nrow(occ))
+  env <- terra::rast(stars::st_warp(bioc, crs=6933))
+  sc <- list(scen1 = terra::rast(stars::st_warp(scen[1], crs=6933)), 
+             scen2 = terra::rast(stars::st_warp(scen[2], crs=6933)), 
+             scen3 = terra::rast(stars::st_warp(scen[3], crs=6933)), 
+             scen4 = terra::rast(stars::st_warp(scen[4], crs=6933)))
+  
+  biomod_data <- BIOMOD_FormatingData(
+    resp.var = occ_biomod$species,
+    expl.var = env,
+    resp.xy = occ_biomod[, c("decimalLongitude", "decimalLatitude")],
+    resp.name = "species",
+    PA.nb.rep = 1,
+    PA.nb.absences = nrow(occ_biomod),
+    PA.strategy = "random"
+  )
+
+  biomod_model <- BIOMOD_Modeling(
+    biomod_data,
+    models = c("ANN", "CTA", "FDA", "GBM", "MARS", "RF"),
+    CV.strategy = "kfold",
+    CV.nb.rep = 1,
+    CV.k = 5,
+    metric.eval = c("TSS", "ROC"),
+    do.progress = FALSE
+  )
+  
+  biomod_ensmodel <- BIOMOD_EnsembleModeling(
+    bm.mod = biomod_model,
+    models.chosen = 'all',
+    em.by = 'all',
+    em.algo = c('EMmean', 'EMwmean', 'EMca'),
+    metric.select = c('AUCroc'),
+    metric.select.thresh = c(0.5)
+  )
+  
+  biomod_proj <- lapply(names(sc), function(nm) {
+    BIOMOD_Projection(
+      bm.mod = biomod_model,
+      proj.name = nm,
+      new.env = sc[[nm]],
+      models.chosen = 'all',
+      overwrite = TRUE,
+      do.stack = FALSE
+    )
+  })
+
+  biomod_ensforecast <- mapply(function(proj, nm) {
+    BIOMOD_EnsembleForecasting(
+      bm.em = biomod_ensmodel,
+      bm.proj = proj,
+      proj.name = nm,
+      models.chosen = 'all',
+      overwrite = TRUE
+    )
+  }, biomod_proj, names(scen))
+
+}
+```
+
+---
+
+### sdm
+
+```{r sdm}
+run_sdm <- function() {
+  occ_sdm <- occ
+  coords <- occ_sdm[, c("decimalLongitude", "decimalLatitude")]
+  names(coords) <- c("x", "y")
+  presence <- occ_sdm[, c("species", "decimalLongitude", "decimalLatitude")]
+  names(presence) <- c("species", "x", "y")
+  env <- terra::rast(stars::st_warp(bioc, crs=6933))
+  pres_vals <- terra::extract(env, vect(coords)) 
+  pres_vals <- pres_vals[, -1]
+  pres_data <- cbind(presence, pres_vals)
+  pres_data$species <- rep(1, nrow(pres_data))
+  sc <- list(scen1 = terra::rast(stars::st_warp(scen[1], crs=6933)), 
+             scen2 = terra::rast(stars::st_warp(scen[2], crs=6933)), 
+             scen3 = terra::rast(stars::st_warp(scen[3], crs=6933)), 
+             scen4 = terra::rast(stars::st_warp(scen[4], crs=6933)))
+  
+  bg <- sdm::background(env, n=nrow(pres_data), method = 'gRandom')
+  bg$species <- rep(0, nrow(bg))
+  pres <- rbind(bg, pres_data)
+
+  d <- sdmData(
+    formula = species ~ bio1 + bio4 + bio12,
+    train = dplyr::select(pres, -c("x", "y"))
+  )
+
+  m <- sdm(
+    formula = species ~ bio1 + bio4 + bio12,
+    data = d,
+    methods = c("mlp", "rpart", "fda", "brt", "mars", "rf"),
+    replication = "cv",
+    cv.folds = 5
+  )
+  
+  projections <- lapply(sc, function(r) {
+    e1 <- ensemble(m, newdata = r, setting = list(method = 'weighted', stat = 'AUC', expr = 'auc > 0.5'))
+    e2 <- ensemble(m, newdata = r, setting = list(method = 'unweighted', expr = 'auc > 0.5'))
+    e3 <- ensemble(m, newdata = r, setting = list(method = 'pa', opt = 2, expr = 'auc > 0.5'))
+    return(list(e1, e2, e3))
+  })
+}
+```
+
+> **Note**: The `sdm` package does not natively accept externally defined folds. Therefore, although the number of folds is controlled, the exact split structure may differ slightly.
+
+---
+
+### caretSDM
+
+```{r caretSDM}
+  sa <- sdm_area(bioc)
+
+  oc <- occurrences_sdm(occ, crs = 6933)
+
+run_caretSDM <- function() {
+
+  i <- input_sdm(oc, sa) |> 
+    pseudoabsences(method = "random", n_set = 1) |> 
+    train_sdm(algo = c("mlp", "rpart", "fda", "gbm", "gcvEarth", "rf"), 
+              tuneLength = 1,
+              ctrl = caret::trainControl(method = "cv", 
+                                         number = 5,
+                                         classProbs = TRUE, 
+                                         returnResamp = "none", 
+                                         savePredictions = "final",
+                                         summaryFunction = summary_sdm)) |> 
+    add_scenarios(scen, pred_as_scen = FALSE) |>
+    predict_sdm(th = 0.5)
+}
+```
+
+---
+
+## Benchmark execution
+
+Before benchmarking, users are encouraged to run each function once to avoid first-run overhead (e.g. package initialization).
+
+```{r benchmark, echo=TRUE, results='hide'}
+bench_res <- bench::mark(
+  biomod2  = run_biomod2(),
+  sdm      = run_sdm(),
+  caretSDM = run_caretSDM(),
+  iterations = 5,
+  check = FALSE
+)
+```
+
+```{r benchmark_result}
+bench_res
+```
+---
+
+## Results
+
+```{r results}
+runtime_table <- bench_res[, c("expression", "median", "itr/sec", "mem_alloc", "total_time")]
+runtime_table
+```
+
+The table above summarizes the median runtime, iteration rate, and memory allocation for each package under identical conditions.
+
+---
+
+## Interpretation
+
+Observed differences in runtime primarily reflect:
+
+* Workflow overhead (data formatting, object abstraction)
+* Internal resampling strategies
+* Model orchestration costs
+
+Packages designed around **lightweight workflows and explicit resampling control**, such as `caretSDM`, tend to show lower computational overhead under identical modeling tasks.
+
+---
+
+## Reproducibility
+
+This benchmark is fully reproducible and can be executed on any system with the required packages installed. Users are encouraged to rerun the analysis on their own hardware to assess absolute performance differences.
+
+---
+
+## Limitations
+
+* Only two algorithms (GLM and Random Forest) were evaluated
+* No parallel processing was used
+* Performance may vary with dataset size, predictor dimensionality, and hardware
+
+---
+
+## Session information
+
+```{r session}
+sessionInfo()
+```

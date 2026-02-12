@@ -21,6 +21,7 @@
 #' sa <- add_predictors(sa, bioc) |> select_predictors(c("bio1", "bio4", "bio12"))
 #'
 #' @importFrom dplyr select relocate mutate filter all_of
+#' @import checkCLI
 #'
 #' @global species
 #'

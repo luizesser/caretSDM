@@ -67,6 +67,7 @@
 #' @importFrom stringdist stringdist
 #' @importFrom sf st_as_sf st_crs st_transform st_join st_geometry_type
 #' @importFrom dplyr mutate select
+#' @import checkCLI
 #'
 #' @export
 data_clean <- function(occ, pred = NULL,

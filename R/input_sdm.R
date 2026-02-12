@@ -46,6 +46,7 @@
 #'
 #' @importFrom stats sd
 #' @importFrom cli cli_abort
+#' @import checkCLI
 #'
 #' @export
 input_sdm <- function(...) {

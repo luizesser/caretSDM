@@ -52,6 +52,7 @@
 #' @importFrom stats na.omit
 #' @importFrom cli cli_alert_warning cli_abort
 #' @importFrom utils read.csv head
+#' @import checkCLI
 #'
 #' @global X Y
 #'

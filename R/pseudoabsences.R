@@ -82,6 +82,7 @@
 #' @importFrom cli cli_abort cli_warn cli_alert
 #' @importFrom caret train getModelInfo
 #' @importFrom stats pchisq cov mahalanobis
+#' @import checkCLI
 #'
 #' @export
 pseudoabsences <- function(occ, pred = NULL, method = "random", n_set = 10, n_pa = NULL, variables_selected = NULL, th = 0, size = 1, crs = 4326) {

@@ -25,6 +25,7 @@
 #' plot(study_area)
 #'
 #' @importFrom sf st_as_sf st_buffer st_union st_crs st_set_geometry st_convex_hull st_combine
+#' @import checkCLI
 #'
 #' @export
 buffer_sdm <- function(occ_data, size = NULL, crs = NULL, mcp = FALSE) {

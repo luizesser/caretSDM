@@ -41,6 +41,8 @@
 #' i <- use_esm(i, n_records = 999)
 #'
 #' @importFrom cli cli_abort
+#' @import checkCLI
+#'
 #' @export
 use_esm <- function(x, spp = NULL, n_records = 20) {
   assert_subset_cli(class(x), c("input_sdm", "occurrences"))

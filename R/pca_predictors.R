@@ -41,6 +41,7 @@
 #'
 #' @importFrom dplyr select
 #' @importFrom stats prcomp
+#' @import checkCLI
 #'
 #' @export
 pca_predictors <- function(i, cumulative_proportion = 0.99) {

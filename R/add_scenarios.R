@@ -73,6 +73,7 @@
 #' @importFrom tidyr drop_na
 #' @importFrom cli cli_progress_along cli_abort cli_warn
 #' @importFrom stats aggregate
+#' @import checkCLI
 #'
 #' @export
 add_scenarios <- function(sa, scen = NULL, scenarios_names = NULL, pred_as_scen = TRUE,
