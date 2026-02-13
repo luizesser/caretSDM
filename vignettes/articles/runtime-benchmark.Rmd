@@ -83,7 +83,104 @@ bioc
 ### biomod2
 
 ```{r biomod2}
+# ---------------------------
+# biomod2 - Pre-processing
+# ---------------------------
+
+prep_biomod2 <- function() {
+  
+  occ_biomod <- occ
+  occ_biomod$species <- rep(1, nrow(occ))
+
+  env <- terra::rast(stars::st_warp(bioc, crs = 6933))
+
+  sc <- list(
+    scen1 = terra::rast(stars::st_warp(scen[1], crs = 6933)),
+    scen2 = terra::rast(stars::st_warp(scen[2], crs = 6933)),
+    scen3 = terra::rast(stars::st_warp(scen[3], crs = 6933)),
+    scen4 = terra::rast(stars::st_warp(scen[4], crs = 6933))
+  )
+
+  biomod_data <- BIOMOD_FormatingData(
+    resp.var = occ_biomod$species,
+    expl.var = env,
+    resp.xy = occ_biomod[, c("decimalLongitude", "decimalLatitude")],
+    resp.name = "species",
+    PA.nb.rep = 1,
+    PA.nb.absences = nrow(occ_biomod),
+    PA.strategy = "random"
+  )
+
+  list(data = biomod_data, scen = sc)
+  
+}
+
+# ---------------------------
+# biomod2 - Processing
+# ---------------------------
+
+fit_biomod2 <- function(prep) {
+
+  biomod_model <- BIOMOD_Modeling(
+    prep$data,
+    models = c("ANN", "CTA", "FDA", "GBM", "MARS", "RF"),
+    CV.strategy = "kfold",
+    CV.nb.rep = 1,
+    CV.k = 5,
+    metric.eval = c("TSS", "ROC"),
+    do.progress = FALSE
+  )
+
+  biomod_ensmodel <- BIOMOD_EnsembleModeling(
+    bm.mod = biomod_model,
+    models.chosen = 'all',
+    em.by = 'all',
+    em.algo = c('EMmean', 'EMwmean', 'EMca'),
+    metric.select = c('AUCroc'),
+    metric.select.thresh = c(0.5)
+  )
+
+  list(model = biomod_model,
+       ensemble = biomod_ensmodel,
+       scen = prep$scen)
+  
+}
+
+# ---------------------------
+# biomod2 - Post-processing
+# ---------------------------
+
+post_biomod2 <- function(fit) {
+
+  biomod_proj <- lapply(names(fit$scen), function(nm) {
+    BIOMOD_Projection(
+      bm.mod = fit$model,
+      proj.name = nm,
+      new.env = fit$scen[[nm]],
+      models.chosen = 'all',
+      overwrite = TRUE,
+      do.stack = FALSE
+    )
+  })
+
+  mapply(function(proj, nm) {
+    BIOMOD_EnsembleForecasting(
+      bm.em = fit$ensemble,
+      bm.proj = proj,
+      proj.name = nm,
+      models.chosen = 'all',
+      overwrite = TRUE
+    )
+  }, biomod_proj, names(fit$scen))
+  
+}
+
+# ---------------------------
+# biomod2 - Complete
+# ---------------------------
+
 run_biomod2 <- function() {
+  
   occ_biomod <- occ
   occ_biomod$species <- rep(1, nrow(occ))
   env <- terra::rast(stars::st_warp(bioc, crs=6933))
@@ -143,6 +240,8 @@ run_biomod2 <- function() {
   }, biomod_proj, names(scen))
 
 }
+
+
 ```
 
 ---
@@ -150,7 +249,81 @@ run_biomod2 <- function() {
 ### sdm
 
 ```{r sdm}
+# ---------------------------
+# sdm - Pre-processing
+# ---------------------------
+
+prep_sdm <- function() {
+
+  coords <- occ[, c("decimalLongitude", "decimalLatitude")]
+  names(coords) <- c("x", "y")
+
+  env <- terra::rast(stars::st_warp(bioc, crs = 6933))
+
+  pres_vals <- terra::extract(env, vect(coords))
+  pres_vals <- pres_vals[, -1]
+
+  pres_data <- cbind(species = 1, pres_vals)
+
+  bg <- sdm::background(env, n = nrow(pres_data), method = 'gRandom')
+  bg$species <- 0
+
+  train <- rbind(dplyr::select(bg, -c("x", "y")), pres_data)
+
+  sc <- list(
+    scen1 = terra::rast(stars::st_warp(scen[1], crs = 6933)),
+    scen2 = terra::rast(stars::st_warp(scen[2], crs = 6933)),
+    scen3 = terra::rast(stars::st_warp(scen[3], crs = 6933)),
+    scen4 = terra::rast(stars::st_warp(scen[4], crs = 6933))
+  )
+
+  d <- sdmData(
+    formula = species ~ bio1 + bio4 + bio12,
+    train = train
+  )
+
+  list(data = d, scen = sc)
+  
+}
+
+# ---------------------------
+# sdm - Processing
+# ---------------------------
+
+fit_sdm <- function(prep) {
+
+  m <- sdm(
+    formula = species ~ bio1 + bio4 + bio12,
+    data = prep$data,
+    methods = c("mlp", "rpart", "fda", "brt", "mars", "rf"),
+    replication = "cv",
+    cv.folds = 5
+  )
+
+  list(model = m, scen = prep$scen)
+  
+}
+
+# ---------------------------
+# biomod2 - Post-processing
+# ---------------------------
+
+post_sdm <- function(fit) {
+  
+  lapply(fit$scen, function(r) {
+    ensemble(fit$model, newdata = r,
+             setting = list(method = 'weighted', stat = 'AUC',
+                            expr = 'auc > 0.5'))
+  })
+  
+}
+
+# ---------------------------
+# sdm - Complete
+# ---------------------------
+
 run_sdm <- function() {
+  
   occ_sdm <- occ
   coords <- occ_sdm[, c("decimalLongitude", "decimalLatitude")]
   names(coords) <- c("x", "y")
@@ -189,6 +362,7 @@ run_sdm <- function() {
     e3 <- ensemble(m, newdata = r, setting = list(method = 'pa', opt = 2, expr = 'auc > 0.5'))
     return(list(e1, e2, e3))
   })
+  
 }
 ```
 
@@ -199,12 +373,63 @@ run_sdm <- function() {
 ### caretSDM
 
 ```{r caretSDM}
+# ---------------------------
+# caretSDM - Pre-processing
+# ---------------------------
+
+prep_caretSDM <- function() {
+  
+  sa <- sdm_area(bioc) |>
+    add_scenarios(scen)
+  oc <- occurrences_sdm(occ, crs = 6933)
+  input_sdm(oc, sa) |> 
+    pseudoabsences(method = "random", n_set = 1)
+  
+}
+
+# ---------------------------
+# caretSDM - Processing
+# ---------------------------
+
+fit_caretSDM <- function(prep) {
+
+  prep |> 
+    train_sdm(
+      algo = c("mlp", "rpart", "fda", "gbm", "gcvEarth", "rf"),
+      tuneLength = 1,
+      ctrl = caret::trainControl(
+        method = "cv",
+        number = 5,
+        classProbs = TRUE,
+        returnResamp = "none",
+        savePredictions = "final",
+        summaryFunction = summary_sdm
+      )
+    )
+  
+}
+
+# ---------------------------
+# caretSDM - Post-processing
+# ---------------------------
+
+post_caretSDM <- function(fit) {
+
+  fit |> 
+    predict_sdm(th = 0.5)
+  
+}
+
+
+# ---------------------------
+# caretSDM - Complete
+# ---------------------------
+run_caretSDM <- function() {
+  
   sa <- sdm_area(bioc)
 
   oc <- occurrences_sdm(occ, crs = 6933)
-
-run_caretSDM <- function() {
-
+  
   i <- input_sdm(oc, sa) |> 
     pseudoabsences(method = "random", n_set = 1) |> 
     train_sdm(algo = c("mlp", "rpart", "fda", "gbm", "gcvEarth", "rf"), 
@@ -217,6 +442,7 @@ run_caretSDM <- function() {
                                          summaryFunction = summary_sdm)) |> 
     add_scenarios(scen, pred_as_scen = FALSE) |>
     predict_sdm(th = 0.5)
+  
 }
 ```
 
@@ -226,8 +452,62 @@ run_caretSDM <- function() {
 
 Before benchmarking, users are encouraged to run each function once to avoid first-run overhead (e.g. package initialization).
 
-```{r benchmark, echo=TRUE, results='hide'}
-bench_res <- bench::mark(
+```{r benchmark_start1, echo=TRUE, results='hide', warning=FALSE, message=FALSE}
+prep_biomod2_res <- prep_biomod2()
+prep_sdm_res <- prep_sdm()
+prep_caretSDM_res <- prep_caretSDM()
+```
+
+```{r benchmark_prep, echo=TRUE, results='hide', warning=FALSE, message=FALSE}
+bench_res_prep <- bench::mark(
+  biomod2  = prep_biomod2(),
+  sdm      = prep_sdm(),
+  caretSDM = prep_caretSDM(),
+  iterations = 5,
+  check = FALSE
+)
+```
+
+```{r benchmark_start2, echo=TRUE, results='hide', warning=FALSE, message=FALSE}
+fit_biomod2_res <- fit_biomod2(prep_biomod2_res)
+fit_sdm_res <- fit_sdm(prep_sdm_res)
+fit_caretSDM_res <- fit_caretSDM(prep_caretSDM_res)
+```
+
+```{r benchmark_fit, echo=TRUE, results='hide', warning=FALSE, message=FALSE}
+bench_res_fit <- bench::mark(
+  biomod2  = fit_biomod2(prep_biomod2_res),
+  sdm      = fit_sdm(prep_sdm_res),
+  caretSDM = fit_caretSDM(prep_caretSDM_res),
+  iterations = 5,
+  check = FALSE
+)
+```
+
+```{r benchmark_start3, echo=TRUE, results='hide', warning=FALSE, message=FALSE}
+post_biomod2(fit_biomod2_res)
+post_sdm(fit_sdm_res)
+post_caretSDM(fit_caretSDM_res)
+```
+
+```{r benchmark_post, echo=TRUE, results='hide', warning=FALSE, message=FALSE}
+bench_res_post <- bench::mark(
+  biomod2  = post_biomod2(fit_biomod2_res),
+  sdm      = post_sdm(fit_sdm_res),
+  caretSDM = post_caretSDM(fit_caretSDM_res),
+  iterations = 5,
+  check = FALSE
+)
+```
+
+```{r benchmark_start4, echo=TRUE, results='hide', warning=FALSE, message=FALSE}
+run_biomod2()
+run_sdm()
+run_caretSDM()
+```
+
+```{r benchmark_complete, echo=TRUE, results='hide', warning=FALSE, message=FALSE}
+bench_res_complete <- bench::mark(
   biomod2  = run_biomod2(),
   sdm      = run_sdm(),
   caretSDM = run_caretSDM(),
@@ -236,16 +516,27 @@ bench_res <- bench::mark(
 )
 ```
 
-```{r benchmark_result}
-bench_res
-```
 ---
 
 ## Results
 
-```{r results}
-runtime_table <- bench_res[, c("expression", "median", "itr/sec", "mem_alloc", "total_time")]
-runtime_table
+```{r benchmark_result0}
+bench_res_prep
+```
+
+
+```{r benchmark_result1}
+bench_res_fit
+```
+
+
+```{r benchmark_result2}
+bench_res_post
+```
+
+
+```{r benchmark_result3}
+bench_res_complete
 ```
 
 The table above summarizes the median runtime, iteration rate, and memory allocation for each package under identical conditions.
@@ -272,7 +563,6 @@ This benchmark is fully reproducible and can be executed on any system with the 
 
 ## Limitations
 
-* Only two algorithms (GLM and Random Forest) were evaluated
 * No parallel processing was used
 * Performance may vary with dataset size, predictor dimensionality, and hardware
 
