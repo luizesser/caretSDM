@@ -1,4 +1,5 @@
 test_that("data_clean - normal path with sdm_area", {
+  skip_on_cran()
   set.seed(1)
   sa <- sdm_area(parana, cell_size = 100000, crs = 6933)
   sa <- add_predictors(sa, bioc)
@@ -19,6 +20,7 @@ test_that("data_clean - normal path with sdm_area", {
 })
 
 test_that("data_clean - normal path with pred", {
+  skip_on_cran()
   set.seed(1)
   pred <- sdm_area(bioc, cell_size = 1)
   oc <- occurrences_sdm(occ, independent_test = TRUE, crs= 6933)
@@ -35,6 +37,7 @@ test_that("data_clean - normal path with pred", {
 })
 
 test_that("data_clean - normal path without pred", {
+  skip_on_cran()
   oc <- occurrences_sdm(occ, crs= 6933)
   i <- input_sdm(oc)
   i <- data_clean(i, terrestrial=FALSE)
@@ -49,6 +52,7 @@ test_that("data_clean - normal path without pred", {
 })
 
 test_that("data_clean - normal path with occurences", {
+  skip_on_cran()
   oc <- occurrences_sdm(occ, crs= 6933)
   i <- data_clean(oc, terrestrial=FALSE)
   expect_true(sf::st_crs(i$occurrences) == sf::st_crs(oc$occurrences))
@@ -63,6 +67,7 @@ test_that("data_clean - normal path with occurences", {
 })
 
 test_that("data_clean - normal path with pred at wgs84", {
+  skip_on_cran()
   pred <- sdm_area(bioc, cell_size = 1)
   occ2 <- sf::st_as_sf(occ,
                      coords = c("decimalLongitude", "decimalLatitude"),

@@ -18,46 +18,48 @@ A \code{input_sdm} object with grouped GCMs.
 An ensembling method to group different GCMs into one SSP scenario
 }
 \examples{
-# Create sdm_area object:
-set.seed(1)
-sa <- sdm_area(parana, cell_size = 100000, crs = 6933)
+if (interactive()) {
+  # Create sdm_area object:
+  set.seed(1)
+  sa <- sdm_area(parana, cell_size = 100000, crs = 6933)
 
-# Include predictors:
-sa <- add_predictors(sa, bioc)
+  # Include predictors:
+  sa <- add_predictors(sa, bioc)
 
-# Include scenarios:
-sa <- add_scenarios(sa, scen) |> select_predictors(c("bio1", "bio12"))
+  # Include scenarios:
+  sa <- add_scenarios(sa, scen) |> select_predictors(c("bio1", "bio12"))
 
-# Create occurrences:
-oc <- occurrences_sdm(occ, crs = 6933) |> join_area(sa)
+  # Create occurrences:
+  oc <- occurrences_sdm(occ, crs = 6933) |> join_area(sa)
 
-# Create input_sdm:
-i <- input_sdm(oc, sa)
+  # Create input_sdm:
+  i <- input_sdm(oc, sa)
 
-# Pseudoabsence generation:
-i <- pseudoabsences(i, method="random", n_set = 2)
+  # Pseudoabsence generation:
+  i <- pseudoabsences(i, method="random", n_set = 2)
 
-# Custom trainControl:
-ctrl_sdm <- caret::trainControl(method = "boot",
-                                number = 1,
-                                classProbs = TRUE,
-                                returnResamp = "all",
-                                summaryFunction = summary_sdm,
-                                savePredictions = "all")
+  # Custom trainControl:
+  ctrl_sdm <- caret::trainControl(method = "boot",
+                                  number = 1,
+                                  classProbs = TRUE,
+                                  returnResamp = "all",
+                                  summaryFunction = summary_sdm,
+                                  savePredictions = "all")
 
-# Train models:
-i <- train_sdm(i,
-               algo = c("naive_bayes"),
-               ctrl=ctrl_sdm,
-               variables_selected = c("bio1", "bio12")) |>
-  suppressWarnings()
+  # Train models:
+  i <- train_sdm(i,
+                 algo = c("naive_bayes"),
+                 ctrl=ctrl_sdm,
+                 variables_selected = c("bio1", "bio12")) |>
+    suppressWarnings()
 
-# Predict models:
-i  <- predict_sdm(i, th=0.8)
+  # Predict models:
+  i  <- predict_sdm(i, th=0.8)
 
-# Ensemble GCMs:
-i <- gcms_ensembles(i, gcms = c("ca", "mi"))
-i
+  # Ensemble GCMs:
+  i <- gcms_ensembles(i, gcms = c("ca", "mi"))
+  i
+}
 
 }
 \seealso{

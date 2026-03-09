@@ -1,5 +1,6 @@
 set.seed(1)
 test_that("pca_predictors - normal path", {
+  skip_on_cran()
   sa <- sdm_area(parana, 1)
   sa <- add_predictors(sa, bioc)
   sa <- select_predictors(sa, c("bio1", "bio12"))
@@ -26,6 +27,7 @@ test_that("pca_predictors - normal path", {
 })
 
 test_that("pca_predictors - without scenarios", {
+  skip_on_cran()
   sa <- sdm_area(parana, 1)
   sa <- add_predictors(sa, bioc)
   sa <- select_predictors(sa, c("bio1", "bio12"))

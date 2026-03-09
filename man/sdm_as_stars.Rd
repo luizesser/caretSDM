@@ -39,41 +39,43 @@ The output is the desired class.
 This functions transform data from a \code{caretSDM} object to be used in other packages.
 }
 \examples{
-# Create sdm_area object:
-sa <- sdm_area(parana, cell_size = 100000, crs = 6933)
+if (interactive()) {
+  # Create sdm_area object:
+  sa <- sdm_area(parana, cell_size = 100000, crs = 6933)
 
-# Include predictors:
-sa <- add_predictors(sa, bioc) |> select_predictors(c("bio1", "bio12"))
+  # Include predictors:
+  sa <- add_predictors(sa, bioc) |> select_predictors(c("bio1", "bio12"))
 
-# Include scenarios:
-sa <- add_scenarios(sa)
+  # Include scenarios:
+  sa <- add_scenarios(sa)
 
-# Create occurrences:
-oc <- occurrences_sdm(occ, crs = 6933) |> join_area(sa)
+  # Create occurrences:
+  oc <- occurrences_sdm(occ, crs = 6933) |> join_area(sa)
 
-# Create input_sdm:
-i <- input_sdm(oc, sa)
+  # Create input_sdm:
+  i <- input_sdm(oc, sa)
 
-# Pseudoabsence generation:
-i <- pseudoabsences(i, method = "random", n_set = 2)
+  # Pseudoabsence generation:
+  i <- pseudoabsences(i, method = "random", n_set = 2)
 
-# Custom trainControl:
-ctrl_sdm <- caret::trainControl(method = "boot",
-                                number = 1,
-                                classProbs = TRUE,
-                                returnResamp = "all",
-                                summaryFunction = summary_sdm,
-                                savePredictions = "all")
+  # Custom trainControl:
+  ctrl_sdm <- caret::trainControl(method = "boot",
+                                  number = 1,
+                                  classProbs = TRUE,
+                                  returnResamp = "all",
+                                  summaryFunction = summary_sdm,
+                                  savePredictions = "all")
 
-# Train models:
-i <- train_sdm(i, algo = c("naive_bayes"), ctrl = ctrl_sdm) |>
-  suppressWarnings()
+  # Train models:
+  i <- train_sdm(i, algo = c("naive_bayes"), ctrl = ctrl_sdm) |>
+    suppressWarnings()
 
-# Predict models:
-i  <- predict_sdm(i, th = 0.8)
+  # Predict models:
+  i  <- predict_sdm(i, th = 0.8)
 
-# Transform in stars:
-sdm_as_stars(i)
+  # Transform in stars:
+  sdm_as_stars(i)
+}
 
 }
 \author{

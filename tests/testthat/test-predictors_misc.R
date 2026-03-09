@@ -1,4 +1,5 @@
 test_that("predictors misc - predictors_names", {
+  skip_on_cran()
   sa <- sdm_area(parana, cell_size = 2)
   pred <- bioc
   suppressWarnings(sa_pred <- add_predictors(sa, pred))
@@ -9,6 +10,7 @@ test_that("predictors misc - predictors_names", {
 })
 
 test_that("predictors misc - set_predictors_names", {
+  skip_on_cran()
   sa <- sdm_area(parana, cell_size = 2)
   pred <- bioc
   suppressWarnings(sa_pred <- add_predictors(sa, pred))

@@ -1,12 +1,16 @@
-if (fs::dir_exists(here::here("tests", "testthat", "testdata"))) {
-  pr_gpkg <- here::here("tests", "testthat", "testdata", "parana.gpkg") |>
-    sf::st_read(quiet = TRUE)
-} else {
-  pr_gpkg <- test_path("testdata","parana.gpkg") |>
-    sf::st_read(quiet = TRUE)
+if (!identical(Sys.getenv("NOT_CRAN"), "false")){
+  if (fs::dir_exists(here::here("tests", "testthat", "testdata"))) {
+    pr_gpkg <- here::here("tests", "testthat", "testdata", "parana.gpkg") |>
+      sf::st_read(quiet = TRUE)
+  } else {
+    pr_gpkg <- test_path("testdata","parana.gpkg") |>
+      sf::st_read(quiet = TRUE)
+  }
 }
 
+
 test_that("select - tidyverse sa", {
+  skip_on_cran()
   sa <- sdm_area(pr_gpkg, cell_size = 10000, crs = 6933)
   sa <- dplyr::select(sa, c("CODIGOIB1", "NOMEUF2"))
   sa_col_names <- sa$grid |> colnames()
@@ -15,6 +19,7 @@ test_that("select - tidyverse sa", {
 })
 
 test_that("select - tidyverse i", {
+  skip_on_cran()
   sa <- sdm_area(pr_gpkg, cell_size = 10000, crs = 6933)
   i <- input_sdm(sa)
   i <- dplyr::select(i, c("CODIGOIB1", "NOMEUF2"))
@@ -24,6 +29,7 @@ test_that("select - tidyverse i", {
 })
 
 test_that("mutate - tidyverse sa", {
+  skip_on_cran()
   sa <- sdm_area(pr_gpkg, cell_size = 10000, crs = 6933)
   sa <- sa |> dplyr::mutate(teste=GID0/CODIGOIB1)
   sa_col_names <- sa$grid |> colnames()
@@ -33,6 +39,7 @@ test_that("mutate - tidyverse sa", {
 })
 
 test_that("mutate - tidyverse i", {
+  skip_on_cran()
   sa <- sdm_area(pr_gpkg, cell_size = 10000, crs = 6933)
   i <- input_sdm(sa)
   i <- i |> dplyr::mutate(teste=GID0/CODIGOIB1)
@@ -43,6 +50,7 @@ test_that("mutate - tidyverse i", {
 })
 
 test_that("select/filter scenarios", {
+  skip_on_cran()
   expect_warning(sa <- sdm_area(parana, cell_size = 100000, crs = 6933) |>
     add_predictors(bioc) |>
     add_scenarios(scen) )
@@ -86,6 +94,7 @@ test_that("select/filter scenarios", {
 })
 
 test_that("filter_species", {
+  skip_on_cran()
   set.seed(1)
   sa <- sdm_area(parana, cell_size = 100000, crs = 6933) |>
     add_predictors(bioc) |>

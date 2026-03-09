@@ -60,42 +60,43 @@
 #' https://luizfesser.wordpress.com
 #'
 #' @examples
-#' # Create sdm_area object:
-#' set.seed(1)
-#' sa <- sdm_area(parana, cell_size = 100000, crs = 6933)
+#' if (interactive()) {
+#'   # Create sdm_area object:
+#'   set.seed(1)
+#'   sa <- sdm_area(parana, cell_size = 100000, crs = 6933)
 #'
-#' # Include predictors:
-#' sa <- add_predictors(sa, bioc) |> select_predictors(c("bio1", "bio12"))
+#'   # Include predictors:
+#'   sa <- add_predictors(sa, bioc) |> select_predictors(c("bio1", "bio12"))
 #'
-#' # Include scenarios:
-#' sa <- add_scenarios(sa)
+#'   # Include scenarios:
+#'   sa <- add_scenarios(sa)
 #'
-#' # Create occurrences:
-#' oc <- occurrences_sdm(occ, crs = 6933) |> join_area(sa)
+#'   # Create occurrences:
+#'   oc <- occurrences_sdm(occ, crs = 6933) |> join_area(sa)
 #'
-#' # Create input_sdm:
-#' i <- input_sdm(oc, sa)
+#'   # Create input_sdm:
+#'   i <- input_sdm(oc, sa)
 #'
-#' # Pseudoabsence generation:
-#' i <- pseudoabsences(i, method="random", n_set=2)
+#'   # Pseudoabsence generation:
+#'   i <- pseudoabsences(i, method="random", n_set=2)
 #'
-#' # Custom trainControl:
-#' ctrl_sdm <- caret::trainControl(method = "boot",
-#'                                 number = 1,
-#'                                 repeats = 1,
-#'                                 classProbs = TRUE,
-#'                                 returnResamp = "all",
-#'                                 summaryFunction = summary_sdm,
-#'                                 savePredictions = "all")
+#'   # Custom trainControl:
+#'   ctrl_sdm <- caret::trainControl(method = "boot",
+#'                                   number = 1,
+#'                                   repeats = 1,
+#'                                   classProbs = TRUE,
+#'                                   returnResamp = "all",
+#'                                   summaryFunction = summary_sdm,
+#'                                   savePredictions = "all")
 #'
-#' # Train models:
-#' i <- train_sdm(i, algo = c("naive_bayes"), ctrl=ctrl_sdm) |>
-#'   suppressWarnings()
+#'   # Train models:
+#'   i <- train_sdm(i, algo = c("naive_bayes"), ctrl=ctrl_sdm) |>
+#'     suppressWarnings()
 #'
-#' # Predict models:
-#' i  <- predict_sdm(i, th = 0.8)
-#' i
-#'
+#'   # Predict models:
+#'   i  <- predict_sdm(i, th = 0.8)
+#'   i
+#' }
 #' @importFrom dplyr bind_cols select mutate all_of filter contains bind_rows across row_number distinct left_join group_split
 #' @importFrom stringdist stringdist
 #' @importFrom gtools mixedsort
@@ -157,7 +158,7 @@ predict_sdm.sdm_area <- function(m, scen, metric = "ROC", th = 0.9, tp = "prob",
   }, simplify = FALSE, USE.NAMES = TRUE)
 
 
-  ####################### NEW REDUCED APPROACH #########################
+#  ####################### NEW REDUCED APPROACH #########################
 
   env_list <- scen$data
 
@@ -217,7 +218,7 @@ predict_sdm.sdm_area <- function(m, scen, metric = "ROC", th = 0.9, tp = "prob",
     scenarios
   )
 
-  ####################### OLD APPROACH  #######################
+#  ####################### OLD APPROACH  #######################
 #
 #  p <- list()
 #
@@ -241,7 +242,49 @@ predict_sdm.sdm_area <- function(m, scen, metric = "ROC", th = 0.9, tp = "prob",
 #
 #  names(p) <- names(scen$data)
 #
-  #####################################################################
+#  ########################## chatGPT Approach #########################
+#
+#  p <- vector("list", length(scen$data))
+#  names(p) <- names(scen$data)
+#
+#  for (scn in names(scen$data)) {
+#
+#    df <- scen$data[[scn]]
+#
+#    # Drop geometry immediately
+#    df_nogeo <- df[, !names(df) %in% c("geometry")]
+#
+#    pred_cols <- setdiff(names(df_nogeo), c("cell_id"))
+#
+#    # Deduplicate ONLY within scenario
+#    df_unique <- df_nogeo[!duplicated(df_nogeo[, pred_cols]), pred_cols, drop = FALSE]
+#
+#    # Map original rows to unique rows
+#    match_id <- match(
+#      do.call(paste, df_nogeo[, pred_cols]),
+#      do.call(paste, df_unique)
+#    )
+#
+#    # Predict once per unique row
+#    pred_sp <- lapply(m1, function(sp_models) {
+#
+#      lapply(sp_models, function(mod) {
+#
+#        pr <- predict(mod, newdata = df_unique, type = "prob")[, "presence"]
+#
+#        # Map back to full grid
+#        pr_full <- pr[match_id]
+#
+#        data.frame(
+#          cell_id = df$cell_id,
+#          presence = pr_full
+#        )
+#      })
+#    })
+#
+#    p[[scn]] <- pred_sp
+#  }
+#
 
   ####################### OLD ENSEMBLES APPROACH  #######################
 

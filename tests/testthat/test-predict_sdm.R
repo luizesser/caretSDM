@@ -1,30 +1,33 @@
-set.seed(1)
-sa <- sdm_area(parana, 100000, crs=6933) |>
-  add_predictors(bioc) |>
-  select_predictors(c("bio1", "bio12")) |>
-  add_scenarios()
-test_that("scenarios_names - sa", {
-  expect_equal(names(sa$scenarios$data), scenarios_names(sa))
-  expect_equal(get_scenarios_data(sa), sa$scenarios$data)
-})
-oc <- occurrences_sdm(occ, crs=6933)
-test_that("scenarios_names - NULL", {
-  expect_null(scenarios_names(oc))
-  expect_null(get_scenarios_data(oc))
-})
-suppressWarnings(oc <- join_area(oc, sa))
-i <- input_sdm(oc, sa)
-suppressWarnings(i <- pseudoabsences(i, method = "random", n_set = 3))
-test_that("predict_sdm - no model", {
-  expect_error(predict_sdm(i))
-})
-ctrl <- caret::trainControl(
-  method = "cv", number = 2, classProbs = TRUE, returnResamp = "all",
-  summaryFunction = caret::twoClassSummary, savePredictions = "all"
-)
-suppressWarnings(i <- train_sdm(i, algo = c("naive_bayes", "kknn"), ctrl = ctrl))
+if (!identical(Sys.getenv("NOT_CRAN"), "false")){
+  set.seed(1)
+  sa <- sdm_area(parana, 100000, crs=6933) |>
+    add_predictors(bioc) |>
+    select_predictors(c("bio1", "bio12")) |>
+    add_scenarios()
+  test_that("scenarios_names - sa", {
+    expect_equal(names(sa$scenarios$data), scenarios_names(sa))
+    expect_equal(get_scenarios_data(sa), sa$scenarios$data)
+  })
+  oc <- occurrences_sdm(occ, crs=6933)
+  test_that("scenarios_names - NULL", {
+    expect_null(scenarios_names(oc))
+    expect_null(get_scenarios_data(oc))
+  })
+  suppressWarnings(oc <- join_area(oc, sa))
+  i <- input_sdm(oc, sa)
+  suppressWarnings(i <- pseudoabsences(i, method = "random", n_set = 3))
+  test_that("predict_sdm - no model", {
+    expect_error(predict_sdm(i))
+  })
+  ctrl <- caret::trainControl(
+    method = "cv", number = 2, classProbs = TRUE, returnResamp = "all",
+    summaryFunction = caret::twoClassSummary, savePredictions = "all"
+  )
+  suppressWarnings(i <- train_sdm(i, algo = c("naive_bayes", "kknn"), ctrl = ctrl))
+}
 
 test_that("predict_sdm - errors", {
+  skip_on_cran()
   expect_error(predict_sdm(i, th=1))
   expect_error(predict_sdm(i, th="a"))
   expect_error(predict_sdm(i, metric="auc"))
@@ -44,6 +47,7 @@ test_that("predict_sdm", {
 })
 
 test_that("predict_sdm2", {
+  skip_on_cran()
   p <- predict_sdm(i, th = 0.5)
 
   expect_true("predictions" %in% names(p))
@@ -80,6 +84,7 @@ test_that("predict_sdm - th 0", {
 })
 
 test_that("predict_sdm2 - th 0", {
+  skip_on_cran()
   p <- predict_sdm(i, th=0)
 
   expect_true("predictions" %in% names(p))
@@ -116,6 +121,7 @@ test_that("predict_sdm - th function", {
 })
 
 test_that("predict_sdm - th function", {
+  skip_on_cran()
   p <- predict_sdm(i, th=mean)
   expect_true("predictions" %in% names(p))
   expect_true("ensembles" %in% names(p$predictions))
@@ -142,12 +148,14 @@ test_that("predict_sdm - th function", {
 })
 
 test_that("test ensembles", {
+  skip_on_cran()
   p <- predict_sdm(i, th = 0.5)
   p2 <- get_predictions(p)
   expect_equal(length(p2$current[[1]]), 6)
 })
 
 test_that("test ensembles", {
+  skip_on_cran()
   expect_no_error(predict_sdm(i, th=mean, ensembles = FALSE))
 
   i2 <- i
@@ -176,6 +184,7 @@ test_that("test ensembles", {
 })
 
 test_that("add_input_sdm", {
+  skip_on_cran()
   set.seed(1234)
   sa <- sdm_area(parana, cell_size = 100000, crs = 6933) |>
     add_predictors(bioc) |>
@@ -218,7 +227,6 @@ test_that("add_input_sdm", {
   expect_true(all(c("Araucaria angustifolia", "Salminus brasiliensis" ) %in% names(i$occurrences$pseudoabsences$data)))
   expect_true(all(c("Araucaria angustifolia", "Salminus brasiliensis" ) %in% names(i$models$models)))
 
-  skip_on_cran()
   expect_no_error(p1 <- add_occurrences(i_sb$occurrences, i_aa$occurrences))
   expect_no_error(p2 <- add_sdm_area(i_sb$predictors, i_aa$predictors))
   expect_no_error(p3 <- add_sdm_area(i_sb$scenarios, i_aa$scenarios))

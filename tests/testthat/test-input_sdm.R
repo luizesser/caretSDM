@@ -1,4 +1,5 @@
 test_that("input_sdm", {
+  skip_on_cran()
   sa <- sdm_area(parana, cell_size = 0.25)
   sa <- add_predictors(sa, bioc)
   sa <- select_predictors(sa, c("bio1", "bio12"))

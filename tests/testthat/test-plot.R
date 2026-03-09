@@ -1,16 +1,15 @@
-set.seed(1)
-sa <- sdm_area(parana, 1) |>
-  add_predictors(bioc) |>
-  select_predictors(c("bio1", "bio12")) |>
-  add_scenarios()
-oc <- occurrences_sdm(occ, crs=6933) |>
-  join_area(sa)
-test_that("plot works with i", {
-  expect_no_error(plot(input_sdm(oc)))
-})
-
 test_that("plot works with i", {
   skip_on_cran()
+  set.seed(1)
+  sa <- sdm_area(parana, 1) |>
+    add_predictors(bioc) |>
+    select_predictors(c("bio1", "bio12")) |>
+    add_scenarios()
+  oc <- occurrences_sdm(occ, crs=6933) |>
+    join_area(sa)
+
+  expect_no_error(plot(input_sdm(oc)))
+
   i <- input_sdm(oc, sa)
   expect_no_error(plot(i))
   expect_no_error(plot_occurrences(i))

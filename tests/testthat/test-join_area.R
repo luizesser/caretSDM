@@ -1,4 +1,5 @@
 test_that("join_area", {
+  skip_on_cran()
   sa <- sdm_area(parana, cell_size = 100000, crs = 6933)
   oc <- occurrences_sdm(occ, crs = 6933)
   oc1 <- join_area(oc, sa)

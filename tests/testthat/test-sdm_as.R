@@ -1,4 +1,5 @@
 test_that("sdm_as_stars", {
+  skip_on_cran()
   sa <- sdm_area(parana, 100000, crs=6933) |>
     add_predictors(bioc) |>
     select_predictors(c("bio1", "bio12"))

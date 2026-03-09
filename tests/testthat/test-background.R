@@ -1,4 +1,3 @@
-
 test_that("background_tests", {
   skip_on_cran()
   set.seed(2)

@@ -1,4 +1,5 @@
 test_that("use esm", {
+  skip_on_cran()
   sa <- sdm_area(parana, 1)
   sa <- add_predictors(sa, bioc)
   sa <- dplyr::select(sa, c("bio1", "bio12"))

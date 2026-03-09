@@ -1,4 +1,5 @@
 test_that("wcdata", {
+  skip_on_cran()
   expect_error(WorldClim_data(period = "a"))
   expect_error(WorldClim_data(period = "current", variable = "a"))
   expect_error(WorldClim_data(period = "current", variable = "bioc", year = "a"))

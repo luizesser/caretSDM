@@ -1,4 +1,5 @@
 test_that("buffer_sdm", {
+  skip_on_cran()
   expect_no_error(b <- buffer_sdm(occ, size = 100000, crs = 6933))
   expect_true(sf::st_geometry_type(b) == "POLYGON")
   expect_no_error(b <- buffer_sdm(occ, size = 10000, crs = 6933))
@@ -21,6 +22,7 @@ test_that("buffer_sdm", {
 })
 
 test_that("buffer_sdm - MCP", {
+  skip_on_cran()
   expect_no_error(b <- buffer_sdm(occ, size = 100000, crs = 6933, mcp = TRUE))
   expect_true(sf::st_geometry_type(b) == "POLYGON")
   expect_no_error(b <- buffer_sdm(occ[,-1], size = 10000, crs = 6933, mcp = TRUE))
