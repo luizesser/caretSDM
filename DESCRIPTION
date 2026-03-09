@@ -3,20 +3,21 @@ Package: caretSDM
 Title: Build Species Distribution Modeling using 'caret'
 Version: 1.5
 Authors@R: c(
-    person("Dayani", "Bailly", role = "aut",
-           comment = c(ORCID = "0000-0002-6954-9902")),
+    person("Luíz Fernando", "Esser", , "luizesser@gmail.com", role = c("aut", "cre", "cph"),
+           comment = c(ORCID = "0000-0003-2982-7223")),
+    person("Reginaldo", "Ré", role = "aut",
+           comment = c(ORCID = "0000-0001-6452-3466")),
+    person("Marcos", "R. Lima", role = "aut",
+           comment = c(ORCID = "0000-0002-5901-0911")),
     person("Edivando", "Couto", role = "aut",
            comment = c(ORCID = "0000-0003-4264-8449")),
     person("José", "Hilário Delconte Ferreira", role = "aut",
            comment = c(ORCID = "0000-0002-7116-2600")),
-    person("Marcos", "R. Lima", role = "aut",
-           comment = c(ORCID = "0000-0002-5901-0911")),
-    person("Reginaldo", "Ré", role = "aut",
-           comment = c(ORCID = "0000-0001-6452-3466")),
     person("Valéria", "Batista", role = "aut",
            comment = c(ORCID = "0000-0002-6574-7338")),
-    person("Luíz Fernando", "Esser", , "luizesser@gmail.com", role = c("aut", "cre", "cph"),
-           comment = c(ORCID = "0000-0003-2982-7223")))
+    person("Dayani", "Bailly", role = "aut",
+           comment = c(ORCID = "0000-0002-6954-9902"))
+    )
 Maintainer: Luíz Fernando Esser <luizesser@gmail.com>
 Description: Use machine learning algorithms and advanced geographic information system tools to
     build Species Distribution Modeling in a extensible and modern fashion. 
@@ -69,6 +70,7 @@ Suggests:
     bench,
     sdm,
     biomod2,
+    R.utils,
     e1071,
     kknn,
     mda,
