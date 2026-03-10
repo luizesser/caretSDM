@@ -12,5 +12,7 @@
   Models](https://luizesser.github.io/caretSDM/articles/ESM.md):
 - [Projecting Non-native Distribution using
   SDMs](https://luizesser.github.io/caretSDM/articles/InvasiveSpp.md):
+- [Benchmarking SDM Package Performance in
+  R](https://luizesser.github.io/caretSDM/articles/runtime-benchmark.md):
 - [Modeling Species Distributions in Continental Water
   Bodies](https://luizesser.github.io/caretSDM/articles/Salminus.md):

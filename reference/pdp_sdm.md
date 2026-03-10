@@ -85,21 +85,13 @@ ctrl_sdm <- caret::trainControl(method = "repeatedcv",
                                 savePredictions = "all")
 # Train models:
 i <- train_sdm(i, algo = c("naive_bayes"), ctrl=ctrl_sdm)
-#> Warning: Partial AUC correction not defined for ROC curves below the diagonal.
-#> Warning: Partial AUC correction not defined for ROC curves below the diagonal.
-#> Warning: Partial AUC correction not defined for ROC curves below the diagonal.
-#> Warning: Partial AUC correction not defined for ROC curves below the diagonal.
-#> Warning: There were missing values in resampled performance measures.
-#> Warning: Partial AUC correction not defined for ROC curves below the diagonal.
-#> Warning: Partial AUC correction not defined for ROC curves below the diagonal.
-#> Warning: Partial AUC correction not defined for ROC curves below the diagonal.
-#> Warning: Partial AUC correction not defined for ROC curves below the diagonal.
-#> Warning: There were missing values in resampled performance measures.
-#> Warning: Partial AUC correction not defined for ROC curves below the diagonal.
-#> Warning: Partial AUC correction not defined for ROC curves below the diagonal.
-#> Warning: Partial AUC correction not defined for ROC curves below the diagonal.
-#> Warning: Partial AUC correction not defined for ROC curves below the diagonal.
-#> Warning: There were missing values in resampled performance measures.
+#> Loading required package: ggplot2
+#> Loading required package: lattice
+#> 
+#> Attaching package: ‘caret’
+#> The following object is masked from ‘package:caretSDM’:
+#> 
+#>     predictors
 # PDP plots:
 pdp_sdm(i)
 #> `geom_smooth()` using method = 'loess' and formula = 'y ~ x'

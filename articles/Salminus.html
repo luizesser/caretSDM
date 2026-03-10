@@ -25,7 +25,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">caretSDM</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.3</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.5</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -43,6 +43,7 @@
     <li><a class="dropdown-item" href="../articles/Compact.html">Concatenate functions in caretSDM</a></li>
     <li><a class="dropdown-item" href="../articles/ESM.html">Modeling Rare Species using Ensemble of Small Models</a></li>
     <li><a class="dropdown-item" href="../articles/InvasiveSpp.html">Projecting Non-native Distribution using SDMs</a></li>
+    <li><a class="dropdown-item" href="../articles/runtime-benchmark.html">Benchmarking SDM Package Performance in R</a></li>
     <li><a class="dropdown-item" href="../articles/Salminus.html">Modeling Species Distributions in Continental Water Bodies</a></li>
   </ul>
 </li>
@@ -129,7 +130,7 @@ package, which is the same output, but with filtered records to match
 our study area. Note that coordinates are in a metric CRS (EPSG:
 6933).</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">salm</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">salm</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rspatial.github.io/terra/reference/headtail.html" class="external-link">head</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt;                 species decimalLongitude decimalLatitude</span></span>
 <span><span class="co">#&gt; 1 Salminus brasiliensis         -5002956        -3034581</span></span>
 <span><span class="co">#&gt; 2 Salminus brasiliensis         -5123570        -3049429</span></span>
@@ -208,7 +209,7 @@ the data)..</p>
 <span><span class="co">#&gt; 9       4.89     2195.6 LINESTRING (-52.94375 -22.5...</span></span>
 <span><span class="co">#&gt; 10     11.24     2320.3 LINESTRING (-51.93542 -22.5...</span></span></code></pre></div>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">rivs</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/tidyverse-methods.html">select_predictors</a></span><span class="op">(</span><span class="va">LENGTH_KM</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/base/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">rivs</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/tidyverse-methods.html">select_predictors</a></span><span class="op">(</span><span class="va">LENGTH_KM</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <p><img src="Salminus_files/figure-html/rivs_view-1.png" class="r-plt" alt="" width="700"></p>
 <p>The <code>sdm_area</code> function is responsible to create a grid to
 build models, a key aspect of caretSDM workflow. With a grid built,
@@ -685,22 +686,12 @@ will be used in predictions and ensembles.</p>
 <span>                 th <span class="op">=</span> <span class="fl">0.7</span>,</span>
 <span>                 tp <span class="op">=</span> <span class="st">"prob"</span>,</span>
 <span>                 ensembles <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] "Projecting: 1/5"</span></span>
-<span><span class="co">#&gt; [1] "Projecting: 2/5"</span></span>
-<span><span class="co">#&gt; [1] "Projecting: 3/5"</span></span>
-<span><span class="co">#&gt; [1] "Projecting: 4/5"</span></span>
-<span><span class="co">#&gt; [1] "Projecting: 5/5"</span></span>
-<span><span class="co">#&gt; [1] "Ensembling..."</span></span>
-<span><span class="co">#&gt; [1] "ca_ssp245_2090"</span></span>
-<span><span class="co">#&gt; [1] "Salminus brasiliensis"</span></span>
-<span><span class="co">#&gt; [1] "ca_ssp585_2090"</span></span>
-<span><span class="co">#&gt; [1] "Salminus brasiliensis"</span></span>
-<span><span class="co">#&gt; [1] "mi_ssp245_2090"</span></span>
-<span><span class="co">#&gt; [1] "Salminus brasiliensis"</span></span>
-<span><span class="co">#&gt; [1] "mi_ssp585_2090"</span></span>
-<span><span class="co">#&gt; [1] "Salminus brasiliensis"</span></span>
-<span><span class="co">#&gt; [1] "current"</span></span>
-<span><span class="co">#&gt; [1] "Salminus brasiliensis"</span></span>
+<span><span class="co">#&gt; Ensembling...</span></span>
+<span><span class="co">#&gt;   current</span></span>
+<span><span class="co">#&gt;   ca_ssp245_2090</span></span>
+<span><span class="co">#&gt;   ca_ssp585_2090</span></span>
+<span><span class="co">#&gt;   mi_ssp245_2090</span></span>
+<span><span class="co">#&gt;   mi_ssp585_2090</span></span>
 <span><span class="va">i</span></span>
 <span><span class="co">#&gt;             caretSDM           </span></span>
 <span><span class="co">#&gt; ...............................</span></span>
@@ -736,7 +727,7 @@ will be used in predictions and ensembles.</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; --------  Predictions  --------</span></span>
 <span><span class="co">#&gt; Ensembles                     :</span></span>
-<span><span class="co">#&gt;     Scenarios                 : ca_ssp245_2090 ca_ssp585_2090 mi_ssp245_2090 mi_ssp585_2090 current </span></span>
+<span><span class="co">#&gt;     Scenarios                 : current ca_ssp245_2090 ca_ssp585_2090 mi_ssp245_2090 mi_ssp585_2090 </span></span>
 <span><span class="co">#&gt;     Methods                   : mean_occ_prob wmean_AUC committee_avg </span></span>
 <span><span class="co">#&gt; Thresholds                    :</span></span>
 <span><span class="co">#&gt;     Method                    : threshold </span></span>
@@ -1084,7 +1075,7 @@ names generated in this last step and are included in object
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; --------  Predictions  --------</span></span>
 <span><span class="co">#&gt; Ensembles                     :</span></span>
-<span><span class="co">#&gt;     Scenarios                 : ca_ssp245_2090 ca_ssp585_2090 mi_ssp245_2090 mi_ssp585_2090 current _ssp245_2090 _ssp585_2090 </span></span>
+<span><span class="co">#&gt;     Scenarios                 : current ca_ssp245_2090 ca_ssp585_2090 mi_ssp245_2090 mi_ssp585_2090 _ssp245_2090 _ssp585_2090 </span></span>
 <span><span class="co">#&gt;     Methods                   : mean_occ_prob wmean_AUC committee_avg </span></span>
 <span><span class="co">#&gt; Thresholds                    :</span></span>
 <span><span class="co">#&gt;     Method                    : threshold </span></span>
@@ -1164,7 +1155,7 @@ instead of lines.</p>
 <div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">end_time</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">end_time</span> <span class="op">-</span> <span class="va">start_time</span></span>
-<span><span class="co">#&gt; Time difference of 2.145759 mins</span></span></code></pre></div>
+<span><span class="co">#&gt; Time difference of 3.173786 mins</span></span></code></pre></div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>
@@ -1173,7 +1164,7 @@ instead of lines.</p>
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by Dayani Bailly, Edivando Couto, José Hilário Delconte Ferreira, Marcos R. Lima, Reginaldo Ré, Valéria Batista, Luíz Fernando Esser.</p>
+  <p>Developed by Luíz Fernando Esser, Reginaldo Ré, Marcos R. Lima, Edivando Couto, José Hilário Delconte Ferreira, Valéria Batista, Dayani Bailly.</p>
 </div>
 
 <div class="pkgdown-footer-right">

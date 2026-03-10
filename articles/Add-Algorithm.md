@@ -383,69 +383,6 @@ i <- train_sdm(i,
 #> The following object is masked from 'package:caretSDM':
 #> 
 #>     predictors
-#> Warning in auc.roc(roc_obj, partial.auc = c(1, 0.9), partial.auc.focus =
-#> "specificity", : Partial AUC correction not defined for ROC curves below the
-#> diagonal.
-#> Warning in auc.roc(roc_obj, partial.auc = c(1, 0.9), partial.auc.focus =
-#> "specificity", : Partial AUC correction not defined for ROC curves below the
-#> diagonal.
-#> Warning in auc.roc(roc_obj, partial.auc = c(1, 0.9), partial.auc.focus =
-#> "specificity", : Partial AUC correction not defined for ROC curves below the
-#> diagonal.
-#> Warning in auc.roc(roc_obj, partial.auc = c(1, 0.9), partial.auc.focus =
-#> "specificity", : Partial AUC correction not defined for ROC curves below the
-#> diagonal.
-#> Warning in auc.roc(roc_obj, partial.auc = c(1, 0.9), partial.auc.focus =
-#> "specificity", : Partial AUC correction not defined for ROC curves below the
-#> diagonal.
-#> Warning in auc.roc(roc_obj, partial.auc = c(1, 0.9), partial.auc.focus =
-#> "specificity", : Partial AUC correction not defined for ROC curves below the
-#> diagonal.
-#> Warning in nominalTrainWorkflow(x = x, y = y, wts = weights, info = trainInfo,
-#> : There were missing values in resampled performance measures.
-#> Warning in auc.roc(roc_obj, partial.auc = c(1, 0.9), partial.auc.focus =
-#> "specificity", : Partial AUC correction not defined for ROC curves below the
-#> diagonal.
-#> Warning in auc.roc(roc_obj, partial.auc = c(1, 0.9), partial.auc.focus =
-#> "specificity", : Partial AUC correction not defined for ROC curves below the
-#> diagonal.
-#> Warning in auc.roc(roc_obj, partial.auc = c(1, 0.9), partial.auc.focus =
-#> "specificity", : Partial AUC correction not defined for ROC curves below the
-#> diagonal.
-#> Warning in auc.roc(roc_obj, partial.auc = c(1, 0.9), partial.auc.focus =
-#> "specificity", : Partial AUC correction not defined for ROC curves below the
-#> diagonal.
-#> Warning in auc.roc(roc_obj, partial.auc = c(1, 0.9), partial.auc.focus =
-#> "specificity", : Partial AUC correction not defined for ROC curves below the
-#> diagonal.
-#> Warning in auc.roc(roc_obj, partial.auc = c(1, 0.9), partial.auc.focus =
-#> "specificity", : Partial AUC correction not defined for ROC curves below the
-#> diagonal.
-#> Warning in nominalTrainWorkflow(x = x, y = y, wts = weights, info = trainInfo,
-#> : There were missing values in resampled performance measures.
-#> Warning in auc.roc(roc_obj, partial.auc = c(1, 0.9), partial.auc.focus =
-#> "specificity", : Partial AUC correction not defined for ROC curves below the
-#> diagonal.
-#> Warning in auc.roc(roc_obj, partial.auc = c(1, 0.9), partial.auc.focus =
-#> "specificity", : Partial AUC correction not defined for ROC curves below the
-#> diagonal.
-#> Warning in auc.roc(roc_obj, partial.auc = c(1, 0.9), partial.auc.focus =
-#> "specificity", : Partial AUC correction not defined for ROC curves below the
-#> diagonal.
-#> Warning in auc.roc(roc_obj, partial.auc = c(1, 0.9), partial.auc.focus =
-#> "specificity", : Partial AUC correction not defined for ROC curves below the
-#> diagonal.
-#> Warning in auc.roc(roc_obj, partial.auc = c(1, 0.9), partial.auc.focus =
-#> "specificity", : Partial AUC correction not defined for ROC curves below the
-#> diagonal.
-#> Warning in auc.roc(roc_obj, partial.auc = c(1, 0.9), partial.auc.focus =
-#> "specificity", : Partial AUC correction not defined for ROC curves below the
-#> diagonal.
-#> Warning in auc.roc(roc_obj, partial.auc = c(1, 0.9), partial.auc.focus =
-#> "specificity", : Partial AUC correction not defined for ROC curves below the
-#> diagonal.
-#> Warning in nominalTrainWorkflow(x = x, y = y, wts = weights, info = trainInfo,
-#> : There were missing values in resampled performance measures.
 ```
 
 Let’s check the output. The printout shows that “Mahalanobis Distance”
@@ -526,69 +463,6 @@ i2 <- input_sdm(oc, sa) |>
       train_sdm(algo = mahal.dismo, 
                 variables_selected = c("bio1", "bio4", "bio12"), # Using only two variables for simplicity
                 ctrl = ctrl_sdm)
-#> Warning in auc.roc(roc_obj, partial.auc = c(1, 0.9), partial.auc.focus =
-#> "specificity", : Partial AUC correction not defined for ROC curves below the
-#> diagonal.
-#> Warning in auc.roc(roc_obj, partial.auc = c(1, 0.9), partial.auc.focus =
-#> "specificity", : Partial AUC correction not defined for ROC curves below the
-#> diagonal.
-#> Warning in auc.roc(roc_obj, partial.auc = c(1, 0.9), partial.auc.focus =
-#> "specificity", : Partial AUC correction not defined for ROC curves below the
-#> diagonal.
-#> Warning in auc.roc(roc_obj, partial.auc = c(1, 0.9), partial.auc.focus =
-#> "specificity", : Partial AUC correction not defined for ROC curves below the
-#> diagonal.
-#> Warning in auc.roc(roc_obj, partial.auc = c(1, 0.9), partial.auc.focus =
-#> "specificity", : Partial AUC correction not defined for ROC curves below the
-#> diagonal.
-#> Warning in auc.roc(roc_obj, partial.auc = c(1, 0.9), partial.auc.focus =
-#> "specificity", : Partial AUC correction not defined for ROC curves below the
-#> diagonal.
-#> Warning in nominalTrainWorkflow(x = x, y = y, wts = weights, info = trainInfo,
-#> : There were missing values in resampled performance measures.
-#> Warning in auc.roc(roc_obj, partial.auc = c(1, 0.9), partial.auc.focus =
-#> "specificity", : Partial AUC correction not defined for ROC curves below the
-#> diagonal.
-#> Warning in auc.roc(roc_obj, partial.auc = c(1, 0.9), partial.auc.focus =
-#> "specificity", : Partial AUC correction not defined for ROC curves below the
-#> diagonal.
-#> Warning in auc.roc(roc_obj, partial.auc = c(1, 0.9), partial.auc.focus =
-#> "specificity", : Partial AUC correction not defined for ROC curves below the
-#> diagonal.
-#> Warning in auc.roc(roc_obj, partial.auc = c(1, 0.9), partial.auc.focus =
-#> "specificity", : Partial AUC correction not defined for ROC curves below the
-#> diagonal.
-#> Warning in auc.roc(roc_obj, partial.auc = c(1, 0.9), partial.auc.focus =
-#> "specificity", : Partial AUC correction not defined for ROC curves below the
-#> diagonal.
-#> Warning in auc.roc(roc_obj, partial.auc = c(1, 0.9), partial.auc.focus =
-#> "specificity", : Partial AUC correction not defined for ROC curves below the
-#> diagonal.
-#> Warning in nominalTrainWorkflow(x = x, y = y, wts = weights, info = trainInfo,
-#> : There were missing values in resampled performance measures.
-#> Warning in auc.roc(roc_obj, partial.auc = c(1, 0.9), partial.auc.focus =
-#> "specificity", : Partial AUC correction not defined for ROC curves below the
-#> diagonal.
-#> Warning in auc.roc(roc_obj, partial.auc = c(1, 0.9), partial.auc.focus =
-#> "specificity", : Partial AUC correction not defined for ROC curves below the
-#> diagonal.
-#> Warning in auc.roc(roc_obj, partial.auc = c(1, 0.9), partial.auc.focus =
-#> "specificity", : Partial AUC correction not defined for ROC curves below the
-#> diagonal.
-#> Warning in auc.roc(roc_obj, partial.auc = c(1, 0.9), partial.auc.focus =
-#> "specificity", : Partial AUC correction not defined for ROC curves below the
-#> diagonal.
-#> Warning in auc.roc(roc_obj, partial.auc = c(1, 0.9), partial.auc.focus =
-#> "specificity", : Partial AUC correction not defined for ROC curves below the
-#> diagonal.
-#> Warning in auc.roc(roc_obj, partial.auc = c(1, 0.9), partial.auc.focus =
-#> "specificity", : Partial AUC correction not defined for ROC curves below the
-#> diagonal.
-#> Warning in auc.roc(roc_obj, partial.auc = c(1, 0.9), partial.auc.focus =
-#> "specificity", : Partial AUC correction not defined for ROC curves below the
-#> diagonal.
-#> Warning in nominalTrainWorkflow(x = x, y = y, wts = weights, info = trainInfo,
-#> : There were missing values in resampled performance measures.
 ```
 
 ``` r
@@ -622,10 +496,8 @@ Plotting the result of mahal.dismo.
 
 ``` r
 i2 |> add_scenarios() |> predict_sdm() |> plot_predictions()
-#> [1] "Projecting: 1/1"
-#> [1] "Ensembling..."
-#> [1] "current"
-#> [1] "Araucaria angustifolia"
+#> Ensembling...
+#>   current
 ```
 
 ![](Add-Algorithm_files/figure-html/mahal.dismo_plot-1.png)
@@ -634,10 +506,8 @@ Plotting the result of mahal.custom.
 
 ``` r
 i |> add_scenarios() |> predict_sdm() |> plot_predictions()
-#> [1] "Projecting: 1/1"
-#> [1] "Ensembling..."
-#> [1] "current"
-#> [1] "Araucaria angustifolia"
+#> Ensembling...
+#>   current
 ```
 
 ![](Add-Algorithm_files/figure-html/mahal.custom_plot-1.png)

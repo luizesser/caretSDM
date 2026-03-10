@@ -9,7 +9,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">caretSDM</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.3</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.5</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -25,6 +25,7 @@
     <li><a class="dropdown-item" href="../articles/Compact.html">Concatenate functions in caretSDM</a></li>
     <li><a class="dropdown-item" href="../articles/ESM.html">Modeling Rare Species using Ensemble of Small Models</a></li>
     <li><a class="dropdown-item" href="../articles/InvasiveSpp.html">Projecting Non-native Distribution using SDMs</a></li>
+    <li><a class="dropdown-item" href="../articles/runtime-benchmark.html">Benchmarking SDM Package Performance in R</a></li>
     <li><a class="dropdown-item" href="../articles/Salminus.html">Modeling Species Distributions in Continental Water Bodies</a></li>
   </ul></li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
@@ -117,30 +118,25 @@ recommended to do so, since the data is very heavy.</p>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># \donttest{</span></span></span>
-<span class="r-in"><span><span class="co"># download data from multiple periods:</span></span></span>
-<span class="r-in"><span><span class="va">year</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"2050"</span>, <span class="st">"2090"</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu">WorldClim_data</span><span class="op">(</span>period <span class="op">=</span> <span class="st">"future"</span>,</span></span>
-<span class="r-in"><span>               variable <span class="op">=</span> <span class="st">"bioc"</span>,</span></span>
-<span class="r-in"><span>               year <span class="op">=</span> <span class="va">year</span>,</span></span>
-<span class="r-in"><span>               gcm <span class="op">=</span> <span class="st">"mi"</span>,</span></span>
-<span class="r-in"><span>               ssp <span class="op">=</span> <span class="st">"126"</span>,</span></span>
-<span class="r-in"><span>               resolution <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Downloading WorldClim future data: mi_ssp126_10_2050 from</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #0000BB; font-style: italic;">&lt;https://geodata.ucdavis.edu/cmip6/10m/MIROC6/ssp126/wc2.1_10m_bioc_MIROC6_ssp126_2041-2060.tif&gt;</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Downloading WorldClim future data: mi_ssp126_10_2090 from</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #0000BB; font-style: italic;">&lt;https://geodata.ucdavis.edu/cmip6/10m/MIROC6/ssp126/wc2.1_10m_bioc_MIROC6_ssp126_2081-2100.tif&gt;</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co">## download data from multiple periods:</span></span></span>
+<span class="r-in"><span><span class="co">#year &lt;- c("2050", "2090")</span></span></span>
+<span class="r-in"><span><span class="co">#WorldClim_data(path = "",</span></span></span>
+<span class="r-in"><span><span class="co">#               period = "future",</span></span></span>
+<span class="r-in"><span><span class="co">#               variable = "bioc",</span></span></span>
+<span class="r-in"><span><span class="co">#               year = year,</span></span></span>
+<span class="r-in"><span><span class="co">#               gcm = "mi",</span></span></span>
+<span class="r-in"><span><span class="co">#               ssp = "126",</span></span></span>
+<span class="r-in"><span><span class="co">#               resolution = 10)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># download data from one specific period</span></span></span>
-<span class="r-in"><span><span class="fu">WorldClim_data</span><span class="op">(</span>period <span class="op">=</span> <span class="st">"future"</span>,</span></span>
-<span class="r-in"><span>               variable <span class="op">=</span> <span class="st">"bioc"</span>,</span></span>
-<span class="r-in"><span>               year <span class="op">=</span> <span class="st">"2070"</span>,</span></span>
-<span class="r-in"><span>               gcm <span class="op">=</span> <span class="st">"mi"</span>,</span></span>
-<span class="r-in"><span>               ssp <span class="op">=</span> <span class="st">"585"</span>,</span></span>
-<span class="r-in"><span>               resolution <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Downloading WorldClim future data: mi_ssp585_10_2070 from</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #0000BB; font-style: italic;">&lt;https://geodata.ucdavis.edu/cmip6/10m/MIROC6/ssp585/wc2.1_10m_bioc_MIROC6_ssp585_2061-2080.tif&gt;</span></span>
-<span class="r-in"><span><span class="co"># }</span></span></span>
+<span class="r-in"><span><span class="co">## download data from one specific period</span></span></span>
+<span class="r-in"><span><span class="co">#WorldClim_data(path = "",</span></span></span>
+<span class="r-in"><span><span class="co">#               period = "future",</span></span></span>
+<span class="r-in"><span><span class="co">#               variable = "bioc",</span></span></span>
+<span class="r-in"><span><span class="co">#               year = "2070",</span></span></span>
+<span class="r-in"><span><span class="co">#               gcm = "mi",</span></span></span>
+<span class="r-in"><span><span class="co">#               ssp = "585",</span></span></span>
+<span class="r-in"><span><span class="co">#               resolution = 10)</span></span></span>
+<span class="r-in"><span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
@@ -149,7 +145,7 @@ recommended to do so, since the data is very heavy.</p>
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by Dayani Bailly, Edivando Couto, José Hilário Delconte Ferreira, Marcos R. Lima, Reginaldo Ré, Valéria Batista, Luíz Fernando Esser.</p>
+  <p>Developed by Luíz Fernando Esser, Reginaldo Ré, Marcos R. Lima, Edivando Couto, José Hilário Delconte Ferreira, Valéria Batista, Dayani Bailly.</p>
 </div>
 
 <div class="pkgdown-footer-right">

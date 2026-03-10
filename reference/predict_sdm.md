@@ -116,82 +116,41 @@ https://luizfesser.wordpress.com
 ## Examples
 
 ``` r
-# Create sdm_area object:
-set.seed(1)
-sa <- sdm_area(parana, cell_size = 100000, crs = 6933)
-#> ! Making grid over study area is an expensive task. Please, be patient!
-#> ℹ Using GDAL to make the grid and resample the variables.
+if (interactive()) {
+  # Create sdm_area object:
+  set.seed(1)
+  sa <- sdm_area(parana, cell_size = 100000, crs = 6933)
 
-# Include predictors:
-sa <- add_predictors(sa, bioc) |> select_predictors(c("bio1", "bio12"))
-#> ! Making grid over the study area is an expensive task. Please, be patient!
-#> ℹ Using GDAL to make the grid and resample the variables.
+  # Include predictors:
+  sa <- add_predictors(sa, bioc) |> select_predictors(c("bio1", "bio12"))
 
-# Include scenarios:
-sa <- add_scenarios(sa)
+  # Include scenarios:
+  sa <- add_scenarios(sa)
 
-# Create occurrences:
-oc <- occurrences_sdm(occ, crs = 6933) |> join_area(sa)
+  # Create occurrences:
+  oc <- occurrences_sdm(occ, crs = 6933) |> join_area(sa)
 
-# Create input_sdm:
-i <- input_sdm(oc, sa)
+  # Create input_sdm:
+  i <- input_sdm(oc, sa)
 
-# Pseudoabsence generation:
-i <- pseudoabsences(i, method="random", n_set=2)
+  # Pseudoabsence generation:
+  i <- pseudoabsences(i, method="random", n_set=2)
 
-# Custom trainControl:
-ctrl_sdm <- caret::trainControl(method = "boot",
-                                number = 1,
-                                repeats = 1,
-                                classProbs = TRUE,
-                                returnResamp = "all",
-                                summaryFunction = summary_sdm,
-                                savePredictions = "all")
-#> Warning: `repeats` has no meaning for this resampling method.
+  # Custom trainControl:
+  ctrl_sdm <- caret::trainControl(method = "boot",
+                                  number = 1,
+                                  repeats = 1,
+                                  classProbs = TRUE,
+                                  returnResamp = "all",
+                                  summaryFunction = summary_sdm,
+                                  savePredictions = "all")
 
-# Train models:
-i <- train_sdm(i, algo = c("naive_bayes"), ctrl=ctrl_sdm) |>
-  suppressWarnings()
+  # Train models:
+  i <- train_sdm(i, algo = c("naive_bayes"), ctrl=ctrl_sdm) |>
+    suppressWarnings()
 
-# Predict models:
-i  <- predict_sdm(i, th = 0.8)
-#> [1] "Projecting: 1/1"
-#> [1] "Ensembling..."
-#> [1] "current"
-#> [1] "Araucaria angustifolia"
-i
-#>             caretSDM           
-#> ...............................
-#> Class                         : input_sdm
-#> --------  Occurrences  --------
-#> Species Names                 : Araucaria angustifolia 
-#> Number of presences           : 419 
-#> Pseudoabsence methods         :
-#>     Method to obtain PAs      : random 
-#>     Number of PA sets         : 2 
-#>     Number of PAs in each set : 419 
-#> --------  Predictors  ---------
-#> Number of Predictors          : 2 
-#> Predictors Names              : bio1, bio12 
-#> ---------  Scenarios  ---------
-#> Number of Scenarios           : 1 
-#> Scenarios Names               : current 
-#> -----------  Models  ----------
-#> Algorithms Names              : naive_bayes 
-#> Variables Names               : bio1 bio12 
-#> Model Validation              :
-#>     Method                    : boot 
-#>     Number                    : 1 
-#>     Metrics                   :
-#> $`Araucaria angustifolia`
-#>          algo       ROC       TSS Sensitivity Specificity
-#> 1 naive_bayes 0.8323889 0.2460904      0.9665      0.2865
-#> 
-#> --------  Predictions  --------
-#> Ensembles                     :
-#>     Scenarios                 : current 
-#>     Methods                   : mean_occ_prob wmean_AUC committee_avg 
-#> Thresholds                    :
-#>     Method                    : threshold 
-#>     Criteria                  : 0.8 
+  # Predict models:
+  i  <- predict_sdm(i, th = 0.8)
+  i
+}
 ```

@@ -660,22 +660,12 @@ i <- predict_sdm(i,
                  th = 0.9,
                  tp = "prob",
                  ensembles = TRUE)
-#> [1] "Projecting: 1/5"
-#> [1] "Projecting: 2/5"
-#> [1] "Projecting: 3/5"
-#> [1] "Projecting: 4/5"
-#> [1] "Projecting: 5/5"
-#> [1] "Ensembling..."
-#> [1] "ca_ssp245_2090"
-#> [1] "Araucaria angustifolia"
-#> [1] "ca_ssp585_2090"
-#> [1] "Araucaria angustifolia"
-#> [1] "mi_ssp245_2090"
-#> [1] "Araucaria angustifolia"
-#> [1] "mi_ssp585_2090"
-#> [1] "Araucaria angustifolia"
-#> [1] "current"
-#> [1] "Araucaria angustifolia"
+#> Ensembling...
+#>   current
+#>   ca_ssp245_2090
+#>   ca_ssp585_2090
+#>   mi_ssp245_2090
+#>   mi_ssp585_2090
 i
 #>             caretSDM           
 #> ...............................
@@ -710,7 +700,7 @@ i
 #> 
 #> --------  Predictions  --------
 #> Ensembles                     :
-#>     Scenarios                 : ca_ssp245_2090 ca_ssp585_2090 mi_ssp245_2090 mi_ssp585_2090 current 
+#>     Scenarios                 : current ca_ssp245_2090 ca_ssp585_2090 mi_ssp245_2090 mi_ssp585_2090 
 #>     Methods                   : mean_occ_prob wmean_AUC committee_avg 
 #> Thresholds                    :
 #>     Method                    : threshold 
@@ -1065,7 +1055,7 @@ i
 #> 
 #> --------  Predictions  --------
 #> Ensembles                     :
-#>     Scenarios                 : ca_ssp245_2090 ca_ssp585_2090 mi_ssp245_2090 mi_ssp585_2090 current _ssp245_2090 _ssp585_2090 
+#>     Scenarios                 : current ca_ssp245_2090 ca_ssp585_2090 mi_ssp245_2090 mi_ssp585_2090 _ssp245_2090 _ssp585_2090 
 #>     Methods                   : mean_occ_prob wmean_AUC committee_avg 
 #> Thresholds                    :
 #>     Method                    : threshold 
@@ -1156,5 +1146,5 @@ cells in a grid.
 ``` r
 end_time <- Sys.time()
 end_time - start_time
-#> Time difference of 2.043002 mins
+#> Time difference of 3.056776 mins
 ```

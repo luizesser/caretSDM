@@ -9,7 +9,7 @@ For that, it uses the predictions on current scenario, but other scenarios can b
 
     <a class="navbar-brand me-2" href="../index.html">caretSDM</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.3</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.5</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -25,6 +25,7 @@ For that, it uses the predictions on current scenario, but other scenarios can b
     <li><a class="dropdown-item" href="../articles/Compact.html">Concatenate functions in caretSDM</a></li>
     <li><a class="dropdown-item" href="../articles/ESM.html">Modeling Rare Species using Ensemble of Small Models</a></li>
     <li><a class="dropdown-item" href="../articles/InvasiveSpp.html">Projecting Non-native Distribution using SDMs</a></li>
+    <li><a class="dropdown-item" href="../articles/runtime-benchmark.html">Benchmarking SDM Package Performance in R</a></li>
     <li><a class="dropdown-item" href="../articles/Salminus.html">Modeling Species Distributions in Continental Water Bodies</a></li>
   </ul></li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
@@ -78,65 +79,45 @@ https://luizfesser.wordpress.com</p>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Create sdm_area object:</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">sa</span> <span class="op">&lt;-</span> <span class="fu"><a href="sdm_area.html">sdm_area</a></span><span class="op">(</span><span class="va">parana</span>, cell_size <span class="op">=</span> <span class="fl">100000</span>, crs <span class="op">=</span> <span class="fl">6933</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> Making grid over study area is an expensive task. Please, be patient!</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Using GDAL to make the grid and resample the variables.</span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/interactive.html" class="external-link">interactive</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span>  <span class="co"># Create sdm_area object:</span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="va">sa</span> <span class="op">&lt;-</span> <span class="fu"><a href="sdm_area.html">sdm_area</a></span><span class="op">(</span><span class="va">parana</span>, cell_size <span class="op">=</span> <span class="fl">100000</span>, crs <span class="op">=</span> <span class="fl">6933</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Include predictors:</span></span></span>
-<span class="r-in"><span><span class="va">sa</span> <span class="op">&lt;-</span> <span class="fu"><a href="add_predictors.html">add_predictors</a></span><span class="op">(</span><span class="va">sa</span>, <span class="va">bioc</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="tidyverse-methods.html">select_predictors</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"bio1"</span>, <span class="st">"bio12"</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> Making grid over the study area is an expensive task. Please, be patient!</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Using GDAL to make the grid and resample the variables.</span>
+<span class="r-in"><span>  <span class="co"># Include predictors:</span></span></span>
+<span class="r-in"><span>  <span class="va">sa</span> <span class="op">&lt;-</span> <span class="fu"><a href="add_predictors.html">add_predictors</a></span><span class="op">(</span><span class="va">sa</span>, <span class="va">bioc</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="tidyverse-methods.html">select_predictors</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"bio1"</span>, <span class="st">"bio12"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Include scenarios:</span></span></span>
-<span class="r-in"><span><span class="va">sa</span> <span class="op">&lt;-</span> <span class="fu"><a href="add_scenarios.html">add_scenarios</a></span><span class="op">(</span><span class="va">sa</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="co"># Include scenarios:</span></span></span>
+<span class="r-in"><span>  <span class="va">sa</span> <span class="op">&lt;-</span> <span class="fu"><a href="add_scenarios.html">add_scenarios</a></span><span class="op">(</span><span class="va">sa</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Create occurrences:</span></span></span>
-<span class="r-in"><span><span class="va">oc</span> <span class="op">&lt;-</span> <span class="fu"><a href="occurrences_sdm.html">occurrences_sdm</a></span><span class="op">(</span><span class="va">occ</span>, crs <span class="op">=</span> <span class="fl">6933</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="join_area.html">join_area</a></span><span class="op">(</span><span class="va">sa</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="co"># Create occurrences:</span></span></span>
+<span class="r-in"><span>  <span class="va">oc</span> <span class="op">&lt;-</span> <span class="fu"><a href="occurrences_sdm.html">occurrences_sdm</a></span><span class="op">(</span><span class="va">occ</span>, crs <span class="op">=</span> <span class="fl">6933</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="join_area.html">join_area</a></span><span class="op">(</span><span class="va">sa</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Create input_sdm:</span></span></span>
-<span class="r-in"><span><span class="va">i</span> <span class="op">&lt;-</span> <span class="fu"><a href="input_sdm.html">input_sdm</a></span><span class="op">(</span><span class="va">oc</span>, <span class="va">sa</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="co"># Create input_sdm:</span></span></span>
+<span class="r-in"><span>  <span class="va">i</span> <span class="op">&lt;-</span> <span class="fu"><a href="input_sdm.html">input_sdm</a></span><span class="op">(</span><span class="va">oc</span>, <span class="va">sa</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Pseudoabsence generation:</span></span></span>
-<span class="r-in"><span><span class="va">i</span> <span class="op">&lt;-</span> <span class="fu"><a href="pseudoabsences.html">pseudoabsences</a></span><span class="op">(</span><span class="va">i</span>, method<span class="op">=</span><span class="st">"random"</span>, n_set<span class="op">=</span><span class="fl">2</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="co"># Pseudoabsence generation:</span></span></span>
+<span class="r-in"><span>  <span class="va">i</span> <span class="op">&lt;-</span> <span class="fu"><a href="pseudoabsences.html">pseudoabsences</a></span><span class="op">(</span><span class="va">i</span>, method<span class="op">=</span><span class="st">"random"</span>, n_set<span class="op">=</span><span class="fl">2</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Custom trainControl:</span></span></span>
-<span class="r-in"><span><span class="va">ctrl_sdm</span> <span class="op">&lt;-</span> <span class="fu">caret</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/caret/man/trainControl.html" class="external-link">trainControl</a></span><span class="op">(</span>method <span class="op">=</span> <span class="st">"boot"</span>,</span></span>
-<span class="r-in"><span>                                number <span class="op">=</span> <span class="fl">1</span>,</span></span>
-<span class="r-in"><span>                                repeats <span class="op">=</span> <span class="fl">1</span>,</span></span>
-<span class="r-in"><span>                                classProbs <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
-<span class="r-in"><span>                                returnResamp <span class="op">=</span> <span class="st">"all"</span>,</span></span>
-<span class="r-in"><span>                                summaryFunction <span class="op">=</span> <span class="va">summary_sdm</span>,</span></span>
-<span class="r-in"><span>                                savePredictions <span class="op">=</span> <span class="st">"all"</span><span class="op">)</span></span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>`repeats` has no meaning for this resampling method.</span>
+<span class="r-in"><span>  <span class="co"># Custom trainControl:</span></span></span>
+<span class="r-in"><span>  <span class="va">ctrl_sdm</span> <span class="op">&lt;-</span> <span class="fu">caret</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/caret/man/trainControl.html" class="external-link">trainControl</a></span><span class="op">(</span>method <span class="op">=</span> <span class="st">"boot"</span>,</span></span>
+<span class="r-in"><span>                                  number <span class="op">=</span> <span class="fl">1</span>,</span></span>
+<span class="r-in"><span>                                  repeats <span class="op">=</span> <span class="fl">1</span>,</span></span>
+<span class="r-in"><span>                                  classProbs <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
+<span class="r-in"><span>                                  returnResamp <span class="op">=</span> <span class="st">"all"</span>,</span></span>
+<span class="r-in"><span>                                  summaryFunction <span class="op">=</span> <span class="va">summary_sdm</span>,</span></span>
+<span class="r-in"><span>                                  savePredictions <span class="op">=</span> <span class="st">"all"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Train models:</span></span></span>
-<span class="r-in"><span><span class="va">i</span> <span class="op">&lt;-</span> <span class="fu"><a href="train_sdm.html">train_sdm</a></span><span class="op">(</span><span class="va">i</span>, algo <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"naive_bayes"</span><span class="op">)</span>, ctrl<span class="op">=</span><span class="va">ctrl_sdm</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
-<span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/warning.html" class="external-link">suppressWarnings</a></span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Loading required package: ggplot2</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Loading required package: lattice</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Attaching package: ‘caret’</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> The following object is masked from ‘package:caretSDM’:</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>     predictors</span>
+<span class="r-in"><span>  <span class="co"># Train models:</span></span></span>
+<span class="r-in"><span>  <span class="va">i</span> <span class="op">&lt;-</span> <span class="fu"><a href="train_sdm.html">train_sdm</a></span><span class="op">(</span><span class="va">i</span>, algo <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"naive_bayes"</span><span class="op">)</span>, ctrl<span class="op">=</span><span class="va">ctrl_sdm</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
+<span class="r-in"><span>    <span class="fu"><a href="https://rdrr.io/r/base/warning.html" class="external-link">suppressWarnings</a></span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Predict models:</span></span></span>
-<span class="r-in"><span><span class="va">i</span>  <span class="op">&lt;-</span> <span class="fu"><a href="predict_sdm.html">predict_sdm</a></span><span class="op">(</span><span class="va">i</span>, th <span class="op">=</span> <span class="fl">0.8</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Projecting: 1/1"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Ensembling..."</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "current"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Araucaria angustifolia"</span>
+<span class="r-in"><span>  <span class="co"># Predict models:</span></span></span>
+<span class="r-in"><span>  <span class="va">i</span>  <span class="op">&lt;-</span> <span class="fu"><a href="predict_sdm.html">predict_sdm</a></span><span class="op">(</span><span class="va">i</span>, th <span class="op">=</span> <span class="fl">0.8</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Check correlations:</span></span></span>
-<span class="r-in"><span><span class="fu">correlate_sdm</span><span class="op">(</span><span class="va">i</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $`Araucaria angustifolia`</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>           m1.1      m2.1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> m1.1 1.0000000 0.5364783</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> m2.1 0.5364783 1.0000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-in"><span></span></span>
+<span class="r-in"><span>  <span class="co"># Check correlations:</span></span></span>
+<span class="r-in"><span>  <span class="fu">correlate_sdm</span><span class="op">(</span><span class="va">i</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
@@ -144,7 +125,7 @@ https://luizfesser.wordpress.com</p>
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by Dayani Bailly, Edivando Couto, José Hilário Delconte Ferreira, Marcos R. Lima, Reginaldo Ré, Valéria Batista, Luíz Fernando Esser.</p>
+  <p>Developed by Luíz Fernando Esser, Reginaldo Ré, Marcos R. Lima, Edivando Couto, José Hilário Delconte Ferreira, Valéria Batista, Dayani Bailly.</p>
 </div>
 
 <div class="pkgdown-footer-right">

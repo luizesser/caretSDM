@@ -91,10 +91,8 @@ i_esm <- input_sdm(oc, sa) |>
 #> ESM species
 #> ESM species
 #> ESM species
-#> [1] "Projecting: 1/1"
-#> [1] "Ensembling..."
-#> [1] "current"
-#> [1] "Araucaria angustifolia"
+#> Ensembling...
+#>   current
 ```
 
 Note that we are setting `use_esm(n_records = 999)`, which means that we
@@ -141,10 +139,10 @@ i_sdm <- input_sdm(oc, sa) |>
 #> Removed 0 records.
 #> 
 #> Predictors identified, procceding with grid filter (removing NA and duplicated data).
-#> [1] "Projecting: 1/1"
-#> [1] "Ensembling..."
-#> [1] "current"
-#> [1] "Araucaria angustifolia"
+#> 
+#> Ensembling...
+#> 
+#>   current
 ```
 
 Now let’s compare both results:
@@ -206,5 +204,5 @@ bivariate models.
 ``` r
 end_time <- Sys.time()
 end_time - start_time
-#> Time difference of 2.333263 mins
+#> Time difference of 12.09978 mins
 ```

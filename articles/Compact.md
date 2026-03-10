@@ -72,6 +72,9 @@ i <- input_sdm(oc, sa) |>
 #> The following object is masked from 'package:caretSDM':
 #> 
 #>     predictors
+#> 
+#> Ensembling...
+#>   current
 ```
 
 ``` r
