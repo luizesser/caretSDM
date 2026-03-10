@@ -36,24 +36,25 @@
 #' [https://luizfesser.wordpress.com](https://luizfesser.wordpress.com)
 #'
 #' @examples
-#' \donttest{
-#' # download data from multiple periods:
-#' year <- c("2050", "2090")
-#' WorldClim_data(period = "future",
-#'                variable = "bioc",
-#'                year = year,
-#'                gcm = "mi",
-#'                ssp = "126",
-#'                resolution = 10)
+#' ## download data from multiple periods:
+#' #year <- c("2050", "2090")
+#' #WorldClim_data(path = "",
+#' #               period = "future",
+#' #               variable = "bioc",
+#' #               year = year,
+#' #               gcm = "mi",
+#' #               ssp = "126",
+#' #               resolution = 10)
 #'
-#' # download data from one specific period
-#' WorldClim_data(period = "future",
-#'                variable = "bioc",
-#'                year = "2070",
-#'                gcm = "mi",
-#'                ssp = "585",
-#'                resolution = 10)
-#' }
+#' ## download data from one specific period
+#' #WorldClim_data(path = "",
+#' #               period = "future",
+#' #               variable = "bioc",
+#' #               year = "2070",
+#' #               gcm = "mi",
+#' #               ssp = "585",
+#' #               resolution = 10)
+#'
 #'
 #' @importFrom httr2 request req_url req_error req_perform resp_is_error resp_status
 #' @importFrom cli cli_alert_warning cli_abort cli_inform
