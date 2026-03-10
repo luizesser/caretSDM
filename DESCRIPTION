@@ -71,6 +71,7 @@ Suggests:
     sdm,
     biomod2,
     R.utils,
+    earth,
     e1071,
     kknn,
     mda,
