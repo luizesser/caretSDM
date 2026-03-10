@@ -56,9 +56,14 @@ library(bench)
 
 library(biomod2)
 library(sdm)
-sdm::installAll()
-library(dismo)
 library(caretSDM)
+
+library(RSNNS)
+library(rpart)
+library(mda)
+library(brt)
+library(earth)
+library(randomForest)
 ```
 
 ---

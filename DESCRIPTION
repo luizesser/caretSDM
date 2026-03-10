@@ -69,6 +69,7 @@ RoxygenNote: 7.3.3
 Suggests: 
     bench,
     biomod2,
+    brt,
     cito,
     covr,
     e1071,
@@ -84,6 +85,8 @@ Suggests:
     randomForest,
     rmarkdown,
     roxyglobals,
+    rpart,
+    RSNNS,
     sdm,
     tibble,
     withr,
