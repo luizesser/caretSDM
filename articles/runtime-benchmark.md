@@ -14,7 +14,6 @@ runtime performance of four widely used SDM frameworks:
 
 - **biomod2**
 - **sdm**
-- **dismo**
 - **caretSDM**
 
 All packages are evaluated under **identical conditions**, using the
@@ -27,15 +26,22 @@ same data, algorithms, and validation structure.
 To ensure fairness and reproducibility, we enforced the following
 constraints:
 
-- Identical presence–absence data
+- Identical pseudoabsence method
 - Identical environmental predictors
-- Identical cross-validation folds (pre-defined)
-- Same algorithms across packages (GLM and Random Forest)
+- Identical validation method
+- Same algorithms across packages (Artificial Neural Network,
+  Classification Tree Analysis, Flexible Discriminant Analysis, Boosted
+  Regression Trees, Multiple Adaptive Regression Splines and Random
+  Forest)
 - No parallelization
 - Runtime measured using the `bench` package
 
-Only model fitting and prediction steps are timed; plotting and file
-writing are excluded.
+Benchmarks included three stages: preprocessing (data formatting),
+processing (model fitting), and postprocessing (projection). A complete
+end-to-end benchmark was also conducted. Preprocessing included data
+formatting and pseudoabsence generation, processing included model
+fitting with cross-validation and ensembling, and postprocessing
+included projection to future scenarios.
 
 ------------------------------------------------------------------------
 
@@ -43,72 +49,14 @@ writing are excluded.
 
 ``` r
 library(terra)
-#> terra 1.9.1
 library(sf)
-#> Linking to GEOS 3.12.1, GDAL 3.8.4, PROJ 9.4.0; sf_use_s2() is TRUE
 library(bench)
 
 library(biomod2)
-#> biomod2 4.3-4-5 loaded.
-#>  /!\ Welcome to augmented biomod2 with abundance modeling available! (*o*)
-#>  Take a look at the HOME and NEWS section on the website to see all the features!
-#> Loading required package: nnet
-#> Loading required package: rpart
-#> Loading required package: cito
-#> Torch is not yet installed
-#> Please run the following before using cito
-#> "library("torch")"
-#> "install_torch()"
-#> see: https://torch.mlverse.org/docs/articles/installation.html
-#> Loading required package: mda
-#> Loading required package: class
-#> Loaded mda 0.5-5
-#> Loading required package: gam
-#> Loading required package: splines
-#> Loading required package: foreach
-#> Loaded gam 1.22-7
-#> Loading required package: mgcv
-#> Loading required package: nlme
-#> This is mgcv 1.9-3. For overview type 'help("mgcv-package")'.
-#> 
-#> Attaching package: 'mgcv'
-#> The following objects are masked from 'package:gam':
-#> 
-#>     gam, gam.control, gam.fit, s
-#> The following object is masked from 'package:nnet':
-#> 
-#>     multinom
-#> Loading required package: gbm
-#> Loaded gbm 2.2.3
-#> This version of gbm is no longer under development. Consider transitioning to gbm3, https://github.com/gbm-developers/gbm3
-#> Loading required package: earth
-#> Loading required package: Formula
-#> Loading required package: plotmo
-#> Loading required package: plotrix
-#> 
-#> Attaching package: 'plotrix'
-#> The following object is masked from 'package:terra':
-#> 
-#>     rescale
-#> Loading required package: maxnet
-#> Loading required package: randomForest
-#> randomForest 4.7-1.2
-#> Type rfNews() to see new features/changes/bug fixes.
-#> Loading required package: xgboost
 library(sdm)
-#> sdm 1.2-59 (2025-07-13)
 library(caretSDM)
-#> 
-#> Attaching package: 'caretSDM'
-#> The following object is masked from 'package:sdm':
-#> 
-#>     background
-#> The following object is masked from 'package:biomod2':
-#> 
-#>     get_predictions
 
 library(RSNNS)
-#> Loading required package: Rcpp
 library(rpart)
 library(mda)
 library(gbm)
@@ -382,8 +330,18 @@ post_sdm <- function(fit) {
   
   lapply(fit$scen, function(r) {
     ensemble(fit$model, newdata = r,
+             setting = list(method = 'unweighted'))
+  })
+  
+  lapply(fit$scen, function(r) {
+    ensemble(fit$model, newdata = r,
              setting = list(method = 'weighted', stat = 'AUC',
                             expr = 'auc > 0.5'))
+  })
+  
+  lapply(fit$scen, function(r) {
+    ensemble(fit$model, newdata = r,
+             setting = list(method = 'pa', opt = 2))
   })
   
 }
@@ -426,11 +384,20 @@ run_sdm <- function() {
     cv.folds = 5
   )
   
-  projections <- lapply(sc, function(r) {
-    e1 <- ensemble(m, newdata = r, setting = list(method = 'weighted', stat = 'AUC', expr = 'auc > 0.5'))
-    e2 <- ensemble(m, newdata = r, setting = list(method = 'unweighted', expr = 'auc > 0.5'))
-    e3 <- ensemble(m, newdata = r, setting = list(method = 'pa', opt = 2, expr = 'auc > 0.5'))
-    return(list(e1, e2, e3))
+  lapply(sc, function(r) {
+    ensemble(m, newdata = r,
+             setting = list(method = 'unweighted'))
+  })
+  
+  lapply(sc, function(r) {
+    ensemble(m, newdata = r,
+             setting = list(method = 'weighted', stat = 'AUC',
+                            expr = 'auc > 0.5'))
+  })
+  
+  lapply(sc, function(r) {
+    ensemble(m, newdata = r,
+             setting = list(method = 'pa', opt = 2))
   })
   
 }
@@ -574,12 +541,6 @@ bench_res_post <- bench::mark(
 ```
 
 ``` r
-run_biomod2()
-run_sdm()
-run_caretSDM()
-```
-
-``` r
 bench_res_complete <- bench::mark(
   biomod2  = run_biomod2(),
   sdm      = run_sdm(),
@@ -598,9 +559,9 @@ bench_res_prep
 #> # A tibble: 3 × 6
 #>   expression      min   median `itr/sec` mem_alloc `gc/sec`
 #>   <bch:expr> <bch:tm> <bch:tm>     <dbl> <bch:byt>    <dbl>
-#> 1 biomod2     168.2ms 170.25ms     5.53     7.75MB    1.11 
-#> 2 sdm        133.89ms 134.85ms     4.25     6.02MB    0.850
-#> 3 caretSDM      1.55s    1.58s     0.596    7.31MB    1.55
+#> 1 biomod2    188.04ms 192.45ms     4.95     7.75MB    0.991
+#> 2 sdm        150.47ms 151.81ms     3.75     6.02MB    0.750
+#> 3 caretSDM      1.75s    1.77s     0.531    7.31MB    1.38
 ```
 
 ``` r
@@ -608,9 +569,9 @@ bench_res_fit
 #> # A tibble: 3 × 6
 #>   expression      min   median `itr/sec` mem_alloc `gc/sec`
 #>   <bch:expr> <bch:tm> <bch:tm>     <dbl> <bch:byt>    <dbl>
-#> 1 biomod2       7.68s    7.72s    0.125  1017.21MB    0.376
-#> 2 sdm          15.54s   15.64s    0.0639    2.19GB    0.319
-#> 3 caretSDM     22.25s   24.69s    0.0408    1.23GB    0.979
+#> 1 biomod2       7.93s    7.97s    0.126        1GB    0.552
+#> 2 sdm          17.36s   17.58s    0.0565    2.18GB    0.339
+#> 3 caretSDM     24.14s   25.48s    0.0383    1.22GB    0.872
 ```
 
 ``` r
@@ -618,9 +579,9 @@ bench_res_post
 #> # A tibble: 3 × 6
 #>   expression      min   median `itr/sec` mem_alloc `gc/sec`
 #>   <bch:expr> <bch:tm> <bch:tm>     <dbl> <bch:byt>    <dbl>
-#> 1 biomod2       9.72s   10.18s    0.0950  958.22MB    0.380
-#> 2 sdm           7.42s    7.45s    0.133   192.27MB    0    
-#> 3 caretSDM      52.7s   54.66s    0.0182    4.28GB    0.415
+#> 1 biomod2         10s    11.2s    0.0863  952.22MB    0.725
+#> 2 sdm           23.9s   24.11s    0.0407  589.03MB    0    
+#> 3 caretSDM        58s    1.01m    0.0166    4.28GB    0.611
 ```
 
 ``` r
@@ -628,9 +589,9 @@ bench_res_complete
 #> # A tibble: 3 × 6
 #>   expression      min   median `itr/sec` mem_alloc `gc/sec`
 #>   <bch:expr> <bch:tm> <bch:tm>     <dbl> <bch:byt>    <dbl>
-#> 1 biomod2      17.25s    17.8s    0.0543    1.95GB   0.347 
-#> 2 sdm          52.96s    53.3s    0.0187    3.07GB   0.0262
-#> 3 caretSDM      1.29m     1.5m    0.0114    5.51GB   0.599
+#> 1 biomod2       18.2s   19.92s    0.0494    1.92GB   0.346 
+#> 2 sdm             55s    56.7s    0.0174     2.9GB   0.0244
+#> 3 caretSDM       1.4m    1.54m    0.0106    5.52GB   0.569
 ```
 
 The table above summarizes the median runtime, iteration rate, and
@@ -640,15 +601,114 @@ memory allocation for each package under identical conditions.
 
 ## Interpretation
 
-Observed differences in runtime primarily reflect:
+Interpretation
 
-- Workflow overhead (data formatting, object abstraction)
-- Internal resampling strategies
-- Model orchestration costs
+The benchmark results reveal clear differences in computational
+performance across the evaluated SDM frameworks, with the magnitude of
+these differences varying substantially among workflow stages.
 
-Packages designed around **lightweight workflows and explicit resampling
-control**, such as `caretSDM`, tend to show lower computational overhead
-under identical modeling tasks.
+### Pre-processing
+
+During the preprocessing stage, both biomod2 and sdm completed data
+preparation rapidly. In contrast, caretSDM required substantially more
+time, despite still being a very low running time.
+
+This difference primarily reflects the greater amount of internal data
+structuring performed by caretSDM, including the creation of
+standardized SDM objects, explicit pseudoabsence management, and
+preparation of workflow metadata used in later modeling and prediction
+steps. By contrast, biomod2 and sdm perform less structural
+preprocessing, relying more directly on raw data objects.
+
+### Model fitting
+
+Model fitting is more computationally demanding. Here, biomod2 exhibited
+the fastest performance, followed by sdm and caretSDM.Memory allocation
+during this stage also differed substantially across packages. The sdm
+package required the largest memory allocation, whereas caretSDM and
+biomod2 used a more close amount, with caretSDM allocating slightly more
+memory than biomod2.
+
+These differences largely arise from how each framework orchestrates
+model training. The modeling functions in biomod2 appear to implement
+relatively efficient internal routines for coordinating algorithms and
+cross-validation. In contrast, caretSDM relies on the training
+infrastructure of the caret framework, which provides highly flexible
+resampling and tuning capabilities but introduces additional overhead
+during model training.
+
+### Post-processing (projection and ensembling)
+
+The largest divergence among packages was observed during the
+post-processing stage. The sdm package completed projections and
+ensemble predictions most rapidly, followed by biomod2. In contrast,
+caretSDM required substantially longer runtimes and allocated
+considerably more memory.
+
+This increase reflects the design of caretSDM’s prediction pipeline,
+which explicitly manages multiple prediction objects, scenarios, and
+ensemble outputs using structured SDM containers. While this approach
+provides consistent handling of predictions and facilitates downstream
+analysis, it introduces additional computational overhead compared with
+the more direct projection implementations used in biomod2 and sdm.
+
+### End-to-end workflow
+
+When considering the complete workflow (preprocessing, model fitting,
+and projection), biomod2 was the fastest framework, followed by the sdm
+package and finally the caretSDM package. Memory usage followed a
+similar pattern, with caretSDM allocating the largest total memory,
+followed by sdm and biomod2.
+
+### Overall implications
+
+These results highlight that differences among SDM frameworks arise not
+only from algorithm implementation but also from workflow architecture.
+Packages such as biomod2 and sdm prioritize computational efficiency by
+performing fewer intermediate abstractions and operating closer to the
+underlying modeling functions. In contrast, caretSDM emphasizes workflow
+standardization, object consistency, and integration with a general
+machine-learning framework, which introduces additional computational
+overhead but may provide advantages in reproducibility, extensibility,
+and workflow transparency. Moreover, caretSDM also needed substantial
+less lines of code to perform the same tasks, while also using only
+functions from its own package. This may be an advantage for users who
+prefer a more streamlined workflow or want to spend more coding time in
+other stages of the modeling process, such as post-processing.
+
+During preprocessing, this benchmark avoided the use of multiple sets of
+pseudoabsences to ensure that all packages were evaluated under
+identical conditions. However, in practice, users may choose to generate
+multiple sets of pseudoabsences to improve model robustness, which would
+likely amplify the observed differences in preprocessing time among
+packages. This approach was intentional due to the lack of easy way to
+perform this task in sdm package, which would require users to implement
+custom code to generate multiple sets of pseudoabsences and manage them
+across modeling iterations. This would probably reflect more a
+difference in user coding ability than in package performance, which is
+not the focus of this benchmark.
+
+The use of multiple sets of pseudoabsences would likely amplify the
+observed differences in model fitting time among packages in the
+processing step. In the same way, hyperparameter tuning was let out of
+this benchmark to ensure that all packages were evaluated under
+identical conditions. However, users may choose to perform tuning to
+optimize model performance particularly when using caretSDM, which
+provides more extensive and auto-tuning capabilities. As previously
+stated, to include these methods in other packages would probably
+reflect more a difference in user coding ability than in package
+performance, which is not the focus of this benchmark.
+
+Finally, in postprocessing, the differences between packages reflect the
+design choices made by each framework regarding how projections and
+ensemble predictions are managed. While the more structured approach of
+caretSDM provides advantages in terms of workflow consistency and
+downstream analysis, it introduces additional computational overhead
+compared with the more direct implementations used in biomod2 and sdm.
+Moreover, biomod2 excels in time and memory management, once it has a
+strong output flow, that is, it does not create many intermediate
+objects during the workflow, which may be an advantage for users with
+limited computational resources or those who prioritize efficiency.
 
 ------------------------------------------------------------------------
 
@@ -666,6 +726,9 @@ differences.
 - No parallel processing was used
 - Performance may vary with dataset size, predictor dimensionality, and
   hardware
+- If you want to see your package here or if you think I am missing some
+  coding or function from sdm and/or biomod2, please contact me on
+  <luizesser@gmail.com>.
 
 ------------------------------------------------------------------------
 
@@ -673,7 +736,7 @@ differences.
 
 ``` r
 sessionInfo()
-#> R version 4.5.2 (2025-10-31)
+#> R version 4.5.3 (2026-03-11)
 #> Platform: x86_64-pc-linux-gnu
 #> Running under: Ubuntu 24.04.3 LTS
 #> 
@@ -695,14 +758,14 @@ sessionInfo()
 #> [8] base     
 #> 
 #> other attached packages:
-#>  [1] caret_7.0-1          lattice_0.22-7       ggplot2_4.0.2       
+#>  [1] caret_7.0-1          lattice_0.22-9       ggplot2_4.0.2       
 #>  [4] kernlab_0.9-33       glmnet_4.1-10        Matrix_1.7-4        
 #>  [7] dismo_1.3-16         raster_3.6-32        sp_2.2-1            
 #> [10] RSNNS_0.4-18         Rcpp_1.1.1           caretSDM_1.5        
 #> [13] sdm_1.2-59           xgboost_3.2.0.1      randomForest_4.7-1.2
 #> [16] maxnet_0.1.4         earth_5.3.5          plotmo_3.7.0        
 #> [19] plotrix_3.8-14       Formula_1.2-5        gbm_2.2.3           
-#> [22] mgcv_1.9-3           nlme_3.1-168         gam_1.22-7          
+#> [22] mgcv_1.9-4           nlme_3.1-168         gam_1.22-7          
 #> [25] foreach_1.5.2        mda_0.5-5            class_7.3-23        
 #> [28] cito_1.1             rpart_4.1.24         nnet_7.3-20         
 #> [31] biomod2_4.3-4-5      bench_1.1.4          sf_1.1-0            
@@ -720,15 +783,15 @@ sessionInfo()
 #>  [25] abind_1.4-8             Rtsne_0.17              purrr_1.2.1            
 #>  [28] R.utils_2.13.0          coro_1.1.0              rappdirs_0.3.4         
 #>  [31] ipred_0.9-15            torch_0.16.3            satellite_1.0.6        
-#>  [34] lava_1.8.2              listenv_0.10.0          units_1.0-0            
+#>  [34] lava_1.8.2              listenv_0.10.1          units_1.0-1            
 #>  [37] parallelly_1.46.1       pkgdown_2.2.0           PresenceAbsence_1.1.11 
 #>  [40] codetools_0.2-20        profmem_0.7.0           xml2_1.5.2             
 #>  [43] shape_1.4.6.1           tidyselect_1.2.1        farver_2.1.2           
-#>  [46] stats4_4.5.2            base64enc_0.1-6         jsonlite_2.0.0         
-#>  [49] e1071_1.7-17            progressr_0.18.0        survival_3.8-3         
+#>  [46] stats4_4.5.3            base64enc_0.1-6         jsonlite_2.0.0         
+#>  [49] e1071_1.7-17            progressr_0.18.0        survival_3.8-6         
 #>  [52] ggspatial_1.1.10        iterators_1.0.14        systemfonts_1.3.2      
-#>  [55] tools_4.5.2             ragg_1.5.1              stringdist_0.9.17      
-#>  [58] glue_1.8.0              prodlim_2025.04.28      xfun_0.56              
+#>  [55] tools_4.5.3             ragg_1.5.1              stringdist_0.9.17      
+#>  [58] glue_1.8.0              prodlim_2026.03.11      xfun_0.56              
 #>  [61] checkCLI_1.0            dplyr_1.2.0             withr_3.0.2            
 #>  [64] fastmap_1.2.0           callr_3.7.6             digest_0.6.39          
 #>  [67] CoordinateCleaner_3.0.1 timechange_0.4.0        R6_2.6.1               
@@ -742,11 +805,11 @@ sessionInfo()
 #>  [91] gower_1.0.2             knitr_1.51              geosphere_1.6-5        
 #>  [94] reshape2_1.4.5          rgbif_3.8.4             checkmate_2.3.4        
 #>  [97] proxy_0.4-29            cachem_1.1.0            stringr_1.6.0          
-#> [100] pdp_0.8.3               KernSmooth_2.23-26      parallel_4.5.2         
+#> [100] pdp_0.8.3               KernSmooth_2.23-26      parallel_4.5.3         
 #> [103] s2_1.1.9                desc_1.4.3              pillar_1.11.1          
-#> [106] grid_4.5.2              reshape_0.8.10          vctrs_0.7.1            
+#> [106] grid_4.5.3              reshape_0.8.10          vctrs_0.7.1            
 #> [109] mapview_2.11.4          evaluate_1.0.5          oai_0.4.0              
-#> [112] cli_3.6.5               compiler_4.5.2          rlang_1.1.7            
+#> [112] cli_3.6.5               compiler_4.5.3          rlang_1.1.7            
 #> [115] future.apply_1.20.2     classInt_0.4-11         ps_1.9.1               
 #> [118] plyr_1.8.9              fs_1.6.7                stringi_1.8.7          
 #> [121] stars_0.7-1             lazyeval_0.2.2          leaflet_2.2.3          
