@@ -623,33 +623,33 @@ to avoid first-run overhead (e.g. package initialization).</p>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 3 × 6</span></span></span>
 <span><span class="co">#&gt;   expression      min   median `itr/sec` mem_alloc `gc/sec`</span></span>
 <span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;bch:expr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;bch:tm&gt;</span> <span style="color: #949494; font-style: italic;">&lt;bch:tm&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;bch:byt&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> biomod2    188.04ms 192.45ms     4.95     7.75MB    0.991</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> sdm        150.47ms 151.81ms     3.75     6.02MB    0.750</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> caretSDM      1.75s    1.77s     0.531    7.31MB    1.38</span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> biomod2    163.88ms 171.86ms     3.62     7.75MB    0.723</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> sdm         133.3ms 142.15ms     7.08     6.02MB    1.42 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> caretSDM      1.61s    1.61s     0.617    7.31MB    1.60</span></span></code></pre></div>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">bench_res_fit</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 3 × 6</span></span></span>
 <span><span class="co">#&gt;   expression      min   median `itr/sec` mem_alloc `gc/sec`</span></span>
 <span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;bch:expr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;bch:tm&gt;</span> <span style="color: #949494; font-style: italic;">&lt;bch:tm&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;bch:byt&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> biomod2       7.93s    7.97s    0.126        1GB    0.552</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> sdm          17.36s   17.58s    0.056<span style="text-decoration: underline;">5</span>    2.18GB    0.339</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> caretSDM     24.14s   25.48s    0.038<span style="text-decoration: underline;">3</span>    1.22GB    0.872</span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> biomod2       7.86s    7.95s    0.123  1016.67MB    0.491</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> sdm          16.51s   16.59s    0.060<span style="text-decoration: underline;">3</span>    2.21GB    0.362</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> caretSDM     24.21s   27.73s    0.037<span style="text-decoration: underline;">1</span>    1.22GB    1.08</span></span></code></pre></div>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">bench_res_post</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 3 × 6</span></span></span>
 <span><span class="co">#&gt;   expression      min   median `itr/sec` mem_alloc `gc/sec`</span></span>
 <span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;bch:expr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;bch:tm&gt;</span> <span style="color: #949494; font-style: italic;">&lt;bch:tm&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;bch:byt&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> biomod2         10s    11.2s    0.086<span style="text-decoration: underline;">3</span>  952.22MB    0.725</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> sdm           23.9s   24.11s    0.040<span style="text-decoration: underline;">7</span>  589.03MB    0    </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> caretSDM        58s    1.01m    0.016<span style="text-decoration: underline;">6</span>    4.28GB    0.611</span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> biomod2         10s    10.7s    0.091<span style="text-decoration: underline;">8</span>   963.5MB    0.367</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> sdm           22.6s    22.6s    0.044<span style="text-decoration: underline;">1</span>  577.34MB    0    </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> caretSDM      56.3s    56.9s    0.017<span style="text-decoration: underline;">6</span>    4.28GB    0.439</span></span></code></pre></div>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">bench_res_complete</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 3 × 6</span></span></span>
 <span><span class="co">#&gt;   expression      min   median `itr/sec` mem_alloc `gc/sec`</span></span>
 <span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;bch:expr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;bch:tm&gt;</span> <span style="color: #949494; font-style: italic;">&lt;bch:tm&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;bch:byt&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> biomod2       18.2s   19.92s    0.049<span style="text-decoration: underline;">4</span>    1.92GB   0.346 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> sdm             55s    56.7s    0.017<span style="text-decoration: underline;">4</span>     2.9GB   0.024<span style="text-decoration: underline;">4</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> caretSDM       1.4m    1.54m    0.010<span style="text-decoration: underline;">6</span>    5.52GB   0.569</span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> biomod2      18.01s   18.12s    0.052<span style="text-decoration: underline;">3</span>    1.91GB   0.335 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> sdm          53.09s   53.22s    0.018<span style="text-decoration: underline;">7</span>    2.77GB   0.037<span style="text-decoration: underline;">4</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> caretSDM      1.38m    1.46m    0.011<span style="text-decoration: underline;">4</span>    5.51GB   0.630</span></span></code></pre></div>
 <p>The table above summarizes the median runtime, iteration rate, and
 memory allocation for each package under identical conditions.</p>
 <hr>
@@ -657,7 +657,6 @@ memory allocation for each package under identical conditions.</p>
 <div class="section level2">
 <h2 id="interpretation">Interpretation<a class="anchor" aria-label="anchor" href="#interpretation"></a>
 </h2>
-<p>Interpretation</p>
 <p>The benchmark results reveal clear differences in computational
 performance across the evaluated SDM frameworks, with the magnitude of
 these differences varying substantially among workflow stages.</p>
