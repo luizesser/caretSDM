@@ -563,8 +563,6 @@ The table above summarizes the median runtime, iteration rate, and memory alloca
 
 ## Interpretation
 
-Interpretation
-
 The benchmark results reveal clear differences in computational performance across the evaluated SDM frameworks, with the magnitude of these differences varying substantially among workflow stages.
 
 ### Pre-processing

@@ -83,7 +83,7 @@ prediction_change_sdm <- function(i, scenario = NULL, ensemble_type = NULL, spec
   if(is.null(scenario)){
     scenario <- sample(colnames(get_ensembles(i))[!colnames(get_ensembles(i)) %in%"current"], 1)
   }
-  assert_choice_cli(ensemble_type, colnames(get_ensembles(i)[1,1][[1]]), null.ok = TRUE)
+  assert_choice_cli(ensemble_type, colnames(get_ensembles(i)[1,1][[1]])[-1], null.ok = TRUE)
   if(is.null(ensemble_type)){
     ensemble_type <- "mean_occ_prob"
   }
