@@ -25,7 +25,6 @@ This document provides a **fully reproducible benchmark** comparing the runtime 
 
 * **biomod2**
 * **sdm**
-* **dismo**
 * **caretSDM**
 
 All packages are evaluated under **identical conditions**, using the same data, algorithms, and validation structure.
@@ -36,20 +35,20 @@ All packages are evaluated under **identical conditions**, using the same data, 
 
 To ensure fairness and reproducibility, we enforced the following constraints:
 
-* Identical presence–absence data
+* Identical pseudoabsence method
 * Identical environmental predictors
-* Identical cross-validation folds (pre-defined)
-* Same algorithms across packages (GLM and Random Forest)
+* Identical validation method
+* Same algorithms across packages (Artificial Neural Network, Classification Tree Analysis, Flexible Discriminant Analysis, Boosted Regression Trees, Multiple Adaptive Regression Splines and Random Forest)
 * No parallelization
 * Runtime measured using the `bench` package
 
-Only model fitting and prediction steps are timed; plotting and file writing are excluded.
+Benchmarks included three stages: preprocessing (data formatting), processing (model fitting), and postprocessing (projection). A complete end-to-end benchmark was also conducted. Preprocessing included data formatting and pseudoabsence generation, processing included model fitting with cross-validation and ensembling, and postprocessing included projection to future scenarios.
 
 ---
 
 ## Packages
 
-```{r packages}
+```{r packages, echo=TRUE, results='hide', message=FALSE, warning=FALSE}
 library(terra)
 library(sf)
 library(bench)
@@ -64,7 +63,6 @@ library(mda)
 library(gbm)
 library(earth)
 library(randomForest)
-
 ```
 
 ---
@@ -319,8 +317,18 @@ post_sdm <- function(fit) {
   
   lapply(fit$scen, function(r) {
     ensemble(fit$model, newdata = r,
+             setting = list(method = 'unweighted'))
+  })
+  
+  lapply(fit$scen, function(r) {
+    ensemble(fit$model, newdata = r,
              setting = list(method = 'weighted', stat = 'AUC',
                             expr = 'auc > 0.5'))
+  })
+  
+  lapply(fit$scen, function(r) {
+    ensemble(fit$model, newdata = r,
+             setting = list(method = 'pa', opt = 2))
   })
   
 }
@@ -363,11 +371,20 @@ run_sdm <- function() {
     cv.folds = 5
   )
   
-  projections <- lapply(sc, function(r) {
-    e1 <- ensemble(m, newdata = r, setting = list(method = 'weighted', stat = 'AUC', expr = 'auc > 0.5'))
-    e2 <- ensemble(m, newdata = r, setting = list(method = 'unweighted', expr = 'auc > 0.5'))
-    e3 <- ensemble(m, newdata = r, setting = list(method = 'pa', opt = 2, expr = 'auc > 0.5'))
-    return(list(e1, e2, e3))
+  lapply(sc, function(r) {
+    ensemble(m, newdata = r,
+             setting = list(method = 'unweighted'))
+  })
+  
+  lapply(sc, function(r) {
+    ensemble(m, newdata = r,
+             setting = list(method = 'weighted', stat = 'AUC',
+                            expr = 'auc > 0.5'))
+  })
+  
+  lapply(sc, function(r) {
+    ensemble(m, newdata = r,
+             setting = list(method = 'pa', opt = 2))
   })
   
 }
@@ -507,12 +524,6 @@ bench_res_post <- bench::mark(
 )
 ```
 
-```{r benchmark_start4, echo=TRUE, results='hide', warning=FALSE, message=FALSE}
-run_biomod2()
-run_sdm()
-run_caretSDM()
-```
-
 ```{r benchmark_complete, echo=TRUE, results='hide', warning=FALSE, message=FALSE}
 bench_res_complete <- bench::mark(
   biomod2  = run_biomod2(),
@@ -552,13 +563,42 @@ The table above summarizes the median runtime, iteration rate, and memory alloca
 
 ## Interpretation
 
-Observed differences in runtime primarily reflect:
+Interpretation
 
-* Workflow overhead (data formatting, object abstraction)
-* Internal resampling strategies
-* Model orchestration costs
+The benchmark results reveal clear differences in computational performance across the evaluated SDM frameworks, with the magnitude of these differences varying substantially among workflow stages.
 
-Packages designed around **lightweight workflows and explicit resampling control**, such as `caretSDM`, tend to show lower computational overhead under identical modeling tasks.
+### Pre-processing
+
+During the preprocessing stage, both biomod2 and sdm completed data preparation rapidly. In contrast, caretSDM required substantially more time, despite still being a very low running time.
+
+This difference primarily reflects the greater amount of internal data structuring performed by caretSDM, including the creation of standardized SDM objects, explicit pseudoabsence management, and preparation of workflow metadata used in later modeling and prediction steps. By contrast, biomod2 and sdm perform less structural preprocessing, relying more directly on raw data objects.
+
+### Model fitting
+
+Model fitting is more computationally demanding. Here, biomod2 exhibited the fastest performance, followed by sdm and caretSDM.Memory allocation during this stage also differed substantially across packages. The sdm package required the largest memory allocation, whereas caretSDM and biomod2 used a more close amount, with caretSDM allocating slightly more memory than biomod2.
+
+These differences largely arise from how each framework orchestrates model training. The modeling functions in biomod2 appear to implement relatively efficient internal routines for coordinating algorithms and cross-validation. In contrast, caretSDM relies on the training infrastructure of the caret framework, which provides highly flexible resampling and tuning capabilities but introduces additional overhead during model training.
+
+### Post-processing (projection and ensembling)
+
+The largest divergence among packages was observed during the post-processing stage. The sdm package completed projections and ensemble predictions most rapidly, followed by biomod2. In contrast, caretSDM required substantially longer runtimes and allocated considerably more memory.
+
+This increase reflects the design of caretSDM's prediction pipeline, which explicitly manages multiple prediction objects, scenarios, and ensemble outputs using structured SDM containers. While this approach provides consistent handling of predictions and facilitates downstream analysis, it introduces additional computational overhead compared with the more direct projection implementations used in biomod2 and sdm.
+
+### End-to-end workflow
+
+When considering the complete workflow (preprocessing, model fitting, and projection), biomod2 was the fastest framework, followed by the sdm package and finally the caretSDM package. Memory usage followed a similar pattern, with caretSDM allocating the largest total memory, followed by sdm and biomod2.
+
+### Overall implications
+
+These results highlight that differences among SDM frameworks arise not only from algorithm implementation but also from workflow architecture. Packages such as biomod2 and sdm prioritize computational efficiency by performing fewer intermediate abstractions and operating closer to the underlying modeling functions. In contrast, caretSDM emphasizes workflow standardization, object consistency, and integration with a general machine-learning framework, which introduces additional computational overhead but may provide advantages in reproducibility, extensibility, and workflow transparency. Moreover, caretSDM also needed substantial less lines of code to perform the same tasks, while also using only functions from its own package. This may be an advantage for users who prefer a more streamlined workflow or want to spend more coding time in other stages of the modeling process, such as post-processing.
+
+During preprocessing, this benchmark avoided the use of multiple sets of pseudoabsences to ensure that all packages were evaluated under identical conditions. However, in practice, users may choose to generate multiple sets of pseudoabsences to improve model robustness, which would likely amplify the observed differences in preprocessing time among packages. This approach was intentional due to the lack of easy way to perform this task in sdm package, which would require users to implement custom code to generate multiple sets of pseudoabsences and manage them across modeling iterations. This would probably reflect more a difference in user coding ability than in package performance, which is not the focus of this benchmark.
+
+The use of multiple sets of pseudoabsences would likely amplify the observed differences in model fitting time among packages in the processing step. In the same way, hyperparameter tuning was let out of this benchmark to ensure that all packages were evaluated under identical conditions. However, users may choose to perform tuning to optimize model performance particularly when using caretSDM, which provides more extensive and auto-tuning capabilities. As previously stated, to include these methods in other packages would probably reflect more a difference in user coding ability than in package performance, which is not the focus of this benchmark.
+
+Finally, in postprocessing, the differences between packages reflect the design choices made by each framework regarding how projections and ensemble predictions are managed. While the more structured approach of caretSDM provides advantages in terms of workflow consistency and downstream analysis, it introduces additional computational overhead compared with the more direct implementations used in biomod2 and sdm. 
+Moreover, biomod2 excels in time and memory management, once it has a strong output flow, that is, it does not create many intermediate objects during the workflow, which may be an advantage for users with limited computational resources or those who prioritize efficiency. 
 
 ---
 
@@ -572,6 +612,7 @@ This benchmark is fully reproducible and can be executed on any system with the 
 
 * No parallel processing was used
 * Performance may vary with dataset size, predictor dimensionality, and hardware
+* If you want to see your package here or if you think I am missing some coding or function from sdm and/or biomod2, please contact me on luizesser@gmail.com.
 
 ---
 
