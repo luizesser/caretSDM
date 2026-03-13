@@ -187,9 +187,9 @@ website:
 - [`prediction_change_sdm()`](https://luizesser.github.io/caretSDM/reference/prediction_change_sdm.md)
   : Prediction Change Analysis
 
-- [`predictors()`](https://luizesser.github.io/caretSDM/reference/predictor_names.md)
-  [`set_predictor_names()`](https://luizesser.github.io/caretSDM/reference/predictor_names.md)
-  [`get_predictor_names()`](https://luizesser.github.io/caretSDM/reference/predictor_names.md)
+- [`get_predictor_names()`](https://luizesser.github.io/caretSDM/reference/predictor_names.md)
+  [`set_predictor_names(`*`<input_sdm>`*`)`](https://luizesser.github.io/caretSDM/reference/predictor_names.md)
+  [`set_predictor_names(`*`<sdm_area>`*`)`](https://luizesser.github.io/caretSDM/reference/predictor_names.md)
   [`test_variables_names()`](https://luizesser.github.io/caretSDM/reference/predictor_names.md)
   [`set_variables_names()`](https://luizesser.github.io/caretSDM/reference/predictor_names.md)
   : Predictors Names Managing

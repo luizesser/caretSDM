@@ -66,13 +66,6 @@ i <- input_sdm(oc, sa) |>
 #> Reading ne_110m_land.zip from naturalearth...Removed 0 records.
 #> Loading required package: ggplot2
 #> Loading required package: lattice
-#> 
-#> Attaching package: 'caret'
-#> 
-#> The following object is masked from 'package:caretSDM':
-#> 
-#>     predictors
-#> 
 #> Ensembling...
 #>   current
 ```

@@ -50,7 +50,7 @@ sf/stars will be used.
 
 ## See also
 
-[`sdm_area`](https://luizesser.github.io/caretSDM/reference/sdm_area.md)` `[`predictors`](https://luizesser.github.io/caretSDM/reference/predictor_names.md)` `[`bioc`](https://luizesser.github.io/caretSDM/reference/bioc.md)
+[`sdm_area`](https://luizesser.github.io/caretSDM/reference/sdm_area.md)` `[`get_predictor_names`](https://luizesser.github.io/caretSDM/reference/predictor_names.md)` `[`bioc`](https://luizesser.github.io/caretSDM/reference/bioc.md)
 
 ## Author
 

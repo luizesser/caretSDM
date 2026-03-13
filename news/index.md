@@ -86,3 +86,7 @@ CRAN release: 2026-03-10
 
 - Ensembles and projections performance were dramatically tunned to be
   more efficient.
+
+## caretSDM 1.6
+
+- Inclusion of pseudoabsence selection through a custom function.

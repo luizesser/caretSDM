@@ -99,7 +99,7 @@ correct one.
 
 ## See also
 
-[`GBIF_data`](https://luizesser.github.io/caretSDM/reference/GBIF_data.md)` `[`occurrences_sdm`](https://luizesser.github.io/caretSDM/reference/occurrences_sdm.md)` `[`sdm_area`](https://luizesser.github.io/caretSDM/reference/sdm_area.md)` `[`input_sdm`](https://luizesser.github.io/caretSDM/reference/input_sdm.md)` `[`predictors`](https://luizesser.github.io/caretSDM/reference/predictor_names.md)
+[`GBIF_data`](https://luizesser.github.io/caretSDM/reference/GBIF_data.md)` `[`occurrences_sdm`](https://luizesser.github.io/caretSDM/reference/occurrences_sdm.md)` `[`sdm_area`](https://luizesser.github.io/caretSDM/reference/sdm_area.md)` `[`input_sdm`](https://luizesser.github.io/caretSDM/reference/input_sdm.md)` `[`get_predictor_names`](https://luizesser.github.io/caretSDM/reference/predictor_names.md)
 
 ## Author
 

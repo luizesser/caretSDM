@@ -5,28 +5,14 @@ This function manage predictors names in `sdm_area` objects.
 ## Usage
 
 ``` r
-predictors(x)
-
-# S3 method for class 'sdm_area'
-predictors(x)
-
-# S3 method for class 'input_sdm'
-predictors(x)
-
-set_predictor_names(x, new_names)
-
-# S3 method for class 'input_sdm'
-set_predictor_names(x, new_names)
-
-# S3 method for class 'sdm_area'
-set_predictor_names(x, new_names)
-
-get_predictor_names(x)
-
-# S3 method for class 'sdm_area'
 get_predictor_names(x)
 
 # S3 method for class 'input_sdm'
+set_predictor_names(x, new_names)
+
+# S3 method for class 'sdm_area'
+set_predictor_names(x, new_names)
+
 get_predictor_names(x)
 
 test_variables_names(sa, scen)
@@ -62,9 +48,9 @@ set_variables_names(s1 = NULL, s2 = NULL, new_names = NULL)
 
 ## Value
 
-`predictors` and `get_predictor_names` return a `character` vector with
-predictors names. `test_variables_names` returns a logical informing if
-all variables are equal in both objects (TRUE) or not (FALSE).
+`get_predictor_names` returns a `character` vector with predictors
+names. `test_variables_names` returns a logical informing if all
+variables are equal in both objects (TRUE) or not (FALSE).
 `set_variables_names` returns the `s1` object with new names provided by
 `s2` or `new_names`.
 

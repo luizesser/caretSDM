@@ -559,9 +559,9 @@ bench_res_prep
 #> # A tibble: 3 × 6
 #>   expression      min   median `itr/sec` mem_alloc `gc/sec`
 #>   <bch:expr> <bch:tm> <bch:tm>     <dbl> <bch:byt>    <dbl>
-#> 1 biomod2    163.88ms 171.86ms     3.62     7.75MB    0.723
-#> 2 sdm         133.3ms 142.15ms     7.08     6.02MB    1.42 
-#> 3 caretSDM      1.61s    1.61s     0.617    7.31MB    1.60
+#> 1 biomod2    163.39ms 171.93ms     5.59     7.75MB    1.12 
+#> 2 sdm        133.87ms 139.39ms     4.23     6.02MB    0.846
+#> 3 caretSDM      1.61s    1.63s     0.572    7.31MB    1.49
 ```
 
 ``` r
@@ -569,9 +569,9 @@ bench_res_fit
 #> # A tibble: 3 × 6
 #>   expression      min   median `itr/sec` mem_alloc `gc/sec`
 #>   <bch:expr> <bch:tm> <bch:tm>     <dbl> <bch:byt>    <dbl>
-#> 1 biomod2       7.86s    7.95s    0.123  1016.67MB    0.491
-#> 2 sdm          16.51s   16.59s    0.0603    2.21GB    0.362
-#> 3 caretSDM     24.21s   27.73s    0.0371    1.22GB    1.08
+#> 1 biomod2        7.9s    7.98s    0.122        1GB    0.367
+#> 2 sdm           16.6s    16.7s    0.0598    2.21GB    0.299
+#> 3 caretSDM      22.5s   25.83s    0.0389    1.21GB    0.894
 ```
 
 ``` r
@@ -579,9 +579,9 @@ bench_res_post
 #> # A tibble: 3 × 6
 #>   expression      min   median `itr/sec` mem_alloc `gc/sec`
 #>   <bch:expr> <bch:tm> <bch:tm>     <dbl> <bch:byt>    <dbl>
-#> 1 biomod2         10s    10.7s    0.0918   963.5MB    0.367
-#> 2 sdm           22.6s    22.6s    0.0441  577.34MB    0    
-#> 3 caretSDM      56.3s    56.9s    0.0176    4.28GB    0.439
+#> 1 biomod2       10.9s    11.4s    0.0877  963.48MB    0.403
+#> 2 sdm           24.1s    24.4s    0.0406  577.31MB    0    
+#> 3 caretSDM      57.5s    57.9s    0.0173    4.28GB    0.435
 ```
 
 ``` r
@@ -589,9 +589,9 @@ bench_res_complete
 #> # A tibble: 3 × 6
 #>   expression      min   median `itr/sec` mem_alloc `gc/sec`
 #>   <bch:expr> <bch:tm> <bch:tm>     <dbl> <bch:byt>    <dbl>
-#> 1 biomod2      18.01s   18.12s    0.0523    1.91GB   0.335 
-#> 2 sdm          53.09s   53.22s    0.0187    2.77GB   0.0374
-#> 3 caretSDM      1.38m    1.46m    0.0114    5.51GB   0.630
+#> 1 biomod2      17.95s   18.23s    0.0525    1.91GB   0.346 
+#> 2 sdm          53.61s   54.49s    0.0183    3.07GB   0.0367
+#> 3 caretSDM      1.36m    1.45m    0.0115    6.27GB   0.721
 ```
 
 The table above summarizes the median runtime, iteration rate, and
@@ -759,7 +759,7 @@ sessionInfo()
 #>  [1] caret_7.0-1          lattice_0.22-9       ggplot2_4.0.2       
 #>  [4] kernlab_0.9-33       glmnet_4.1-10        Matrix_1.7-4        
 #>  [7] dismo_1.3-16         raster_3.6-32        sp_2.2-1            
-#> [10] RSNNS_0.4-18         Rcpp_1.1.1           caretSDM_1.5        
+#> [10] RSNNS_0.4-18         Rcpp_1.1.1           caretSDM_1.6        
 #> [13] sdm_1.2-59           xgboost_3.2.0.1      randomForest_4.7-1.2
 #> [16] maxnet_0.1.4         earth_5.3.5          plotmo_3.7.0        
 #> [19] plotrix_3.8-14       Formula_1.2-5        gbm_2.2.3           

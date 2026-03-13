@@ -597,11 +597,6 @@ i <- train_sdm(i,
                ctrl=ctrl_sdm) |> suppressWarnings()
 #> Loading required package: ggplot2
 #> Loading required package: lattice
-#> 
-#> Attaching package: 'caret'
-#> The following object is masked from 'package:caretSDM':
-#> 
-#>     predictors
 i
 #>             caretSDM           
 #> ...............................
@@ -1140,5 +1135,5 @@ species using a grid simplefeatures instead of lines.
 ``` r
 end_time <- Sys.time()
 end_time - start_time
-#> Time difference of 3.290484 mins
+#> Time difference of 3.229652 mins
 ```

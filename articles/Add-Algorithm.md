@@ -378,11 +378,6 @@ i <- train_sdm(i,
                ctrl = ctrl_sdm)
 #> Loading required package: ggplot2
 #> Loading required package: lattice
-#> 
-#> Attaching package: 'caret'
-#> The following object is masked from 'package:caretSDM':
-#> 
-#>     predictors
 ```
 
 Let’s check the output. The printout shows that “Mahalanobis Distance”
