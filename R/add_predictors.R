@@ -22,7 +22,7 @@
 #' \code{pred} data binded to the previous \code{grid}.
 #' \code{get_predictors} retrieves the grid from the \code{i} object.
 #'
-#' @seealso \code{\link{sdm_area} \link{predictors} \link{bioc}}
+#' @seealso \code{\link{sdm_area} \link{get_predictor_names} \link{bioc}}
 #'
 #' @author Luíz Fernando Esser (luizesser@gmail.com) and Reginaldo Ré.
 #' https://luizfesser.wordpress.com

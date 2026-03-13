@@ -48,7 +48,7 @@ get_predictors(sa)
 
 }
 \seealso{
-\code{\link{sdm_area} \link{predictors} \link{bioc}}
+\code{\link{sdm_area} \link{get_predictor_names} \link{bioc}}
 }
 \author{
 Luíz Fernando Esser (luizesser@gmail.com) and Reginaldo Ré.

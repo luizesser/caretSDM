@@ -16,10 +16,6 @@ if(!identical(Sys.getenv("NOT_CRAN"), "false")){
   test_that("predictors - sdm_area", {
     sa <- sdm_area(pr_gpkg, cell_size = 50000, crs = 6399)
     expect_equal(
-      predictors(sa),
-      c("GID0", "CODIGOIB1", "NOMEUF2", "SIGLAUF3")
-    )
-    expect_equal(
       get_predictor_names(sa),
       c("GID0", "CODIGOIB1", "NOMEUF2", "SIGLAUF3")
     )
@@ -29,7 +25,7 @@ if(!identical(Sys.getenv("NOT_CRAN"), "false")){
   test_that("predictors - set/get rename predictors", {
     sa <- sdm_area(pr_gpkg, cell_size = 50000, crs = 6399)
     expect_equal(
-      set_predictor_names(sa, get_predictor_names(sa) |> tolower()) |> predictors(),
+      set_predictor_names(sa, get_predictor_names(sa) |> tolower()) |> get_predictor_names(),
       c("gid0", "codigoib1", "nomeuf2", "siglauf3")
     )
   })

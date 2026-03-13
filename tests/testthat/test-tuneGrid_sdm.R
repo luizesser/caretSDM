@@ -9,7 +9,6 @@ test_that("tuneGrid_sdm", {
   i <- pseudoabsences(i, method="random", n_set=2)
   ctrl_sdm <- caret::trainControl(method = "boot",
                                   number = 1,
-                                  repeats = 1,
                                   classProbs = TRUE,
                                   returnResamp = "all",
                                   summaryFunction = summary_sdm,

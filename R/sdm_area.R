@@ -1341,7 +1341,7 @@ print.sdm_area <- function(x, ...) {
   cat("Extent                    :", sf::st_bbox(x$grid), "(xmin, xmax, ymin, ymax)\n")
   cat("CRS                       :", substr(sf::st_crs(x$grid)$input, 1, 20), "\n")
   cat("Resolution                :", paste0("(", x$cell_size, ", ", x$cell_size, ")"), "(x, y)\n")
-  predictors_sdm <- predictors(x)
+  predictors_sdm <- get_predictor_names(x)
   if (length(predictors_sdm)>0) {
     cat("Number of Predictors      :", length(predictors_sdm), "\n")
     cat(cat("Predictors Names          : "), cat(predictors_sdm, sep = ", "),

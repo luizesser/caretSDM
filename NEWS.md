@@ -60,3 +60,7 @@
 # caretSDM 1.5
 
 -   Ensembles and projections performance were dramatically tunned to be more efficient.
+
+# caretSDM 1.6
+
+-   Inclusion of pseudoabsence selection through a custom function.

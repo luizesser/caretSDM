@@ -51,6 +51,30 @@ test_that("pseudoabsences - normal", {
   expect_equal("mahal.dist", pseudoabsence_method(i7))
   expect_equal("mahal.dist", pseudoabsence_method(i7$occurrences))
 
+  env_distance_pa <- function(env_sf, occ_sf, n_pa=n_pa) {
+    df <- as.data.frame(env_sf)[, -which(names(env_sf) %in% c("cell_id", "geometry"))]
+    center <- colMeans(df)
+    d <- sqrt(rowSums((df - center)^2))
+    p <- d / sum(d)
+    sample(env_sf$cell_id, size = n_pa, prob = p)
+  }
+
+  expect_warning(i8 <- pseudoabsences(i, method = env_distance_pa, n_set = 2, n_pa=n_pa))
+  expect_equal(as.numeric(n_pseudoabsences(i8)), n_pa)
+  expect_equal("env_distance_pa", pseudoabsence_method(i8))
+  expect_equal("env_distance_pa", pseudoabsence_method(i8$occurrences))
+  expect_equal(names(i8$occurrences$pseudoabsences), c("data", "method", "n_set", "n_pa"))
+  expect_equal(class(i8$occurrences$pseudoabsences$n_pa), c("table"))
+  expect_equal(class(i8$occurrences$pseudoabsences$n_set), c("numeric"))
+  expect_equal(class(i8$occurrences$pseudoabsences$method), c("character"))
+  expect_equal(class(i8$occurrences$pseudoabsences$data), c("list"))
+  expect_equal(names(i8$occurrences$pseudoabsences$data), species_names(i8))
+  expect_equal(class(i8$occurrences$pseudoabsences$data[[1]]), c("list"))
+  expect_equal(names(i8$occurrences$pseudoabsences$data[[1]]), NULL)
+  expect_equal(length(i8$occurrences$pseudoabsences$data[[1]]), 2)
+  expect_equal(names(i8$occurrences$pseudoabsences$data[[1]][[1]]), c("cell_id", "bio1", "bio12", "geometry"))
+  expect_equal(class(i8$occurrences$pseudoabsences$data[[1]][[1]]), c("sf", "data.frame"))
+
   # erros
   i <- background(i)
   expect_error(train_sdm(i, algo = c("kknn")))

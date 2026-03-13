@@ -3,7 +3,7 @@
 #' This function manage predictors names in \code{sdm_area} objects.
 #'
 #' @usage
-#' predictors(x)
+#' get_predictor_names(x)
 #'
 #' @param x A \code{sdm_area} or \code{input_sdm} object to get/set predictors names.
 #' @param new_names A \code{character} vector from size \code{length(get_predictor_names(x))}
@@ -22,8 +22,7 @@
 #' \code{set_variables_names} will set \code{s1} object variables names as the \code{s2} object
 #' variables names OR assign new names to it.
 #'
-#' @return \code{predictors} and \code{get_predictor_names} return a \code{character} vector with
-#' predictors names.
+#' @return \code{get_predictor_names} returns a \code{character} vector with predictors names.
 #' \code{test_variables_names} returns a logical informing if all variables are equal in both
 #' objects (TRUE) or not (FALSE).
 #' \code{set_variables_names} returns the \code{s1} object with new names provided by \code{s2} or
@@ -52,36 +51,6 @@
 #' @importFrom methods is
 #' @import checkCLI
 #'
-#' @export
-#' @rdname predictor_names
-#' @export
-predictors <- function(x) {
-  assert_cli(
-    check_class_cli(x, c('input_sdm')),
-    check_class_cli(x, c('sdm_area'))
-  )
-  UseMethod("predictors")
-}
-
-#' @rdname predictor_names
-#' @export
-predictors.sdm_area <- function(x){
-  predictors <- x$grid |>
-    names() |>
-    purrr::discard(\(x) x %in% c("geometry", "cell_id"))
-  return(predictors)
-}
-
-#' @rdname predictor_names
-#' @export
-predictors.input_sdm <- function(x){
-  x <- x$predictors
-  predictors <- x$grid |>
-    names() |>
-    purrr::discard(\(x) x %in% c("geometry", "cell_id"))
-  return(predictors)
-}
-
 #' @rdname predictor_names
 #' @export
 set_predictor_names <- function(x, new_names) {
@@ -211,19 +180,10 @@ get_predictor_names <- function(x) {
   if(is_input_sdm(x)){
     x <- x$predictors
   }
-  UseMethod("get_predictor_names")
-}
-
-#' @rdname predictor_names
-#' @export
-get_predictor_names.sdm_area <- function(x) {
-  return(predictors(x))
-}
-
-#' @rdname predictor_names
-#' @export
-get_predictor_names.input_sdm <- function(x) {
-  return(predictors(x$predictors))
+  predictors <- x$grid |>
+    names() |>
+    purrr::discard(\(x) x %in% c("geometry", "cell_id"))
+  return(predictors)
 }
 
 #' @rdname predictor_names

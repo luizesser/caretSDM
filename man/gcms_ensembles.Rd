@@ -64,7 +64,7 @@ if (interactive()) {
 }
 \seealso{
 \code{\link{GBIF_data} \link{occurrences_sdm} \link{sdm_area} \link{input_sdm}
-\link{predictors}}
+\link{get_predictor_names}}
 }
 \author{
 Luíz Fernando Esser (luizesser@gmail.com)

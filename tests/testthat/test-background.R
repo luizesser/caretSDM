@@ -68,4 +68,6 @@ test_that("background_tests", {
     pseudoabsences()
   expect_error(train_sdm(i, algo = c("maxent")))
 
+
+
 })
