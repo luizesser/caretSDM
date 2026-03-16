@@ -17,6 +17,7 @@ test_that("full structure check", {
   # multispecies multiscenario
   i_mm <- input_sdm(oc_m, sa_m) |>
     pseudoabsences(method="random", n_set = 2) |>
+    background(method="random", n_set = 2) |>
     train_sdm(algo = c("naive_bayes"),
               ctrl=caret::trainControl(method = "boot",
                                        number = 1,
@@ -31,6 +32,7 @@ test_that("full structure check", {
   # multispecies single scenario
   i_ms <- input_sdm(oc_m, sa_s) |>
     pseudoabsences(method="random", n_set = 2) |>
+    background(method="random", n_set = 2) |>
     train_sdm(algo = c("naive_bayes"),
               ctrl=caret::trainControl(method = "boot",
                                        number = 1,
@@ -44,6 +46,7 @@ test_that("full structure check", {
   # single species multiscenario
   i_sm <- input_sdm(oc_s, sa_m) |>
     pseudoabsences(method="random", n_set = 2) |>
+    background(method="random", n_set = 2) |>
     train_sdm(algo = c("naive_bayes"),
               ctrl=caret::trainControl(method = "boot",
                                        number = 1,
@@ -58,6 +61,7 @@ test_that("full structure check", {
   # single species single scenario
   i_ss <- input_sdm(oc_s, sa_s) |>
     pseudoabsences(method="random", n_set = 2) |>
+    background(method="random", n_set = 2) |>
     train_sdm(algo = c("naive_bayes"),
               ctrl=caret::trainControl(method = "boot",
                                        number = 1,
@@ -76,10 +80,10 @@ test_that("full structure check", {
   expect_equal(names(i_mm), c("occurrences", "predictors", "scenarios", "models", "predictions"))
 
   # occurrence
-  expect_equal(names(i_ss$occurrences), c("occurrences", "spp_names", "n_presences", "crs", "pseudoabsences"))
-  expect_equal(names(i_sm$occurrences), c("occurrences", "spp_names", "n_presences", "crs", "pseudoabsences"))
-  expect_equal(names(i_ms$occurrences), c("occurrences", "spp_names", "n_presences", "crs", "pseudoabsences"))
-  expect_equal(names(i_mm$occurrences), c("occurrences", "spp_names", "n_presences", "crs", "pseudoabsences"))
+  expect_equal(names(i_ss$occurrences), c("occurrences", "spp_names", "n_presences", "crs", "pseudoabsences", "background"))
+  expect_equal(names(i_sm$occurrences), c("occurrences", "spp_names", "n_presences", "crs", "pseudoabsences", "background"))
+  expect_equal(names(i_ms$occurrences), c("occurrences", "spp_names", "n_presences", "crs", "pseudoabsences", "background"))
+  expect_equal(names(i_mm$occurrences), c("occurrences", "spp_names", "n_presences", "crs", "pseudoabsences", "background"))
 
   expect_equal(class(i_ss$occurrences), c("occurrences"))
   expect_equal(class(i_sm$occurrences), c("occurrences"))
@@ -180,6 +184,62 @@ test_that("full structure check", {
   expect_equal(class(i_sm$occurrences$pseudoabsences$data[[1]][[1]]), c("sf", "data.frame"))
   expect_equal(class(i_ms$occurrences$pseudoabsences$data[[1]][[1]]), c("sf", "data.frame"))
   expect_equal(class(i_mm$occurrences$pseudoabsences$data[[1]][[1]]), c("sf", "data.frame"))
+
+  expect_equal(names(i_ss$occurrences$background), c("data", "method", "n_set", "n_bg", "proportion"))
+  expect_equal(names(i_sm$occurrences$background), c("data", "method", "n_set", "n_bg", "proportion"))
+  expect_equal(names(i_ms$occurrences$background), c("data", "method", "n_set", "n_bg", "proportion"))
+  expect_equal(names(i_mm$occurrences$background), c("data", "method", "n_set", "n_bg", "proportion"))
+
+  expect_equal(class(i_ss$occurrences$background$n_bg), c("table"))
+  expect_equal(class(i_sm$occurrences$background$n_bg), c("table"))
+  expect_equal(class(i_ms$occurrences$background$n_bg), c("table"))
+  expect_equal(class(i_mm$occurrences$background$n_bg), c("table"))
+
+  expect_equal(class(i_ss$occurrences$background$n_set), c("numeric"))
+  expect_equal(class(i_sm$occurrences$background$n_set), c("numeric"))
+  expect_equal(class(i_ms$occurrences$background$n_set), c("numeric"))
+  expect_equal(class(i_mm$occurrences$background$n_set), c("numeric"))
+
+  expect_equal(class(i_ss$occurrences$background$method), c("character"))
+  expect_equal(class(i_sm$occurrences$background$method), c("character"))
+  expect_equal(class(i_ms$occurrences$background$method), c("character"))
+  expect_equal(class(i_mm$occurrences$background$method), c("character"))
+
+  expect_equal(class(i_ss$occurrences$background$data), c("list"))
+  expect_equal(class(i_sm$occurrences$background$data), c("list"))
+  expect_equal(class(i_ms$occurrences$background$data), c("list"))
+  expect_equal(class(i_mm$occurrences$background$data), c("list"))
+
+  expect_equal(names(i_ss$occurrences$background$data), species_names(i_ss))
+  expect_equal(names(i_sm$occurrences$background$data), species_names(i_sm))
+  expect_equal(names(i_ms$occurrences$background$data), species_names(i_ms))
+  expect_equal(names(i_mm$occurrences$background$data), species_names(i_mm))
+
+  expect_equal(class(i_ss$occurrences$background$data[[1]]), c("list"))
+  expect_equal(class(i_sm$occurrences$background$data[[1]]), c("list"))
+  expect_equal(class(i_ms$occurrences$background$data[[1]]), c("list"))
+  expect_equal(class(i_mm$occurrences$background$data[[1]]), c("list"))
+
+  expect_equal(names(i_ss$occurrences$background$data[[1]]), NULL)
+  expect_equal(names(i_sm$occurrences$background$data[[1]]), NULL)
+  expect_equal(names(i_ms$occurrences$background$data[[1]]), NULL)
+  expect_equal(names(i_mm$occurrences$background$data[[1]]), NULL)
+
+  expect_equal(length(i_ss$occurrences$background$data[[1]]), 2)
+  expect_equal(length(i_sm$occurrences$background$data[[1]]), 2)
+  expect_equal(length(i_ms$occurrences$background$data[[1]]), 2)
+  expect_equal(length(i_mm$occurrences$background$data[[1]]), 2)
+
+  expect_equal(names(i_ss$occurrences$background$data[[1]][[1]]), c("cell_id", "bio1", "bio12", "geometry"))
+  expect_equal(names(i_sm$occurrences$background$data[[1]][[1]]), c("cell_id", "bio1", "bio12", "geometry"))
+  expect_equal(names(i_ms$occurrences$background$data[[1]][[1]]), c("cell_id", "bio1", "bio12", "geometry"))
+  expect_equal(names(i_mm$occurrences$background$data[[1]][[1]]), c("cell_id", "bio1", "bio12", "geometry"))
+
+  expect_equal(class(i_ss$occurrences$background$data[[1]][[1]]), c("sf", "data.frame"))
+  expect_equal(class(i_sm$occurrences$background$data[[1]][[1]]), c("sf", "data.frame"))
+  expect_equal(class(i_ms$occurrences$background$data[[1]][[1]]), c("sf", "data.frame"))
+  expect_equal(class(i_mm$occurrences$background$data[[1]][[1]]), c("sf", "data.frame"))
+
 
   # predictors
   expect_equal(names(i_ss$predictors), c("grid", "cell_size", "parameters"))

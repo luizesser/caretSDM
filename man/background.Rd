@@ -3,16 +3,20 @@
 \name{background}
 \alias{background}
 \alias{n_background}
+\alias{background_method}
 \alias{background_data}
 \title{Obtain Background data}
 \usage{
 background(occ,
            pred = NULL,
-           n = 10000,
+           method = "random",
            n_set = 1,
+           n_bg = 10000,
            proportion = NULL)
 
 n_background(i)
+
+background_method(i)
 
 background_data(i)
 }
@@ -22,12 +26,15 @@ background_data(i)
 \item{pred}{A \code{sdm_area} object. If \code{NULL} and \code{occ} is a \code{input_sdm},
 \code{pred} will be retrieved from \code{occ}.}
 
-\item{n}{\code{numeric}. Number of background records to be generated in each dataset created.
+\item{method}{Method to obtain the background data. One of: "random" or a custom function (see
+details).}
+
+\item{n_set}{\code{numeric}. Number of datasets of background data to create.}
+
+\item{n_bg}{\code{numeric}. Number of background records to be generated in each dataset created.
 If \code{NULL} then the function prevents imbalance by using the same number of presence records
 (\code{n_records(occ)}). If you want to address different sizes to each species, you must provide
 a named vector (as in \code{n_records(occ)}).}
-
-\item{n_set}{\code{numeric}. Number of datasets of background data to create.}
 
 \item{proportion}{\code{numeric}. A number between 0 and 1 representing a proportion of the area
 to be mapped as background. E.g.: if the whole area has 5,000 cells and proportion is 0.1, then
@@ -45,6 +52,10 @@ This function obtains background data given a set of predictors.
 \code{background} is used in the SDM workflow to obtain background data, a step necessary for
 MaxEnt algorithm to run. This function helps avoid the use of pseudoabsence data in background
 algorithms and the use of background data in pseudoabsence algorithms, a very common mistake.
+If user provides a custom function, it must have the arguments \code{env_sf} and \code{occ_sf},
+which will consist of two \code{"sf"}s. The first has the predictor values for the whole study
+area, while the second has the presence records for the species. The function must return a
+vector with cell_ids of the pseudoabsences.
 
 \code{n_background} returns the number of background records obtained per species.
 
@@ -62,17 +73,18 @@ sa <- add_predictors(sa, bioc) |> select_predictors(c("bio1", "bio4", "bio12"))
 sa <- add_scenarios(sa)
 
 # Create occurrences:
-oc <- occurrences_sdm(occ, crs = 6933) |> join_area(sa)
+oc <- occurrences_sdm(occ, crs = 6933)
 
 # Create input_sdm:
 i <- input_sdm(oc, sa)
 
-# Pseudoabsence generation:
+# Background generation:
 i <- background(i, proportion = 1) # All available data is obtained as background data.
 
 }
 \seealso{
-\code{link{input_sdm} \link{pseudoabsences} \link{occurrences_sdm}}
+\code{link{input_sdm} \link{pseudoabsences} \link{occurrences_sdm}
+\link{get_occurrences} \link{get_predictors} }
 }
 \author{
 Luíz Fernando Esser (luizesser@gmail.com)

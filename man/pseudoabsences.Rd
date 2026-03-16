@@ -30,7 +30,7 @@ pseudoabsence_data(i)
 \code{pred} will be retrieved from \code{occ}.}
 
 \item{method}{Method to create pseudoabsences. One of: "random", "bioclim", "mahal.dist" or
-"buffer_sdm".}
+"buffer_sdm". User can also provide a custom function (see details).}
 
 \item{n_set}{\code{numeric}. Number of datasets of pseudoabsence to create.}
 
@@ -62,10 +62,14 @@ This function obtains pseudoabsences given a set of predictors.
 most of the algorithms to run. We implemented three methods so far: \code{"random"}, which is
 self-explanatory, \code{"bioclim"}, \code{"mahal.dist"} and \code{"buffer_sdm"}. The two last are
 built with the idea that pseudoabsences should be environmentally different from presences. Thus,
-we implemented two presence-only methods to infer the distribution of the species. \code{"bioclim"} uses an
-envelope approach (bioclimatic envelope), while \code{"mahal.dist"} uses a distance approach
-(mahalanobis distance). \code{th} parameter enters here as a threshold to binarize those results.
-Pseudoabsences are retrieved outside the projected distribution of the species.
+we implemented two presence-only methods to infer the distribution of the species. \code{"bioclim"}
+uses an envelope approach (bioclimatic envelope), while \code{"mahal.dist"} uses a distance
+approach (mahalanobis distance). \code{th} parameter enters here as a threshold to binarize those
+results. Pseudoabsences are retrieved outside the projected distribution of the species. If user
+provides a custom function, it must have the arguments \code{env_sf} and \code{occ_sf}, which will
+consist of two \code{"sf"}s. The first has the predictor values for the whole study area, while
+the second has the presence records for the species. The function must return a vector with
+cell_ids of the pseudoabsences.
 
 \code{n_pseudoabsences} returns the number of pseudoabsences obtained per species.
 
@@ -85,7 +89,7 @@ sa <- add_predictors(sa, bioc) |> select_predictors(c("bio1", "bio4", "bio12"))
 sa <- add_scenarios(sa)
 
 # Create occurrences:
-oc <- occurrences_sdm(occ, crs = 6933) |> join_area(sa)
+oc <- occurrences_sdm(occ[1:50,], crs = 6933)
 
 # Create input_sdm:
 i <- input_sdm(oc, sa)
@@ -93,9 +97,32 @@ i <- input_sdm(oc, sa)
 # Pseudoabsence generation:
 i <- pseudoabsences(i, method="random")
 
+# Custom method example:
+env_distance_pa <- function(env_sf, occ_sf, n_pa=n_pa) {
+
+  # Transform the environmental data to a data frame and remove the cell_id and geometry columns
+  df <- as.data.frame(env_sf)[, -which(names(env_sf) \%in\% c("cell_id", "geometry"))]
+
+  # Define the center of the environmental space based on the mean of the predictors
+  center <- colMeans(df)
+
+  # Calculate the distance of each cell in the environmental space to the center
+  d <- sqrt(rowSums((df - center)^2))
+
+  # Convert distances to probabilities (the closer to the center, the higher the probability)
+  p <- d / sum(d)
+
+  # Sample pseudo-absences based on the calculated probabilities
+  sample(env_sf$cell_id, size = n_pa, prob = p)
+
+}
+
+i <- pseudoabsences(i, method=env_distance_pa)
+
 }
 \seealso{
-\code{link{input_sdm} \link{background} \link{occurrences_sdm}}
+\code{link{input_sdm} \link{background} \link{occurrences_sdm} \link{get_occurrences}
+\link{get_predictors} }
 }
 \author{
 Luíz Fernando Esser (luizesser@gmail.com)

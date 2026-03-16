@@ -134,8 +134,9 @@ print.input_sdm <- function(x, ...) {
     if (!is.null(x$occurrences$background)) {
       cat(
         "Background methods            :\n",
+        "   Method to obtain BGs.     :", x$occurrences$background$method, "\n",
         "   Number of Background sets :", x$occurrences$background$n_set, "\n",
-        "   Number of Bg in each set  :", as.numeric(x$occurrences$background$n), "\n",
+        "   Number of Bg in each set  :", as.numeric(x$occurrences$background$n_bg), "\n",
         "   Background proportion     :", as.numeric(x$occurrences$background$proportion), "\n"
       )
     }

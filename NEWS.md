@@ -64,3 +64,7 @@
 # caretSDM 1.6
 
 -   Inclusion of pseudoabsence selection through a custom function.
+
+# caretSDM 1.6.1
+
+-   Inclusion of background selection through a custom function.

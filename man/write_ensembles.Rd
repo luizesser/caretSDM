@@ -9,6 +9,7 @@
 \alias{write_gpkg.sdm_area}
 \alias{write_occurrences}
 \alias{write_pseudoabsences}
+\alias{write_background}
 \alias{write_grid}
 \alias{write_validation_metrics}
 \title{Write caretSDM data}
@@ -28,6 +29,8 @@ write_gpkg(x, file_path, file_name)
 write_occurrences(x, path = NULL, grid = FALSE, ...)
 
 write_pseudoabsences(x, path = NULL, ext = ".csv", centroid = FALSE)
+
+write_background(x, path = NULL, ext = ".csv", centroid = FALSE)
 
 write_grid(x, path = NULL, centroid = FALSE)
 

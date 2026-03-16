@@ -16,7 +16,7 @@ test_that("background_tests", {
     background()
 
   ## background_tests - n_background
-  expect_equal(n_background(i), nrow(i$occurrences$background$data[[1]][[1]]))
+  expect_equal(as.numeric(n_background(i)), nrow(i$occurrences$background$data[[1]][[1]]))
 
   ## background_tests - background_data
   expect_equal(background_data(i), i$occurrences$background$data)
@@ -24,6 +24,16 @@ test_that("background_tests", {
 
   expect_equal(as.numeric(i$occurrences$background$proportion), 1)
   expect_equal(as.numeric(i$occurrences$background$n_set), 1)
+
+  env_distance_bg <- function(env_sf, occ_sf, n_pa=n_pa) {
+    df <- as.data.frame(env_sf)[, -which(names(env_sf) %in% c("cell_id", "geometry"))]
+    center <- colMeans(df)
+    d <- sqrt(rowSums((df - center)^2))
+    p <- d / sum(d)
+    sample(env_sf$cell_id, size = n_pa, prob = p)
+  }
+  expect_no_error(i2 <- input_sdm(oc, sa) |> background(method = env_distance_bg))
+  expect_equal(background_method(i2), "env_distance_bg")
 
   ## modeling
   i1 <- i |>
@@ -43,7 +53,7 @@ test_that("background_tests", {
     background()
 
   ## background_tests - n_background
-  expect_equal(n_background(i), rep(nrow(i$occurrences$background$data[[1]][[1]]),
+  expect_equal(as.numeric(n_background(i)), rep(nrow(i$occurrences$background$data[[1]][[1]]),
                                     length(species_names(i))))
 
   ## background_tests - background_data

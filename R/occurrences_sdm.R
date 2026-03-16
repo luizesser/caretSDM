@@ -33,6 +33,8 @@
 #' \code{n_records} return the number of presence records to each species.
 #' \code{species_names} return the species names.
 #' \code{get_coords} return a \code{data.frame} with coordinates of species records.
+#' \code{get_occurrences} return a \code{sf} with coordinates of species records, species names and
+#' \code{cell_id}s.
 #' \code{add_occurrences} return a \code{occurrences}. This function sums two \code{occurrences} objects.
 #' It can also sum a \code{occurrences} object with a \code{data.frame} object.
 #' \code{occurrences_as_df} returns a \code{data.frame} with species names and coordinates.
@@ -130,6 +132,19 @@ get_coords <- function(i) {
     sf::st_coordinates() |>
     as.data.frame() |>
     dplyr::select(X, Y)
+  return(res)
+}
+
+#' @rdname occurrences_sdm
+#' @export
+get_occurrences <- function(i) {
+  x=i
+  if (is_input_sdm(x)) {
+    y <- x$occurrences
+  } else {
+    y <- x
+  }
+  res <- y$occurrences
   return(res)
 }
 

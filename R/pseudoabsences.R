@@ -55,7 +55,8 @@
 #' \code{pseudoabsence_data} returns a \code{list} of species names. Each species name will have a
 #' \code{list}s with pseudoabsences data from class \code{sf}.
 #'
-#' @seealso \code{link{input_sdm} \link{background} \link{occurrences_sdm}}
+#' @seealso \code{link{input_sdm} \link{background} \link{occurrences_sdm} \link{get_occurrences}
+#' \link{get_predictors} }
 #'
 #' @author Luíz Fernando Esser (luizesser@gmail.com)
 #' https://luizfesser.wordpress.com

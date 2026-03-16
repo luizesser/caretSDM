@@ -5,6 +5,7 @@
 \alias{n_records}
 \alias{species_names}
 \alias{get_coords}
+\alias{get_occurrences}
 \alias{occurrences_as_df}
 \alias{add_occurrences}
 \title{Occurrences Managing}
@@ -21,6 +22,8 @@ n_records(i)
 species_names(i)
 
 get_coords(i)
+
+get_occurrences(i)
 
 occurrences_as_df(i)
 
@@ -62,6 +65,8 @@ it is only necessary a species column.
 \code{n_records} return the number of presence records to each species.
 \code{species_names} return the species names.
 \code{get_coords} return a \code{data.frame} with coordinates of species records.
+\code{get_occurrences} return a \code{sf} with coordinates of species records, species names and
+\code{cell_id}s.
 \code{add_occurrences} return a \code{occurrences}. This function sums two \code{occurrences} objects.
 It can also sum a \code{occurrences} object with a \code{data.frame} object.
 \code{occurrences_as_df} returns a \code{data.frame} with species names and coordinates.
