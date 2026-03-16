@@ -28,6 +28,7 @@
 
 - [`background()`](https://luizesser.github.io/caretSDM/reference/background.md)
   [`n_background()`](https://luizesser.github.io/caretSDM/reference/background.md)
+  [`background_method()`](https://luizesser.github.io/caretSDM/reference/background.md)
   [`background_data()`](https://luizesser.github.io/caretSDM/reference/background.md)
   : Obtain Background data
 
@@ -71,6 +72,7 @@
   [`n_records()`](https://luizesser.github.io/caretSDM/reference/occurrences_sdm.md)
   [`species_names()`](https://luizesser.github.io/caretSDM/reference/occurrences_sdm.md)
   [`get_coords()`](https://luizesser.github.io/caretSDM/reference/occurrences_sdm.md)
+  [`get_occurrences()`](https://luizesser.github.io/caretSDM/reference/occurrences_sdm.md)
   [`occurrences_as_df()`](https://luizesser.github.io/caretSDM/reference/occurrences_sdm.md)
   [`add_occurrences()`](https://luizesser.github.io/caretSDM/reference/occurrences_sdm.md)
   : Occurrences Managing
@@ -213,6 +215,7 @@
   [`write_gpkg()`](https://luizesser.github.io/caretSDM/reference/write_ensembles.md)
   [`write_occurrences()`](https://luizesser.github.io/caretSDM/reference/write_ensembles.md)
   [`write_pseudoabsences()`](https://luizesser.github.io/caretSDM/reference/write_ensembles.md)
+  [`write_background()`](https://luizesser.github.io/caretSDM/reference/write_ensembles.md)
   [`write_grid()`](https://luizesser.github.io/caretSDM/reference/write_ensembles.md)
   [`write_validation_metrics()`](https://luizesser.github.io/caretSDM/reference/write_ensembles.md)
   : Write caretSDM data

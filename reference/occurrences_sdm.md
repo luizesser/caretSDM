@@ -18,6 +18,8 @@ species_names(i)
 
 get_coords(i)
 
+get_occurrences(i)
+
 occurrences_as_df(i)
 
 add_occurrences(oc1, oc2)
@@ -77,11 +79,12 @@ A `occurrences` object.
 decimalLatitude. When `sf` it is only necessary a species column.
 `n_records` return the number of presence records to each species.
 `species_names` return the species names. `get_coords` return a
-`data.frame` with coordinates of species records. `add_occurrences`
-return a `occurrences`. This function sums two `occurrences` objects. It
-can also sum a `occurrences` object with a `data.frame` object.
-`occurrences_as_df` returns a `data.frame` with species names and
-coordinates.
+`data.frame` with coordinates of species records. `get_occurrences`
+return a `sf` with coordinates of species records, species names and
+`cell_id`s. `add_occurrences` return a `occurrences`. This function sums
+two `occurrences` objects. It can also sum a `occurrences` object with a
+`data.frame` object. `occurrences_as_df` returns a `data.frame` with
+species names and coordinates.
 
 ## See also
 

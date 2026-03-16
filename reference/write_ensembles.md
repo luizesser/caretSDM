@@ -22,6 +22,8 @@ write_occurrences(x, path = NULL, grid = FALSE, ...)
 
 write_pseudoabsences(x, path = NULL, ext = ".csv", centroid = FALSE)
 
+write_background(x, path = NULL, ext = ".csv", centroid = FALSE)
+
 write_grid(x, path = NULL, centroid = FALSE)
 
 write_validation_metrics(x, path = NULL)

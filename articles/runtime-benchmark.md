@@ -559,9 +559,9 @@ bench_res_prep
 #> # A tibble: 3 × 6
 #>   expression      min   median `itr/sec` mem_alloc `gc/sec`
 #>   <bch:expr> <bch:tm> <bch:tm>     <dbl> <bch:byt>    <dbl>
-#> 1 biomod2    163.39ms 171.93ms     5.59     7.75MB    1.12 
-#> 2 sdm        133.87ms 139.39ms     4.23     6.02MB    0.846
-#> 3 caretSDM      1.61s    1.63s     0.572    7.31MB    1.49
+#> 1 biomod2     165.9ms 169.01ms     5.61     7.75MB    1.12 
+#> 2 sdm         129.8ms  131.3ms     4.22     6.02MB    0.843
+#> 3 caretSDM       1.6s    1.62s     0.582    7.31MB    1.51
 ```
 
 ``` r
@@ -569,9 +569,9 @@ bench_res_fit
 #> # A tibble: 3 × 6
 #>   expression      min   median `itr/sec` mem_alloc `gc/sec`
 #>   <bch:expr> <bch:tm> <bch:tm>     <dbl> <bch:byt>    <dbl>
-#> 1 biomod2        7.9s    7.98s    0.122        1GB    0.367
-#> 2 sdm           16.6s    16.7s    0.0598    2.21GB    0.299
-#> 3 caretSDM      22.5s   25.83s    0.0389    1.21GB    0.894
+#> 1 biomod2       7.83s    7.85s    0.127  1016.14MB    0.433
+#> 2 sdm          16.47s   16.51s    0.0602    2.18GB    0.301
+#> 3 caretSDM     23.58s   25.58s    0.0371    1.22GB    0.862
 ```
 
 ``` r
@@ -579,9 +579,9 @@ bench_res_post
 #> # A tibble: 3 × 6
 #>   expression      min   median `itr/sec` mem_alloc `gc/sec`
 #>   <bch:expr> <bch:tm> <bch:tm>     <dbl> <bch:byt>    <dbl>
-#> 1 biomod2       10.9s    11.4s    0.0877  963.48MB    0.403
-#> 2 sdm           24.1s    24.4s    0.0406  577.31MB    0    
-#> 3 caretSDM      57.5s    57.9s    0.0173    4.28GB    0.435
+#> 1 biomod2       10.4s    10.8s    0.0923  953.78MB  0.369  
+#> 2 sdm           25.5s    25.7s    0.0387     581MB  0.00773
+#> 3 caretSDM        57s    59.4s    0.0170    4.28GB  0.392
 ```
 
 ``` r
@@ -589,9 +589,9 @@ bench_res_complete
 #> # A tibble: 3 × 6
 #>   expression      min   median `itr/sec` mem_alloc `gc/sec`
 #>   <bch:expr> <bch:tm> <bch:tm>     <dbl> <bch:byt>    <dbl>
-#> 1 biomod2      17.95s   18.23s    0.0525    1.91GB   0.346 
-#> 2 sdm          53.61s   54.49s    0.0183    3.07GB   0.0367
-#> 3 caretSDM      1.36m    1.45m    0.0115    6.27GB   0.721
+#> 1 biomod2      17.97s   18.06s    0.0521    1.91GB   0.261 
+#> 2 sdm           1.01m    1.03m    0.0163    2.84GB   0.0228
+#> 3 caretSDM      1.38m    1.48m    0.0112    5.51GB   0.559
 ```
 
 The table above summarizes the median runtime, iteration rate, and
@@ -759,7 +759,7 @@ sessionInfo()
 #>  [1] caret_7.0-1          lattice_0.22-9       ggplot2_4.0.2       
 #>  [4] kernlab_0.9-33       glmnet_4.1-10        Matrix_1.7-4        
 #>  [7] dismo_1.3-16         raster_3.6-32        sp_2.2-1            
-#> [10] RSNNS_0.4-18         Rcpp_1.1.1           caretSDM_1.6        
+#> [10] RSNNS_0.4-18         Rcpp_1.1.1           caretSDM_1.6.1      
 #> [13] sdm_1.2-59           xgboost_3.2.0.1      randomForest_4.7-1.2
 #> [16] maxnet_0.1.4         earth_5.3.5          plotmo_3.7.0        
 #> [19] plotrix_3.8-14       Formula_1.2-5        gbm_2.2.3           
@@ -773,7 +773,7 @@ sessionInfo()
 #>   [1] blockCV_3.2-0           rnaturalearth_1.2.0     tibble_3.3.1           
 #>   [4] R.oo_1.27.1             hardhat_1.4.2           pROC_1.19.0.1          
 #>   [7] lifecycle_1.0.5         httr2_1.2.2             ecospat_4.1.3          
-#>  [10] usdm_2.1-7              globals_0.19.0          processx_3.8.6         
+#>  [10] usdm_2.1-7              globals_0.19.1          processx_3.8.6         
 #>  [13] MASS_7.3-65             crosstalk_1.2.2         backports_1.5.0        
 #>  [16] magrittr_2.0.4          sass_0.4.10             rmarkdown_2.30         
 #>  [19] jquerylib_0.1.4         yaml_2.3.12             otel_0.2.0             
@@ -799,7 +799,7 @@ sessionInfo()
 #>  [79] httr_1.4.8              htmlwidgets_1.6.4       whisker_0.4.1          
 #>  [82] ModelMetrics_1.2.2.2    pkgconfig_2.0.3         gtable_0.3.6           
 #>  [85] timeDate_4052.112       S7_0.2.1                furrr_0.3.1            
-#>  [88] htmltools_0.5.9         scales_1.4.0            png_0.1-8              
+#>  [88] htmltools_0.5.9         scales_1.4.0            png_0.1-9              
 #>  [91] gower_1.0.2             knitr_1.51              geosphere_1.6-5        
 #>  [94] reshape2_1.4.5          rgbif_3.8.4             checkmate_2.3.4        
 #>  [97] proxy_0.4-29            cachem_1.1.0            stringr_1.6.0          
@@ -811,6 +811,6 @@ sessionInfo()
 #> [115] future.apply_1.20.2     classInt_0.4-11         ps_1.9.1               
 #> [118] plyr_1.8.9              fs_1.6.7                stringi_1.8.7          
 #> [121] stars_0.7-1             lazyeval_0.2.2          leaflet_2.2.3          
-#> [124] bit64_4.6.0-1           leafem_0.2.5            future_1.69.0          
+#> [124] bit64_4.6.0-1           leafem_0.2.5            future_1.70.0          
 #> [127] bslib_0.10.0            lwgeom_0.2-15           bit_4.6.0
 ```

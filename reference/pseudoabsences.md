@@ -36,7 +36,8 @@ pseudoabsence_data(i)
 - method:
 
   Method to create pseudoabsences. One of: "random", "bioclim",
-  "mahal.dist" or "buffer_sdm".
+  "mahal.dist" or "buffer_sdm". User can also provide a custom function
+  (see details).
 
 - n_set:
 
@@ -89,7 +90,11 @@ of the species. `"bioclim"` uses an envelope approach (bioclimatic
 envelope), while `"mahal.dist"` uses a distance approach (mahalanobis
 distance). `th` parameter enters here as a threshold to binarize those
 results. Pseudoabsences are retrieved outside the projected distribution
-of the species.
+of the species. If user provides a custom function, it must have the
+arguments `env_sf` and `occ_sf`, which will consist of two `"sf"`s. The
+first has the predictor values for the whole study area, while the
+second has the presence records for the species. The function must
+return a vector with cell_ids of the pseudoabsences.
 
 `n_pseudoabsences` returns the number of pseudoabsences obtained per
 species.
@@ -101,7 +106,7 @@ name will have a `list`s with pseudoabsences data from class `sf`.
 
 ## See also
 
-`link{input_sdm} `[`background`](https://luizesser.github.io/caretSDM/reference/background.md)` `[`occurrences_sdm`](https://luizesser.github.io/caretSDM/reference/occurrences_sdm.md)
+`link{input_sdm} `[`background`](https://luizesser.github.io/caretSDM/reference/background.md)` `[`occurrences_sdm`](https://luizesser.github.io/caretSDM/reference/occurrences_sdm.md)` `[`get_occurrences`](https://luizesser.github.io/caretSDM/reference/occurrences_sdm.md)` `[`get_predictors`](https://luizesser.github.io/caretSDM/reference/add_predictors.md)` `
 
 ## Author
 
@@ -125,14 +130,34 @@ sa <- add_predictors(sa, bioc) |> select_predictors(c("bio1", "bio4", "bio12"))
 sa <- add_scenarios(sa)
 
 # Create occurrences:
-oc <- occurrences_sdm(occ, crs = 6933) |> join_area(sa)
-#> Warning: Some records from `occ` do not fall in `pred`.
-#> ℹ 2 elements from `occ` were excluded.
-#> ℹ If this seems too much, check how `occ` and `pred` intersect.
+oc <- occurrences_sdm(occ[1:50,], crs = 6933)
 
 # Create input_sdm:
 i <- input_sdm(oc, sa)
 
 # Pseudoabsence generation:
 i <- pseudoabsences(i, method="random")
+
+# Custom method example:
+env_distance_pa <- function(env_sf, occ_sf, n_pa=n_pa) {
+
+  # Transform the environmental data to a data frame and remove the cell_id and geometry columns
+  df <- as.data.frame(env_sf)[, -which(names(env_sf) %in% c("cell_id", "geometry"))]
+
+  # Define the center of the environmental space based on the mean of the predictors
+  center <- colMeans(df)
+
+  # Calculate the distance of each cell in the environmental space to the center
+  d <- sqrt(rowSums((df - center)^2))
+
+  # Convert distances to probabilities (the closer to the center, the higher the probability)
+  p <- d / sum(d)
+
+  # Sample pseudo-absences based on the calculated probabilities
+  sample(env_sf$cell_id, size = n_pa, prob = p)
+
+}
+
+i <- pseudoabsences(i, method=env_distance_pa)
+#> → Previous pseudoabsence element on Occurrences object will be overwritten.
 ```

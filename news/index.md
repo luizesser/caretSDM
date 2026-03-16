@@ -90,3 +90,7 @@ CRAN release: 2026-03-10
 ## caretSDM 1.6
 
 - Inclusion of pseudoabsence selection through a custom function.
+
+## caretSDM 1.6.1
+
+- Inclusion of background selection through a custom function.

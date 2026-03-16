@@ -7,11 +7,14 @@ This function obtains background data given a set of predictors.
 ``` r
 background(occ,
            pred = NULL,
-           n = 10000,
+           method = "random",
            n_set = 1,
+           n_bg = 10000,
            proportion = NULL)
 
 n_background(i)
+
+background_method(i)
 
 background_data(i)
 ```
@@ -27,17 +30,22 @@ background_data(i)
   A `sdm_area` object. If `NULL` and `occ` is a `input_sdm`, `pred` will
   be retrieved from `occ`.
 
-- n:
+- method:
+
+  Method to obtain the background data. One of: "random" or a custom
+  function (see details).
+
+- n_set:
+
+  `numeric`. Number of datasets of background data to create.
+
+- n_bg:
 
   `numeric`. Number of background records to be generated in each
   dataset created. If `NULL` then the function prevents imbalance by
   using the same number of presence records (`n_records(occ)`). If you
   want to address different sizes to each species, you must provide a
   named vector (as in `n_records(occ)`).
-
-- n_set:
-
-  `numeric`. Number of datasets of background data to create.
 
 - proportion:
 
@@ -59,7 +67,12 @@ A `occurrences_sdm` or `input_sdm` object with background data.
 `background` is used in the SDM workflow to obtain background data, a
 step necessary for MaxEnt algorithm to run. This function helps avoid
 the use of pseudoabsence data in background algorithms and the use of
-background data in pseudoabsence algorithms, a very common mistake.
+background data in pseudoabsence algorithms, a very common mistake. If
+user provides a custom function, it must have the arguments `env_sf` and
+`occ_sf`, which will consist of two `"sf"`s. The first has the predictor
+values for the whole study area, while the second has the presence
+records for the species. The function must return a vector with cell_ids
+of the pseudoabsences.
 
 `n_background` returns the number of background records obtained per
 species.
@@ -69,7 +82,7 @@ will have a `list`s with background data from class `sf`.
 
 ## See also
 
-`link{input_sdm} `[`pseudoabsences`](https://luizesser.github.io/caretSDM/reference/pseudoabsences.md)` `[`occurrences_sdm`](https://luizesser.github.io/caretSDM/reference/occurrences_sdm.md)
+`link{input_sdm} `[`pseudoabsences`](https://luizesser.github.io/caretSDM/reference/pseudoabsences.md)` `[`occurrences_sdm`](https://luizesser.github.io/caretSDM/reference/occurrences_sdm.md)` `[`get_occurrences`](https://luizesser.github.io/caretSDM/reference/occurrences_sdm.md)` `[`get_predictors`](https://luizesser.github.io/caretSDM/reference/add_predictors.md)` `
 
 ## Author
 
@@ -93,15 +106,15 @@ sa <- add_predictors(sa, bioc) |> select_predictors(c("bio1", "bio4", "bio12"))
 sa <- add_scenarios(sa)
 
 # Create occurrences:
-oc <- occurrences_sdm(occ, crs = 6933) |> join_area(sa)
+oc <- occurrences_sdm(occ, crs = 6933)
+
+# Create input_sdm:
+i <- input_sdm(oc, sa)
 #> Warning: Some records from `occ` do not fall in `pred`.
 #> ℹ 2 elements from `occ` were excluded.
 #> ℹ If this seems too much, check how `occ` and `pred` intersect.
 
-# Create input_sdm:
-i <- input_sdm(oc, sa)
-
-# Pseudoabsence generation:
+# Background generation:
 i <- background(i, proportion = 1) # All available data is obtained as background data.
 #> → Proportion is 1 Setting all species to have 373 background records.
 #> → Background number is higher than the total data available.
