@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>Modeling Species Distributions in Continental Water Bodies • caretSDM</title>
+<title>5. Modeling Species Distributions in Continental Water Bodies • caretSDM</title>
 <!-- favicons --><link rel="icon" type="image/png" sizes="96x96" href="../favicon-96x96.png">
 <link rel="icon" type="”image/svg+xml”" href="../favicon.svg">
 <link rel="apple-touch-icon" sizes="180x180" href="../apple-touch-icon.png">
@@ -15,7 +15,7 @@
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
 <script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
-<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Modeling Species Distributions in Continental Water Bodies">
+<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="5. Modeling Species Distributions in Continental Water Bodies">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -25,7 +25,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">caretSDM</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.6.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.7</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -38,13 +38,13 @@
 <li class="active nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
-<li><a class="dropdown-item" href="../articles/Add-Algorithm.html">Adding New Algorithms to caretSDM</a></li>
-    <li><a class="dropdown-item" href="../articles/Araucaria.html">caretSDM Workflow for Species Distribution Modeling</a></li>
-    <li><a class="dropdown-item" href="../articles/Compact.html">Concatenate functions in caretSDM</a></li>
-    <li><a class="dropdown-item" href="../articles/ESM.html">Modeling Rare Species using Ensemble of Small Models</a></li>
-    <li><a class="dropdown-item" href="../articles/InvasiveSpp.html">Projecting Non-native Distribution using SDMs</a></li>
-    <li><a class="dropdown-item" href="../articles/runtime-benchmark.html">Benchmarking SDM Package Performance in R</a></li>
-    <li><a class="dropdown-item" href="../articles/Salminus.html">Modeling Species Distributions in Continental Water Bodies</a></li>
+<li><a class="dropdown-item" href="../articles/Add-Algorithm.html">2. Adding New Algorithms to caretSDM</a></li>
+    <li><a class="dropdown-item" href="../articles/Araucaria.html">3. caretSDM Workflow for Species Distribution Modeling</a></li>
+    <li><a class="dropdown-item" href="../articles/Compact.html">1. Concatenate functions in caretSDM</a></li>
+    <li><a class="dropdown-item" href="../articles/ESM.html">7. Modeling Rare Species using Ensemble of Small Models</a></li>
+    <li><a class="dropdown-item" href="../articles/InvasiveSpp.html">6. Projecting Non-native Distribution using SDMs</a></li>
+    <li><a class="dropdown-item" href="../articles/runtime-benchmark.html">8. Benchmarking SDM Package Performance in R</a></li>
+    <li><a class="dropdown-item" href="../articles/Salminus.html">5. Modeling Species Distributions in Continental Water Bodies</a></li>
   </ul>
 </li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
@@ -66,7 +66,7 @@
 
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
-      <img src="../logo.png" class="logo" alt=""><h1>Modeling Species Distributions in Continental Water Bodies</h1>
+      <img src="../logo.png" class="logo" alt=""><h1>5. Modeling Species Distributions in Continental Water Bodies</h1>
             
       
       <small class="dont-index">Source: <a href="https://github.com/luizesser/caretSDM/blob/main/vignettes/articles/Salminus.Rmd" class="external-link"><code>vignettes/articles/Salminus.Rmd</code></a></small>
@@ -423,15 +423,6 @@ data).</p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_occurrences.html">plot_occurrences</a></span><span class="op">(</span><span class="va">oc</span><span class="op">)</span></span></code></pre></div>
 <p><img src="Salminus_files/figure-html/plot_occurrences-1.png" class="r-plt" alt="" width="700"></p>
-<p>This next step assigns occurrences into a study area, excluding
-records outside the study area or with NAs as predictors. When
-<code>sdm_area</code> is a grid, it will assign records to each cell.
-Here, as a line is being used, it is very unlikely that a record will
-fall exactly above a line. The solution presented here is the use of
-<code><a href="https://r-spatial.github.io/sf/reference/st_nearest_feature.html" class="external-link">sf::st_nearest_feature</a></code> function, which will address each
-species record to its closest river line.</p>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">oc</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/join_area.html">join_area</a></span><span class="op">(</span><span class="va">oc</span>, <span class="va">sa</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="the-input_sdm-class">The <code>input_sdm</code> class<a class="anchor" aria-label="anchor" href="#the-input_sdm-class"></a>
@@ -444,8 +435,10 @@ in the workflow, where every function will orbitate. That class puts
 occurrences, predictors, scenarios, models and predictions together to
 perform analysis that are only possible when two or more of these
 classes are available. First, we create the object by informing the
-occurrences and the sdm_area.</p>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+occurrences and the sdm_area. This step assigns occurrences into a study
+area, excluding records outside the study area or with NAs as
+predictors.</p>
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">i</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/input_sdm.html">input_sdm</a></span><span class="op">(</span><span class="va">oc</span>, <span class="va">sa</span><span class="op">)</span></span>
 <span><span class="va">i</span></span>
 <span><span class="co">#&gt;             caretSDM           </span></span>
@@ -479,7 +472,7 @@ of the Data Cleaning information there is the Duplicated Cell method
 (here actually a duplicated line). This method is only possible when we
 have both the <code>occurrence</code> and <code>predictors</code>
 data.</p>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">i</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/data_clean.html">data_clean</a></span><span class="op">(</span><span class="va">i</span>,</span>
 <span>                capitals <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>                centroids <span class="op">=</span> <span class="cn">TRUE</span>,</span>
@@ -517,14 +510,14 @@ Inflation Factor (VIF), which is performed using
 variables selection through <code>usdm</code> package. The function is a
 wrapper for <code><a href="https://rdrr.io/pkg/usdm/man/vif.html" class="external-link">usdm::vifcor</a></code>, where variables are kept given a
 maximum threshold of colinearity. The standard is 0.5.</p>
-<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">i</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/vif_predictors.html">vif_predictors</a></span><span class="op">(</span><span class="va">i</span>, </span>
 <span>                    th <span class="op">=</span> <span class="fl">0.5</span>, </span>
 <span>                    maxobservations <span class="op">=</span> <span class="fl">5000</span>, </span>
 <span>                    variables_selected <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
 <p>To better visualize VIF results, users can run
 <code>vif_summary</code> functions, which is very self-explanatory.</p>
-<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/vif_predictors.html">vif_summary</a></span><span class="op">(</span><span class="va">i</span><span class="op">)</span></span>
 <span><span class="co">#&gt; 2 variables from the 5 input variables have collinearity problem: </span></span>
 <span><span class="co">#&gt;  </span></span>
@@ -560,7 +553,7 @@ argument <code>variables_selected</code> will inform which variables you
 want to use to build your pseudoabsences/models. This can either be a
 vector of variables names or a previously performed selection
 method.</p>
-<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">i</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/pseudoabsences.html">pseudoabsences</a></span><span class="op">(</span><span class="va">i</span>, </span>
 <span>                    method <span class="op">=</span> <span class="st">"bioclim"</span>, </span>
 <span>                    n_set <span class="op">=</span> <span class="fl">10</span>,</span>
@@ -612,7 +605,7 @@ defined through <code><a href="https://rdrr.io/pkg/caret/man/trainControl.html" 
 <p>Note that, when you are using an algorithm for the first time, caret
 will ask you to install the relevant packages to properly run the
 algorithm.</p>
-<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ctrl_sdm</span> <span class="op">&lt;-</span> <span class="fu">caret</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/caret/man/trainControl.html" class="external-link">trainControl</a></span><span class="op">(</span>method <span class="op">=</span> <span class="st">"repeatedcv"</span>, </span>
 <span>                                number <span class="op">=</span> <span class="fl">4</span>, </span>
 <span>                                repeats <span class="op">=</span> <span class="fl">1</span>, </span>
@@ -675,13 +668,53 @@ threshold. This validation metric is set using <code>metric</code> and
 <code>th</code> arguments. In the following example, metric is set to be
 “ROC” and th is equal 0.9. This means that only models with ROC &gt; 0.9
 will be used in predictions and ensembles.</p>
-<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">i</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/predict_sdm.html">predict_sdm</a></span><span class="op">(</span><span class="va">i</span>,</span>
 <span>                 metric <span class="op">=</span> <span class="st">"ROC"</span>,</span>
 <span>                 th <span class="op">=</span> <span class="fl">0.7</span>,</span>
-<span>                 tp <span class="op">=</span> <span class="st">"prob"</span>,</span>
-<span>                 ensembles <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Ensembling...</span></span>
+<span>                 tp <span class="op">=</span> <span class="st">"prob"</span><span class="op">)</span></span>
+<span><span class="va">i</span></span>
+<span><span class="co">#&gt;             caretSDM           </span></span>
+<span><span class="co">#&gt; ...............................</span></span>
+<span><span class="co">#&gt; Class                         : input_sdm</span></span>
+<span><span class="co">#&gt; --------  Occurrences  --------</span></span>
+<span><span class="co">#&gt; Species Names                 : Salminus brasiliensis </span></span>
+<span><span class="co">#&gt; Number of presences           : 22 </span></span>
+<span><span class="co">#&gt; Pseudoabsence methods         :</span></span>
+<span><span class="co">#&gt;     Method to obtain PAs      : bioclim </span></span>
+<span><span class="co">#&gt;     Number of PA sets         : 10 </span></span>
+<span><span class="co">#&gt;     Number of PAs in each set : 22 </span></span>
+<span><span class="co">#&gt; Data Cleaning                 : NAs, Capitals, Centroids, Geographically Duplicated, Identical Lat/Long, Institutions, Invalid, Non-terrestrial, Duplicated Cell (grid) </span></span>
+<span><span class="co">#&gt; --------  Predictors  ---------</span></span>
+<span><span class="co">#&gt; Number of Predictors          : 5 </span></span>
+<span><span class="co">#&gt; Predictors Names              : LENGTH_KM, DIST_DN_KM, bio1, bio4, bio12 </span></span>
+<span><span class="co">#&gt; Area (VIF)                    : all</span></span>
+<span><span class="co">#&gt; Threshold                     : 0.5</span></span>
+<span><span class="co">#&gt; Selected Variables (VIF)      : LENGTH_KM, DIST_DN_KM, bio1 </span></span>
+<span><span class="co">#&gt; ---------  Scenarios  ---------</span></span>
+<span><span class="co">#&gt; Number of Scenarios           : 5 </span></span>
+<span><span class="co">#&gt; Scenarios Names               : ca_ssp245_2090 ca_ssp585_2090 mi_ssp245_2090 mi_ssp585_2090 current </span></span>
+<span><span class="co">#&gt; -----------  Models  ----------</span></span>
+<span><span class="co">#&gt; Algorithms Names              : naive_bayes kknn </span></span>
+<span><span class="co">#&gt; Variables Names               : LENGTH_KM DIST_DN_KM bio1 </span></span>
+<span><span class="co">#&gt; Model Validation              :</span></span>
+<span><span class="co">#&gt;     Method                    : repeatedcv </span></span>
+<span><span class="co">#&gt;     Number                    : 4 </span></span>
+<span><span class="co">#&gt;     Metrics                   :</span></span>
+<span><span class="co">#&gt; $`Salminus brasiliensis`</span></span>
+<span><span class="co">#&gt;          algo       ROC       TSS Sensitivity Specificity</span></span>
+<span><span class="co">#&gt; 1        kknn 0.7793611 0.4883333       0.755      0.7425</span></span>
+<span><span class="co">#&gt; 2 naive_bayes 0.7883889 0.4408333       0.745      0.7142</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; --------  Predictions  --------</span></span>
+<span><span class="co">#&gt; Thresholds                    :</span></span>
+<span><span class="co">#&gt;     Method                    : threshold </span></span>
+<span><span class="co">#&gt;     Criteria                  : 0.7</span></span></code></pre></div>
+<p>Finally, we can ensemble the predictions using:</p>
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">i</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ensemble_sdm.html">ensemble_sdm</a></span><span class="op">(</span><span class="va">i</span>,</span>
+<span>                  method <span class="op">=</span> <span class="st">"average"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Ensemble function: average</span></span>
 <span><span class="co">#&gt;   current</span></span>
 <span><span class="co">#&gt;   ca_ssp245_2090</span></span>
 <span><span class="co">#&gt;   ca_ssp585_2090</span></span>
@@ -721,19 +754,19 @@ will be used in predictions and ensembles.</p>
 <span><span class="co">#&gt; 2 naive_bayes 0.7883889 0.4408333       0.745      0.7142</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; --------  Predictions  --------</span></span>
-<span><span class="co">#&gt; Ensembles                     :</span></span>
-<span><span class="co">#&gt;     Scenarios                 : current ca_ssp245_2090 ca_ssp585_2090 mi_ssp245_2090 mi_ssp585_2090 </span></span>
-<span><span class="co">#&gt;     Methods                   : mean_occ_prob wmean_AUC committee_avg </span></span>
 <span><span class="co">#&gt; Thresholds                    :</span></span>
 <span><span class="co">#&gt;     Method                    : threshold </span></span>
-<span><span class="co">#&gt;     Criteria                  : 0.7</span></span></code></pre></div>
+<span><span class="co">#&gt;     Criteria                  : 0.7 </span></span>
+<span><span class="co">#&gt; ---------  Ensembles  ---------</span></span>
+<span><span class="co">#&gt; Ensembles                     :</span></span>
+<span><span class="co">#&gt;     Methods                   : average</span></span></code></pre></div>
 <p>In the above print, it is possible to see the “Methods” under the
-“Predictions” section, which informs which ensemble types were made:
-mean occurrence probability (<code>mean_occ_prob</code>; a simple mean
-between GCMs), mean occurrence probability weighted by AUC/ROC
-(<code>wmean_AUC</code>; AUC/ROC values are used as weights), and the
-majority rule, or the committee average (<code>committee_avg</code>; the
-sum of binaries).</p>
+“Ensembles” section, which informs which ensemble types were made: mean
+occurrence probability (<code>average</code>; a simple mean between
+GCMs), mean occurrence probability weighted by AUC/ROC
+(<code>weighted_average</code>; AUC/ROC values are used as weights), and
+the majority rule, or the committee average
+(<code>committee_average</code>; the sum of binaries).</p>
 <p>Besides the AUC/ROC metric, users can get every available metric by
 model using the following code before commit to “ROC”:</p>
 <div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
@@ -1028,13 +1061,9 @@ names generated in this last step and are included in object
 <span><span class="co">#&gt; New names:</span></span>
 <span><span class="co">#&gt; New names:</span></span>
 <span><span class="co">#&gt; <span style="color: #00BBBB;">•</span> `cell_id` -&gt; `cell_id...1`</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">•</span> `mean_occ_prob` -&gt; `mean_occ_prob...2`</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">•</span> `wmean_AUC` -&gt; `wmean_AUC...3`</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">•</span> `committee_avg` -&gt; `committee_avg...4`</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">•</span> `cell_id` -&gt; `cell_id...5`</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">•</span> `mean_occ_prob` -&gt; `mean_occ_prob...6`</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">•</span> `wmean_AUC` -&gt; `wmean_AUC...7`</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">•</span> `committee_avg` -&gt; `committee_avg...8`</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">•</span> `average` -&gt; `average...2`</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">•</span> `cell_id` -&gt; `cell_id...3`</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">•</span> `average` -&gt; `average...4`</span></span>
 <span><span class="va">i</span></span>
 <span><span class="co">#&gt;             caretSDM           </span></span>
 <span><span class="co">#&gt; ...............................</span></span>
@@ -1069,15 +1098,15 @@ names generated in this last step and are included in object
 <span><span class="co">#&gt; 2 naive_bayes 0.7883889 0.4408333       0.745      0.7142</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; --------  Predictions  --------</span></span>
-<span><span class="co">#&gt; Ensembles                     :</span></span>
-<span><span class="co">#&gt;     Scenarios                 : current ca_ssp245_2090 ca_ssp585_2090 mi_ssp245_2090 mi_ssp585_2090 _ssp245_2090 _ssp585_2090 </span></span>
-<span><span class="co">#&gt;     Methods                   : mean_occ_prob wmean_AUC committee_avg </span></span>
 <span><span class="co">#&gt; Thresholds                    :</span></span>
 <span><span class="co">#&gt;     Method                    : threshold </span></span>
-<span><span class="co">#&gt;     Criteria                  : 0.7</span></span></code></pre></div>
-<p>Note that now the section “Predictions” has two scenarios called
-_ssp245_2090 and _ssp585_2090, which are the GCM’s ensembles that we
-have calculated.</p>
+<span><span class="co">#&gt;     Criteria                  : 0.7 </span></span>
+<span><span class="co">#&gt; ---------  Ensembles  ---------</span></span>
+<span><span class="co">#&gt; Ensembles                     :</span></span>
+<span><span class="co">#&gt;     Methods                   : average</span></span></code></pre></div>
+<p>Note that now the “Ensembles” has two scenarios called _ssp245_2090
+and _ssp585_2090, which are the GCM’s ensembles that we have
+calculated.</p>
 </div>
 <div class="section level3">
 <h3 id="plotting-results">Plotting results<a class="anchor" aria-label="anchor" href="#plotting-results"></a>
@@ -1098,20 +1127,14 @@ separate projections you can plot them informing the model
 <code>id</code> (see row names of <code>get_validation_metrics</code>
 above to retrieve models ids).</p>
 <div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_occurrences.html">plot_predictions</a></span><span class="op">(</span><span class="va">i</span>,</span>
-<span>                 spp_name <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>                 scenario <span class="op">=</span> <span class="st">"current"</span>,</span>
-<span>                 id <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>                 ensemble <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>                 ensemble_type <span class="op">=</span> <span class="st">"mean_occ_prob"</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_occurrences.html">plot_ensembles</a></span><span class="op">(</span><span class="va">i</span>,</span>
+<span>               scenario <span class="op">=</span> <span class="st">"current"</span>,</span>
+<span>               ensemble_type <span class="op">=</span> <span class="st">"average"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="Salminus_files/figure-html/plot_current_results-1.png" class="r-plt" alt="" width="700"></p>
 <div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_occurrences.html">plot_predictions</a></span><span class="op">(</span><span class="va">i</span>,</span>
-<span>                 spp_name <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>                 scenario <span class="op">=</span> <span class="st">"_ssp245_2090"</span>,</span>
-<span>                 id <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>                 ensemble <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>                 ensemble_type <span class="op">=</span> <span class="st">"mean_occ_prob"</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_occurrences.html">plot_ensembles</a></span><span class="op">(</span><span class="va">i</span>,</span>
+<span>               scenario <span class="op">=</span> <span class="st">"_ssp245_2090"</span>,</span>
+<span>               ensemble_type <span class="op">=</span> <span class="st">"average"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="Salminus_files/figure-html/ssp245_2090-1.png" class="r-plt" alt="" width="700"></p>
 <p>Another plot widely used in SDM studies is the Partial Dependence
 Plot, which informs the response curves to each variable. In
@@ -1150,7 +1173,7 @@ instead of lines.</p>
 <div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">end_time</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">end_time</span> <span class="op">-</span> <span class="va">start_time</span></span>
-<span><span class="co">#&gt; Time difference of 3.258505 mins</span></span></code></pre></div>
+<span><span class="co">#&gt; Time difference of 31.87561 secs</span></span></code></pre></div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>

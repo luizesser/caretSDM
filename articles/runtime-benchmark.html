@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>Benchmarking SDM Package Performance in R • caretSDM</title>
+<title>8. Benchmarking SDM Package Performance in R • caretSDM</title>
 <!-- favicons --><link rel="icon" type="image/png" sizes="96x96" href="../favicon-96x96.png">
 <link rel="icon" type="”image/svg+xml”" href="../favicon.svg">
 <link rel="apple-touch-icon" sizes="180x180" href="../apple-touch-icon.png">
@@ -15,7 +15,7 @@
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
 <script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
-<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Benchmarking SDM Package Performance in R">
+<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="8. Benchmarking SDM Package Performance in R">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -25,7 +25,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">caretSDM</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.6.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.7</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -38,13 +38,13 @@
 <li class="active nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
-<li><a class="dropdown-item" href="../articles/Add-Algorithm.html">Adding New Algorithms to caretSDM</a></li>
-    <li><a class="dropdown-item" href="../articles/Araucaria.html">caretSDM Workflow for Species Distribution Modeling</a></li>
-    <li><a class="dropdown-item" href="../articles/Compact.html">Concatenate functions in caretSDM</a></li>
-    <li><a class="dropdown-item" href="../articles/ESM.html">Modeling Rare Species using Ensemble of Small Models</a></li>
-    <li><a class="dropdown-item" href="../articles/InvasiveSpp.html">Projecting Non-native Distribution using SDMs</a></li>
-    <li><a class="dropdown-item" href="../articles/runtime-benchmark.html">Benchmarking SDM Package Performance in R</a></li>
-    <li><a class="dropdown-item" href="../articles/Salminus.html">Modeling Species Distributions in Continental Water Bodies</a></li>
+<li><a class="dropdown-item" href="../articles/Add-Algorithm.html">2. Adding New Algorithms to caretSDM</a></li>
+    <li><a class="dropdown-item" href="../articles/Araucaria.html">3. caretSDM Workflow for Species Distribution Modeling</a></li>
+    <li><a class="dropdown-item" href="../articles/Compact.html">1. Concatenate functions in caretSDM</a></li>
+    <li><a class="dropdown-item" href="../articles/ESM.html">7. Modeling Rare Species using Ensemble of Small Models</a></li>
+    <li><a class="dropdown-item" href="../articles/InvasiveSpp.html">6. Projecting Non-native Distribution using SDMs</a></li>
+    <li><a class="dropdown-item" href="../articles/runtime-benchmark.html">8. Benchmarking SDM Package Performance in R</a></li>
+    <li><a class="dropdown-item" href="../articles/Salminus.html">5. Modeling Species Distributions in Continental Water Bodies</a></li>
   </ul>
 </li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
@@ -66,7 +66,7 @@
 
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
-      <img src="../logo.png" class="logo" alt=""><h1>Benchmarking SDM Package Performance in R</h1>
+      <img src="../logo.png" class="logo" alt=""><h1>8. Benchmarking SDM Package Performance in R</h1>
             
       
       <small class="dont-index">Source: <a href="https://github.com/luizesser/caretSDM/blob/main/vignettes/articles/runtime-benchmark.Rmd" class="external-link"><code>vignettes/articles/runtime-benchmark.Rmd</code></a></small>
@@ -533,7 +533,8 @@ is controlled, the exact split structure may differ slightly.</p>
 <span><span class="va">post_caretSDM</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">fit</span><span class="op">)</span> <span class="op">{</span></span>
 <span></span>
 <span>  <span class="va">fit</span> <span class="op">|&gt;</span> </span>
-<span>    <span class="fu"><a href="../reference/predict_sdm.html">predict_sdm</a></span><span class="op">(</span>th <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span></span>
+<span>    <span class="fu"><a href="../reference/predict_sdm.html">predict_sdm</a></span><span class="op">(</span>th <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>    <span class="fu"><a href="../reference/ensemble_sdm.html">ensemble_sdm</a></span><span class="op">(</span><span class="op">)</span></span>
 <span>  </span>
 <span><span class="op">}</span></span>
 <span></span>
@@ -558,7 +559,8 @@ is controlled, the exact split structure may differ slightly.</p>
 <span>                                         savePredictions <span class="op">=</span> <span class="st">"final"</span>,</span>
 <span>                                         summaryFunction <span class="op">=</span> <span class="va">summary_sdm</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
 <span>    <span class="fu"><a href="../reference/add_scenarios.html">add_scenarios</a></span><span class="op">(</span><span class="va">scen</span>, pred_as_scen <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>    <span class="fu"><a href="../reference/predict_sdm.html">predict_sdm</a></span><span class="op">(</span>th <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span></span>
+<span>    <span class="fu"><a href="../reference/predict_sdm.html">predict_sdm</a></span><span class="op">(</span>th <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>    <span class="fu"><a href="../reference/ensemble_sdm.html">ensemble_sdm</a></span><span class="op">(</span><span class="op">)</span></span>
 <span>  </span>
 <span><span class="op">}</span></span></code></pre></div>
 <hr>
@@ -623,33 +625,33 @@ to avoid first-run overhead (e.g. package initialization).</p>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 3 × 6</span></span></span>
 <span><span class="co">#&gt;   expression      min   median `itr/sec` mem_alloc `gc/sec`</span></span>
 <span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;bch:expr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;bch:tm&gt;</span> <span style="color: #949494; font-style: italic;">&lt;bch:tm&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;bch:byt&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> biomod2     165.9ms 169.01ms     5.61     7.75MB    1.12 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> sdm         129.8ms  131.3ms     4.22     6.02MB    0.843</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> caretSDM       1.6s    1.62s     0.582    7.31MB    1.51</span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> biomod2     164.6ms 169.14ms     5.64     7.75MB    1.13 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> sdm         131.9ms 140.59ms     4.21     6.02MB    0.843</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> caretSDM       1.6s    1.62s     0.584    7.31MB    1.52</span></span></code></pre></div>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">bench_res_fit</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 3 × 6</span></span></span>
 <span><span class="co">#&gt;   expression      min   median `itr/sec` mem_alloc `gc/sec`</span></span>
 <span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;bch:expr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;bch:tm&gt;</span> <span style="color: #949494; font-style: italic;">&lt;bch:tm&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;bch:byt&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> biomod2       7.83s    7.85s    0.127  1016.14MB    0.433</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> sdm          16.47s   16.51s    0.060<span style="text-decoration: underline;">2</span>    2.18GB    0.301</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> caretSDM     23.58s   25.58s    0.037<span style="text-decoration: underline;">1</span>    1.22GB    0.862</span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> biomod2        7.9s    7.93s    0.125  1016.25MB    0.426</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> sdm           16.7s   16.79s    0.058<span style="text-decoration: underline;">9</span>    2.18GB    0.295</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> caretSDM      23.4s   26.14s    0.037<span style="text-decoration: underline;">6</span>    1.22GB    0.835</span></span></code></pre></div>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">bench_res_post</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 3 × 6</span></span></span>
 <span><span class="co">#&gt;   expression      min   median `itr/sec` mem_alloc `gc/sec`</span></span>
 <span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;bch:expr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;bch:tm&gt;</span> <span style="color: #949494; font-style: italic;">&lt;bch:tm&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;bch:byt&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> biomod2       10.4s    10.8s    0.092<span style="text-decoration: underline;">3</span>  953.78MB  0.369  </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> sdm           25.5s    25.7s    0.038<span style="text-decoration: underline;">7</span>     581MB  0.007<span style="text-decoration: underline;">73</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> caretSDM        57s    59.4s    0.017<span style="text-decoration: underline;">0</span>    4.28GB  0.392</span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> biomod2      10.26s   10.51s    0.092<span style="text-decoration: underline;">9</span>     963MB    0.446</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> sdm           18.6s   18.77s    0.053<span style="text-decoration: underline;">0</span>     579MB    0    </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> caretSDM      1.03s    1.04s    0.910       47MB    0.182</span></span></code></pre></div>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">bench_res_complete</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 3 × 6</span></span></span>
 <span><span class="co">#&gt;   expression      min   median `itr/sec` mem_alloc `gc/sec`</span></span>
 <span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;bch:expr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;bch:tm&gt;</span> <span style="color: #949494; font-style: italic;">&lt;bch:tm&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;bch:byt&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> biomod2      17.97s   18.06s    0.052<span style="text-decoration: underline;">1</span>    1.91GB   0.261 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> sdm           1.01m    1.03m    0.016<span style="text-decoration: underline;">3</span>    2.84GB   0.022<span style="text-decoration: underline;">8</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> caretSDM      1.38m    1.48m    0.011<span style="text-decoration: underline;">2</span>    5.51GB   0.559</span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> biomod2       18.9s    20.6s    0.048<span style="text-decoration: underline;">7</span>    1.92GB   0.526 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> sdm           39.1s    40.3s    0.024<span style="text-decoration: underline;">7</span>    3.02GB   0.098<span style="text-decoration: underline;">8</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> caretSDM      25.1s    28.8s    0.034<span style="text-decoration: underline;">6</span>    1.28GB   0.975</span></span></code></pre></div>
 <p>The table above summarizes the median runtime, iteration rate, and
 memory allocation for each package under identical conditions.</p>
 <hr>
@@ -816,8 +818,8 @@ some coding or function from sdm and/or biomod2, please contact me on <a href="m
 <span><span class="co">#&gt;  [1] caret_7.0-1          lattice_0.22-9       ggplot2_4.0.2       </span></span>
 <span><span class="co">#&gt;  [4] kernlab_0.9-33       glmnet_4.1-10        Matrix_1.7-4        </span></span>
 <span><span class="co">#&gt;  [7] dismo_1.3-16         raster_3.6-32        sp_2.2-1            </span></span>
-<span><span class="co">#&gt; [10] RSNNS_0.4-18         Rcpp_1.1.1           caretSDM_1.6.1      </span></span>
-<span><span class="co">#&gt; [13] sdm_1.2-59           xgboost_3.2.0.1      randomForest_4.7-1.2</span></span>
+<span><span class="co">#&gt; [10] RSNNS_0.4-18         Rcpp_1.1.1           caretSDM_1.7        </span></span>
+<span><span class="co">#&gt; [13] sdm_1.2-59           xgboost_3.2.1.1      randomForest_4.7-1.2</span></span>
 <span><span class="co">#&gt; [16] maxnet_0.1.4         earth_5.3.5          plotmo_3.7.0        </span></span>
 <span><span class="co">#&gt; [19] plotrix_3.8-14       Formula_1.2-5        gbm_2.2.3           </span></span>
 <span><span class="co">#&gt; [22] mgcv_1.9-4           nlme_3.1-168         gam_1.22-7          </span></span>
@@ -846,7 +848,7 @@ some coding or function from sdm and/or biomod2, please contact me on <a href="m
 <span><span class="co">#&gt;  [49] e1071_1.7-17            progressr_0.18.0        survival_3.8-6         </span></span>
 <span><span class="co">#&gt;  [52] ggspatial_1.1.10        iterators_1.0.14        systemfonts_1.3.2      </span></span>
 <span><span class="co">#&gt;  [55] tools_4.5.3             ragg_1.5.1              stringdist_0.9.17      </span></span>
-<span><span class="co">#&gt;  [58] glue_1.8.0              prodlim_2026.03.11      xfun_0.56              </span></span>
+<span><span class="co">#&gt;  [58] glue_1.8.0              prodlim_2026.03.11      xfun_0.57              </span></span>
 <span><span class="co">#&gt;  [61] checkCLI_1.0            dplyr_1.2.0             withr_3.0.2            </span></span>
 <span><span class="co">#&gt;  [64] fastmap_1.2.0           callr_3.7.6             digest_0.6.39          </span></span>
 <span><span class="co">#&gt;  [67] CoordinateCleaner_3.0.1 timechange_0.4.0        R6_2.6.1               </span></span>
@@ -858,15 +860,15 @@ some coding or function from sdm and/or biomod2, please contact me on <a href="m
 <span><span class="co">#&gt;  [85] timeDate_4052.112       S7_0.2.1                furrr_0.3.1            </span></span>
 <span><span class="co">#&gt;  [88] htmltools_0.5.9         scales_1.4.0            png_0.1-9              </span></span>
 <span><span class="co">#&gt;  [91] gower_1.0.2             knitr_1.51              geosphere_1.6-5        </span></span>
-<span><span class="co">#&gt;  [94] reshape2_1.4.5          rgbif_3.8.4             checkmate_2.3.4        </span></span>
+<span><span class="co">#&gt;  [94] reshape2_1.4.5          rgbif_3.8.5             checkmate_2.3.4        </span></span>
 <span><span class="co">#&gt;  [97] proxy_0.4-29            cachem_1.1.0            stringr_1.6.0          </span></span>
 <span><span class="co">#&gt; [100] pdp_0.8.3               KernSmooth_2.23-26      parallel_4.5.3         </span></span>
 <span><span class="co">#&gt; [103] s2_1.1.9                desc_1.4.3              pillar_1.11.1          </span></span>
-<span><span class="co">#&gt; [106] grid_4.5.3              reshape_0.8.10          vctrs_0.7.1            </span></span>
+<span><span class="co">#&gt; [106] grid_4.5.3              reshape_0.8.10          vctrs_0.7.2            </span></span>
 <span><span class="co">#&gt; [109] mapview_2.11.4          evaluate_1.0.5          oai_0.4.0              </span></span>
 <span><span class="co">#&gt; [112] cli_3.6.5               compiler_4.5.3          rlang_1.1.7            </span></span>
 <span><span class="co">#&gt; [115] future.apply_1.20.2     classInt_0.4-11         ps_1.9.1               </span></span>
-<span><span class="co">#&gt; [118] plyr_1.8.9              fs_1.6.7                stringi_1.8.7          </span></span>
+<span><span class="co">#&gt; [118] plyr_1.8.9              fs_2.0.0                stringi_1.8.7          </span></span>
 <span><span class="co">#&gt; [121] stars_0.7-1             lazyeval_0.2.2          leaflet_2.2.3          </span></span>
 <span><span class="co">#&gt; [124] bit64_4.6.0-1           leafem_0.2.5            future_1.70.0          </span></span>
 <span><span class="co">#&gt; [127] bslib_0.10.0            lwgeom_0.2-15           bit_4.6.0</span></span></code></pre></div>

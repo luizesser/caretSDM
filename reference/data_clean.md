@@ -14,7 +14,8 @@ data_clean(occ, pred = NULL,
            institutions = TRUE,
            invalid = TRUE,
            terrestrial = TRUE,
-           independent_test = TRUE)
+           independent_test = TRUE,
+           fun = NULL)
 ```
 
 ## Arguments
@@ -82,6 +83,13 @@ data_clean(occ, pred = NULL,
 
   Boolean. If `occ` has independent test data, the data cleaning routine
   is also applied on it.
+
+- fun:
+
+  Function. A custom function to apply to occurrence data. It must
+  receive a `df` argument, which will be a `data.frame` with three
+  columns: species, decimalLongitude and decimalLatitude; The function
+  must return the same `data.frame` with the same three columns.
 
 ## Value
 

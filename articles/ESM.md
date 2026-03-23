@@ -1,4 +1,4 @@
-# Modeling Rare Species using Ensemble of Small Models
+# 7. Modeling Rare Species using Ensemble of Small Models
 
 ## Introduction
 
@@ -35,11 +35,7 @@ sa <- sdm_area(parana,
 #> ℹ Using GDAL to make the grid and resample the variables.
 
 # Build occurrences_sdm object
-oc <- occurrences_sdm(occ, crs = 6933) |> 
-  join_area(sa)
-#> Warning: Some records from `occ` do not fall in `pred`.
-#> ℹ 2 elements from `occ` were excluded.
-#> ℹ If this seems too much, check how `occ` and `pred` intersect.
+oc <- occurrences_sdm(occ, crs = 6933)
 
 # Merge sdm_area and occurrences_sdm and perform pre-processing, processing and projecting.
 i_esm <- input_sdm(oc, sa) |> 
@@ -55,6 +51,7 @@ i_esm <- input_sdm(oc, sa) |>
                                        summaryFunction = summary_sdm, 
                                        savePredictions = "all")) |> 
   predict_sdm(th = 0.9) |> 
+  ensemble_sdm() |>
   suppressWarnings()
 #> Cell_ids identified, removing duplicated cell_id.
 #> Testing country capitals
@@ -84,7 +81,7 @@ i_esm <- input_sdm(oc, sa) |>
 #> ESM species
 #> ESM species
 #> ESM species
-#> Ensembling...
+#> Ensemble function: average
 #>   current
 ```
 
@@ -113,6 +110,7 @@ i_sdm <- input_sdm(oc, sa) |>
                                        summaryFunction = summary_sdm, 
                                        savePredictions = "all")) |> 
   predict_sdm(th = 0.9) |> 
+  ensemble_sdm() |>
   suppressWarnings()
 #> Cell_ids identified, removing duplicated cell_id.
 #> Testing country capitals
@@ -133,7 +131,7 @@ i_sdm <- input_sdm(oc, sa) |>
 #> 
 #> Predictors identified, procceding with grid filter (removing NA and duplicated data).
 #> 
-#> Ensembling...
+#> Ensemble function: average
 #> 
 #>   current
 ```
@@ -142,24 +140,18 @@ Now let’s compare both results:
 
 ``` r
 # Plotting ESM result for current scenario
-plot_predictions(i_esm,
-                 spp_name = NULL,
-                 scenario = "current",
-                 id = NULL,
-                 ensemble = TRUE,
-                 ensemble_type = "mean_occ_prob")
+plot_ensembles(i_esm,
+               scenario = "current",
+               ensemble_type = "average")
 ```
 
 ![](ESM_files/figure-html/plot_esm-1.png)
 
 ``` r
 # Plotting standard result for current scenario
-plot_predictions(i_sdm,
-                 spp_name = NULL,
-                 scenario = "current",
-                 id = NULL,
-                 ensemble = TRUE,
-                 ensemble_type = "mean_occ_prob")
+plot_ensembles(i_sdm,
+               scenario = "current",
+               ensemble_type = "average")
 ```
 
 ![](ESM_files/figure-html/plot_standard_sdm-1.png)
@@ -197,5 +189,5 @@ bivariate models.
 ``` r
 end_time <- Sys.time()
 end_time - start_time
-#> Time difference of 12.10894 mins
+#> Time difference of 1.050163 mins
 ```

@@ -87,6 +87,7 @@ ctrl_sdm <- caret::trainControl(method = "repeatedcv",
 i <- train_sdm(i, algo = c("naive_bayes"), ctrl=ctrl_sdm)
 #> Loading required package: ggplot2
 #> Loading required package: lattice
+
 # PDP plots:
 pdp_sdm(i)
 #> `geom_smooth()` using method = 'loess' and formula = 'y ~ x'

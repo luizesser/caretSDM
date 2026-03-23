@@ -23,7 +23,7 @@ prediction_change_sdm(i, scenario = NULL, ensemble_type = NULL, species = NULL, 
 - ensemble_type:
 
   Character. Type of ensemble to be used. Standard is NULL, but will
-  return the mean_occ_prob
+  return the average.
 
 - species:
 
@@ -86,6 +86,9 @@ if (interactive()) {
 
   # Predict models:
   i  <- predict_sdm(i, th=0.8)
+
+  # Ensemble:
+  i <- ensemble_sdm(i, method = "average")
 
   # Ensemble GCMs:
   i <- gcms_ensembles(i, gcms = c("ca", "mi"))

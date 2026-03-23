@@ -1,4 +1,4 @@
-# Concatenate functions in caretSDM
+# 1. Concatenate functions in caretSDM
 
 In caretSDM we always use one central object through out the framework,
 the `input_sdm` object. This allows us to concatenate functions, which
@@ -30,8 +30,7 @@ sa <- sdm_area(rivs,
 #> ℹ Using GDAL to make the grid and resample the variables.
 
 # Build occurrences_sdm object
-oc <- occurrences_sdm(salm, crs = 6933) |> 
-  join_area(sa)
+oc <- occurrences_sdm(salm, crs = 6933)
 
 # Merge sdm_area and occurrences_sdm and perform pre-processing, processing and projecting.
 i <- input_sdm(oc, sa) |> 
@@ -48,6 +47,7 @@ i <- input_sdm(oc, sa) |>
                                        savePredictions = "all"), 
             variables_selected = "vif") |> 
   predict_sdm(th = 0.7) |> 
+  ensemble_sdm() |>
   suppressWarnings()
 #> Cell_ids identified, removing duplicated cell_id.
 #> Testing country capitals
@@ -66,7 +66,7 @@ i <- input_sdm(oc, sa) |>
 #> Reading ne_110m_land.zip from naturalearth...Removed 0 records.
 #> Loading required package: ggplot2
 #> Loading required package: lattice
-#> Ensembling...
+#> Ensemble function: average
 #>   current
 ```
 
@@ -105,12 +105,12 @@ i
 #> 2 naive_bayes 0.7883889 0.4408333       0.745      0.7142
 #> 
 #> --------  Predictions  --------
-#> Ensembles                     :
-#>     Scenarios                 : current 
-#>     Methods                   : mean_occ_prob wmean_AUC committee_avg 
 #> Thresholds                    :
 #>     Method                    : threshold 
-#>     Criteria                  : 0.7
+#>     Criteria                  : 0.7 
+#> ---------  Ensembles  ---------
+#> Ensembles                     :
+#>     Methods                   : average
 ```
 
 ``` r

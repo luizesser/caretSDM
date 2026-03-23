@@ -23,6 +23,7 @@
 <url><loc>https://luizesser.github.io/caretSDM/reference/caretSDM-package.html</loc></url>
 <url><loc>https://luizesser.github.io/caretSDM/reference/correlate_sdm.html</loc></url>
 <url><loc>https://luizesser.github.io/caretSDM/reference/data_clean.html</loc></url>
+<url><loc>https://luizesser.github.io/caretSDM/reference/ensemble_sdm.html</loc></url>
 <url><loc>https://luizesser.github.io/caretSDM/reference/gcms_ensembles.html</loc></url>
 <url><loc>https://luizesser.github.io/caretSDM/reference/index.html</loc></url>
 <url><loc>https://luizesser.github.io/caretSDM/reference/input_sdm.html</loc></url>
@@ -37,6 +38,7 @@
 <url><loc>https://luizesser.github.io/caretSDM/reference/predict_sdm.html</loc></url>
 <url><loc>https://luizesser.github.io/caretSDM/reference/prediction_change_sdm.html</loc></url>
 <url><loc>https://luizesser.github.io/caretSDM/reference/predictor_names.html</loc></url>
+<url><loc>https://luizesser.github.io/caretSDM/reference/print.ensembles.html</loc></url>
 <url><loc>https://luizesser.github.io/caretSDM/reference/print.input_sdm.html</loc></url>
 <url><loc>https://luizesser.github.io/caretSDM/reference/print.models.html</loc></url>
 <url><loc>https://luizesser.github.io/caretSDM/reference/print.occurrences.html</loc></url>

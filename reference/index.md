@@ -44,6 +44,11 @@
 - [`data_clean()`](https://luizesser.github.io/caretSDM/reference/data_clean.md)
   : Presence data cleaning routine
 
+- [`ensemble_sdm()`](https://luizesser.github.io/caretSDM/reference/ensemble_sdm.md)
+  [`get_ensembles()`](https://luizesser.github.io/caretSDM/reference/ensemble_sdm.md)
+  [`add_ensembles()`](https://luizesser.github.io/caretSDM/reference/ensemble_sdm.md)
+  : Predict SDM models in new data
+
 - [`gcms_ensembles()`](https://luizesser.github.io/caretSDM/reference/gcms_ensembles.md)
   : Ensemble GCMs into one scenario
 
@@ -94,18 +99,19 @@
   [`plot_predictors()`](https://luizesser.github.io/caretSDM/reference/plot_occurrences.md)
   [`plot_scenarios()`](https://luizesser.github.io/caretSDM/reference/plot_occurrences.md)
   [`plot_predictions()`](https://luizesser.github.io/caretSDM/reference/plot_occurrences.md)
+  [`plot_ensembles()`](https://luizesser.github.io/caretSDM/reference/plot_occurrences.md)
   [`mapview_grid()`](https://luizesser.github.io/caretSDM/reference/plot_occurrences.md)
   [`mapview_occurrences()`](https://luizesser.github.io/caretSDM/reference/plot_occurrences.md)
   [`mapview_predictors()`](https://luizesser.github.io/caretSDM/reference/plot_occurrences.md)
   [`mapview_scenarios()`](https://luizesser.github.io/caretSDM/reference/plot_occurrences.md)
   [`mapview_predictions()`](https://luizesser.github.io/caretSDM/reference/plot_occurrences.md)
+  [`mapview_ensembles()`](https://luizesser.github.io/caretSDM/reference/plot_occurrences.md)
   [`plot_background()`](https://luizesser.github.io/caretSDM/reference/plot_occurrences.md)
   [`plot_niche()`](https://luizesser.github.io/caretSDM/reference/plot_occurrences.md)
   : S3 Methods for plot and mapview
 
 - [`predict_sdm()`](https://luizesser.github.io/caretSDM/reference/predict_sdm.md)
   [`get_predictions()`](https://luizesser.github.io/caretSDM/reference/predict_sdm.md)
-  [`get_ensembles()`](https://luizesser.github.io/caretSDM/reference/predict_sdm.md)
   [`add_predictions()`](https://luizesser.github.io/caretSDM/reference/predict_sdm.md)
   : Predict SDM models in new data
 
@@ -118,6 +124,9 @@
   [`test_variables_names()`](https://luizesser.github.io/caretSDM/reference/predictor_names.md)
   [`set_variables_names()`](https://luizesser.github.io/caretSDM/reference/predictor_names.md)
   : Predictors Names Managing
+
+- [`print(`*`<ensembles>`*`)`](https://luizesser.github.io/caretSDM/reference/print.ensembles.md)
+  : Print method for ensembles
 
 - [`print(`*`<input_sdm>`*`)`](https://luizesser.github.io/caretSDM/reference/print.input_sdm.md)
   : Print method for input_sdm

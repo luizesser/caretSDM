@@ -1,4 +1,4 @@
-# Adding New Algorithms to caretSDM
+# 2. Adding New Algorithms to caretSDM
 
 ## Introduction
 
@@ -344,7 +344,6 @@ sa <- add_predictors(sa, bioc)
 
 # Format occurrences
 oc <- occurrences_sdm(occ, crs = 6933)
-oc <- join_area(oc, sa)
 
 # Create the final input_sdm object
 i <- input_sdm(oc, sa)
@@ -490,8 +489,8 @@ i2
 Plotting the result of mahal.dismo.
 
 ``` r
-i2 |> add_scenarios() |> predict_sdm() |> plot_predictions()
-#> Ensembling...
+i2 |> add_scenarios() |> predict_sdm() |> ensemble_sdm() |> plot_ensembles()
+#> Ensemble function: average
 #>   current
 ```
 
@@ -500,8 +499,8 @@ i2 |> add_scenarios() |> predict_sdm() |> plot_predictions()
 Plotting the result of mahal.custom.
 
 ``` r
-i |> add_scenarios() |> predict_sdm() |> plot_predictions()
-#> Ensembling...
+i |> add_scenarios() |> predict_sdm() |> ensemble_sdm() |> plot_ensembles()
+#> Ensemble function: average
 #>   current
 ```
 

@@ -10,13 +10,10 @@ predict_sdm(m,
             metric = "ROC",
             th = 0.9,
             tp = "prob",
-            ensembles = TRUE,
             file = NULL,
             add.current = TRUE)
 
 get_predictions(i)
-
-get_ensembles(i)
 
 add_predictions(p1, p2)
 ```
@@ -46,11 +43,6 @@ add_predictions(p1, p2)
 - tp:
 
   Type of output to be retrieved. See details.
-
-- ensembles:
-
-  Boolean. Should ensembles be calculated? If `TRUE` a series of
-  ensembles are obtained. See details.
 
 - file:
 
@@ -84,19 +76,9 @@ probabilities of classes (tp="prob") or the raw output (tp="raw"), which
 could vary depending on the algorithm used, but usually would be on of
 the classes (factor vector with presences and pseudoabsences).
 
-When `ensembles` is set to `TRUE`, three ensembles are currently
-implemented. mean_occ_prob is the mean occurrence probability, which is
-a simple mean of predictions, wmean_AUC is the same mean_occ_prob, but
-weighted by AUC, and committee_avg is the committee average, as known as
-majority rule, where predictions are binarized and then a mean is
-obtained.
-
 `get_predictions` returns the `list` of all predictions to all
 scenarios, all species, all algorithms and all repetitions. Useful for
 those who wish to implement their own ensemble methods.
-
-`get_ensembles` returns a `matrix` of `data.frame`s, where each column
-is a scenario and each row is a species.
 
 `scenarios_names` returns the scenarios names in a `sdm_area` or
 `input_sdm` object.

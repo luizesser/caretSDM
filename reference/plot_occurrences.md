@@ -5,21 +5,23 @@ This function creates different plots depending on the input.
 ## Usage
 
 ``` r
-plot_occurrences(i, spp_name = NULL, pa = TRUE, pa_id = 1)
+plot_occurrences(i, spp_name = NULL, pa = TRUE, pa_id = 1, ...)
 
-plot_grid(i)
+plot_grid(i, ...)
 
-plot_predictors(i, variables_selected = NULL)
+plot_predictors(i, variables_selected = NULL, ...)
 
-plot_scenarios(i, variables_selected = NULL, scenario = NULL)
+plot_scenarios(i, variables_selected = NULL, scenario = NULL, ...)
 
-plot_predictions(
+plot_predictions(i, spp_name = NULL, scenario = NULL, id = NULL, ...)
+
+plot_ensembles(
   i,
   spp_name = NULL,
   scenario = NULL,
   id = NULL,
-  ensemble = TRUE,
-  ensemble_type = "mean_occ_prob"
+  ensemble_type = "average",
+  ...
 )
 
 mapview_grid(i)
@@ -30,16 +32,17 @@ mapview_predictors(i, variables_selected = NULL)
 
 mapview_scenarios(i, variables_selected = NULL, scenario = NULL)
 
-mapview_predictions(
+mapview_predictions(i, spp_name = NULL, scenario = NULL, id = NULL)
+
+mapview_ensembles(
   i,
   spp_name = NULL,
   scenario = NULL,
   id = NULL,
-  ensemble = TRUE,
-  ensemble_type = "mean_occ_prob"
+  ensemble_type = "average"
 )
 
-plot_background(i, variables_selected = NULL)
+plot_background(i, variables_selected = NULL, ...)
 
 plot_niche(
   i,
@@ -47,9 +50,9 @@ plot_niche(
   variables_selected = NULL,
   scenario = NULL,
   id = NULL,
-  ensemble = TRUE,
-  ensemble_type = "mean_occ_prob",
-  raster = FALSE
+  ensemble_type = "average",
+  raster = FALSE,
+  ...
 )
 ```
 
@@ -75,6 +78,10 @@ plot_niche(
   The id of pseudoabsences to be plotted (only used when `pa = TRUE`).
   Possible values are numeric values from 1 to number of PA sets.
 
+- ...:
+
+  Plotting arguments to pass to ggplot2 function.
+
 - variables_selected:
 
   A character vector with names of variables to be plotted.
@@ -88,15 +95,9 @@ plot_niche(
   The id of models to be plotted (only used when `ensemble = FALSE`).
   Possible values are row names of get_validation_metrics(i).
 
-- ensemble:
-
-  Boolean. Should the ensemble be plotted (TRUE)? Otherwise a prediction
-  will be plotted
-
 - ensemble_type:
 
-  Character of the type of ensemble to be plotted. One of:
-  "mean_occ_prob", "wmean_AUC" or "committee_avg"
+  Character of the type of ensemble to be plotted.
 
 - raster:
 

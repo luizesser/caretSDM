@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>Adding New Algorithms to caretSDM • caretSDM</title>
+<title>2. Adding New Algorithms to caretSDM • caretSDM</title>
 <!-- favicons --><link rel="icon" type="image/png" sizes="96x96" href="../favicon-96x96.png">
 <link rel="icon" type="”image/svg+xml”" href="../favicon.svg">
 <link rel="apple-touch-icon" sizes="180x180" href="../apple-touch-icon.png">
@@ -15,7 +15,7 @@
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
 <script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
-<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Adding New Algorithms to caretSDM">
+<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="2. Adding New Algorithms to caretSDM">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -25,7 +25,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">caretSDM</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.6.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.7</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -38,13 +38,13 @@
 <li class="active nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
-<li><a class="dropdown-item" href="../articles/Add-Algorithm.html">Adding New Algorithms to caretSDM</a></li>
-    <li><a class="dropdown-item" href="../articles/Araucaria.html">caretSDM Workflow for Species Distribution Modeling</a></li>
-    <li><a class="dropdown-item" href="../articles/Compact.html">Concatenate functions in caretSDM</a></li>
-    <li><a class="dropdown-item" href="../articles/ESM.html">Modeling Rare Species using Ensemble of Small Models</a></li>
-    <li><a class="dropdown-item" href="../articles/InvasiveSpp.html">Projecting Non-native Distribution using SDMs</a></li>
-    <li><a class="dropdown-item" href="../articles/runtime-benchmark.html">Benchmarking SDM Package Performance in R</a></li>
-    <li><a class="dropdown-item" href="../articles/Salminus.html">Modeling Species Distributions in Continental Water Bodies</a></li>
+<li><a class="dropdown-item" href="../articles/Add-Algorithm.html">2. Adding New Algorithms to caretSDM</a></li>
+    <li><a class="dropdown-item" href="../articles/Araucaria.html">3. caretSDM Workflow for Species Distribution Modeling</a></li>
+    <li><a class="dropdown-item" href="../articles/Compact.html">1. Concatenate functions in caretSDM</a></li>
+    <li><a class="dropdown-item" href="../articles/ESM.html">7. Modeling Rare Species using Ensemble of Small Models</a></li>
+    <li><a class="dropdown-item" href="../articles/InvasiveSpp.html">6. Projecting Non-native Distribution using SDMs</a></li>
+    <li><a class="dropdown-item" href="../articles/runtime-benchmark.html">8. Benchmarking SDM Package Performance in R</a></li>
+    <li><a class="dropdown-item" href="../articles/Salminus.html">5. Modeling Species Distributions in Continental Water Bodies</a></li>
   </ul>
 </li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
@@ -66,7 +66,7 @@
 
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
-      <img src="../logo.png" class="logo" alt=""><h1>Adding New Algorithms to caretSDM</h1>
+      <img src="../logo.png" class="logo" alt=""><h1>2. Adding New Algorithms to caretSDM</h1>
             
       
       <small class="dont-index">Source: <a href="https://github.com/luizesser/caretSDM/blob/main/vignettes/articles/Add-Algorithm.Rmd" class="external-link"><code>vignettes/articles/Add-Algorithm.Rmd</code></a></small>
@@ -433,7 +433,6 @@ pre-processing steps of a typical SDM analysis.</p>
 <span></span>
 <span><span class="co"># Format occurrences</span></span>
 <span><span class="va">oc</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/occurrences_sdm.html">occurrences_sdm</a></span><span class="op">(</span><span class="va">occ</span>, crs <span class="op">=</span> <span class="fl">6933</span><span class="op">)</span></span>
-<span><span class="va">oc</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/join_area.html">join_area</a></span><span class="op">(</span><span class="va">oc</span>, <span class="va">sa</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Create the final input_sdm object</span></span>
 <span><span class="va">i</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/input_sdm.html">input_sdm</a></span><span class="op">(</span><span class="va">oc</span>, <span class="va">sa</span><span class="op">)</span></span>
@@ -559,14 +558,14 @@ build models using the mahal.dismo method.</p>
 <span><span class="co">#&gt; 1 custom 0.9907247 0.8527099   0.9826667   0.8821111</span></span></code></pre></div>
 <p>Plotting the result of mahal.dismo.</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">i2</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/add_scenarios.html">add_scenarios</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/predict_sdm.html">predict_sdm</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/plot_occurrences.html">plot_predictions</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Ensembling...</span></span>
+<code class="sourceCode R"><span><span class="va">i2</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/add_scenarios.html">add_scenarios</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/predict_sdm.html">predict_sdm</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/ensemble_sdm.html">ensemble_sdm</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/plot_occurrences.html">plot_ensembles</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Ensemble function: average</span></span>
 <span><span class="co">#&gt;   current</span></span></code></pre></div>
 <p><img src="Add-Algorithm_files/figure-html/mahal.dismo_plot-1.png" class="r-plt" alt="" width="700"></p>
 <p>Plotting the result of mahal.custom.</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">i</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/add_scenarios.html">add_scenarios</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/predict_sdm.html">predict_sdm</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/plot_occurrences.html">plot_predictions</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Ensembling...</span></span>
+<code class="sourceCode R"><span><span class="va">i</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/add_scenarios.html">add_scenarios</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/predict_sdm.html">predict_sdm</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/ensemble_sdm.html">ensemble_sdm</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/plot_occurrences.html">plot_ensembles</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Ensemble function: average</span></span>
 <span><span class="co">#&gt;   current</span></span></code></pre></div>
 <p><img src="Add-Algorithm_files/figure-html/mahal.custom_plot-1.png" class="r-plt" alt="" width="700"></p>
 </div>

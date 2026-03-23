@@ -72,6 +72,10 @@ if (interactive()) {
   # Predict models:
   i  <- predict_sdm(i, th=0.8)
 
+  # Ensemble:
+  i <- ensemble_sdm(i, method = "average")
+  i
+
   # Ensemble GCMs:
   i <- gcms_ensembles(i, gcms = c("ca", "mi"))
   i

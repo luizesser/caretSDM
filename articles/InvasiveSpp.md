@@ -1,4 +1,4 @@
-# Projecting Non-native Distribution using SDMs
+# 6. Projecting Non-native Distribution using SDMs
 
 ## Introduction
 
@@ -387,16 +387,6 @@ plot_occurrences(oc)
 
 ![](InvasiveSpp_files/figure-html/plot_occurrences-1.png)
 
-This next step assigns occurrences into a study area, excluding records
-outside the study area or with NAs as predictors.
-
-``` r
-oc <- join_area(oc, sa)
-#> Warning: Some records from `occ` do not fall in `pred`.
-#> ℹ 2 elements from `occ` were excluded.
-#> ℹ If this seems too much, check how `occ` and `pred` intersect.
-```
-
 ### The `input_sdm` class
 
 In `caretSDM` we use multiple classes to perform our analysis. Every
@@ -410,6 +400,9 @@ create the object by informing the occurrences and the sdm_area.
 
 ``` r
 i <- input_sdm(oc, sa)
+#> Warning: Some records from `occ` do not fall in `pred`.
+#> ℹ 2 elements from `occ` were excluded.
+#> ℹ If this seems too much, check how `occ` and `pred` intersect.
 i
 #>             caretSDM           
 #> ...............................
@@ -625,9 +618,52 @@ ROC \> 0.9 will be used in predictions and ensembles.
 i <- predict_sdm(i,
                  metric = "ROC",
                  th = 0.9,
-                 tp = "prob",
-                 ensembles = TRUE)
-#> Ensembling...
+                 tp = "prob")
+i
+#>             caretSDM           
+#> ...............................
+#> Class                         : input_sdm
+#> --------  Occurrences  --------
+#> Species Names                 : Araucaria angustifolia 
+#> Number of presences           : 82 
+#> Pseudoabsence methods         :
+#>     Method to obtain PAs      : bioclim 
+#>     Number of PA sets         : 10 
+#>     Number of PAs in each set : 82 
+#> Data Cleaning                 : NAs, Capitals, Centroids, Geographically Duplicated, Identical Lat/Long, Institutions, Invalid, Non-terrestrial, Duplicated Cell (grid) 
+#> --------  Predictors  ---------
+#> Number of Predictors          : 3 
+#> Predictors Names              : bio1, bio4, bio12 
+#> Area (VIF)                    : all
+#> Threshold                     : 0.5
+#> Selected Variables (VIF)      : bio1, bio12 
+#> ---------  Scenarios  ---------
+#> Number of Scenarios           : 5 
+#> Scenarios Names               : current ca_ssp245_2090 ca_ssp585_2090 mi_ssp245_2090 mi_ssp585_2090 
+#> -----------  Models  ----------
+#> Algorithms Names              : naive_bayes kknn 
+#> Variables Names               : bio1 bio12 
+#> Model Validation              :
+#>     Method                    : repeatedcv 
+#>     Number                    : 4 
+#>     Metrics                   :
+#> $`Araucaria angustifolia`
+#>          algo       ROC      TSS Sensitivity Specificity
+#> 1        kknn 0.9846174 0.968089      0.9890    0.979075
+#> 2 naive_bayes 0.9979933 0.962443      0.9963    0.966125
+#> 
+#> --------  Predictions  --------
+#> Thresholds                    :
+#>     Method                    : threshold 
+#>     Criteria                  : 0.9
+```
+
+Finally, we can ensemble the predictions using:
+
+``` r
+i <- ensemble_sdm(i,
+                  method = "average")
+#> Ensemble function: average
 #>   current
 #>   ca_ssp245_2090
 #>   ca_ssp585_2090
@@ -667,20 +703,20 @@ i
 #> 2 naive_bayes 0.9979933 0.962443      0.9963    0.966125
 #> 
 #> --------  Predictions  --------
-#> Ensembles                     :
-#>     Scenarios                 : current ca_ssp245_2090 ca_ssp585_2090 mi_ssp245_2090 mi_ssp585_2090 
-#>     Methods                   : mean_occ_prob wmean_AUC committee_avg 
 #> Thresholds                    :
 #>     Method                    : threshold 
-#>     Criteria                  : 0.9
+#>     Criteria                  : 0.9 
+#> ---------  Ensembles  ---------
+#> Ensembles                     :
+#>     Methods                   : average
 ```
 
 In the above print, it is possible to see the “Methods” under the
-“Predictions” section, which informs which ensemble types were made:
-mean occurrence probability (`mean_occ_prob`; a simple mean between
-GCMs), mean occurrence probability weighted by AUC/ROC (`wmean_AUC`;
-AUC/ROC values are used as weights), and the majority rule, or the
-committee average (`committee_avg`; the sum of binaries).
+“Ensembles” section, which informs which ensemble types were made: mean
+occurrence probability (`average`; a simple mean between GCMs), mean
+occurrence probability weighted by AUC/ROC (`weighted_average`; AUC/ROC
+values are used as weights), and the majority rule, or the committee
+average (`committee_average`; the sum of binaries).
 
 Besides the AUC/ROC metric, users can get every available metric by
 model using the following code before commit to “ROC”:
@@ -982,13 +1018,9 @@ i <- gcms_ensembles(i, gcms = c("ca", "mi"))
 #> New names:
 #> New names:
 #> • `cell_id` -> `cell_id...1`
-#> • `mean_occ_prob` -> `mean_occ_prob...2`
-#> • `wmean_AUC` -> `wmean_AUC...3`
-#> • `committee_avg` -> `committee_avg...4`
-#> • `cell_id` -> `cell_id...5`
-#> • `mean_occ_prob` -> `mean_occ_prob...6`
-#> • `wmean_AUC` -> `wmean_AUC...7`
-#> • `committee_avg` -> `committee_avg...8`
+#> • `average` -> `average...2`
+#> • `cell_id` -> `cell_id...3`
+#> • `average` -> `average...4`
 i
 #>             caretSDM           
 #> ...............................
@@ -1023,17 +1055,16 @@ i
 #> 2 naive_bayes 0.9979933 0.962443      0.9963    0.966125
 #> 
 #> --------  Predictions  --------
-#> Ensembles                     :
-#>     Scenarios                 : current ca_ssp245_2090 ca_ssp585_2090 mi_ssp245_2090 mi_ssp585_2090 _ssp245_2090 _ssp585_2090 
-#>     Methods                   : mean_occ_prob wmean_AUC committee_avg 
 #> Thresholds                    :
 #>     Method                    : threshold 
-#>     Criteria                  : 0.9
+#>     Criteria                  : 0.9 
+#> ---------  Ensembles  ---------
+#> Ensembles                     :
+#>     Methods                   : average
 ```
 
-Note that now the section “Predictions” has two scenarios called
-\_ssp245_2090 and \_ssp585_2090, which are the GCM’s ensembles that we
-have calculated.
+Note that now the “Ensembles” has two scenarios called \_ssp245_2090 and
+\_ssp585_2090, which are the GCM’s ensembles that we have calculated.
 
 ### Plotting results
 
@@ -1053,23 +1084,17 @@ the model `id` (see row names of `get_validation_metrics` above to
 retrieve models ids).
 
 ``` r
-plot_predictions(i,
-                 spp_name = NULL,
-                 scenario = "current",
-                 id = NULL,
-                 ensemble = TRUE,
-                 ensemble_type = "mean_occ_prob")
+plot_ensembles(i,
+               scenario = "current",
+               ensemble_type = "average")
 ```
 
 ![](InvasiveSpp_files/figure-html/plot_current_results-1.png)
 
 ``` r
-plot_predictions(i,
-                 spp_name = NULL,
-                 scenario = "_ssp245_2090",
-                 id = NULL,
-                 ensemble = TRUE,
-                 ensemble_type = "mean_occ_prob")
+plot_ensembles(i,
+               scenario = "_ssp585_2090",
+               ensemble_type = "average")
 ```
 
 ![](InvasiveSpp_files/figure-html/ssp245_2090-1.png)
@@ -1115,5 +1140,5 @@ cells in a grid.
 ``` r
 end_time <- Sys.time()
 end_time - start_time
-#> Time difference of 3.12698 mins
+#> Time difference of 19.573 secs
 ```

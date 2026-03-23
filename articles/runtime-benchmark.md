@@ -1,4 +1,4 @@
-# Benchmarking SDM Package Performance in R
+# 8. Benchmarking SDM Package Performance in R
 
 ## Motivation
 
@@ -455,7 +455,8 @@ fit_caretSDM <- function(prep) {
 post_caretSDM <- function(fit) {
 
   fit |> 
-    predict_sdm(th = 0.5)
+    predict_sdm(th = 0.5) |>
+    ensemble_sdm()
   
 }
 
@@ -480,7 +481,8 @@ run_caretSDM <- function() {
                                          savePredictions = "final",
                                          summaryFunction = summary_sdm)) |> 
     add_scenarios(scen, pred_as_scen = FALSE) |>
-    predict_sdm(th = 0.5)
+    predict_sdm(th = 0.5) |>
+    ensemble_sdm()
   
 }
 ```
@@ -559,9 +561,9 @@ bench_res_prep
 #> # A tibble: 3 × 6
 #>   expression      min   median `itr/sec` mem_alloc `gc/sec`
 #>   <bch:expr> <bch:tm> <bch:tm>     <dbl> <bch:byt>    <dbl>
-#> 1 biomod2     165.9ms 169.01ms     5.61     7.75MB    1.12 
-#> 2 sdm         129.8ms  131.3ms     4.22     6.02MB    0.843
-#> 3 caretSDM       1.6s    1.62s     0.582    7.31MB    1.51
+#> 1 biomod2     164.6ms 169.14ms     5.64     7.75MB    1.13 
+#> 2 sdm         131.9ms 140.59ms     4.21     6.02MB    0.843
+#> 3 caretSDM       1.6s    1.62s     0.584    7.31MB    1.52
 ```
 
 ``` r
@@ -569,9 +571,9 @@ bench_res_fit
 #> # A tibble: 3 × 6
 #>   expression      min   median `itr/sec` mem_alloc `gc/sec`
 #>   <bch:expr> <bch:tm> <bch:tm>     <dbl> <bch:byt>    <dbl>
-#> 1 biomod2       7.83s    7.85s    0.127  1016.14MB    0.433
-#> 2 sdm          16.47s   16.51s    0.0602    2.18GB    0.301
-#> 3 caretSDM     23.58s   25.58s    0.0371    1.22GB    0.862
+#> 1 biomod2        7.9s    7.93s    0.125  1016.25MB    0.426
+#> 2 sdm           16.7s   16.79s    0.0589    2.18GB    0.295
+#> 3 caretSDM      23.4s   26.14s    0.0376    1.22GB    0.835
 ```
 
 ``` r
@@ -579,9 +581,9 @@ bench_res_post
 #> # A tibble: 3 × 6
 #>   expression      min   median `itr/sec` mem_alloc `gc/sec`
 #>   <bch:expr> <bch:tm> <bch:tm>     <dbl> <bch:byt>    <dbl>
-#> 1 biomod2       10.4s    10.8s    0.0923  953.78MB  0.369  
-#> 2 sdm           25.5s    25.7s    0.0387     581MB  0.00773
-#> 3 caretSDM        57s    59.4s    0.0170    4.28GB  0.392
+#> 1 biomod2      10.26s   10.51s    0.0929     963MB    0.446
+#> 2 sdm           18.6s   18.77s    0.0530     579MB    0    
+#> 3 caretSDM      1.03s    1.04s    0.910       47MB    0.182
 ```
 
 ``` r
@@ -589,9 +591,9 @@ bench_res_complete
 #> # A tibble: 3 × 6
 #>   expression      min   median `itr/sec` mem_alloc `gc/sec`
 #>   <bch:expr> <bch:tm> <bch:tm>     <dbl> <bch:byt>    <dbl>
-#> 1 biomod2      17.97s   18.06s    0.0521    1.91GB   0.261 
-#> 2 sdm           1.01m    1.03m    0.0163    2.84GB   0.0228
-#> 3 caretSDM      1.38m    1.48m    0.0112    5.51GB   0.559
+#> 1 biomod2       18.9s    20.6s    0.0487    1.92GB   0.526 
+#> 2 sdm           39.1s    40.3s    0.0247    3.02GB   0.0988
+#> 3 caretSDM      25.1s    28.8s    0.0346    1.28GB   0.975
 ```
 
 The table above summarizes the median runtime, iteration rate, and
@@ -759,8 +761,8 @@ sessionInfo()
 #>  [1] caret_7.0-1          lattice_0.22-9       ggplot2_4.0.2       
 #>  [4] kernlab_0.9-33       glmnet_4.1-10        Matrix_1.7-4        
 #>  [7] dismo_1.3-16         raster_3.6-32        sp_2.2-1            
-#> [10] RSNNS_0.4-18         Rcpp_1.1.1           caretSDM_1.6.1      
-#> [13] sdm_1.2-59           xgboost_3.2.0.1      randomForest_4.7-1.2
+#> [10] RSNNS_0.4-18         Rcpp_1.1.1           caretSDM_1.7        
+#> [13] sdm_1.2-59           xgboost_3.2.1.1      randomForest_4.7-1.2
 #> [16] maxnet_0.1.4         earth_5.3.5          plotmo_3.7.0        
 #> [19] plotrix_3.8-14       Formula_1.2-5        gbm_2.2.3           
 #> [22] mgcv_1.9-4           nlme_3.1-168         gam_1.22-7          
@@ -789,7 +791,7 @@ sessionInfo()
 #>  [49] e1071_1.7-17            progressr_0.18.0        survival_3.8-6         
 #>  [52] ggspatial_1.1.10        iterators_1.0.14        systemfonts_1.3.2      
 #>  [55] tools_4.5.3             ragg_1.5.1              stringdist_0.9.17      
-#>  [58] glue_1.8.0              prodlim_2026.03.11      xfun_0.56              
+#>  [58] glue_1.8.0              prodlim_2026.03.11      xfun_0.57              
 #>  [61] checkCLI_1.0            dplyr_1.2.0             withr_3.0.2            
 #>  [64] fastmap_1.2.0           callr_3.7.6             digest_0.6.39          
 #>  [67] CoordinateCleaner_3.0.1 timechange_0.4.0        R6_2.6.1               
@@ -801,15 +803,15 @@ sessionInfo()
 #>  [85] timeDate_4052.112       S7_0.2.1                furrr_0.3.1            
 #>  [88] htmltools_0.5.9         scales_1.4.0            png_0.1-9              
 #>  [91] gower_1.0.2             knitr_1.51              geosphere_1.6-5        
-#>  [94] reshape2_1.4.5          rgbif_3.8.4             checkmate_2.3.4        
+#>  [94] reshape2_1.4.5          rgbif_3.8.5             checkmate_2.3.4        
 #>  [97] proxy_0.4-29            cachem_1.1.0            stringr_1.6.0          
 #> [100] pdp_0.8.3               KernSmooth_2.23-26      parallel_4.5.3         
 #> [103] s2_1.1.9                desc_1.4.3              pillar_1.11.1          
-#> [106] grid_4.5.3              reshape_0.8.10          vctrs_0.7.1            
+#> [106] grid_4.5.3              reshape_0.8.10          vctrs_0.7.2            
 #> [109] mapview_2.11.4          evaluate_1.0.5          oai_0.4.0              
 #> [112] cli_3.6.5               compiler_4.5.3          rlang_1.1.7            
 #> [115] future.apply_1.20.2     classInt_0.4-11         ps_1.9.1               
-#> [118] plyr_1.8.9              fs_1.6.7                stringi_1.8.7          
+#> [118] plyr_1.8.9              fs_2.0.0                stringi_1.8.7          
 #> [121] stars_0.7-1             lazyeval_0.2.2          leaflet_2.2.3          
 #> [124] bit64_4.6.0-1           leafem_0.2.5            future_1.70.0          
 #> [127] bslib_0.10.0            lwgeom_0.2-15           bit_4.6.0

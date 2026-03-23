@@ -1,4 +1,4 @@
-# Modeling Species Distributions in Continental Water Bodies
+# 5. Modeling Species Distributions in Continental Water Bodies
 
 ## Introduction
 
@@ -388,19 +388,6 @@ plot_occurrences(oc)
 
 ![](Salminus_files/figure-html/plot_occurrences-1.png)
 
-This next step assigns occurrences into a study area, excluding records
-outside the study area or with NAs as predictors. When `sdm_area` is a
-grid, it will assign records to each cell. Here, as a line is being
-used, it is very unlikely that a record will fall exactly above a line.
-The solution presented here is the use of
-[`sf::st_nearest_feature`](https://r-spatial.github.io/sf/reference/st_nearest_feature.html)
-function, which will address each species record to its closest river
-line.
-
-``` r
-oc <- join_area(oc, sa)
-```
-
 ### The `input_sdm` class
 
 In `caretSDM` we use multiple classes to perform our analysis. Every
@@ -410,7 +397,9 @@ did. Ideally, the workflow will have only one object throughout it. The
 will orbitate. That class puts occurrences, predictors, scenarios,
 models and predictions together to perform analysis that are only
 possible when two or more of these classes are available. First, we
-create the object by informing the occurrences and the sdm_area.
+create the object by informing the occurrences and the sdm_area. This
+step assigns occurrences into a study area, excluding records outside
+the study area or with NAs as predictors.
 
 ``` r
 i <- input_sdm(oc, sa)
@@ -647,9 +636,52 @@ ROC \> 0.9 will be used in predictions and ensembles.
 i <- predict_sdm(i,
                  metric = "ROC",
                  th = 0.7,
-                 tp = "prob",
-                 ensembles = TRUE)
-#> Ensembling...
+                 tp = "prob")
+i
+#>             caretSDM           
+#> ...............................
+#> Class                         : input_sdm
+#> --------  Occurrences  --------
+#> Species Names                 : Salminus brasiliensis 
+#> Number of presences           : 22 
+#> Pseudoabsence methods         :
+#>     Method to obtain PAs      : bioclim 
+#>     Number of PA sets         : 10 
+#>     Number of PAs in each set : 22 
+#> Data Cleaning                 : NAs, Capitals, Centroids, Geographically Duplicated, Identical Lat/Long, Institutions, Invalid, Non-terrestrial, Duplicated Cell (grid) 
+#> --------  Predictors  ---------
+#> Number of Predictors          : 5 
+#> Predictors Names              : LENGTH_KM, DIST_DN_KM, bio1, bio4, bio12 
+#> Area (VIF)                    : all
+#> Threshold                     : 0.5
+#> Selected Variables (VIF)      : LENGTH_KM, DIST_DN_KM, bio1 
+#> ---------  Scenarios  ---------
+#> Number of Scenarios           : 5 
+#> Scenarios Names               : ca_ssp245_2090 ca_ssp585_2090 mi_ssp245_2090 mi_ssp585_2090 current 
+#> -----------  Models  ----------
+#> Algorithms Names              : naive_bayes kknn 
+#> Variables Names               : LENGTH_KM DIST_DN_KM bio1 
+#> Model Validation              :
+#>     Method                    : repeatedcv 
+#>     Number                    : 4 
+#>     Metrics                   :
+#> $`Salminus brasiliensis`
+#>          algo       ROC       TSS Sensitivity Specificity
+#> 1        kknn 0.7793611 0.4883333       0.755      0.7425
+#> 2 naive_bayes 0.7883889 0.4408333       0.745      0.7142
+#> 
+#> --------  Predictions  --------
+#> Thresholds                    :
+#>     Method                    : threshold 
+#>     Criteria                  : 0.7
+```
+
+Finally, we can ensemble the predictions using:
+
+``` r
+i <- ensemble_sdm(i,
+                  method = "average")
+#> Ensemble function: average
 #>   current
 #>   ca_ssp245_2090
 #>   ca_ssp585_2090
@@ -689,20 +721,20 @@ i
 #> 2 naive_bayes 0.7883889 0.4408333       0.745      0.7142
 #> 
 #> --------  Predictions  --------
-#> Ensembles                     :
-#>     Scenarios                 : current ca_ssp245_2090 ca_ssp585_2090 mi_ssp245_2090 mi_ssp585_2090 
-#>     Methods                   : mean_occ_prob wmean_AUC committee_avg 
 #> Thresholds                    :
 #>     Method                    : threshold 
-#>     Criteria                  : 0.7
+#>     Criteria                  : 0.7 
+#> ---------  Ensembles  ---------
+#> Ensembles                     :
+#>     Methods                   : average
 ```
 
 In the above print, it is possible to see the “Methods” under the
-“Predictions” section, which informs which ensemble types were made:
-mean occurrence probability (`mean_occ_prob`; a simple mean between
-GCMs), mean occurrence probability weighted by AUC/ROC (`wmean_AUC`;
-AUC/ROC values are used as weights), and the majority rule, or the
-committee average (`committee_avg`; the sum of binaries).
+“Ensembles” section, which informs which ensemble types were made: mean
+occurrence probability (`average`; a simple mean between GCMs), mean
+occurrence probability weighted by AUC/ROC (`weighted_average`; AUC/ROC
+values are used as weights), and the majority rule, or the committee
+average (`committee_average`; the sum of binaries).
 
 Besides the AUC/ROC metric, users can get every available metric by
 model using the following code before commit to “ROC”:
@@ -1004,13 +1036,9 @@ i <- gcms_ensembles(i, gcms = c("ca", "mi"))
 #> New names:
 #> New names:
 #> • `cell_id` -> `cell_id...1`
-#> • `mean_occ_prob` -> `mean_occ_prob...2`
-#> • `wmean_AUC` -> `wmean_AUC...3`
-#> • `committee_avg` -> `committee_avg...4`
-#> • `cell_id` -> `cell_id...5`
-#> • `mean_occ_prob` -> `mean_occ_prob...6`
-#> • `wmean_AUC` -> `wmean_AUC...7`
-#> • `committee_avg` -> `committee_avg...8`
+#> • `average` -> `average...2`
+#> • `cell_id` -> `cell_id...3`
+#> • `average` -> `average...4`
 i
 #>             caretSDM           
 #> ...............................
@@ -1045,17 +1073,16 @@ i
 #> 2 naive_bayes 0.7883889 0.4408333       0.745      0.7142
 #> 
 #> --------  Predictions  --------
-#> Ensembles                     :
-#>     Scenarios                 : current ca_ssp245_2090 ca_ssp585_2090 mi_ssp245_2090 mi_ssp585_2090 _ssp245_2090 _ssp585_2090 
-#>     Methods                   : mean_occ_prob wmean_AUC committee_avg 
 #> Thresholds                    :
 #>     Method                    : threshold 
-#>     Criteria                  : 0.7
+#>     Criteria                  : 0.7 
+#> ---------  Ensembles  ---------
+#> Ensembles                     :
+#>     Methods                   : average
 ```
 
-Note that now the section “Predictions” has two scenarios called
-\_ssp245_2090 and \_ssp585_2090, which are the GCM’s ensembles that we
-have calculated.
+Note that now the “Ensembles” has two scenarios called \_ssp245_2090 and
+\_ssp585_2090, which are the GCM’s ensembles that we have calculated.
 
 ### Plotting results
 
@@ -1075,23 +1102,17 @@ the model `id` (see row names of `get_validation_metrics` above to
 retrieve models ids).
 
 ``` r
-plot_predictions(i,
-                 spp_name = NULL,
-                 scenario = "current",
-                 id = NULL,
-                 ensemble = TRUE,
-                 ensemble_type = "mean_occ_prob")
+plot_ensembles(i,
+               scenario = "current",
+               ensemble_type = "average")
 ```
 
 ![](Salminus_files/figure-html/plot_current_results-1.png)
 
 ``` r
-plot_predictions(i,
-                 spp_name = NULL,
-                 scenario = "_ssp245_2090",
-                 id = NULL,
-                 ensemble = TRUE,
-                 ensemble_type = "mean_occ_prob")
+plot_ensembles(i,
+               scenario = "_ssp245_2090",
+               ensemble_type = "average")
 ```
 
 ![](Salminus_files/figure-html/ssp245_2090-1.png)
@@ -1135,5 +1156,5 @@ species using a grid simplefeatures instead of lines.
 ``` r
 end_time <- Sys.time()
 end_time - start_time
-#> Time difference of 3.258505 mins
+#> Time difference of 31.87561 secs
 ```
