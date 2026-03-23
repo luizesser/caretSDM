@@ -72,16 +72,10 @@
 #' @export
 sdm_as_stars <- function(x, what = NULL, spp = NULL, scen = NULL, id = NULL, ens = NULL) {
   if (is.null(what)) {
-    if ("predictions" %in% names(x)) {
-      if ("ensembles" %in% names(x$predictions)) {
-        if(is.null(x$predictions$ensembles)) {
-          what <- "predictions"
-        } else {
-          what <- "ensembles"
-        }
-      } else {
-        what <- "predictions"
-      }
+    if ("ensembles" %in% names(x)) {
+      what <- "ensembles"
+    } else if ("predictions" %in% names(x)) {
+      what <- "predictions"
     } else if ("predictors" %in% names(x)) {
       what <- "predictors"
     } else if ("scenarios" %in% names(x)) {
@@ -119,7 +113,7 @@ sdm_as_stars <- function(x, what = NULL, spp = NULL, scen = NULL, id = NULL, ens
         scen <- scenarios_names(x)[1]
       }
       if (is.null(ens)) {
-        ens <- "mean_occ_prob"
+        ens <- "average"
       }
       grd <- x$predictors$grid
       v <- get_ensembles(x)[[spp, scen]][, c("cell_id", ens)]
@@ -134,16 +128,10 @@ sdm_as_stars <- function(x, what = NULL, spp = NULL, scen = NULL, id = NULL, ens
 #' @export
 sdm_as_raster <- function(x, what = NULL, spp = NULL, scen = NULL, id = NULL, ens = NULL) {
   if (is.null(what)) {
-    if ("predictions" %in% names(x)) {
-      if ("ensembles" %in% names(x$predictions)) {
-        if(is.null(x$predictions$ensembles)) {
-          what <- "predictions"
-        } else {
-          what <- "ensembles"
-        }
-      } else {
-        what <- "predictions"
-      }
+    if ("ensembles" %in% names(x)) {
+      what <- "ensembles"
+    } else if ("predictions" %in% names(x)) {
+      what <- "predictions"
     } else if ("predictors" %in% names(x)) {
       what <- "predictors"
     } else if ("scenarios" %in% names(x)) {
@@ -190,11 +178,11 @@ sdm_as_raster <- function(x, what = NULL, spp = NULL, scen = NULL, id = NULL, en
         print(paste0("scen not detected. Using scen=", scen))
       }
       if (is.null(ens)) {
-        ens <- "mean_occ_prob"
+        ens <- "average"
         print(paste0("ens not detected. Using ens=", ens))
       }
       grd <- x$predictors$grid
-      v <- x$predictions$ensembles[[spp, scen]][, c("cell_id", ens)]
+      v <- x$ensembles$data[[spp, scen]][, c("cell_id", ens)]
       result <- methods::as(stars::st_rasterize(sf::st_as_sf(dplyr::select(stars::st_as_stars(merge(grd, v, by = "cell_id")), -"cell_id"))), "Raster")
       return(result)
     }
@@ -205,16 +193,10 @@ sdm_as_raster <- function(x, what = NULL, spp = NULL, scen = NULL, id = NULL, en
 #' @export
 sdm_as_terra <- function(x, what = NULL, spp = NULL, scen = NULL, id = NULL, ens = NULL) {
   if (is.null(what)) {
-    if ("predictions" %in% names(x)) {
-      if ("ensembles" %in% names(x$predictions)) {
-        if(is.null(x$predictions$ensembles)) {
-          what <- "predictions"
-        } else {
-          what <- "ensembles"
-        }
-      } else {
-        what <- "predictions"
-      }
+    if ("ensembles" %in% names(x)) {
+      what <- "ensembles"
+    } else if ("predictions" %in% names(x)) {
+      what <- "predictions"
     } else if ("predictors" %in% names(x)) {
       what <- "predictors"
     } else if ("scenarios" %in% names(x)) {
@@ -261,11 +243,11 @@ sdm_as_terra <- function(x, what = NULL, spp = NULL, scen = NULL, id = NULL, ens
         print(paste0("scen not detected. Using scen=", scen))
       }
       if (is.null(ens)) {
-        ens <- "mean_occ_prob"
+        ens <- "average"
         print(paste0("ens not detected. Using ens=", ens))
       }
       grd <- x$predictors$grid
-      v <- x$predictions$ensembles[[spp, scen]][, c("cell_id", ens)]
+      v <- x$ensembles$data[[spp, scen]][, c("cell_id", ens)]
       result <- terra::rast(methods::as(stars::st_rasterize(sf::st_as_sf(dplyr::select(stars::st_as_stars(merge(grd, v, by = "cell_id")), -"cell_id"))), "Raster"))
       return(result)
     }

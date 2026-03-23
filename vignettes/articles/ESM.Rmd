@@ -1,5 +1,5 @@
 ---
-title: "Modeling Rare Species using Ensemble of Small Models"
+title: "7. Modeling Rare Species using Ensemble of Small Models"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Modeling Rare Species using Ensemble of Small Models}
@@ -46,8 +46,7 @@ sa <- sdm_area(parana,
   select_predictors(c("bio1", "bio4", "bio12"))
 
 # Build occurrences_sdm object
-oc <- occurrences_sdm(occ, crs = 6933) |> 
-  join_area(sa)
+oc <- occurrences_sdm(occ, crs = 6933)
 
 # Merge sdm_area and occurrences_sdm and perform pre-processing, processing and projecting.
 i_esm <- input_sdm(oc, sa) |> 
@@ -63,6 +62,7 @@ i_esm <- input_sdm(oc, sa) |>
                                        summaryFunction = summary_sdm, 
                                        savePredictions = "all")) |> 
   predict_sdm(th = 0.9) |> 
+  ensemble_sdm() |>
   suppressWarnings()
 ```
 
@@ -89,6 +89,7 @@ i_sdm <- input_sdm(oc, sa) |>
                                        summaryFunction = summary_sdm, 
                                        savePredictions = "all")) |> 
   predict_sdm(th = 0.9) |> 
+  ensemble_sdm() |>
   suppressWarnings()
 ```
 
@@ -96,22 +97,16 @@ Now let's compare both results:
 
 ```{r plot_esm}
 # Plotting ESM result for current scenario
-plot_predictions(i_esm,
-                 spp_name = NULL,
-                 scenario = "current",
-                 id = NULL,
-                 ensemble = TRUE,
-                 ensemble_type = "mean_occ_prob")
+plot_ensembles(i_esm,
+               scenario = "current",
+               ensemble_type = "average")
 ```
 
 ```{r plot_standard_sdm}
 # Plotting standard result for current scenario
-plot_predictions(i_sdm,
-                 spp_name = NULL,
-                 scenario = "current",
-                 id = NULL,
-                 ensemble = TRUE,
-                 ensemble_type = "mean_occ_prob")
+plot_ensembles(i_sdm,
+               scenario = "current",
+               ensemble_type = "average")
 ```
 
 ## Comparing response curves

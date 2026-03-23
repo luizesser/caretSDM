@@ -13,7 +13,8 @@ data_clean(occ, pred = NULL,
            institutions = TRUE,
            invalid = TRUE,
            terrestrial = TRUE,
-           independent_test = TRUE)
+           independent_test = TRUE,
+           fun = NULL)
 }
 \arguments{
 \item{occ}{A \code{occurrences_sdm} object or \code{input_sdm}.}
@@ -43,6 +44,10 @@ predictors data, than \code{pred} is obtained from it.}
 
 \item{independent_test}{Boolean. If \code{occ} has independent test data, the data cleaning routine
 is also applied on it.}
+
+\item{fun}{Function. A custom function to apply to occurrence data. It must receive a \code{df}
+argument, which will be a \code{data.frame} with three columns: species, decimalLongitude and
+decimalLatitude; The function must return the same \code{data.frame} with the same three columns.}
 }
 \value{
 A \code{occurrences_sdm} object or \code{input_sdm} with cleaned presence data.

@@ -34,7 +34,7 @@ test_that("sdm_as_stars", {
   suppressWarnings(i <- train_sdm(i,
                                   algo = c("naive_bayes", "kknn"),
                                   ctrl = ctrl))
-  p <- predict_sdm(i, th = 0.5, ensembles = FALSE)
+  p <- predict_sdm(i, th = 0.5)
   # predictions
   expect_equal(class(sdm_as_stars(p)), "stars")
   expect_true(all(c("cell_id", "presence", "pseudoabsence") %in% names(sdm_as_stars(p))))
@@ -43,14 +43,15 @@ test_that("sdm_as_stars", {
   expect_true(all(c("cell_id", "presence") %in% names(sdm_as_terra(p))))
   expect_true(all(c("cell_id", "presence") %in% names(sdm_as_raster(p))))
 
-  p <- predict_sdm(i, th = 0.5)
+  p <- predict_sdm(i, th = 0.5) |>
+    ensemble_sdm()
   # ensembles
   expect_equal(class(sdm_as_stars(p)), "stars")
-  expect_true(all(c("cell_id", "mean_occ_prob") %in% names(sdm_as_stars(p))))
+  expect_true(all(c("cell_id", "average") %in% names(sdm_as_stars(p))))
   expect_equal(class(sdm_as_terra(p))[1], "SpatRaster")
-  expect_true(all(c("mean_occ_prob") %in% names(sdm_as_terra(p))))
+  expect_true(all(c("average") %in% names(sdm_as_terra(p))))
   expect_equal(class(sdm_as_raster(p))[1], "RasterBrick")
-  expect_true(all(c("mean_occ_prob") %in% names(sdm_as_raster(p))))
+  expect_true(all(c("average") %in% names(sdm_as_raster(p))))
 
   # what
   expect_equal(class(sdm_as_stars(p, what="predictors")), "stars")
@@ -60,7 +61,7 @@ test_that("sdm_as_stars", {
   expect_equal(class(sdm_as_stars(p, what="predictions")), "stars")
   expect_true(all(c("cell_id", "presence", "pseudoabsence") %in% names(sdm_as_stars(p, what="predictions"))))
   expect_equal(class(sdm_as_stars(p, what="ensembles")), "stars")
-  expect_true(all(c("cell_id", "mean_occ_prob") %in% names(sdm_as_stars(p, what="ensembles"))))
+  expect_true(all(c("cell_id", "average") %in% names(sdm_as_stars(p, what="ensembles"))))
 
   # classes
   expect_true(is_input_sdm(p))

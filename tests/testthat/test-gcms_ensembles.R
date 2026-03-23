@@ -53,29 +53,30 @@ test_that("gcms_ensembles/names", {
                  variables_selected = c("bio1", "bio12")) |>
     suppressWarnings()
   i  <- predict_sdm(i, th=0.8)
+  i <- ensemble_sdm(i)
   # name changes
   inames <- set_scenarios_names(i, as.character(c(1:5)))
   expect_true(all(as.character(c(1:5)) == scenarios_names(inames)))
   expect_true(all(as.character(c(1:5)) == names(inames$scenarios$data)))
   expect_true(all(as.character(c(1:5)) == names(inames$predictions$predictions)))
-  expect_true(all(as.character(c(1:5)) == colnames(inames$predictions$ensembles)))
+  expect_true(all(as.character(c(1:5)) == colnames(inames$ensembles$data)))
   #
   # ensemble
   i <- gcms_ensembles(i, gcms = c("ca", "mi")) ######
   expect_true("ensembles" %in% names(i$predictions))
-  expect_true(all(c("matrix", "array") == class(i$predictions$ensembles)))
-  expect_true(ncol(i$predictions$ensembles) == length(scenarios_names(i))+2)
-  expect_true(nrow(i$predictions$ensembles) == length(species_names(i)))
-  expect_true(all(scenarios_names(i) %in% colnames(i$predictions$ensembles)))
-  expect_true(all(species_names(i) %in% rownames(i$predictions$ensembles)))
-  expect_true(all(c("cell_id", "mean_occ_prob", "wmean_AUC", "committee_avg") %in%
-                    colnames(i$predictions$ensembles[,"_ssp585_2090"][[1]])))
-  expect_true(all(c("list") == class(i$predictions$ensembles[,"_ssp585_2090"])))
-  expect_true(all(c("data.frame") == class(i$predictions$ensembles[,"_ssp585_2090"][[1]])))
+  expect_true(all(c("matrix", "array") == class(i$ensembles$data)))
+  expect_true(ncol(i$ensembles$data) == length(scenarios_names(i))+2)
+  expect_true(nrow(i$ensembles$data) == length(species_names(i)))
+  expect_true(all(scenarios_names(i) %in% colnames(i$ensembles$data)))
+  expect_true(all(species_names(i) %in% rownames(i$ensembles$data)))
+  expect_true(all(c("cell_id", "average") %in%
+                    colnames(i$ensembles$data[,"_ssp585_2090"][[1]])))
+  expect_true(all(c("list") == class(i$ensembles$data[,"_ssp585_2090"])))
+  expect_true(all(c("data.frame") == class(i$ensembles$data[,"_ssp585_2090"][[1]])))
   expect_snapshot(i)
-  e <- i$predictions$ensembles[,"_ssp585_2090"][[1]]
-  p1 <- i$predictions$ensembles[,"mi_ssp585_2090"][[1]]
-  p2 <- i$predictions$ensembles[,"ca_ssp585_2090"][[1]]
+  e <- i$ensembles$data[,"_ssp585_2090"][[1]]
+  p1 <- i$ensembles$data[,"mi_ssp585_2090"][[1]]
+  p2 <- i$ensembles$data[,"ca_ssp585_2090"][[1]]
   expect_true(all(e$cell_id == p1$cell_id))
   expect_true(all(e$mean_occ_prob == (p1$mean_occ_prob + p2$mean_occ_prob) / 2))
 })

@@ -95,7 +95,7 @@ oc <- occurrences_sdm(occ[1:50,], crs = 6933)
 i <- input_sdm(oc, sa)
 
 # Pseudoabsence generation:
-i <- pseudoabsences(i, method="random")
+i0 <- pseudoabsences(i, method="random")
 
 # Custom method example:
 env_distance_pa <- function(env_sf, occ_sf, n_pa=n_pa) {
@@ -117,7 +117,7 @@ env_distance_pa <- function(env_sf, occ_sf, n_pa=n_pa) {
 
 }
 
-i <- pseudoabsences(i, method=env_distance_pa)
+i1 <- pseudoabsences(i, method=env_distance_pa)
 
 }
 \seealso{

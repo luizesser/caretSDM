@@ -31,10 +31,10 @@
       1 naive_bayes 0.8323889 0.2460904      0.9665      0.2865
       
       --------  Predictions  --------
-      Ensembles                     :
-          Scenarios                 : current ca_ssp245_2090 ca_ssp585_2090 mi_ssp245_2090 mi_ssp585_2090 _ssp245_2090 _ssp585_2090 
-          Methods                   : mean_occ_prob wmean_AUC committee_avg 
       Thresholds                    :
           Method                    : threshold 
           Criteria                  : 0.8 
+      ---------  Ensembles  ---------
+      Ensembles                     :
+          Methods                   : average 
 

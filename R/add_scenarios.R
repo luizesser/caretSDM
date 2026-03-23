@@ -434,7 +434,7 @@ set_scenarios_names <- function(i, scenarios_names = NULL) {
     if("scenarios" %in% names(i)){names(i$scenarios$data) <- scenarios_names}
     if("predictions" %in% names(i)){
       names(i$predictions$predictions) <- scenarios_names
-      colnames(i$predictions$ensembles) <- scenarios_names
+      colnames(i$ensembles$data) <- scenarios_names
     }
   }
   return(i)

@@ -102,7 +102,8 @@ add_input_sdm <- function(i1, i2) {
     predictors = add_sdm_area(i1$predictors, i2$predictors),
     scenarios = add_sdm_area(i1$scenarios, i2$scenarios),
     models = add_models(i1$models, i2$models),
-    predictions = add_predictions(i1$predictions, i2$predictions)
+    predictions = add_predictions(i1$predictions, i2$predictions),
+    predictions = add_ensembles(i1$ensembles, i2$ensembles)
   )
   i <- structure(l,
     class = "input_sdm"
@@ -220,14 +221,16 @@ print.input_sdm <- function(x, ...) {
   if ("predictions" %in% names(x)) {
     cat("--------  Predictions  --------\n")
     cat(
-      "Ensembles                     :\n",
-      "   Scenarios                 :", colnames(x$predictions$ensembles), "\n",
-      "   Methods                   :", colnames(x$predictions$ensembles[1, 1][[1]])[-1], "\n"
-    )
-    cat(
       "Thresholds                    :\n",
       "   Method                    :", x$predictions$thresholds$method, "\n",
       "   Criteria                  :", x$predictions$thresholds$criteria, "\n"
+    )
+  }
+  if ("ensembles" %in% names(x)) {
+    cat("---------  Ensembles  ---------\n")
+    cat(
+      "Ensembles                     :\n",
+      "   Methods                   :", x$ensembles$method, "\n"
     )
   }
   invisible(x)

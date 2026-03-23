@@ -68,3 +68,11 @@
 # caretSDM 1.6.1
 
 -   Inclusion of background selection through a custom function.
+
+# caretSDM 1.7
+
+-   predict_sdm doesn't perform ensembles anymore.
+-   Ensembles are included in the ensembles_sdm function.
+-   All adjusts necessary to properly perform that operation, including tests, are implemented.
+-   Vignettes and examples were changed to include ensembles_sdm function.
+-   data_clean now accepts a custom function to clean occurrences.

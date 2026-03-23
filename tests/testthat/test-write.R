@@ -21,13 +21,14 @@ test_that("write", {
                                        savePredictions = "all"),
               variables_selected = c("bio1", "bio12")) |>
     predict_sdm(th=0.8) |>
+    ensemble_sdm() |>
     gcms_ensembles(gcms = c("ca", "mi")) |>
     suppressWarnings()
 
   # write_ensembles
   expect_no_error(write_ensembles(i, path = "tmp_test", ext = ".tif", centroid = FALSE))
   expect_true(file.exists("tmp_test/Araucaria angustifolia/_ssp245_2090.tif"))
-  expect_no_error(write_ensembles(i$predictions, path = "tmp_test", ext = ".gpkg", centroid = TRUE))
+  expect_no_error(write_ensembles(i, path = "tmp_test", ext = ".gpkg", centroid = TRUE))
   expect_true(file.exists("tmp_test/Araucaria angustifolia/_ssp245_2090.gpkg"))
   expect_no_error(write_ensembles(i, path = "tmp_test", ext = ".csv", centroid = TRUE))
   expect_true(file.exists("tmp_test/Araucaria angustifolia/_ssp245_2090.csv"))

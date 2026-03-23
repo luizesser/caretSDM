@@ -28,6 +28,7 @@ test_that("full structure check", {
               variables_selected = c("bio1", "bio12")) |>
     suppressWarnings() |>
     predict_sdm(th=0.5) |>
+    ensemble_sdm() |>
     gcms_ensembles(gcms = c("ca", "mi"))
   # multispecies single scenario
   i_ms <- input_sdm(oc_m, sa_s) |>
@@ -42,7 +43,8 @@ test_that("full structure check", {
                                        savePredictions = "all"),
               variables_selected = c("bio1", "bio12")) |>
     suppressWarnings() |>
-    predict_sdm(th=0.5)
+    predict_sdm(th=0.5) |>
+    ensemble_sdm()
   # single species multiscenario
   i_sm <- input_sdm(oc_s, sa_m) |>
     pseudoabsences(method="random", n_set = 2) |>
@@ -57,6 +59,7 @@ test_that("full structure check", {
               variables_selected = c("bio1", "bio12")) |>
     suppressWarnings() |>
     predict_sdm(th=0.5) |>
+    ensemble_sdm() |>
     gcms_ensembles(gcms = c("ca", "mi"))
   # single species single scenario
   i_ss <- input_sdm(oc_s, sa_s) |>
@@ -71,13 +74,14 @@ test_that("full structure check", {
                                        savePredictions = "all"),
               variables_selected = c("bio1", "bio12")) |>
     suppressWarnings() |>
-    predict_sdm(th=0.5)
+    predict_sdm(th=0.5) |>
+    ensemble_sdm()
 
   ## Testing structure
-  expect_equal(names(i_ss), c("occurrences", "predictors", "scenarios", "models", "predictions"))
-  expect_equal(names(i_sm), c("occurrences", "predictors", "scenarios", "models", "predictions"))
-  expect_equal(names(i_ms), c("occurrences", "predictors", "scenarios", "models", "predictions"))
-  expect_equal(names(i_mm), c("occurrences", "predictors", "scenarios", "models", "predictions"))
+  expect_equal(names(i_ss), c("occurrences", "predictors", "scenarios", "models", "predictions", "ensembles"))
+  expect_equal(names(i_sm), c("occurrences", "predictors", "scenarios", "models", "predictions", "ensembles"))
+  expect_equal(names(i_ms), c("occurrences", "predictors", "scenarios", "models", "predictions", "ensembles"))
+  expect_equal(names(i_mm), c("occurrences", "predictors", "scenarios", "models", "predictions", "ensembles"))
 
   # occurrence
   expect_equal(names(i_ss$occurrences), c("occurrences", "spp_names", "n_presences", "crs", "pseudoabsences", "background"))
@@ -475,10 +479,10 @@ test_that("full structure check", {
   expect_equal(names(i_ms$predictions$thresholds), c("values", "method", "criteria"))
   expect_equal(names(i_mm$predictions$thresholds), c("values", "method", "criteria"))
 
-  expect_equal(class(i_ss$predictions$thresholds$criteria), c("character"))
-  expect_equal(class(i_sm$predictions$thresholds$criteria), c("character"))
-  expect_equal(class(i_ms$predictions$thresholds$criteria), c("character"))
-  expect_equal(class(i_mm$predictions$thresholds$criteria), c("character"))
+  expect_equal(class(i_ss$predictions$thresholds$criteria), c("numeric"))
+  expect_equal(class(i_sm$predictions$thresholds$criteria), c("numeric"))
+  expect_equal(class(i_ms$predictions$thresholds$criteria), c("numeric"))
+  expect_equal(class(i_mm$predictions$thresholds$criteria), c("numeric"))
 
   expect_equal(class(i_ss$predictions$thresholds$method), c("character"))
   expect_equal(class(i_sm$predictions$thresholds$method), c("character"))
@@ -545,34 +549,50 @@ test_that("full structure check", {
   expect_equal(as.character(unique(sf::st_geometry_type(i_mm$predictions$predictions[[1]][[1]][[1]]))), c("POLYGON"))
   expect_equal(as.character(unique(sf::st_geometry_type(i_mm$predictions$predictions[[1]][[1]][[1]]))), c("POLYGON"))
 
-  expect_equal(class(i_ss$predictions$ensembles), c("matrix", "array"))
-  expect_equal(class(i_sm$predictions$ensembles), c("matrix", "array"))
-  expect_equal(class(i_ms$predictions$ensembles), c("matrix", "array"))
-  expect_equal(class(i_mm$predictions$ensembles), c("matrix", "array"))
+  # ensembles
+  expect_equal(class(i_ss$ensembles), c("ensembles"))
+  expect_equal(class(i_sm$ensembles), c("ensembles"))
+  expect_equal(class(i_ms$ensembles), c("ensembles"))
+  expect_equal(class(i_mm$ensembles), c("ensembles"))
 
-  expect_true(all(scenarios_names(i_ss) %in% colnames(i_ss$predictions$ensembles)))
-  expect_true(all(scenarios_names(i_sm) %in% colnames(i_sm$predictions$ensembles)))
-  expect_true(all(scenarios_names(i_ms) %in% colnames(i_ms$predictions$ensembles)))
-  expect_true(all(scenarios_names(i_mm) %in% colnames(i_mm$predictions$ensembles)))
+  expect_equal(names(i_ss$ensembles), c("method", "data"))
+  expect_equal(names(i_sm$ensembles), c("method", "data"))
+  expect_equal(names(i_ms$ensembles), c("method", "data"))
+  expect_equal(names(i_mm$ensembles), c("method", "data"))
 
-  expect_equal(rownames(i_ss$predictions$ensembles), species_names(i_ss))
-  expect_equal(rownames(i_sm$predictions$ensembles), species_names(i_sm))
-  expect_equal(rownames(i_ms$predictions$ensembles), species_names(i_ms))
-  expect_equal(rownames(i_mm$predictions$ensembles), species_names(i_mm))
+  expect_true(all(scenarios_names(i_ss) %in% colnames(i_ss$ensembles$data)))
+  expect_true(all(scenarios_names(i_sm) %in% colnames(i_sm$ensembles$data)))
+  expect_true(all(scenarios_names(i_ms) %in% colnames(i_ms$ensembles$data)))
+  expect_true(all(scenarios_names(i_mm) %in% colnames(i_mm$ensembles$data)))
 
-  expect_equal(class(i_ss$predictions$ensembles[1,1]), "list")
-  expect_equal(class(i_sm$predictions$ensembles[1,1]), "list")
-  expect_equal(class(i_ms$predictions$ensembles[1,1]), "list")
-  expect_equal(class(i_mm$predictions$ensembles[1,1]), "list")
+  expect_equal(rownames(i_ss$ensembles$data), species_names(i_ss))
+  expect_equal(rownames(i_sm$ensembles$data), species_names(i_sm))
+  expect_equal(rownames(i_ms$ensembles$data), species_names(i_ms))
+  expect_equal(rownames(i_mm$ensembles$data), species_names(i_mm))
 
-  expect_equal(class(i_ss$predictions$ensembles[1,1][[1]]), "data.frame")
-  expect_equal(class(i_sm$predictions$ensembles[1,1][[1]]), "data.frame")
-  expect_equal(class(i_ms$predictions$ensembles[1,1][[1]]), "data.frame")
-  expect_equal(class(i_mm$predictions$ensembles[1,1][[1]]), "data.frame")
+  expect_equal(class(i_ss$ensembles$data[1,1]), "list")
+  expect_equal(class(i_sm$ensembles$data[1,1]), "list")
+  expect_equal(class(i_ms$ensembles$data[1,1]), "list")
+  expect_equal(class(i_mm$ensembles$data[1,1]), "list")
 
-  expect_equal(names(i_ss$predictions$ensembles[1,1][[1]]), c("cell_id", "mean_occ_prob", "wmean_AUC", "committee_avg"))
-  expect_equal(names(i_sm$predictions$ensembles[1,1][[1]]), c("cell_id", "mean_occ_prob", "wmean_AUC", "committee_avg"))
-  expect_equal(names(i_ms$predictions$ensembles[1,1][[1]]), c("cell_id", "mean_occ_prob", "wmean_AUC", "committee_avg"))
-  expect_equal(names(i_mm$predictions$ensembles[1,1][[1]]), c("cell_id", "mean_occ_prob", "wmean_AUC", "committee_avg"))
+  expect_equal(class(i_ss$ensembles$data[1,1][[1]]), "data.frame")
+  expect_equal(class(i_sm$ensembles$data[1,1][[1]]), "data.frame")
+  expect_equal(class(i_ms$ensembles$data[1,1][[1]]), "data.frame")
+  expect_equal(class(i_mm$ensembles$data[1,1][[1]]), "data.frame")
+
+  expect_equal(names(i_ss$ensembles$data[1,1][[1]]), c("cell_id", "average"))
+  expect_equal(names(i_sm$ensembles$data[1,1][[1]]), c("cell_id", "average"))
+  expect_equal(names(i_ms$ensembles$data[1,1][[1]]), c("cell_id", "average"))
+  expect_equal(names(i_mm$ensembles$data[1,1][[1]]), c("cell_id", "average"))
+
+  expect_equal(class(i_ss$ensembles$data[1,1][[1]][,"cell_id"]), c("integer"))
+  expect_equal(class(i_sm$ensembles$data[1,1][[1]][,"cell_id"]), c("integer"))
+  expect_equal(class(i_ms$ensembles$data[1,1][[1]][,"cell_id"]), c("integer"))
+  expect_equal(class(i_mm$ensembles$data[1,1][[1]][,"cell_id"]), c("integer"))
+
+  expect_equal(class(i_ss$ensembles$data[1,1][[1]][,"average"]), c("numeric"))
+  expect_equal(class(i_sm$ensembles$data[1,1][[1]][,"average"]), c("numeric"))
+  expect_equal(class(i_ms$ensembles$data[1,1][[1]][,"average"]), c("numeric"))
+  expect_equal(class(i_mm$ensembles$data[1,1][[1]][,"average"]), c("numeric"))
 })
 

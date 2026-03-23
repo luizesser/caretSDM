@@ -7,7 +7,7 @@
 #'
 #' @param i A \code{input_sdm} object with projections.
 #' @param scenario Character. One of the scenarios that were projected. Can be ensembles as well.
-#' @param ensemble_type Character. Type of ensemble to be used. Standard is NULL, but will return the mean_occ_prob
+#' @param ensemble_type Character. Type of ensemble to be used. Standard is NULL, but will return the average.
 #' @param species Character. Species to be analyzed. Standard is NULL.
 #' @param th Numeric. Threshold to binarize the ensemble.
 #'
@@ -58,6 +58,9 @@
 #'   # Predict models:
 #'   i  <- predict_sdm(i, th=0.8)
 #'
+#'   # Ensemble:
+#'   i <- ensemble_sdm(i, method = "average")
+#'
 #'   # Ensemble GCMs:
 #'   i <- gcms_ensembles(i, gcms = c("ca", "mi"))
 #'   i
@@ -85,7 +88,7 @@ prediction_change_sdm <- function(i, scenario = NULL, ensemble_type = NULL, spec
   }
   assert_choice_cli(ensemble_type, colnames(get_ensembles(i)[1,1][[1]])[-1], null.ok = TRUE)
   if(is.null(ensemble_type)){
-    ensemble_type <- "mean_occ_prob"
+    ensemble_type <- "average"
   }
   assert_choice_cli(species, colnames(get_ensembles(i)[1,1][[1]]), null.ok = TRUE)
   if(is.null(species)){

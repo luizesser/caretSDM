@@ -59,6 +59,7 @@ ctrl_sdm <- caret::trainControl(method = "repeatedcv",
                                 savePredictions = "all")
 # Train models:
 i <- train_sdm(i, algo = c("naive_bayes"), ctrl=ctrl_sdm)
+
 # PDP plots:
 pdp_sdm(i)
 get_pdp_sdm(i)

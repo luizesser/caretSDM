@@ -32,9 +32,6 @@
       2 naive_bayes 0.8525695 0.9737374 0.41180556 0.04199922
       
       --------  Predictions  --------
-      Ensembles                     :
-          Scenarios                 : current 
-          Methods                   : mean_occ_prob wmean_AUC committee_avg 
       Thresholds                    :
           Method                    : threshold 
           Criteria                  : 0.5 
@@ -47,8 +44,6 @@
                caretSDM        
       .........................
       Class             : Predictions
-      Ensembles         :
-               Methods  : mean_occ_prob wmean_AUC committee_avg 
       Thresholds        :
                Method   : threshold 
                Criteria : 0.5 
@@ -104,9 +99,6 @@
       2 naive_bayes 0.8525695 0.9737374 0.41180556 0.04199922
       
       --------  Predictions  --------
-      Ensembles                     :
-          Scenarios                 : current 
-          Methods                   : mean_occ_prob wmean_AUC committee_avg 
       Thresholds                    :
           Method                    : threshold 
           Criteria                  : 0 
@@ -119,8 +111,6 @@
                caretSDM        
       .........................
       Class             : Predictions
-      Ensembles         :
-               Methods  : mean_occ_prob wmean_AUC committee_avg 
       Thresholds        :
                Method   : threshold 
                Criteria : 0 
@@ -176,12 +166,9 @@
       2 naive_bayes 0.8525695 0.9737374 0.41180556 0.04199922
       
       --------  Predictions  --------
-      Ensembles                     :
-          Scenarios                 : current 
-          Methods                   : mean_occ_prob wmean_AUC committee_avg 
       Thresholds                    :
-          Method                    : function (x, ...)  UseMethod("mean") 
-          Criteria                  : function (x, ...)  UseMethod("mean") 
+          Method                    : mean 
+          Criteria                  : 0.7177166 
 
 ---
 
@@ -191,11 +178,9 @@
                caretSDM        
       .........................
       Class             : Predictions
-      Ensembles         :
-               Methods  : mean_occ_prob wmean_AUC committee_avg 
       Thresholds        :
-               Method   : function (x, ...)  UseMethod("mean") 
-               Criteria : function (x, ...)  UseMethod("mean") 
+               Method   : mean 
+               Criteria : 0.7177166 
                Metrics  :
       $`Araucaria angustifolia`
                   algo       ROC      Sens      Spec       ROCSD       SensSD
@@ -354,8 +339,6 @@
                caretSDM        
       .........................
       Class             : Predictions
-      Ensembles         :
-               Methods  : mean_occ_prob wmean_AUC committee_avg 
       Thresholds        :
                Method   : threshold 
                Criteria : 0.5 0.6 
@@ -439,8 +422,6 @@
                caretSDM        
       .........................
       Class             : Predictions
-      Ensembles         :
-               Methods  : mean_occ_prob wmean_AUC committee_avg 
       Thresholds        :
                Method   : threshold 
                Criteria : 0.5 
@@ -489,8 +470,6 @@
                caretSDM        
       .........................
       Class             : Predictions
-      Ensembles         :
-               Methods  : mean_occ_prob wmean_AUC committee_avg 
       Thresholds        :
                Method   : threshold 
                Criteria : 0.6 

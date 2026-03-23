@@ -118,18 +118,19 @@ test_that("filter_species", {
                                        summaryFunction = summary_sdm,
                                        savePredictions = "all")) |>
     suppressWarnings() |>
-    predict_sdm(th = 0.6)
+    predict_sdm(th = 0.6) |>
+    ensemble_sdm()
   expect_true(all(species_names(i) %in% unique(i$occurrences$occurrences$species)))
   expect_true(all(species_names(i) %in% names(i$occurrences$pseudoabsences$data)))
   expect_true(all(species_names(i) %in% names(i$models$models)))
   expect_true(all(species_names(i) %in% names(i$predictions$predictions[[1]])))
-  expect_true(all(species_names(i) %in% rownames(i$predictions$ensembles)))
+  expect_true(all(species_names(i) %in% rownames(i$ensembles$data)))
   i2 <- filter_species(i, spp = "Araucaria angustifolia")
   expect_true(all(species_names(i2) %in% unique(i2$occurrences$occurrences$species)))
   expect_true(all(species_names(i2) %in% names(i2$occurrences$pseudoabsences$data)))
   expect_true(all(species_names(i2) %in% names(i2$models$models)))
   expect_true(all(species_names(i2) %in% names(i2$predictions$predictions[[1]])))
-  expect_true(all(species_names(i2) %in% rownames(i2$predictions$ensembles)))
+  expect_true(all(species_names(i2) %in% rownames(i2$ensembles$data)))
   expect_error(filter_species(i, spp = "x"))
   expect_error(filter_species(i, spp = NULL))
 

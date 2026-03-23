@@ -1,5 +1,5 @@
 ---
-title: "Benchmarking SDM Package Performance in R"
+title: "8. Benchmarking SDM Package Performance in R"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{runtime-benchmark}
@@ -440,7 +440,8 @@ fit_caretSDM <- function(prep) {
 post_caretSDM <- function(fit) {
 
   fit |> 
-    predict_sdm(th = 0.5)
+    predict_sdm(th = 0.5) |>
+    ensemble_sdm()
   
 }
 
@@ -465,7 +466,8 @@ run_caretSDM <- function() {
                                          savePredictions = "final",
                                          summaryFunction = summary_sdm)) |> 
     add_scenarios(scen, pred_as_scen = FALSE) |>
-    predict_sdm(th = 0.5)
+    predict_sdm(th = 0.5) |>
+    ensemble_sdm()
   
 }
 ```

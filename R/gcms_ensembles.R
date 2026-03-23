@@ -56,6 +56,10 @@
 #'   # Predict models:
 #'   i  <- predict_sdm(i, th=0.8)
 #'
+#'   # Ensemble:
+#'   i <- ensemble_sdm(i, method = "average")
+#'   i
+#'
 #'   # Ensemble GCMs:
 #'   i <- gcms_ensembles(i, gcms = c("ca", "mi"))
 #'   i
@@ -66,7 +70,7 @@
 #' @export
 gcms_ensembles <- function(i, gcms=NULL) {
   if (is_input_sdm(i)) {
-    y <- i$predictions$ensembles
+    y <- i$ensembles$data
   }
   emet <- colnames(y[[1]])[-1]
   cols <- colnames(y)
@@ -90,7 +94,7 @@ gcms_ensembles <- function(i, gcms=NULL) {
   m <- matrix(l, nrow=nrow(y), ncol = length(scen_names), dimnames = list(rownames(y), scen_names), byrow = TRUE)
   y2 <- cbind(y,m)
 
-  i$predictions$ensembles <- y2
+  i$ensembles$data <- y2
   return(i)
 }
 

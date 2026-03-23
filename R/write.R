@@ -32,7 +32,7 @@
 #' @importFrom sf st_join st_write st_coordinates st_centroid
 #' @importFrom stars write_stars st_rasterize
 #' @importFrom fs path_file path_dir path
-#' @importFrom cli cli_inform
+#' @importFrom cli cli_inform cli_abort
 #' @importFrom dplyr select
 #' @importFrom utils write.csv
 #' @import checkCLI
@@ -42,16 +42,19 @@
 #' @export
 write_ensembles <- function(x, path = NULL, ext = ".tif", centroid = FALSE) {
   if (is_input_sdm(x)) {
-    y <- x$predictions
+    y <- x$ensembles
   } else {
-    y <- x
+    cli::cli_abort(c(
+      "{.var x} must be an input_sdm object",
+      "x" = "You've supplied a {.cls {class(x)}} object."
+    ))
   }
   assert_character_cli(path, null.ok = FALSE)
   ext_sf <- c(".bna", ".csv", ".e00", ".gdb", ".geojson", ".gml", ".gmt", ".gpkg", ".gps", ".gtm", ".gxt", ".jml",
               ".map", ".mdb", ".nc", ".ods", ".osm", ".pbf", ".shp", ".sqlite", ".vdv", ".xls", ".xlsx")
-  scen <- colnames(y$ensembles)
-  spp <- rownames(y$ensembles)
-  grd <- y$grid
+  scen <- colnames(y$data)
+  spp <- rownames(y$data)
+  grd <- x$predictions$grid
   if(centroid){
     suppressWarnings(cent <- sf::st_coordinates(sf::st_centroid(grd)))
     colnames(cent) <- c("x_centroid", "y_centroid")
@@ -59,7 +62,7 @@ write_ensembles <- function(x, path = NULL, ext = ".tif", centroid = FALSE) {
   }
   for (sp in spp) {
     for (sc in scen) {
-      v <- y[["ensembles"]][[sp, sc]]
+      v <- y[["data"]][[sp, sc]]
       if (is.data.frame(v)) {
         result <- merge(grd, v, by = "cell_id")
         if (!dir.exists(paste0(path, "/", sp))) {

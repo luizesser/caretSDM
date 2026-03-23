@@ -1,5 +1,5 @@
 ---
-title: "Projecting Non-native Distribution using SDMs"
+title: "6. Projecting Non-native Distribution using SDMs"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Projecting Non-native Distribution using SDMs}
@@ -262,12 +262,6 @@ oc
 plot_occurrences(oc)
 ```
 
-This next step assigns occurrences into a study area, excluding records outside the study area or
-with NAs as predictors.
-
-```{r join_area}
-oc <- join_area(oc, sa)
-```
 
 ### The `input_sdm` class
 
@@ -393,15 +387,23 @@ predict models that passes a given validation threshold. This validation metric 
 i <- predict_sdm(i,
                  metric = "ROC",
                  th = 0.9,
-                 tp = "prob",
-                 ensembles = TRUE)
+                 tp = "prob")
 i
 ```
 
-In the above print, it is possible to see the "Methods" under the "Predictions" section, which
-informs which ensemble types were made: mean occurrence probability (`mean_occ_prob`; a simple mean
-between GCMs), mean occurrence probability weighted by AUC/ROC (`wmean_AUC`; AUC/ROC values are used
-as weights), and the majority rule, or the committee average (`committee_avg`; the sum of binaries).
+Finally, we can ensemble the predictions using:
+
+```{r ensemble_sdm}
+i <- ensemble_sdm(i,
+                  method = "average")
+i
+```
+
+In the above print, it is possible to see the "Methods" under the "Ensembles" section, which
+informs which ensemble types were made: mean occurrence probability (`average`; a simple mean
+between GCMs), mean occurrence probability weighted by AUC/ROC (`weighted_average`; AUC/ROC values 
+are used as weights), and the majority rule, or the committee average (`committee_average`; the sum 
+of binaries).
 
 Besides the AUC/ROC metric, users can get every available metric by model using the following code
 before commit to "ROC":
@@ -433,7 +435,7 @@ i <- gcms_ensembles(i, gcms = c("ca", "mi"))
 i
 ```
 
-Note that now the section "Predictions" has two scenarios called \_ssp245_2090 and \_ssp585_2090,
+Note that now the "Ensembles" has two scenarios called \_ssp245_2090 and \_ssp585_2090,
 which are the GCM's ensembles that we have calculated.
 
 ### Plotting results
@@ -450,21 +452,15 @@ separate projections you can plot them informing the model `id` (see row names o
 `get_validation_metrics` above to retrieve models ids).
 
 ```{r plot_current_results}
-plot_predictions(i,
-                 spp_name = NULL,
-                 scenario = "current",
-                 id = NULL,
-                 ensemble = TRUE,
-                 ensemble_type = "mean_occ_prob")
+plot_ensembles(i,
+               scenario = "current",
+               ensemble_type = "average")
 ```
 
 ```{r ssp245_2090}
-plot_predictions(i,
-                 spp_name = NULL,
-                 scenario = "_ssp245_2090",
-                 id = NULL,
-                 ensemble = TRUE,
-                 ensemble_type = "mean_occ_prob")
+plot_ensembles(i,
+               scenario = "_ssp585_2090",
+               ensemble_type = "average")
 ```
 
 Another plot widely used in SDM studies is the Partial Dependence Plot, which informs the response

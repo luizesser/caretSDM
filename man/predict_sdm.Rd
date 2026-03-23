@@ -3,7 +3,6 @@
 \name{predict_sdm}
 \alias{predict_sdm}
 \alias{get_predictions}
-\alias{get_ensembles}
 \alias{add_predictions}
 \title{Predict SDM models in new data}
 \usage{
@@ -12,13 +11,10 @@ predict_sdm(m,
             metric = "ROC",
             th = 0.9,
             tp = "prob",
-            ensembles = TRUE,
             file = NULL,
             add.current = TRUE)
 
 get_predictions(i)
-
-get_ensembles(i)
 
 add_predictions(p1, p2)
 }
@@ -35,9 +31,6 @@ available.}
 \item{th}{Thresholds for metrics. Can be numeric or a function.}
 
 \item{tp}{Type of output to be retrieved. See details.}
-
-\item{ensembles}{Boolean. Should ensembles be calculated? If \code{TRUE} a series of ensembles
-are obtained. See details.}
 
 \item{file}{File to sabe predictions.}
 
@@ -61,17 +54,9 @@ This function projects SDM models to new scenarios
 (tp="prob") or the raw output (tp="raw"), which could vary depending on the algorithm used, but
 usually would be on of the classes (factor vector with presences and pseudoabsences).
 
-When \code{ensembles} is set to \code{TRUE}, three ensembles are currently implemented.
-mean_occ_prob is the mean occurrence probability, which is a simple mean of predictions,
-wmean_AUC is the same mean_occ_prob, but weighted by AUC, and committee_avg is the committee
-average, as known as majority rule, where predictions are binarized and then a mean is obtained.
-
 \code{get_predictions} returns the \code{list} of all predictions to all scenarios, all species,
 all algorithms and all repetitions. Useful for those who wish to implement their own ensemble
 methods.
-
-\code{get_ensembles} returns a \code{matrix} of \code{data.frame}s, where each column is a
-scenario and each row is a species.
 
 \code{scenarios_names} returns the scenarios names in a \code{sdm_area} or \code{input_sdm}
 object.

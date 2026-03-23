@@ -1,5 +1,5 @@
 ---
-title: "Adding New Algorithms to caretSDM"
+title: "2. Adding New Algorithms to caretSDM"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Adding New Algorithms to caretSDM}
@@ -276,7 +276,6 @@ sa <- add_predictors(sa, bioc)
 
 # Format occurrences
 oc <- occurrences_sdm(occ, crs = 6933)
-oc <- join_area(oc, sa)
 
 # Create the final input_sdm object
 i <- input_sdm(oc, sa)
@@ -355,13 +354,13 @@ i2
 Plotting the result of mahal.dismo.
 
 ```{r mahal.dismo_plot}
-i2 |> add_scenarios() |> predict_sdm() |> plot_predictions()
+i2 |> add_scenarios() |> predict_sdm() |> ensemble_sdm() |> plot_ensembles()
 ```
 
 Plotting the result of mahal.custom.
 
 ```{r mahal.custom_plot}
-i |> add_scenarios() |> predict_sdm() |> plot_predictions()
+i |> add_scenarios() |> predict_sdm() |> ensemble_sdm() |> plot_ensembles()
 ```
 
 ## Conclusion

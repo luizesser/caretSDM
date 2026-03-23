@@ -12,7 +12,8 @@
 #'            institutions = TRUE,
 #'            invalid = TRUE,
 #'            terrestrial = TRUE,
-#'            independent_test = TRUE)
+#'            independent_test = TRUE,
+#'            fun = NULL)
 #'
 #' @param occ A \code{occurrences_sdm} object or \code{input_sdm}.
 #' @param pred A \code{sdm_area} object. If \code{occ} is a \code{input_sdm} object with
@@ -27,6 +28,9 @@
 #' @param institutions Boolean to turn on/off the exclusion from biodiversity institutions coordinates (see \code{?cc_inst})
 #' @param invalid Boolean to turn on/off the exclusion from invalid coordinates (see \code{?cc_val})
 #' @param terrestrial Boolean to turn on/off the exclusion from coordinates falling on sea (see \code{?cc_sea})
+#' @param fun Function. A custom function to apply to occurrence data. It must receive a \code{df}
+#' argument, which will be a \code{data.frame} with three columns: species, decimalLongitude and
+#' decimalLatitude; The function must return the same \code{data.frame} with the same three columns.
 #'
 #' @param independent_test Boolean. If \code{occ} has independent test data, the data cleaning routine
 #' is also applied on it.
@@ -79,7 +83,8 @@ data_clean <- function(occ, pred = NULL,
                        institutions = TRUE,
                        invalid = TRUE,
                        terrestrial = TRUE,
-                       independent_test = TRUE) {
+                       independent_test = TRUE,
+                       fun = NULL) {
 
   assert_logical_cli(capitals, any.missing = FALSE,   all.missing = FALSE, len = 1, null.ok = FALSE)
   assert_logical_cli(centroids, any.missing = FALSE, all.missing = FALSE, len = 1, null.ok = FALSE)
@@ -108,7 +113,6 @@ data_clean <- function(occ, pred = NULL,
   } else {
     x <- .sf_to_df_sdm(y$occurrences)
   }
-
   if (is.na(species)) {
     cn <- colnames(x)
     species <- cn[which.min(stringdist::stringdist(cn, "species"))]
@@ -129,6 +133,9 @@ data_clean <- function(occ, pred = NULL,
   if (institutions) { x <- CoordinateCleaner::cc_inst(x, lon = lon, lat = lat, species = species) }
   if (invalid) { x <- CoordinateCleaner::cc_val(x, lon = lon, lat = lat) }
   if (terrestrial) { x <- CoordinateCleaner::cc_sea(x, lon = lon, lat = lat) }
+  if(is.function(fun)) {
+    x <- fun(x)
+  }
 
   if(!is.null(pred)){
     not_line <- unique(sf::st_geometry_type(pred$grid)) != "LINESTRING"
@@ -190,6 +197,7 @@ data_clean <- function(occ, pred = NULL,
   if (invalid) { clean_methods <- c(clean_methods, "Invalid") }
   if (terrestrial) { clean_methods <- c(clean_methods, "Non-terrestrial") }
   if (!is.null(pred)) { clean_methods <- c(clean_methods, "Duplicated Cell (grid)") }
+  if (!is.null(fun)) { clean_methods <- c(clean_methods, paste0("Custom Function (", deparse(substitute(method)),")")) }
   y$n_presences <- table(y$occurrences$species)
 
   if ("independent_test" %in% names(y) & independent_test) {

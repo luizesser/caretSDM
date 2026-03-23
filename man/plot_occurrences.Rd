@@ -6,30 +6,34 @@
 \alias{plot_predictors}
 \alias{plot_scenarios}
 \alias{plot_predictions}
+\alias{plot_ensembles}
 \alias{mapview_grid}
 \alias{mapview_occurrences}
 \alias{mapview_predictors}
 \alias{mapview_scenarios}
 \alias{mapview_predictions}
+\alias{mapview_ensembles}
 \alias{plot_background}
 \alias{plot_niche}
 \title{S3 Methods for plot and mapview}
 \usage{
-plot_occurrences(i, spp_name = NULL, pa = TRUE, pa_id = 1)
+plot_occurrences(i, spp_name = NULL, pa = TRUE, pa_id = 1, ...)
 
-plot_grid(i)
+plot_grid(i, ...)
 
-plot_predictors(i, variables_selected = NULL)
+plot_predictors(i, variables_selected = NULL, ...)
 
-plot_scenarios(i, variables_selected = NULL, scenario = NULL)
+plot_scenarios(i, variables_selected = NULL, scenario = NULL, ...)
 
-plot_predictions(
+plot_predictions(i, spp_name = NULL, scenario = NULL, id = NULL, ...)
+
+plot_ensembles(
   i,
   spp_name = NULL,
   scenario = NULL,
   id = NULL,
-  ensemble = TRUE,
-  ensemble_type = "mean_occ_prob"
+  ensemble_type = "average",
+  ...
 )
 
 mapview_grid(i)
@@ -40,16 +44,17 @@ mapview_predictors(i, variables_selected = NULL)
 
 mapview_scenarios(i, variables_selected = NULL, scenario = NULL)
 
-mapview_predictions(
+mapview_predictions(i, spp_name = NULL, scenario = NULL, id = NULL)
+
+mapview_ensembles(
   i,
   spp_name = NULL,
   scenario = NULL,
   id = NULL,
-  ensemble = TRUE,
-  ensemble_type = "mean_occ_prob"
+  ensemble_type = "average"
 )
 
-plot_background(i, variables_selected = NULL)
+plot_background(i, variables_selected = NULL, ...)
 
 plot_niche(
   i,
@@ -57,9 +62,9 @@ plot_niche(
   variables_selected = NULL,
   scenario = NULL,
   id = NULL,
-  ensemble = TRUE,
-  ensemble_type = "mean_occ_prob",
-  raster = FALSE
+  ensemble_type = "average",
+  raster = FALSE,
+  ...
 )
 }
 \arguments{
@@ -73,6 +78,8 @@ plot_niche(
 \item{pa_id}{The id of pseudoabsences to be plotted (only used when \code{pa = TRUE}). Possible
 values are numeric values from 1 to number of PA sets.}
 
+\item{...}{Plotting arguments to pass to ggplot2 function.}
+
 \item{variables_selected}{A character vector with names of variables to be plotted.}
 
 \item{scenario}{description}
@@ -80,11 +87,7 @@ values are numeric values from 1 to number of PA sets.}
 \item{id}{The id of models to be plotted (only used when \code{ensemble = FALSE}). Possible
 values are row names of get_validation_metrics(i).}
 
-\item{ensemble}{Boolean. Should the ensemble be plotted (TRUE)? Otherwise a prediction will be
-plotted}
-
-\item{ensemble_type}{Character of the type of ensemble to be plotted. One of: "mean_occ_prob",
-"wmean_AUC" or "committee_avg"}
+\item{ensemble_type}{Character of the type of ensemble to be plotted.}
 
 \item{raster}{Should the niche be extrapolated to a raster covering all possibe values in the
 environmental space?}

@@ -1,5 +1,5 @@
 ---
-title: "caretSDM Workflow for Species Distribution Modeling"
+title: "3. caretSDM Workflow for Species Distribution Modeling"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{caretSDM Workflow for Species Distribution Modeling}
@@ -238,12 +238,6 @@ oc
 plot_occurrences(oc)
 ```
 
-This next step assigns occurrences into a study area, excluding records outside the study area or
-with NAs as predictors.
-
-```{r join_area}
-oc <- join_area(oc, sa)
-```
 
 ### The `input_sdm` class
 
@@ -252,7 +246,8 @@ objects keep the information of what we did. Ideally, the workflow will have onl
 throughout it. The `input_sdm` class is the key class in the workflow, where every function will
 orbitate. That class puts occurrences, predictors, scenarios, models and predictions together to
 perform analysis that are only possible when two or more of these classes are available. First, we
-create the object by informing the occurrences and the sdm_area.
+create the object by informing the occurrences and the sdm_area. This step assigns occurrences into
+a study area, excluding records outside the study area or with NAs as predictors.
 
 ```{r input_sdm}
 i <- input_sdm(oc, sa)
@@ -378,24 +373,31 @@ i
 ### Predicting species distribution in given scenarios
 
 Now that we have our models, we can make predictions in new scenarios. The function `predict_sdm`
-incorporates also the prediction of ensembles (`ensembles=TRUE` is standard). The function will only
-predict models that passes a given validation threshold. This validation metric is set using
-`metric` and `th` arguments. In the following example, metric is set to be "ROC" and th is equal
-0.9. This means that only models with ROC \> 0.9 will be used in predictions and ensembles.
+will only predict models that passes a given validation threshold. This validation metric is set
+using `metric` and `th` arguments. In the following example, metric is set to be "ROC" and `th` is 
+equal 0.9. This means that only models with ROC \> 0.9 will be used in predictions and ensembles.
 
 ```{r predict_sdm}
 i <- predict_sdm(i,
                  metric = "ROC",
                  th = 0.9,
-                 tp = "prob",
-                 ensembles = TRUE)
+                 tp = "prob")
 i
 ```
 
-In the above print, it is possible to see the "Methods" under the "Predictions" section, which
-informs which ensemble types were made: mean occurrence probability (`mean_occ_prob`; a simple mean
-between GCMs), mean occurrence probability weighted by AUC/ROC (`wmean_AUC`; AUC/ROC values are used
-as weights), and the majority rule, or the committee average (`committee_avg`; the sum of binaries).
+Finally, we can ensemble the predictions using:
+
+```{r ensemble_sdm}
+i <- ensemble_sdm(i,
+                  method = "average")
+i
+```
+
+In the above print, it is possible to see the "Methods" under the "Ensembles" section, which
+informs which ensemble types were made: mean occurrence probability (`average`; a simple mean
+between GCMs), mean occurrence probability weighted by AUC/ROC (`weighted_average`; AUC/ROC values 
+are used as weights), and the majority rule, or the committee average (`committee_average`; the sum 
+of binaries).
 
 Besides the AUC/ROC metric, users can get every available metric by model using the following code
 before commit to "ROC":
@@ -427,7 +429,7 @@ i <- gcms_ensembles(i, gcms = c("ca", "mi"))
 i
 ```
 
-Note that now the section "Predictions" has two scenarios called \_ssp245_2090 and \_ssp585_2090,
+Note that now the "Ensembles" has two scenarios called \_ssp245_2090 and \_ssp585_2090,
 which are the GCM's ensembles that we have calculated.
 
 ### Plotting results
@@ -436,7 +438,7 @@ To plot results, we prepared plot and mapview functions. Here we present only th
 to mapview limitations for markdown, but we encourage users to use the mapview alternatives every
 time it is possible. To do that, simply alternate the "plot" portion of functions to "mapview". As
 an example, `plot_occurrences` has its counterpart function `mapview_occurrences` with the same set
-of arguments an functioning. For plot_predictions, we can set some parameters to control what is
+of arguments an functioning. For plot_ensembles, we can set some parameters to control what is
 being plotted. Probably the most important parameter is the `scenario`, which user can change to
 plot every different scenario projected. If you are modeling more than one species you can inform
 the correct species to be plotted using the `spp_name` parameter and if you are wealling to debate
@@ -444,21 +446,15 @@ separate projections you can plot them informing the model `id` (see row names o
 `get_validation_metrics` above to retrieve models ids).
 
 ```{r plot_current_results}
-plot_predictions(i,
-                 spp_name = NULL,
-                 scenario = "current",
-                 id = NULL,
-                 ensemble = TRUE,
-                 ensemble_type = "mean_occ_prob")
+plot_ensembles(i,
+               scenario = "current",
+               ensemble_type = "average")
 ```
 
 ```{r ssp245_2090}
-plot_predictions(i,
-                 spp_name = NULL,
-                 scenario = "_ssp245_2090",
-                 id = NULL,
-                 ensemble = TRUE,
-                 ensemble_type = "mean_occ_prob")
+plot_ensembles(i,
+               scenario = "_ssp245_2090",
+               ensemble_type = "average")
 ```
 
 Another plot widely used in SDM studies is the Partial Dependence Plot, which informs the response

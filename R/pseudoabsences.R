@@ -78,7 +78,7 @@
 #' i <- input_sdm(oc, sa)
 #'
 #' # Pseudoabsence generation:
-#' i <- pseudoabsences(i, method="random")
+#' i0 <- pseudoabsences(i, method="random")
 #'
 #' # Custom method example:
 #' env_distance_pa <- function(env_sf, occ_sf, n_pa=n_pa) {
@@ -100,7 +100,7 @@
 #'
 #' }
 #'
-#' i <- pseudoabsences(i, method=env_distance_pa)
+#' i1 <- pseudoabsences(i, method=env_distance_pa)
 #'
 #' @importFrom sf st_as_sf st_crs st_transform st_intersection st_geometry_type st_difference
 #' @importFrom dplyr select all_of filter

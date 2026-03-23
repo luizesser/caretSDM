@@ -68,12 +68,12 @@ test_that("predict_sdm2", {
   expect_equal(sf::st_bbox(pred$current$`Araucaria angustifolia`$m1.1),
                sf::st_bbox(p$scenarios$data$current))
 
-  ens <- get_ensembles(p)
-  expect_equal(rownames(p$predictions$ensembles), rownames(ens))
-  expect_equal(rownames(ens), species_names(p))
-  expect_equal(colnames(ens), scenarios_names(p))
-  expect_equal(c("cell_id", "mean_occ_prob", "wmean_AUC", "committee_avg"),
-               colnames(ens[1,1][[1]]))
+  #ens <- get_ensembles(p)
+  #expect_equal(rownames(p$predictions$ensembles), rownames(ens))
+  #expect_equal(rownames(ens), species_names(p))
+  #expect_equal(colnames(ens), scenarios_names(p))
+  #expect_equal(c("cell_id", "mean_occ_prob", "wmean_AUC", "committee_avg"),
+  #             colnames(ens[1,1][[1]]))
 })
 
 test_that("predict_sdm - th 0", {
@@ -102,13 +102,6 @@ test_that("predict_sdm2 - th 0", {
                sf::st_crs(p$scenarios$data$current))
   expect_equal(sf::st_bbox(pred$current$`Araucaria angustifolia`$m1.1),
                sf::st_bbox(p$scenarios$data$current))
-
-  ens <- get_ensembles(p)
-  expect_equal(rownames(p$predictions$ensembles), rownames(ens))
-  expect_equal(rownames(ens), species_names(p))
-  expect_equal(colnames(ens), scenarios_names(p))
-  expect_equal(c("cell_id", "mean_occ_prob", "wmean_AUC", "committee_avg"),
-               colnames(ens[1,1][[1]]))
 })
 
 test_that("predict_sdm - th function", {
@@ -139,12 +132,12 @@ test_that("predict_sdm - th function", {
   expect_equal(sf::st_bbox(pred$current$`Araucaria angustifolia`$m2.1),
                sf::st_bbox(p$scenarios$data$current))
 
-  ens <- get_ensembles(p)
-  expect_equal(rownames(p$predictions$ensembles), rownames(ens))
-  expect_equal(rownames(ens), species_names(p))
-  expect_equal(colnames(ens), scenarios_names(p))
-  expect_equal(c("cell_id", "mean_occ_prob", "wmean_AUC", "committee_avg"),
-               colnames(ens[1,1][[1]]))
+  #ens <- get_ensembles(p)
+  #expect_equal(rownames(p$predictions$ensembles), rownames(ens))
+  #expect_equal(rownames(ens), species_names(p))
+  #expect_equal(colnames(ens), scenarios_names(p))
+  #expect_equal(c("cell_id", "mean_occ_prob", "wmean_AUC", "committee_avg"),
+  #             colnames(ens[1,1][[1]]))
 })
 
 test_that("test ensembles", {
@@ -156,7 +149,7 @@ test_that("test ensembles", {
 
 test_that("test ensembles", {
   skip_on_cran()
-  expect_no_error(predict_sdm(i, th=mean, ensembles = FALSE))
+  expect_no_error(predict_sdm(i, th=mean))
 
   i2 <- i
   i2$scenarios$data$teste <- i2$scenarios$data$current
@@ -164,23 +157,23 @@ test_that("test ensembles", {
   i2$scenarios$data$teste$bio1 <- i2$scenarios$data$teste$bio1*0
 
   p <- predict_sdm(i2, th=mean)
-  e <- get_ensembles(p)
-
-  expect_equal(length(unique(e[,"teste"][[1]]$committee_avg)), 1)
-  expect_equal(length(unique(e[,"teste"][[1]]$wmean_AUC)), 1)
-  expect_equal(length(unique(e[,"teste"][[1]]$mean_occ_prob)), 1)
-  expect_false(any(e[,"current"][[1]][,2] > 1 ))
-  expect_false(any(e[,"current"][[1]][,3] > 1 ))
-  expect_false(any(e[,"current"][[1]][,4] > 1 ))
-  expect_false(any(e[,"current"][[1]][,2] < 0 ))
-  expect_false(any(e[,"current"][[1]][,3] < 0 ))
-  expect_false(any(e[,"current"][[1]][,4] < 0 ))
-  expect_false(any(is.na(e[,"current"][[1]][,2])))
-  expect_false(any(is.na(e[,"current"][[1]][,3])))
-  expect_false(any(is.na(e[,"current"][[1]][,4])))
-  expect_false(any(is.nan(e[,"current"][[1]][,2])))
-  expect_false(any(is.nan(e[,"current"][[1]][,3])))
-  expect_false(any(is.nan(e[,"current"][[1]][,4])))
+  #e <- get_ensembles(p)
+#
+  #expect_equal(length(unique(e[,"teste"][[1]]$committee_avg)), 1)
+  #expect_equal(length(unique(e[,"teste"][[1]]$wmean_AUC)), 1)
+  #expect_equal(length(unique(e[,"teste"][[1]]$mean_occ_prob)), 1)
+  #expect_false(any(e[,"current"][[1]][,2] > 1 ))
+  #expect_false(any(e[,"current"][[1]][,3] > 1 ))
+  #expect_false(any(e[,"current"][[1]][,4] > 1 ))
+  #expect_false(any(e[,"current"][[1]][,2] < 0 ))
+  #expect_false(any(e[,"current"][[1]][,3] < 0 ))
+  #expect_false(any(e[,"current"][[1]][,4] < 0 ))
+  #expect_false(any(is.na(e[,"current"][[1]][,2])))
+  #expect_false(any(is.na(e[,"current"][[1]][,3])))
+  #expect_false(any(is.na(e[,"current"][[1]][,4])))
+  #expect_false(any(is.nan(e[,"current"][[1]][,2])))
+  #expect_false(any(is.nan(e[,"current"][[1]][,3])))
+  #expect_false(any(is.nan(e[,"current"][[1]][,4])))
 })
 
 test_that("add_input_sdm", {

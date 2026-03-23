@@ -20,9 +20,10 @@ test_that("change_sdm", {
                  ctrl=ctrl_sdm,
                  variables_selected = c("bio1", "bio12")) |>
     suppressWarnings()
-  i  <- predict_sdm(i, th=0.8)
+  i  <- predict_sdm(i, th=0.8) |>
+    ensemble_sdm()
   i <- gcms_ensembles(i, gcms = c("ca", "mi"))
-  expect_no_error(prediction_change_sdm(i, scenario = "_ssp585_2090", ensemble_type = "mean_occ_prob"))
+  expect_no_error(prediction_change_sdm(i, scenario = "_ssp585_2090", ensemble_type = "average"))
   expect_no_error(prediction_change_sdm(i, scenario = NULL, ensemble_type = NULL, species = NULL, th = 0.5))
   expect_error(prediction_change_sdm("i"))
   expect_error(prediction_change_sdm(i, scenario = "test"))
