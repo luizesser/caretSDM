@@ -75,11 +75,15 @@ function in the `fun` argument to calculate a threshold for each model.
 Standardly, the committee average uses the
 [`caret::thresholder`](https://rdrr.io/pkg/caret/man/thresholder.html)
 function to find the threshold that maximizes the sum of sensitivity and
-specificity (through `caretSDM:::.MaxSeSp`). The custom function must
-use the argument `mod`, which is the model output from caret package
-(see
+specificity (through `caretSDM:::.MaxSeSp`). Custom function (`fun`)
+must use the argument `mod`, which is the model output from caret
+package (see
 [`get_models`](https://luizesser.github.io/caretSDM/reference/train_sdm.md))
-and must return a `numeric` value (see example).
+and must return a `numeric` value (see example). `method` can also be
+set to a custom function, which must receive the argument pred_mat,
+which is a matrix of predictions (columns are models and rows are cells)
+and return a vector of predictions (one value per cell). See the
+`median` example below for a custom function.
 
 `get_predictions` returns the `list` of all predictions to all
 scenarios, all species, all algorithms and all repetitions. Useful for
@@ -157,5 +161,10 @@ MaxSeSp <- function(mod) {
                             )
    th <- th$prob_threshold[which.max(th$Sensitivity + th$Specificity)]
    if (length(th) > 1) mean(th) else th
+}
+
+# Example from a custom function to obtain ensembles using the median instead of the mean:
+median_ensemble <- function(pred_mat) {
+ apply(pred_mat, 1, median, na.rm = TRUE)
 }
 ```

@@ -86,9 +86,8 @@ i
 #> --------  Predictors  ---------
 #> Number of Predictors          : 5 
 #> Predictors Names              : LENGTH_KM, DIST_DN_KM, bio1, bio4, bio12 
-#> Area (VIF)                    : all
-#> Threshold                     : 0.5
-#> Selected Variables (VIF)      : LENGTH_KM, DIST_DN_KM, bio1 
+#> Variable Selection            : vif 
+#> Selected Variables            : LENGTH_KM, DIST_DN_KM, bio1 
 #> ---------  Scenarios  ---------
 #> Number of Scenarios           : 1 
 #> Scenarios Names               : current 

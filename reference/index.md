@@ -70,6 +70,10 @@
 - [`join_area()`](https://luizesser.github.io/caretSDM/reference/join_area.md)
   : Join Area
 
+- [`multicollinearity_sdm()`](https://luizesser.github.io/caretSDM/reference/multicollinearity_sdm.md)
+  [`selected_variables()`](https://luizesser.github.io/caretSDM/reference/multicollinearity_sdm.md)
+  : Multicollinearity Analysis
+
 - [`occ`](https://luizesser.github.io/caretSDM/reference/occ.md) :
   Araucaria angustifolia occurrence data
 
@@ -214,7 +218,6 @@
 
 - [`vif_predictors()`](https://luizesser.github.io/caretSDM/reference/vif_predictors.md)
   [`vif_summary()`](https://luizesser.github.io/caretSDM/reference/vif_predictors.md)
-  [`selected_variables()`](https://luizesser.github.io/caretSDM/reference/vif_predictors.md)
   : Calculate VIF
 
 - [`write_ensembles()`](https://luizesser.github.io/caretSDM/reference/write_ensembles.md)

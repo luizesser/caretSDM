@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">caretSDM</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.7</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.8</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -112,12 +112,15 @@ The three implemented strategies are:
 <code>weighted_average</code> is the same average, but weighted by a metric, which needs to be
 set using argument <code>metric</code> (see <a href="train_sdm.html">mean_validation_metrics</a> for the metrics available).
 <code>committee_average</code> is the committee average, as known as majority rule, where predictions
-are binarized and then a mean is obtained. To binarize predictions, user can set a custom function
-in the <code>fun</code> argument to calculate a threshold for each model. Standardly, the
+are binarized and then a mean is obtained. To binarize predictions, user can set a custom
+function in the <code>fun</code> argument to calculate a threshold for each model. Standardly, the
 committee average uses the <code><a href="https://rdrr.io/pkg/caret/man/thresholder.html" class="external-link">caret::thresholder</a></code> function to find the threshold that
-maximizes the sum of sensitivity and specificity (through <code>caretSDM:::.MaxSeSp</code>). The custom
-function must use the argument <code>mod</code>, which is the model output from caret package (see
-<code><a href="train_sdm.html">get_models</a></code>) and must return a <code>numeric</code> value (see example).</p>
+maximizes the sum of sensitivity and specificity (through <code>caretSDM:::.MaxSeSp</code>).
+Custom function (<code>fun</code>) must use the argument <code>mod</code>, which is the model output from
+caret package (see <code><a href="train_sdm.html">get_models</a></code>) and must return a <code>numeric</code> value (see example).
+<code>method</code> can also be set to a custom function, which must receive the argument pred_mat,
+which is a matrix of predictions (columns are models and rows are cells) and return a vector of
+predictions (one value per cell). See the <code>median</code> example below for a custom function.</p>
 <p><code>get_predictions</code> returns the <code>list</code> of all predictions to all scenarios, all species,
 all algorithms and all repetitions. Useful for those who wish to implement their own ensemble
 methods.</p>
@@ -191,6 +194,11 @@ https://luizfesser.wordpress.com</p>
 <span class="r-in"><span>                            <span class="op">)</span></span></span>
 <span class="r-in"><span>   <span class="va">th</span> <span class="op">&lt;-</span> <span class="va">th</span><span class="op">$</span><span class="va">prob_threshold</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/which.min.html" class="external-link">which.max</a></span><span class="op">(</span><span class="va">th</span><span class="op">$</span><span class="va">Sensitivity</span> <span class="op">+</span> <span class="va">th</span><span class="op">$</span><span class="va">Specificity</span><span class="op">)</span><span class="op">]</span></span></span>
 <span class="r-in"><span>   <span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">th</span><span class="op">)</span> <span class="op">&gt;</span> <span class="fl">1</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">th</span><span class="op">)</span> <span class="kw">else</span> <span class="va">th</span></span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Example from a custom function to obtain ensembles using the median instead of the mean:</span></span></span>
+<span class="r-in"><span><span class="va">median_ensemble</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">pred_mat</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span> <span class="fu"><a href="https://rdrr.io/r/base/apply.html" class="external-link">apply</a></span><span class="op">(</span><span class="va">pred_mat</span>, <span class="fl">1</span>, <span class="va">median</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>

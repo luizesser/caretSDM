@@ -9,8 +9,6 @@ vif_predictors(pred, area = "all", th = 0.5, maxobservations = 5000, variables_s
 NULL)
 
 vif_summary(i)
-
-selected_variables(i)
 ```
 
 ## Arguments
@@ -84,13 +82,13 @@ sa <- add_scenarios(sa, scen)
 #> ℹ Using GDAL to make the grid and resample the variables.
 
 # Create occurrences:
-oc <- occurrences_sdm(occ, crs = 6933) |> join_area(sa)
-#> Warning: Some records from `occ` do not fall in `pred`.
-#> ℹ 2 elements from `occ` were excluded.
-#> ℹ If this seems too much, check how `occ` and `pred` intersect.
+oc <- occurrences_sdm(occ, crs = 6933)
 
 # Create input_sdm:
 i <- input_sdm(oc, sa)
+#> Warning: Some records from `occ` do not fall in `pred`.
+#> ℹ 2 elements from `occ` were excluded.
+#> ℹ If this seems too much, check how `occ` and `pred` intersect.
 
 # VIF calculation:
 i <- vif_predictors(i)
@@ -104,27 +102,15 @@ i
 #> --------  Predictors  ---------
 #> Number of Predictors          : 3 
 #> Predictors Names              : bio1, bio4, bio12 
-#> Area (VIF)                    : all
-#> Threshold                     : 0.5
-#> Selected Variables (VIF)      : bio1, bio12 
+#> Variable Selection            : vif 
+#> Selected Variables            : bio1, bio12 
 #> ---------  Scenarios  ---------
 #> Number of Scenarios           : 5 
 #> Scenarios Names               : ca_ssp245_2090 ca_ssp585_2090 mi_ssp245_2090 mi_ssp585_2090 current 
 
 # Retrieve information about vif:
 vif_summary(i)
-#> 1 variables from the 3 input variables have collinearity problem: 
-#>  
-#> bio4 
-#> 
-#> After excluding the collinear variables, the linear correlation coefficients ranges between: 
-#> min correlation ( bio12 ~ bio1 ):  -0.3350609 
-#> max correlation ( bio12 ~ bio1 ):  -0.3350609 
-#> 
-#> ---------- VIFs of the remained variables -------- 
-#>   Variables      VIF
-#> 1      bio1 1.126463
-#> 2     bio12 1.126463
+#> [1] 0.5
 selected_variables(i)
 #> [1] "bio1"  "bio12"
 ```

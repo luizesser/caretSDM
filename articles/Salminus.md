@@ -484,19 +484,7 @@ which is very self-explanatory.
 
 ``` r
 vif_summary(i)
-#> 2 variables from the 5 input variables have collinearity problem: 
-#>  
-#> bio12 bio4 
-#> 
-#> After excluding the collinear variables, the linear correlation coefficients ranges between: 
-#> min correlation ( DIST_DN_KM ~ LENGTH_KM ):  -0.03408993 
-#> max correlation ( bio1 ~ DIST_DN_KM ):  -0.2953415 
-#> 
-#> ---------- VIFs of the remained variables -------- 
-#>    Variables      VIF
-#> 1  LENGTH_KM 1.006302
-#> 2 DIST_DN_KM 1.095707
-#> 3       bio1 1.101186
+#> [1] 0.5
 ```
 
 ### Obtaining pseudoabsence data
@@ -539,9 +527,8 @@ i
 #> --------  Predictors  ---------
 #> Number of Predictors          : 5 
 #> Predictors Names              : LENGTH_KM, DIST_DN_KM, bio1, bio4, bio12 
-#> Area (VIF)                    : all
-#> Threshold                     : 0.5
-#> Selected Variables (VIF)      : LENGTH_KM, DIST_DN_KM, bio1 
+#> Variable Selection            : vif 
+#> Selected Variables            : LENGTH_KM, DIST_DN_KM, bio1 
 #> ---------  Scenarios  ---------
 #> Number of Scenarios           : 5 
 #> Scenarios Names               : ca_ssp245_2090 ca_ssp585_2090 mi_ssp245_2090 mi_ssp585_2090 current
@@ -601,9 +588,8 @@ i
 #> --------  Predictors  ---------
 #> Number of Predictors          : 5 
 #> Predictors Names              : LENGTH_KM, DIST_DN_KM, bio1, bio4, bio12 
-#> Area (VIF)                    : all
-#> Threshold                     : 0.5
-#> Selected Variables (VIF)      : LENGTH_KM, DIST_DN_KM, bio1 
+#> Variable Selection            : vif 
+#> Selected Variables            : LENGTH_KM, DIST_DN_KM, bio1 
 #> ---------  Scenarios  ---------
 #> Number of Scenarios           : 5 
 #> Scenarios Names               : ca_ssp245_2090 ca_ssp585_2090 mi_ssp245_2090 mi_ssp585_2090 current 
@@ -652,9 +638,8 @@ i
 #> --------  Predictors  ---------
 #> Number of Predictors          : 5 
 #> Predictors Names              : LENGTH_KM, DIST_DN_KM, bio1, bio4, bio12 
-#> Area (VIF)                    : all
-#> Threshold                     : 0.5
-#> Selected Variables (VIF)      : LENGTH_KM, DIST_DN_KM, bio1 
+#> Variable Selection            : vif 
+#> Selected Variables            : LENGTH_KM, DIST_DN_KM, bio1 
 #> ---------  Scenarios  ---------
 #> Number of Scenarios           : 5 
 #> Scenarios Names               : ca_ssp245_2090 ca_ssp585_2090 mi_ssp245_2090 mi_ssp585_2090 current 
@@ -702,9 +687,8 @@ i
 #> --------  Predictors  ---------
 #> Number of Predictors          : 5 
 #> Predictors Names              : LENGTH_KM, DIST_DN_KM, bio1, bio4, bio12 
-#> Area (VIF)                    : all
-#> Threshold                     : 0.5
-#> Selected Variables (VIF)      : LENGTH_KM, DIST_DN_KM, bio1 
+#> Variable Selection            : vif 
+#> Selected Variables            : LENGTH_KM, DIST_DN_KM, bio1 
 #> ---------  Scenarios  ---------
 #> Number of Scenarios           : 5 
 #> Scenarios Names               : ca_ssp245_2090 ca_ssp585_2090 mi_ssp245_2090 mi_ssp585_2090 current 
@@ -1054,9 +1038,8 @@ i
 #> --------  Predictors  ---------
 #> Number of Predictors          : 5 
 #> Predictors Names              : LENGTH_KM, DIST_DN_KM, bio1, bio4, bio12 
-#> Area (VIF)                    : all
-#> Threshold                     : 0.5
-#> Selected Variables (VIF)      : LENGTH_KM, DIST_DN_KM, bio1 
+#> Variable Selection            : vif 
+#> Selected Variables            : LENGTH_KM, DIST_DN_KM, bio1 
 #> ---------  Scenarios  ---------
 #> Number of Scenarios           : 5 
 #> Scenarios Names               : ca_ssp245_2090 ca_ssp585_2090 mi_ssp245_2090 mi_ssp585_2090 current 
@@ -1156,5 +1139,5 @@ species using a grid simplefeatures instead of lines.
 ``` r
 end_time <- Sys.time()
 end_time - start_time
-#> Time difference of 31.87561 secs
+#> Time difference of 30.98417 secs
 ```

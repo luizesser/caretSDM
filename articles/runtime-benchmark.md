@@ -561,9 +561,9 @@ bench_res_prep
 #> # A tibble: 3 × 6
 #>   expression      min   median `itr/sec` mem_alloc `gc/sec`
 #>   <bch:expr> <bch:tm> <bch:tm>     <dbl> <bch:byt>    <dbl>
-#> 1 biomod2     164.6ms 169.14ms     5.64     7.75MB    1.13 
-#> 2 sdm         131.9ms 140.59ms     4.21     6.02MB    0.843
-#> 3 caretSDM       1.6s    1.62s     0.584    7.31MB    1.52
+#> 1 biomod2     165.6ms 170.07ms     5.53     7.75MB    1.11 
+#> 2 sdm        132.59ms 136.25ms     4.32     6.02MB    0.865
+#> 3 caretSDM      1.33s    1.34s     0.694    7.31MB    1.80
 ```
 
 ``` r
@@ -571,9 +571,9 @@ bench_res_fit
 #> # A tibble: 3 × 6
 #>   expression      min   median `itr/sec` mem_alloc `gc/sec`
 #>   <bch:expr> <bch:tm> <bch:tm>     <dbl> <bch:byt>    <dbl>
-#> 1 biomod2        7.9s    7.93s    0.125  1016.25MB    0.426
-#> 2 sdm           16.7s   16.79s    0.0589    2.18GB    0.295
-#> 3 caretSDM      23.4s   26.14s    0.0376    1.22GB    0.835
+#> 1 biomod2       7.32s    7.36s    0.131  1017.55MB    0.499
+#> 2 sdm          15.57s    15.7s    0.0638    2.18GB    0.319
+#> 3 caretSDM     23.27s   27.78s    0.0371    1.22GB    0.838
 ```
 
 ``` r
@@ -581,9 +581,9 @@ bench_res_post
 #> # A tibble: 3 × 6
 #>   expression      min   median `itr/sec` mem_alloc `gc/sec`
 #>   <bch:expr> <bch:tm> <bch:tm>     <dbl> <bch:byt>    <dbl>
-#> 1 biomod2      10.26s   10.51s    0.0929     963MB    0.446
-#> 2 sdm           18.6s   18.77s    0.0530     579MB    0    
-#> 3 caretSDM      1.03s    1.04s    0.910       47MB    0.182
+#> 1 biomod2       9.97s   10.01s    0.0970   963.4MB    0.466
+#> 2 sdm          16.88s   16.98s    0.0586   581.2MB    0    
+#> 3 caretSDM      1.03s    1.03s    0.908     47.2MB    0.182
 ```
 
 ``` r
@@ -591,9 +591,9 @@ bench_res_complete
 #> # A tibble: 3 × 6
 #>   expression      min   median `itr/sec` mem_alloc `gc/sec`
 #>   <bch:expr> <bch:tm> <bch:tm>     <dbl> <bch:byt>    <dbl>
-#> 1 biomod2       18.9s    20.6s    0.0487    1.92GB   0.526 
-#> 2 sdm           39.1s    40.3s    0.0247    3.02GB   0.0988
-#> 3 caretSDM      25.1s    28.8s    0.0346    1.28GB   0.975
+#> 1 biomod2       17.1s    18.6s    0.0531    1.91GB   0.595 
+#> 2 sdm           39.3s      40s    0.0251     3.1GB   0.0752
+#> 3 caretSDM      25.9s    29.6s    0.0342    1.27GB   0.882
 ```
 
 The table above summarizes the median runtime, iteration rate, and
@@ -738,7 +738,7 @@ differences.
 sessionInfo()
 #> R version 4.5.3 (2026-03-11)
 #> Platform: x86_64-pc-linux-gnu
-#> Running under: Ubuntu 24.04.3 LTS
+#> Running under: Ubuntu 24.04.4 LTS
 #> 
 #> Matrix products: default
 #> BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 
@@ -761,7 +761,7 @@ sessionInfo()
 #>  [1] caret_7.0-1          lattice_0.22-9       ggplot2_4.0.2       
 #>  [4] kernlab_0.9-33       glmnet_4.1-10        Matrix_1.7-4        
 #>  [7] dismo_1.3-16         raster_3.6-32        sp_2.2-1            
-#> [10] RSNNS_0.4-18         Rcpp_1.1.1           caretSDM_1.7        
+#> [10] RSNNS_0.4-18         Rcpp_1.1.1           caretSDM_1.8        
 #> [13] sdm_1.2-59           xgboost_3.2.1.1      randomForest_4.7-1.2
 #> [16] maxnet_0.1.4         earth_5.3.5          plotmo_3.7.0        
 #> [19] plotrix_3.8-14       Formula_1.2-5        gbm_2.2.3           
@@ -769,7 +769,7 @@ sessionInfo()
 #> [25] foreach_1.5.2        mda_0.5-5            class_7.3-23        
 #> [28] cito_1.1             rpart_4.1.24         nnet_7.3-20         
 #> [31] biomod2_4.3-4-5      bench_1.1.4          sf_1.1-0            
-#> [34] terra_1.9-1         
+#> [34] terra_1.9-11        
 #> 
 #> loaded via a namespace (and not attached):
 #>   [1] blockCV_3.2-0           rnaturalearth_1.2.0     tibble_3.3.1           
@@ -777,7 +777,7 @@ sessionInfo()
 #>   [7] lifecycle_1.0.5         httr2_1.2.2             ecospat_4.1.3          
 #>  [10] usdm_2.1-7              globals_0.19.1          processx_3.8.6         
 #>  [13] MASS_7.3-65             crosstalk_1.2.2         backports_1.5.0        
-#>  [16] magrittr_2.0.4          sass_0.4.10             rmarkdown_2.30         
+#>  [16] magrittr_2.0.4          sass_0.4.10             rmarkdown_2.31         
 #>  [19] jquerylib_0.1.4         yaml_2.3.12             otel_0.2.0             
 #>  [22] DBI_1.3.0               RColorBrewer_1.1-3      lubridate_1.9.5        
 #>  [25] abind_1.4-8             Rtsne_0.17              purrr_1.2.1            
@@ -788,9 +788,9 @@ sessionInfo()
 #>  [40] codetools_0.2-20        profmem_0.7.0           xml2_1.5.2             
 #>  [43] shape_1.4.6.1           tidyselect_1.2.1        farver_2.1.2           
 #>  [46] stats4_4.5.3            base64enc_0.1-6         jsonlite_2.0.0         
-#>  [49] e1071_1.7-17            progressr_0.18.0        survival_3.8-6         
+#>  [49] e1071_1.7-17            progressr_0.19.0        survival_3.8-6         
 #>  [52] ggspatial_1.1.10        iterators_1.0.14        systemfonts_1.3.2      
-#>  [55] tools_4.5.3             ragg_1.5.1              stringdist_0.9.17      
+#>  [55] tools_4.5.3             ragg_1.5.2              stringdist_0.9.17      
 #>  [58] glue_1.8.0              prodlim_2026.03.11      xfun_0.57              
 #>  [61] checkCLI_1.0            dplyr_1.2.0             withr_3.0.2            
 #>  [64] fastmap_1.2.0           callr_3.7.6             digest_0.6.39          
@@ -800,7 +800,7 @@ sessionInfo()
 #>  [76] generics_0.1.4          data.table_1.18.2.1     recipes_1.3.1          
 #>  [79] httr_1.4.8              htmlwidgets_1.6.4       whisker_0.4.1          
 #>  [82] ModelMetrics_1.2.2.2    pkgconfig_2.0.3         gtable_0.3.6           
-#>  [85] timeDate_4052.112       S7_0.2.1                furrr_0.3.1            
+#>  [85] timeDate_4052.112       S7_0.2.1                furrr_0.4.0            
 #>  [88] htmltools_0.5.9         scales_1.4.0            png_0.1-9              
 #>  [91] gower_1.0.2             knitr_1.51              geosphere_1.6-5        
 #>  [94] reshape2_1.4.5          rgbif_3.8.5             checkmate_2.3.4        
@@ -810,8 +810,8 @@ sessionInfo()
 #> [106] grid_4.5.3              reshape_0.8.10          vctrs_0.7.2            
 #> [109] mapview_2.11.4          evaluate_1.0.5          oai_0.4.0              
 #> [112] cli_3.6.5               compiler_4.5.3          rlang_1.1.7            
-#> [115] future.apply_1.20.2     classInt_0.4-11         ps_1.9.1               
-#> [118] plyr_1.8.9              fs_2.0.0                stringi_1.8.7          
+#> [115] future.apply_1.20.2     classInt_0.4-11         ps_1.9.2               
+#> [118] plyr_1.8.9              fs_2.0.1                stringi_1.8.7          
 #> [121] stars_0.7-1             lazyeval_0.2.2          leaflet_2.2.3          
 #> [124] bit64_4.6.0-1           leafem_0.2.5            future_1.70.0          
 #> [127] bslib_0.10.0            lwgeom_0.2-15           bit_4.6.0

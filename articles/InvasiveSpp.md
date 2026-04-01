@@ -521,9 +521,8 @@ i
 #> --------  Predictors  ---------
 #> Number of Predictors          : 3 
 #> Predictors Names              : bio1, bio4, bio12 
-#> Area (VIF)                    : all
-#> Threshold                     : 0.5
-#> Selected Variables (VIF)      : bio1, bio12 
+#> Variable Selection            : vif 
+#> Selected Variables            : bio1, bio12 
 #> ---------  Scenarios  ---------
 #> Number of Scenarios           : 5 
 #> Scenarios Names               : current ca_ssp245_2090 ca_ssp585_2090 mi_ssp245_2090 mi_ssp585_2090
@@ -583,9 +582,8 @@ i
 #> --------  Predictors  ---------
 #> Number of Predictors          : 3 
 #> Predictors Names              : bio1, bio4, bio12 
-#> Area (VIF)                    : all
-#> Threshold                     : 0.5
-#> Selected Variables (VIF)      : bio1, bio12 
+#> Variable Selection            : vif 
+#> Selected Variables            : bio1, bio12 
 #> ---------  Scenarios  ---------
 #> Number of Scenarios           : 5 
 #> Scenarios Names               : current ca_ssp245_2090 ca_ssp585_2090 mi_ssp245_2090 mi_ssp585_2090 
@@ -634,9 +632,8 @@ i
 #> --------  Predictors  ---------
 #> Number of Predictors          : 3 
 #> Predictors Names              : bio1, bio4, bio12 
-#> Area (VIF)                    : all
-#> Threshold                     : 0.5
-#> Selected Variables (VIF)      : bio1, bio12 
+#> Variable Selection            : vif 
+#> Selected Variables            : bio1, bio12 
 #> ---------  Scenarios  ---------
 #> Number of Scenarios           : 5 
 #> Scenarios Names               : current ca_ssp245_2090 ca_ssp585_2090 mi_ssp245_2090 mi_ssp585_2090 
@@ -684,9 +681,8 @@ i
 #> --------  Predictors  ---------
 #> Number of Predictors          : 3 
 #> Predictors Names              : bio1, bio4, bio12 
-#> Area (VIF)                    : all
-#> Threshold                     : 0.5
-#> Selected Variables (VIF)      : bio1, bio12 
+#> Variable Selection            : vif 
+#> Selected Variables            : bio1, bio12 
 #> ---------  Scenarios  ---------
 #> Number of Scenarios           : 5 
 #> Scenarios Names               : current ca_ssp245_2090 ca_ssp585_2090 mi_ssp245_2090 mi_ssp585_2090 
@@ -1036,9 +1032,8 @@ i
 #> --------  Predictors  ---------
 #> Number of Predictors          : 3 
 #> Predictors Names              : bio1, bio4, bio12 
-#> Area (VIF)                    : all
-#> Threshold                     : 0.5
-#> Selected Variables (VIF)      : bio1, bio12 
+#> Variable Selection            : vif 
+#> Selected Variables            : bio1, bio12 
 #> ---------  Scenarios  ---------
 #> Number of Scenarios           : 5 
 #> Scenarios Names               : current ca_ssp245_2090 ca_ssp585_2090 mi_ssp245_2090 mi_ssp585_2090 
@@ -1140,5 +1135,5 @@ cells in a grid.
 ``` r
 end_time <- Sys.time()
 end_time - start_time
-#> Time difference of 19.573 secs
+#> Time difference of 18.51282 secs
 ```
