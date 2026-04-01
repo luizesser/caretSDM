@@ -168,18 +168,27 @@ print.input_sdm <- function(x, ...) {
       if (!is.null(x$predictors$resolution)) {
         cat("Resolution                    :", paste0("(", x$predictors$cell_size, ", ", x$cell_size, ")"), "(x, y)\n")
       }
-      if (!is.null(x$predictors$variable_selection$vif)) {
-        cat(
-          cat("Area (VIF)                    : "), cat(x$predictors$variable_selection$vif$area), cat("\n"),
-          cat("Threshold                     : "), cat(x$predictors$variable_selection$vif$threshold), cat("\n"),
-          cat("Selected Variables (VIF)      : "), cat(x$predictors$variable_selection$vif$selected_variables, sep = ", "), "\n"
-        )
-      }
-      if (!is.null(x$predictors$variable_selection$pca)) {
-        cat(
-          cat("PCA-transformed variables     : DONE \n"),
-          cat("Cummulative proportion (",x$predictors$variable_selection$pca$cumulative_proportion_th,") : "), cat(x$predictors$variable_selection$pca$selected_variables, sep = ", "), "\n"
-        )
+      if("variable_selection" %in% names(x$predictors)) {
+        cat("Variable Selection            :", names(x$predictors$variable_selection), "\n")
+        if (!names(x$predictors$variable_selection) %in% c("vifstep", "vifcor", "pca")) {
+          cat(
+            cat("Selected Variables            : "), cat(x$predictors$variable_selection[[1]]$selected_variables, sep = ", "), "\n"
+          )
+
+        }
+        if (names(x$predictors$variable_selection) %in% c("vifstep", "vifcor")) {
+          cat(
+            cat("Threshold                     : "), cat(x$predictors$variable_selection$vif$threshold), cat("\n"),
+            cat("Selected Variables            : "), cat(x$predictors$variable_selection$vif$selected_variables, sep = ", "), "\n"
+          )
+        }
+        if (!is.null(x$predictors$variable_selection$pca)) {
+          cat(
+            cat("PCA-transformed variables     : DONE \n"),
+            cat("Cummulative proportion (",x$predictors$variable_selection$pca$cumulative_proportion_th,") : "), cat(x$predictors$variable_selection$pca$selected_variables, sep = ", "), "\n"
+          )
+        }
+
       }
     }
   }

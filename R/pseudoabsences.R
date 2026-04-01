@@ -180,13 +180,17 @@ pseudoabsences <- function(occ, pred = NULL, method = "random", n_set = 10, n_pa
     l <- sapply(y$spp_names, function(sp) {
       l <- vector("list", n_set)
       for (j in seq_len(n_set)) {
-        samp <- method(
+        method_output <- method(
           env_sf = df,
           occ_sf = y$occurrences[y$occurrences$species == sp, ]
         )
+        if (j == 1) {
+          assert_class_cli(method_output, "integer")
+          assert_vector_cli(method_output)
+        }
         # Keep valid cell_ids
-        samp <- intersect(unique(samp), df$cell_id)
-        l[[j]] <- df[df$cell_id %in% samp, ]
+        method_output <- intersect(unique(method_output), df$cell_id)
+        l[[j]] <- df[df$cell_id %in% method_output, ]
       }
       return(l)
     }, simplify = FALSE, USE.NAMES = TRUE)

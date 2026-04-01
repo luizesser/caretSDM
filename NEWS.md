@@ -76,3 +76,8 @@
 -   All adjusts necessary to properly perform that operation, including tests, are implemented.
 -   Vignettes and examples were changed to include ensembles_sdm function.
 -   data_clean now accepts a custom function to clean occurrences.
+
+# caretSDM 1.8
+
+-   New wrapper for multicollinearity reduction with PCA, VIF and custom functions.
+-   Pseudoabsences and ensemble now accept custom functions.

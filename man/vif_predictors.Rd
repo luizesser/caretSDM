@@ -3,15 +3,12 @@
 \name{vif_predictors}
 \alias{vif_predictors}
 \alias{vif_summary}
-\alias{selected_variables}
 \title{Calculate VIF}
 \usage{
 vif_predictors(pred, area = "all", th = 0.5, maxobservations = 5000, variables_selected =
 NULL)
 
 vif_summary(i)
-
-selected_variables(i)
 }
 \arguments{
 \item{pred}{A \code{input_sdm} or \code{predictors} object.}
@@ -48,7 +45,7 @@ sa <- add_predictors(sa, bioc) |> select_predictors(c("bio1", "bio4", "bio12"))
 sa <- add_scenarios(sa, scen)
 
 # Create occurrences:
-oc <- occurrences_sdm(occ, crs = 6933) |> join_area(sa)
+oc <- occurrences_sdm(occ, crs = 6933)
 
 # Create input_sdm:
 i <- input_sdm(oc, sa)

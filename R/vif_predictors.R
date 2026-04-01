@@ -35,7 +35,7 @@
 #' sa <- add_scenarios(sa, scen)
 #'
 #' # Create occurrences:
-#' oc <- occurrences_sdm(occ, crs = 6933) |> join_area(sa)
+#' oc <- occurrences_sdm(occ, crs = 6933)
 #'
 #' # Create input_sdm:
 #' i <- input_sdm(oc, sa)
@@ -59,7 +59,6 @@ vif_predictors <- function(pred, area = "all", th = 0.5, maxobservations = 5000,
   assert_class_cli(pred, "input_sdm")
   assert_subset_cli("predictors", names(pred), empty.ok = FALSE)
   assert_class_cli(pred$predictors, "sdm_area")
-  assert_class_cli(pred, "input_sdm")
   assert_numeric_cli(th, len = 1, null.ok = FALSE, upper = 1, lower = 0, any.missing = FALSE)
   assert_numeric_cli(maxobservations, len = 1, null.ok = FALSE, any.missing = FALSE)
   assert_subset_cli(variables_selected, c(get_predictor_names(pred), "vif", "pca"), empty.ok = TRUE)
@@ -106,14 +105,5 @@ vif_summary <- function(i){
   assert_subset_cli("predictors", names(i), empty.ok = FALSE)
   assert_subset_cli("variable_selection", names(i$predictors), empty.ok = FALSE)
   assert_subset_cli("vif", names(i$predictors$variable_selection), empty.ok = FALSE)
-  return(i$predictors$variable_selection$vif$vifcor)
-}
-
-#' @rdname vif_predictors
-#' @export
-selected_variables <- function(i){
-  assert_class_cli(i, "input_sdm")
-  assert_subset_cli("predictors", names(i), empty.ok = FALSE)
-  assert_subset_cli("variable_selection", names(i$predictors), empty.ok = FALSE)
-  return(i$predictors$variable_selection[[1]]$selected_variables)
+  return(i$predictors$variable_selection$vif[[3]])
 }

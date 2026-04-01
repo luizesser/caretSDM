@@ -51,12 +51,15 @@ The three implemented strategies are:
 \code{weighted_average} is the same average, but weighted by a metric, which needs to be
 set using argument \code{metric} (see \link{mean_validation_metrics} for the metrics available).
 \code{committee_average} is the committee average, as known as majority rule, where predictions
-are binarized and then a mean is obtained. To binarize predictions, user can set a custom function
-in the \code{fun} argument to calculate a threshold for each model. Standardly, the
+are binarized and then a mean is obtained. To binarize predictions, user can set a custom
+function in the \code{fun} argument to calculate a threshold for each model. Standardly, the
 committee average uses the \code{caret::thresholder} function to find the threshold that
-maximizes the sum of sensitivity and specificity (through \code{caretSDM:::.MaxSeSp}). The custom
-function must use the argument \code{mod}, which is the model output from caret package (see
-\code{\link{get_models}}) and must return a \code{numeric} value (see example).
+maximizes the sum of sensitivity and specificity (through \code{caretSDM:::.MaxSeSp}).
+Custom function (\code{fun}) must use the argument \code{mod}, which is the model output from
+caret package (see \code{\link{get_models}}) and must return a \code{numeric} value (see example).
+\code{method} can also be set to a custom function, which must receive the argument pred_mat,
+which is a matrix of predictions (columns are models and rows are cells) and return a vector of
+predictions (one value per cell). See the \code{median} example below for a custom function.
 
 \code{get_predictions} returns the \code{list} of all predictions to all scenarios, all species,
 all algorithms and all repetitions. Useful for those who wish to implement their own ensemble
@@ -123,6 +126,11 @@ MaxSeSp <- function(mod) {
                             )
    th <- th$prob_threshold[which.max(th$Sensitivity + th$Specificity)]
    if (length(th) > 1) mean(th) else th
+}
+
+# Example from a custom function to obtain ensembles using the median instead of the mean:
+median_ensemble <- function(pred_mat) {
+ apply(pred_mat, 1, median, na.rm = TRUE)
 }
 
 }
