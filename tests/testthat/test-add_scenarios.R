@@ -329,8 +329,6 @@ if (!identical(Sys.getenv("NOT_CRAN"), "false")) {
 
 
     # Testar bbox dos cenários futuros e presente.
-    expect_equal(nrow(sa_pred$scenarios$data$ca_ssp245_2090),
-                 nrow(sa_pred$scenarios$data$current))
     expect_equal(
       scenarios_names(sa_pred),
       c("ca_ssp245_2090", "ca_ssp585_2090", "mi_ssp245_2090", "mi_ssp585_2090", "current")

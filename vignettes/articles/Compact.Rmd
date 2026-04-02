@@ -48,7 +48,7 @@ i <- input_sdm(oc, sa) |>
   vif_predictors() |> 
   pseudoabsences(method = "bioclim", variables_selected = "vif") |> 
   train_sdm(algo = c("naive_bayes", "kknn"), 
-            crtl = caret::trainControl(method = "repeatedcv", 
+            ctrl = caret::trainControl(method = "repeatedcv", 
                                        number = 4, 
                                        repeats = 1, 
                                        classProbs = TRUE, 

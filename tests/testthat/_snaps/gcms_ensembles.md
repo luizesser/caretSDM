@@ -28,7 +28,7 @@
           Metrics                   :
       $`Araucaria angustifolia`
                algo       ROC       TSS Sensitivity Specificity
-      1 naive_bayes 0.8323889 0.2460904      0.9665      0.2865
+      1 naive_bayes 0.8318881 0.2148404      0.9665       0.255
       
       --------  Predictions  --------
       Thresholds                    :

@@ -44,7 +44,7 @@ test_that("vif_predictors - facnum", {
   sa <- sdm_area(parana, 1)
   sa <- add_predictors(sa, bioc)
   sa <- dplyr::select(sa, c("bio1", "bio12"))
-  sa <- sa |> dplyr::mutate(test=c(rep("a", 20), rep("b", 10)))
+  sa <- sa |> dplyr::mutate(test=c(rep("a", 19), rep("b", 10)))
   oc <- occurrences_sdm(occ, crs=6933)
   oc <- join_area(oc, sa)
   i <- input_sdm(oc, sa)

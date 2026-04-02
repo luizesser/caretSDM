@@ -13,7 +13,7 @@ Usually the output from \code{GBIF_data}.}
 \item{size}{\code{numeric}. The distance between the record and the margin of the buffer (i.e.
 buffer radius).}
 
-\item{crs}{\code{numeric}. Indicates which EPSG it the \code{occ_data} in.}
+\item{crs}{\code{numeric}. Indicates which EPSG is the \code{occ_data} in.}
 
 \item{mcp}{\code{boolean}. Should the buffer be applied in each record (FALSE) or in a minimum
 convex polygon/convex hull (TRUE)? Standard is \code{FALSE}.}

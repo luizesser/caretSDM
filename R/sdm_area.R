@@ -16,8 +16,7 @@
 #' @param gdal Boolean. Force the use or not of GDAL when available. See details.
 #' @param crop_by A shape from \code{sf} to crop \code{x}.
 #' @param lines_as_sdm_area Boolean. If \code{x} is a \code{sf} with LINESTRING geometry, it can be
-#' used
-#' to model species distribution in lines and not grid cells.
+#' used to model species distribution in lines and not grid cells.
 #' @param i A \code{sdm_area} or a \code{input_sdm} object.
 #' @param sa1 A \code{sdm_area} object.
 #' @param sa2 A \code{sdm_area} object.
@@ -78,7 +77,7 @@
 #'
 #' @export
 sdm_area <- function(x, cell_size = NULL, crs = NULL, variables_selected = NULL,
-                     gdal = TRUE, crop_by = NULL, lines_as_sdm_area = FALSE) {
+                       gdal = TRUE, crop_by = NULL, lines_as_sdm_area = FALSE) {
   assert_cli(
     check_int_cli(
       crs,
@@ -131,7 +130,7 @@ sdm_area <- function(x, cell_size = NULL, crs = NULL, variables_selected = NULL,
 sdm_area.RasterStack <- function(x, cell_size = NULL, crs = NULL, variables_selected = NULL,
                                  gdal= TRUE, crop_by = NULL, lines_as_sdm_area = FALSE) {
   xs <- stars::st_as_stars(x)
-  sa <- sdm_area(xs, cell_size, crs, variables_selected, gdal, crop_by)
+  sa <- sdm_area(xs, cell_size, crs, variables_selected, gdal, crop_by, lines_as_sdm_area)
   return(invisible(sa))
 }
 
@@ -140,7 +139,7 @@ sdm_area.SpatRaster <- function(x, cell_size = NULL, crs = NULL, variables_selec
                                 gdal= TRUE, crop_by = NULL, lines_as_sdm_area = FALSE) {
   xs <- stars::st_as_stars(x)
   names(stars::st_dimensions(xs)) <- c("x", "y", "band")
-  sa <- sdm_area(xs, cell_size, crs, variables_selected, gdal, crop_by)
+  sa <- sdm_area(xs, cell_size, crs, variables_selected, gdal, crop_by, lines_as_sdm_area)
   return(invisible(sa))
 }
 
@@ -224,7 +223,7 @@ sdm_area.stars <- function(x, cell_size = NULL, crs = NULL, variables_selected =
     cli_abort(c("x" = "crs is invalid."))
   }
 
-
+##############################
   if (!is.null(crop_by)) {
     assert_class_cli(
       try(sf::st_bbox(crop_by), silent = TRUE),
@@ -232,23 +231,54 @@ sdm_area.stars <- function(x, cell_size = NULL, crs = NULL, variables_selected =
       null.ok = FALSE,
       .var.name = "crop_by"
     )
-    if (is.null(crs)){
-      if (sf::st_crs(x) != sf::st_crs(crop_by)){
-        cli::cli_abort(
-          c(
-            "x" = "The CRS of crop_by must be equal to CRS of x."
-          ))
-      }
-    } else {
-      if (sf::st_crs(crs) != sf::st_crs(crop_by)){
-        #crop_by <- sf::st_transform(crop_by, crs = sf::st_crs(crs))
-        cli::cli_abort(
-          c(
-            "x" = "The CRS of crop_by must be equal to CRS of parameter crs."
-          ))
-      }
+
+    target_crs <- if (is.null(crs)) sf::st_crs(x) else sf::st_crs(crs)
+
+    if (is.na(sf::st_crs(crop_by))) {
+      cli::cli_abort(c(
+        "x" = "crop_by must have a valid CRS."
+      ))
+    }
+
+    if (is.na(target_crs)) {
+      cli::cli_abort(c(
+        "x" = "The target CRS could not be determined from x or parameter crs."
+      ))
+    }
+
+    if (sf::st_crs(crop_by) != target_crs) {
+      crop_by <- sf::st_transform(crop_by, crs = target_crs)
     }
   }
+##############################
+  #if (!is.null(crop_by)) {
+  #  assert_class_cli(
+  #    try(sf::st_bbox(crop_by), silent = TRUE),
+  #    classes = "bbox",
+  #    null.ok = FALSE,
+  #    .var.name = "crop_by"
+  #  )
+  #  if (is.null(crs)){
+  #    if (sf::st_crs(x) != sf::st_crs(crop_by)){
+  #      cli::cli_abort(
+  #        c(
+  #          "x" = "The CRS of crop_by must be equal to CRS of x."
+  #        ))
+  #    }
+  #  } else {
+  #    if (sf::st_crs(crs) != sf::st_crs(crop_by)){
+  #      #crop_by <- sf::st_transform(crop_by, crs = sf::st_crs(crs))
+  #      cli::cli_abort(
+  #        c(
+  #          "x" = "The CRS of crop_by must be equal to CRS of parameter crs."
+  #        ))
+  #    }
+  #  }
+  #  #if (sf::st_crs(crs) != sf::st_crs(x)) {
+  #  #  x <- stars::st_warp(x, crs = sf::st_crs(crs))
+  #  #}
+  #  #x <- sf::st_crop(x, crop_by)
+  #}
 
   if (.is_gdal_installed() && gdal){
     cli::cli_inform(c(
@@ -275,6 +305,7 @@ sdm_area.stars <- function(x, cell_size = NULL, crs = NULL, variables_selected =
       parameters = list(gdal = gdal, lines_as_sdm_area = lines_as_sdm_area)
     )
   }
+
   if ((l$grid |> nrow()) > 0) {
     sa <- .sdm_area(l)
   } else {
@@ -287,7 +318,150 @@ sdm_area.stars <- function(x, cell_size = NULL, crs = NULL, variables_selected =
   return(invisible(sa))
 }
 
+#.sdm_area_from_stars_using_gdal <- function(x, cell_size = NULL, crs = NULL, crop_by = NULL) {
+#  in_dir <- fs::path(tempdir(), Sys.time() |> as.integer() |> as.character(), "in_dir")
+#  if (fs::dir_exists(in_dir)) {
+#    fs::dir_delete(in_dir)
+#  }
+#
+#  var_names <- ""
+#  file_list <- ""
+#  del_in_dir <- FALSE
+#  if (checkmate::test_class(x, "stars", ordered = TRUE)) {
+#    tryCatch(
+#      {
+#        fs::dir_create(in_dir)
+#
+#        var_names <- names(x)
+#        if (length(var_names)==0) {
+#          x$cell_id <- 1
+#          var_names <- names(x)
+#        }
+#
+#        var_names |>
+#          purrr::map(
+#            \(v_name) {
+#              x[v_name] |>
+#                stars::write_stars(
+#                  fs::path(in_dir, v_name, ext="tif"),
+#                  options="COMPRESS=LZW"
+#                )
+#            }
+#          )
+#        del_in_dir <- TRUE
+#      },
+#      error = function(e) {
+#        cli::cli_abort(c(
+#          "x" = "It was not possible to write raster on disk.",
+#          "i" = e$message
+#        ))
+#      }
+#    )
+#    file_list <- in_dir |>
+#      fs::dir_ls(type = "file")
+#  } else {
+#    var_names <- names(x)
+#    file_list <- x |>
+#      purrr::map_chr(\(x) x) |> unname()
+#  }
+#
+#  out_dir <- fs::path(tempdir(), Sys.time() |> as.integer() |> as.character(), "out_dir")
+#  if (fs::dir_exists(out_dir)) {
+#    fs::dir_delete(out_dir)
+#  }
+#  tryCatch(
+#    {
+#      fs::dir_create(out_dir)
+#      warp_method <- x |> purrr::map(
+#        \(e) {
+#          if (.is_float(e)) {
+#            return("average")
+#          } else {
+#            return("med")
+#          }
+#        }
+#      )
+#
+#      file_list |> purrr::map(
+#        \(file_name){
+#          in_file <- file_name
+#          out_file <- fs::path(out_dir, fs::path_file(file_name))
+#          options <- c(
+#            "-overwrite",
+#            "-of", "GTiff",
+#            "-t_srs", crs$wkt, # output file SRS
+#            "-r", warp_method[[file_name |> fs::path_file() |> fs::path_ext_remove()]],
+#            "-co", "BIGTIFF=YES",
+#            "-co", "COMPRESS=LZW",
+#            "-dstnodata", "-999999",
+#            "-tr", cell_size, cell_size,
+#            "-ot", "Float32"
+#          )
+#          if (!is.null(crop_by)){
+#            ## Write crop_by to a temporary file
+#            #temp_shp <- tempfile(fileext = ".gpkg")
+#            #sf::st_write(crop_by, temp_shp, quiet = TRUE)
+#
+#            options <- c(
+#              options,
+#              #"-cutline", temp_shp,
+#              #"-crop_to_cutline",
+#              #"-wo", "CUTLINE_ALL_TOUCHED=TRUE",  # Include partially covered cells
+#              "-te", c(sf::st_bbox(crop_by) |> methods::as("vector"))
+#            )
+#          }
+#          sf::gdal_utils(
+#            util = "warp",
+#            source = in_file,
+#            destination = out_file,
+#            options = options
+#          )
+#       }
+#      )
+#    },
+#    error = function(e) {
+#      cli::cli_abort(c(
+#        "x" = "It was not possible to write raster on disk.",
+#        "i" = e$message
+#      ))
+#    }
+#  )
+#
+#  if (del_in_dir && fs::dir_exists(in_dir)){
+#    fs::dir_delete(in_dir)
+#  }
+#
+#  grd <- out_dir |>
+#    list.files(full.names = T) |>
+#    stars::read_stars(normalize_path = F) |>
+#    stats::setNames(var_names)
+#
+#  n_col <- attr(grd, "dimensions")[["x"]]$to
+#  n_row <- attr(grd, "dimensions")[["y"]]$to
+#  grd$cell_id <- seq(1, n_col * n_row)
+#
+#  grd <- grd |>
+#    sf::st_as_sf()
+#
+#  if(is.null(crop_by)){
+#    grd_bbox <- sf::st_bbox(grd)
+#  }
+#
+#  grd <- grd |>
+#    tidyr::drop_na() |>
+#    dplyr::relocate(cell_id)
+#
+#  if (!is.null(crop_by)){
+#    attr(sf::st_geometry(grd), "bbox") <- sf::st_bbox(crop_by)
+#  } else {
+#    attr(sf::st_geometry(grd), "bbox") <- grd_bbox
+#  }
+#
+#  return(grd)
+#}
+
 .sdm_area_from_stars_using_gdal <- function(x, cell_size = NULL, crs = NULL, crop_by = NULL) {
+
   in_dir <- fs::path(tempdir(), Sys.time() |> as.integer() |> as.character(), "in_dir")
   if (fs::dir_exists(in_dir)) {
     fs::dir_delete(in_dir)
@@ -338,6 +512,21 @@ sdm_area.stars <- function(x, cell_size = NULL, crs = NULL, variables_selected =
   if (fs::dir_exists(out_dir)) {
     fs::dir_delete(out_dir)
   }
+
+  # Create temporary cutline file if crop_by is provided
+  cutline_file <- NULL
+  if (!is.null(crop_by)) {
+    cutline_file <- tempfile(fileext = ".gpkg")
+    # Ensure valid geometries for reliable cutline processing
+    crop_by <- sf::st_make_valid(crop_by)
+    crop_by <- crop_by[!sf::st_is_empty(crop_by), ]
+    if(unique(sf::st_geometry_type(crop_by)) == "LINESTRING") {
+      # For line geometries, use a buffer to ensure they are included in the cutline
+      crop_by <- sf::st_buffer(crop_by, dist = cell_size / 2)
+    }
+    sf::st_write(crop_by, cutline_file, delete_dsn = TRUE, quiet = TRUE)
+  }
+
   tryCatch(
     {
       fs::dir_create(out_dir)
@@ -355,6 +544,7 @@ sdm_area.stars <- function(x, cell_size = NULL, crs = NULL, variables_selected =
         \(file_name){
           in_file <- file_name
           out_file <- fs::path(out_dir, fs::path_file(file_name))
+
           options <- c(
             "-overwrite",
             "-of", "GTiff",
@@ -366,38 +556,39 @@ sdm_area.stars <- function(x, cell_size = NULL, crs = NULL, variables_selected =
             "-tr", cell_size, cell_size,
             "-ot", "Float32"
           )
-          if (!is.null(crop_by)){
-            ## Write crop_by to a temporary file
-            #temp_shp <- tempfile(fileext = ".gpkg")
-            #sf::st_write(crop_by, temp_shp, quiet = TRUE)
 
+          if (!is.null(crop_by) && !is.null(cutline_file)) {
             options <- c(
               options,
-              #"-cutline", temp_shp,
-              #"-crop_to_cutline",
-              #"-wo", "CUTLINE_ALL_TOUCHED=TRUE",  # Include partially covered cells
-              "-te", c(sf::st_bbox(crop_by) |> methods::as("vector"))
+              "-cutline", cutline_file,
+              "-crop_to_cutline",
+              "-wo", "CUTLINE_ALL_TOUCHED=TRUE"  # Include partially covered cells
             )
           }
+
           sf::gdal_utils(
             util = "warp",
             source = in_file,
             destination = out_file,
             options = options
           )
-       }
+        }
       )
     },
     error = function(e) {
       cli::cli_abort(c(
-        "x" = "It was not possible to write raster on disk.",
+        "x" = "GDAL warp failed.",
         "i" = e$message
       ))
     }
   )
 
+  # Cleanup
   if (del_in_dir && fs::dir_exists(in_dir)){
     fs::dir_delete(in_dir)
+  }
+  if (!is.null(cutline_file)) {
+    unlink(cutline_file, force = TRUE)
   }
 
   grd <- out_dir |>
@@ -412,22 +603,22 @@ sdm_area.stars <- function(x, cell_size = NULL, crs = NULL, variables_selected =
   grd <- grd |>
     sf::st_as_sf()
 
-  if(is.null(crop_by)){
-    grd_bbox <- sf::st_bbox(grd)
+  grd_bbox <- if (!is.null(crop_by)) {
+    sf::st_bbox(crop_by)
+  } else {
+    sf::st_bbox(grd)
   }
 
   grd <- grd |>
     tidyr::drop_na() |>
     dplyr::relocate(cell_id)
 
-  if (!is.null(crop_by)){
-    attr(sf::st_geometry(grd), "bbox") <- sf::st_bbox(crop_by)
-  } else {
-    attr(sf::st_geometry(grd), "bbox") <- grd_bbox
-  }
+  attr(sf::st_geometry(grd), "bbox") <- grd_bbox
 
   return(grd)
 }
+
+
 
 .sdm_area_from_stars_using_stars <- function(x, cell_size = NULL, crs = NULL, crop_by = NULL) {
   if (sf::st_crs(crs) != sf::st_crs(x)) {
@@ -798,7 +989,7 @@ sdm_area.sf <- function(x, cell_size = NULL, crs = NULL, variables_selected = NU
   suppressWarnings(
     grd <- grd |>
       as.data.frame() |>
-      select(-geometry) |>
+      dplyr::select(-geometry) |>
       dplyr::group_by(cell_id) |>
       dplyr::reframe(
         dplyr::across(dplyr::where(.is_float), ~ weighted.mean(.x, w=..weighting_factor, na.rm = TRUE)),
@@ -862,7 +1053,13 @@ sdm_area.sf <- function(x, cell_size = NULL, crs = NULL, variables_selected = NU
       if (nrow(intersecting_grids) > 1) {
         # Create union of all grid boundaries
         #grid_bounds <- st_union(st_geometry(intersecting_grids))
-
+        #if(!inherits(intersecting_grids, "sfc_LINESTRING") || inherits(intersecting_grids, "sfc_MULTILINESTRING")) {
+        #  intersecting_grids <- intersecting_grids |>
+        #    sf::st_boundary() |>
+        #    sf::st_union() |>
+        #    sf::st_cast("MULTILINESTRING")
+        #}
+        #print(sf::st_geometry(intersecting_grids))
         # Split line by grid boundaries
         suppressWarnings(split_lines <- lwgeom::st_split(sf::st_geometry(line), intersecting_grids) |>
           sf::st_collection_extract("LINESTRING") |>
@@ -881,7 +1078,7 @@ sdm_area.sf <- function(x, cell_size = NULL, crs = NULL, variables_selected = NU
             grid_index <- sf::st_nearest_feature(seg_centroid, intersecting_grids)
           }
 
-          if (!any(grid_index)) return(NULL)
+          #if (!any(grid_index)) return(NULL)
 
           # Get bioclimatic data
           bioclim_data <- sf::st_drop_geometry(intersecting_grids[grid_index, bioclim_cols, drop = FALSE])
@@ -924,6 +1121,8 @@ sdm_area.sf <- function(x, cell_size = NULL, crs = NULL, variables_selected = NU
   final_result <- lapply(1:nrow(rivers_sf), function(i) {
     process_river_feature(rivers_sf[i, ], grid_sf)
   })
+
+  final_result <- final_result[!sapply(final_result, is.null)]
 
   # Combine all results
   final_sf <- do.call(rbind, final_result)
@@ -1011,7 +1210,7 @@ sdm_area.sf <- function(x, cell_size = NULL, crs = NULL, variables_selected = NU
 
   # Next check is only executed if no errors are
   # To improve performance found up to this line.
-  if (error_collection$isEmpty() & "POLYGON" %in% st_geometry_type(x$grid)){
+  if (error_collection$isEmpty() & "POLYGON" %in% sf::st_geometry_type(x$grid)){
     polygon_area <- x$cell_size * x$cell_size
     invalid_row <- x$grid$geometry |>
       purrr::detect_index(
@@ -1280,7 +1479,7 @@ get_sdm_area <- function(i) {
     x <- i
   }
   assert_class_cli(x, "sdm_area")
-  x <- x$grid |> select(c(cell_id))
+  x <- x$grid |> dplyr::select(c(cell_id))
   return(x)
 }
 

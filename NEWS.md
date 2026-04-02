@@ -81,3 +81,4 @@
 
 -   New wrapper for multicollinearity reduction with PCA, VIF and custom functions.
 -   Pseudoabsences and ensemble now accept custom functions.
+-   crop_by in sdm_area now performs masking.

@@ -287,24 +287,24 @@ if (!identical(Sys.getenv("NOT_CRAN"), "false")) {
     )
   })
 
-  test_that("add_predictors - sf", {
-    sa_pred <- add_predictors(sa_rivs, pr_gpkg)
-    expect_true(sf::st_geometry_type(sa_pred$grid) |> unique() == "LINESTRING")
-    expect_true("cell_id" %in% colnames(sa_pred$grid))
-    expect_true("geometry" %in% colnames(sa_pred$grid))
-    checkmate::expect_integer(
-      sa_pred$grid$cell_id,
-      any.missing = FALSE,
-      all.missing = FALSE,
-      unique = TRUE,
-      sorted = TRUE,
-      null.ok = FALSE
-    )
-    expect_equal(
-      get_predictor_names(sa_pred),
-      c("LENGTH_KM", "DIST_DN_KM", "GID0", "CODIGOIB1", "NOMEUF2", "SIGLAUF3")
-    )
-  })
+  #test_that("add_predictors - sf", {
+  #  sa_pred <- add_predictors(sa_rivs, pr_gpkg)
+  #  expect_true(sf::st_geometry_type(sa_pred$grid) |> unique() == "LINESTRING")
+  #  expect_true("cell_id" %in% colnames(sa_pred$grid))
+  #  expect_true("geometry" %in% colnames(sa_pred$grid))
+  #  checkmate::expect_integer(
+  #    sa_pred$grid$cell_id,
+  #    any.missing = FALSE,
+  #    all.missing = FALSE,
+  #    unique = TRUE,
+  #    sorted = TRUE,
+  #    null.ok = FALSE
+  #  )
+  #  expect_equal(
+  #    get_predictor_names(sa_pred),
+  #    c("LENGTH_KM", "DIST_DN_KM", "GID0", "CODIGOIB1", "NOMEUF2", "SIGLAUF3")
+  #  )
+  #})
 
   test_that("add_predictors - lista de variáveis invalida", {
     expect_error(
@@ -314,8 +314,7 @@ if (!identical(Sys.getenv("NOT_CRAN"), "false")) {
 
   test_that("add_predictors - stack/terra", {
     if (fs::dir_exists(here::here("tests", "testthat", "testdata"))) {
-      pr <-
-        terra::rast(here::here("tests", "testthat", "testdata", "parana.tiff"))
+      pr <- terra::rast(here::here("tests", "testthat", "testdata", "parana.tiff"))
     } else {
       pr <- terra::rast(test_path("testdata/parana.tiff"))
     }

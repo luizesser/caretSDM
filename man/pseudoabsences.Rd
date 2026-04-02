@@ -59,8 +59,8 @@ This function obtains pseudoabsences given a set of predictors.
 }
 \details{
 \code{pseudoabsences} is used in the SDM workflow to obtain pseudoabsences, a step necessary for
-most of the algorithms to run. We implemented three methods so far: \code{"random"}, which is
-self-explanatory, \code{"bioclim"}, \code{"mahal.dist"} and \code{"buffer_sdm"}. The two last are
+most of the algorithms to run. We implemented four methods: \code{"random"}, which is
+self-explanatory, \code{"buffer_sdm"}, \code{"mahal.dist"} and \code{"bioclim"}. The two last are
 built with the idea that pseudoabsences should be environmentally different from presences. Thus,
 we implemented two presence-only methods to infer the distribution of the species. \code{"bioclim"}
 uses an envelope approach (bioclimatic envelope), while \code{"mahal.dist"} uses a distance
@@ -69,7 +69,8 @@ results. Pseudoabsences are retrieved outside the projected distribution of the 
 provides a custom function, it must have the arguments \code{env_sf} and \code{occ_sf}, which will
 consist of two \code{"sf"}s. The first has the predictor values for the whole study area, while
 the second has the presence records for the species. The function must return a vector with
-cell_ids of the pseudoabsences.
+cell_ids of the pseudoabsences.For \code{buffer_sdm}, user needs to specifiy the size of the
+buffer compatible with buffer CRS.
 
 \code{n_pseudoabsences} returns the number of pseudoabsences obtained per species.
 

@@ -392,7 +392,8 @@ train_sdm <- function(occ, pred = NULL, algo, ctrl = NULL, variables_selected = 
   }
 
   m <- apply(l, 2, function(x) {
-    unlist(x, recursive = FALSE)
+    res <-  unlist(x, recursive = FALSE)
+    res <- res[!sapply(res, is.null)] # Remove NULL models (models that caret returned an error)
   })
 
   if(length(algo2) == 1) {

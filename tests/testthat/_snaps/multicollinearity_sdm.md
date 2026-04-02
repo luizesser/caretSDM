@@ -8,13 +8,13 @@
       sub soma bio1 bio12 
       
       After excluding the collinear variables, the linear correlation coefficients ranges between: 
-      min correlation ( prod ~ div ):  -0.09041999 
-      max correlation ( prod ~ div ):  -0.09041999 
+      min correlation ( prod ~ div ):  0.03743047 
+      max correlation ( prod ~ div ):  0.03743047 
       
       ---------- VIFs of the remained variables -------- 
         Variables      VIF
-      1       div 1.008243
-      2      prod 1.008243
+      1       div 1.001403
+      2      prod 1.001403
 
 ---
 
@@ -24,14 +24,14 @@
       No variable from the 3 input variables has collinearity problem. 
       
       The linear correlation coefficients ranges between: 
-      min correlation ( bio12 ~ bio1 ):  -0.5114804 
-      max correlation ( test ~ bio1 ):  -0.8292101 
+      min correlation ( bio12 ~ bio1 ):  -0.4991922 
+      max correlation ( test ~ bio1 ):  -0.7721316 
       
       ---------- VIFs of the remained variables -------- 
         Variables      VIF
-      1      bio1 3.211198
-      2     bio12 1.527657
-      3      test 3.610643
+      1      bio1 2.512167
+      2     bio12 1.491410
+      3      test 2.772972
 
 # multicollinearity vifstep
 
@@ -43,13 +43,13 @@
       bio1 bio12 sub soma 
       
       After excluding the collinear variables, the linear correlation coefficients ranges between: 
-      min correlation ( prod ~ div ):  -0.09041999 
-      max correlation ( prod ~ div ):  -0.09041999 
+      min correlation ( prod ~ div ):  0.03743047 
+      max correlation ( prod ~ div ):  0.03743047 
       
       ---------- VIFs of the remained variables -------- 
         Variables      VIF
-      1       div 1.008243
-      2      prod 1.008243
+      1       div 1.001403
+      2      prod 1.001403
 
 ---
 
@@ -59,12 +59,12 @@
       No variable from the 3 input variables has collinearity problem. 
       
       The linear correlation coefficients ranges between: 
-      min correlation ( bio12 ~ bio1 ):  -0.5114804 
-      max correlation ( test ~ bio1 ):  -0.8292101 
+      min correlation ( bio12 ~ bio1 ):  -0.4991922 
+      max correlation ( test ~ bio1 ):  -0.7721316 
       
       ---------- VIFs of the remained variables -------- 
         Variables      VIF
-      1      bio1 3.211198
-      2     bio12 1.527657
-      3      test 3.610643
+      1      bio1 2.512167
+      2     bio12 1.491410
+      3      test 2.772972
 

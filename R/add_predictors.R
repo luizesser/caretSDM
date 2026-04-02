@@ -2,7 +2,8 @@
 #'
 #' This function includes new predictors to the \code{sdm_area} object.
 #'
-#' @usage add_predictors(sa, pred, variables_selected = NULL, gdal = TRUE)
+#' @usage add_predictors(sa, pred, variables_selected = NULL, gdal = TRUE,
+#'                       lines_as_sdm_area = FALSE)
 #'
 #' @param sa A \code{sdm_area} object.
 #' @param pred \code{RasterStack}, \code{SpatRaster}, \code{stars} or \code{sf} object with predictors
@@ -10,13 +11,17 @@
 #' @param variables_selected \code{character} vector with variables names in \code{pred} to be used
 #' as predictors. If \code{NULL} adds all variables.
 #' @param gdal Boolean. Force the use or not of GDAL when available. See details.
+#' @param lines_as_sdm_area Boolean. If \code{x} is a \code{sf} with LINESTRING geometry, it can be
+#' used to model species distribution in lines and not grid cells.
 #' @param i \code{input_sdm} or \code{sdm_area} object to retrieve data from.
 #'
 #' @details
 #' \code{add_predictors} returns a \code{sdm_area} object with a grid built upon the \code{x} parameter.
 #' There are two ways to make the grid and resample the variables in \code{sdm_area}: with and
 #' without gdal. As standard, if gdal is available in you machine it will be used (\code{gdal = TRUE}),
-#' otherwise sf/stars will be used.
+#' otherwise sf/stars will be used. \code{lines_as_sdm_area} and \code{gdal} parameters are passed
+#' to \code{sdm_area} function, so they will be used in the grid creation and resampling of
+#' predictors. They will be retrieved automatically from the \code{sdm_area} object.
 #'
 #' @returns For \code{add_predictors} the same input \code{sdm_area} object is returned including the
 #' \code{pred} data binded to the previous \code{grid}.
@@ -39,7 +44,7 @@
 #'
 #' @importFrom cli cli_abort
 #' @importFrom dplyr inner_join join_by select
-#' @importFrom sf st_crs st_bbox st_intersection st_cast st_join st_nearest_feature st_centroid
+#' @importFrom sf st_crs st_bbox st_intersection st_cast st_join st_nearest_feature st_centroid st_geometry_type
 #' @importFrom tidyr drop_na
 #' @importFrom stats na.omit
 #' @import checkCLI
@@ -47,7 +52,7 @@
 #' @global cell_id geometry
 #'
 #' @export
-add_predictors <- function(sa, pred, variables_selected = NULL, gdal = TRUE) {
+add_predictors <- function(sa, pred, variables_selected = NULL, gdal = TRUE, lines_as_sdm_area = FALSE) {
   if (!is_sdm_area(sa)) {
     cli::cli_abort(c(
       "x" = "The sa argument must be an instance of class sdm_area."
@@ -67,65 +72,73 @@ add_predictors <- function(sa, pred, variables_selected = NULL, gdal = TRUE) {
     len = 1,
     null.ok = FALSE
   )
+  assert_logical_cli(
+    lines_as_sdm_area,
+    any.missing = FALSE,
+    all.missing = FALSE,
+    len = 1,
+    null.ok = FALSE
+  )
   .check_sdm_area(sa)
   UseMethod("add_predictors", pred)
 }
 
 #' @export
-add_predictors.RasterStack <- function(sa, pred, variables_selected = NULL, gdal = TRUE) {
+add_predictors.RasterStack <- function(sa, pred, variables_selected = NULL, gdal = TRUE, lines_as_sdm_area = FALSE) {
   pred <- sa  |>
-    .add_predictors(pred, variables_selected, gdal)
+    .add_predictors(pred, variables_selected, gdal, lines_as_sdm_area)
   return(invisible(pred))
 }
 
 #' @export
-add_predictors.SpatRaster <- function(sa, pred, variables_selected = NULL, gdal = TRUE) {
+add_predictors.SpatRaster <- function(sa, pred, variables_selected = NULL, gdal = TRUE, lines_as_sdm_area = FALSE) {
   pred <- sa  |>
-    .add_predictors(pred, variables_selected, gdal)
+    .add_predictors(pred, variables_selected, gdal, lines_as_sdm_area)
   return(invisible(pred))
 }
 
 #' @export
-add_predictors.character <- function(sa, pred, variables_selected = NULL, gdal = TRUE) {
+add_predictors.character <- function(sa, pred, variables_selected = NULL, gdal = TRUE, lines_as_sdm_area = FALSE) {
   pred <- sa  |>
-    .add_predictors(pred, variables_selected, gdal)
+    .add_predictors(pred, variables_selected, gdal, lines_as_sdm_area)
   return(invisible(pred))
 }
 
 #' @export
-add_predictors.stars <- function(sa, pred, variables_selected = NULL, gdal = TRUE) {
+add_predictors.stars <- function(sa, pred, variables_selected = NULL, gdal = TRUE, lines_as_sdm_area = FALSE) {
   pred <- sa  |>
-    .add_predictors(pred, variables_selected, gdal)
+    .add_predictors(pred, variables_selected, gdal, lines_as_sdm_area)
   return(invisible(pred))
 }
 
 #' @export
-add_predictors.sf <- function(sa, pred, variables_selected = NULL, gdal = TRUE) {
+add_predictors.sf <- function(sa, pred, variables_selected = NULL, gdal = TRUE, lines_as_sdm_area = FALSE) {
   pred <- sa  |>
-    .add_predictors(pred, variables_selected, gdal)
+    .add_predictors(pred, variables_selected, gdal, lines_as_sdm_area)
   return(invisible(pred))
 }
 
 
-.add_predictors <- function(sa, pred, variables_selected = NULL, gdal = TRUE) {
+.add_predictors <- function(sa, pred, variables_selected = NULL, gdal = TRUE, lines_as_sdm_area = FALSE) {
   pred_sa <- pred |>
     sdm_area(
       cell_size = sa$cell_size,
       crs = sa$grid |> sf::st_crs(),
       variables_selected = variables_selected,
-      gdal = gdal,
-      crop_by = sa$grid
+      gdal = sa$parameters$gdal,
+      crop_by = sa$grid,
+      lines_as_sdm_area = sa$parameters$lines_as_sdm_area
     )
   if (is.null(pred_sa)){
     return(sa)
   }
 
-  if(unique(st_geometry_type(sa$grid)) == "LINESTRING") {
+  if(unique(sf::st_geometry_type(sa$grid)) == "LINESTRING") {
     grd <- sa$grid |>
       sf::st_intersection(dplyr::select(pred_sa$grid, -cell_id))|>
       suppressWarnings()
-    if("POINT" %in% st_geometry_type(grd)) {
-      grd <- grd[st_geometry_type(grd) %in% c("LINESTRING","MULTILINESTRING"),]
+    if("POINT" %in% sf::st_geometry_type(grd)) {
+      grd <- grd[sf::st_geometry_type(grd) %in% c("LINESTRING","MULTILINESTRING"),]
     }
     grd <- grd |>
       sf::st_cast("LINESTRING") |>
@@ -144,7 +157,7 @@ add_predictors.sf <- function(sa, pred, variables_selected = NULL, gdal = TRUE) 
     grd <- sf::st_join(sa$grid, grd) |>
       na.omit()
     grd <- grd[!duplicated(grd$cell_id.x),]
-    grd <- select(grd, -"cell_id.y")
+    grd <- dplyr::select(grd, -"cell_id.y")
     colnames(grd)[1] <- "cell_id"
   }
 

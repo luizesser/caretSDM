@@ -31,8 +31,7 @@ If \code{NULL} (standard), all variables in \code{x} are used.}
 \item{crop_by}{A shape from \code{sf} to crop \code{x}.}
 
 \item{lines_as_sdm_area}{Boolean. If \code{x} is a \code{sf} with LINESTRING geometry, it can be
-used
-to model species distribution in lines and not grid cells.}
+used to model species distribution in lines and not grid cells.}
 
 \item{i}{A \code{sdm_area} or a \code{input_sdm} object.}
 

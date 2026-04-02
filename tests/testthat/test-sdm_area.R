@@ -332,7 +332,7 @@ if (!identical(Sys.getenv("NOT_CRAN"), "false")){
 
   # test crop!=NULL
   test_that("sdm_area - crop_by tem crs diferente", {
-    expect_error(sdm_area(bioc, cell_size = 100000, crs = 6933, crop_by = pr_gpkg))
+    expect_no_error(sdm_area(bioc, cell_size = 100000, crs = 6933, crop_by = pr_gpkg))
   })
 
   test_that("sdm_area - crop_by tem crs igual", {
@@ -343,7 +343,7 @@ if (!identical(Sys.getenv("NOT_CRAN"), "false")){
 
   test_that("sdm_area - crop_by tem crs diferente de bioc e crs=NULL", {
     pr <- sf::st_transform(pr_gpkg, crs=6933)
-    expect_error(sdm_area(bioc, cell_size = 100000, crs = NULL, crop_by = pr))
+    expect_no_error(sdm_area(bioc, cell_size = 1, crs = NULL, crop_by = pr))
   })
 
   # print

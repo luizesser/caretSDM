@@ -5,7 +5,8 @@
 \alias{get_predictors}
 \title{Add predictors to \code{sdm_area}}
 \usage{
-add_predictors(sa, pred, variables_selected = NULL, gdal = TRUE)
+add_predictors(sa, pred, variables_selected = NULL, gdal = TRUE,
+                      lines_as_sdm_area = FALSE)
 
 get_predictors(i)
 }
@@ -19,6 +20,9 @@ data.}
 as predictors. If \code{NULL} adds all variables.}
 
 \item{gdal}{Boolean. Force the use or not of GDAL when available. See details.}
+
+\item{lines_as_sdm_area}{Boolean. If \code{x} is a \code{sf} with LINESTRING geometry, it can be
+used to model species distribution in lines and not grid cells.}
 
 \item{i}{\code{input_sdm} or \code{sdm_area} object to retrieve data from.}
 }
@@ -34,7 +38,9 @@ This function includes new predictors to the \code{sdm_area} object.
 \code{add_predictors} returns a \code{sdm_area} object with a grid built upon the \code{x} parameter.
 There are two ways to make the grid and resample the variables in \code{sdm_area}: with and
 without gdal. As standard, if gdal is available in you machine it will be used (\code{gdal = TRUE}),
-otherwise sf/stars will be used.
+otherwise sf/stars will be used. \code{lines_as_sdm_area} and \code{gdal} parameters are passed
+to \code{sdm_area} function, so they will be used in the grid creation and resampling of
+predictors. They will be retrieved automatically from the \code{sdm_area} object.
 }
 \examples{
 # Create sdm_area object:
