@@ -156,7 +156,9 @@ predict_sdm.sdm_area <- function(m, scen, metric = "ROC", th = 0.9, tp = "prob",
     df <- env_list[[sc]]
     df$scenario  <- sc
     df
-  }) |> dplyr::bind_rows()
+  }) |>
+    dplyr::bind_rows() |>
+    na.omit()
 
   pred_cols <- names(env_long)[!names(env_long) %in% c("cell_id", "geometry", "scenario")]
 
