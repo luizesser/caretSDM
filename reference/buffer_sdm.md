@@ -22,7 +22,7 @@ buffer_sdm(occ_data, size = NULL, crs = NULL, mcp = FALSE)
 
 - crs:
 
-  `numeric`. Indicates which EPSG it the `occ_data` in.
+  `numeric`. Indicates which EPSG is the `occ_data` in.
 
 - mcp:
 

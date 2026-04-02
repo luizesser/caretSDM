@@ -81,9 +81,9 @@ A `occurrences_sdm` or `input_sdm` object with pseudoabsence data.
 ## Details
 
 `pseudoabsences` is used in the SDM workflow to obtain pseudoabsences, a
-step necessary for most of the algorithms to run. We implemented three
-methods so far: `"random"`, which is self-explanatory, `"bioclim"`,
-`"mahal.dist"` and `"buffer_sdm"`. The two last are built with the idea
+step necessary for most of the algorithms to run. We implemented four
+methods: `"random"`, which is self-explanatory, `"buffer_sdm"`,
+`"mahal.dist"` and `"bioclim"`. The two last are built with the idea
 that pseudoabsences should be environmentally different from presences.
 Thus, we implemented two presence-only methods to infer the distribution
 of the species. `"bioclim"` uses an envelope approach (bioclimatic
@@ -94,7 +94,9 @@ of the species. If user provides a custom function, it must have the
 arguments `env_sf` and `occ_sf`, which will consist of two `"sf"`s. The
 first has the predictor values for the whole study area, while the
 second has the presence records for the species. The function must
-return a vector with cell_ids of the pseudoabsences.
+return a vector with cell_ids of the pseudoabsences.For `buffer_sdm`,
+user needs to specifiy the size of the buffer compatible with buffer
+CRS.
 
 `n_pseudoabsences` returns the number of pseudoabsences obtained per
 species.

@@ -490,8 +490,8 @@ Distance” was successfully trained and evaluated.</p>
 <span><span class="co">#&gt;     Number                    : 3 </span></span>
 <span><span class="co">#&gt;     Metrics                   :</span></span>
 <span><span class="co">#&gt; $`Araucaria angustifolia`</span></span>
-<span><span class="co">#&gt;           algo       ROC       TSS Sensitivity Specificity</span></span>
-<span><span class="co">#&gt; 1 mahal.custom 0.9906817 0.8306326   0.8305556           1</span></span></code></pre></div>
+<span><span class="co">#&gt;           algo      ROC       TSS Sensitivity Specificity</span></span>
+<span><span class="co">#&gt; 1 mahal.custom 0.978312 0.8139431       0.814           1</span></span></code></pre></div>
 <p>Note that the algorithm name will be set as the name of the object
 passed to <code>algo</code>:</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
@@ -504,7 +504,7 @@ passed to <code>algo</code>:</p>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 1 × 59</span></span></span>
 <span><span class="co">#&gt;   algo       ROC   TSS Sensitivity Specificity `Pos Pred Value` `Neg Pred Value`</span></span>
 <span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> mahal.c… 0.991 0.831       0.831           1                1            0.336</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> mahal.c… 0.978 0.814       0.814           1                1            0.289</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># ℹ 52 more variables: Precision &lt;dbl&gt;, Recall &lt;dbl&gt;, F1 &lt;dbl&gt;,</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;">#   Prevalence &lt;dbl&gt;, `Detection Rate` &lt;dbl&gt;, `Detection Prevalence` &lt;dbl&gt;,</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;">#   `Balanced Accuracy` &lt;dbl&gt;, Accuracy &lt;dbl&gt;, Kappa &lt;dbl&gt;,</span></span></span>
@@ -554,8 +554,8 @@ build models using the mahal.dismo method.</p>
 <span><span class="co">#&gt;     Number                    : 3 </span></span>
 <span><span class="co">#&gt;     Metrics                   :</span></span>
 <span><span class="co">#&gt; $`Araucaria angustifolia`</span></span>
-<span><span class="co">#&gt;     algo       ROC       TSS Sensitivity Specificity</span></span>
-<span><span class="co">#&gt; 1 custom 0.9907247 0.8527099   0.9826667   0.8821111</span></span></code></pre></div>
+<span><span class="co">#&gt;     algo      ROC       TSS Sensitivity Specificity</span></span>
+<span><span class="co">#&gt; 1 custom 0.996803 0.9315789   0.9952222   0.9363333</span></span></code></pre></div>
 <p>Plotting the result of mahal.dismo.</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">i2</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/add_scenarios.html">add_scenarios</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/predict_sdm.html">predict_sdm</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/ensemble_sdm.html">ensemble_sdm</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/plot_occurrences.html">plot_ensembles</a></span><span class="op">(</span><span class="op">)</span></span>

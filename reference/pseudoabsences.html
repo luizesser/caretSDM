@@ -123,8 +123,8 @@ buffer radius).</p></dd>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p><code>pseudoabsences</code> is used in the SDM workflow to obtain pseudoabsences, a step necessary for
-most of the algorithms to run. We implemented three methods so far: <code>"random"</code>, which is
-self-explanatory, <code>"bioclim"</code>, <code>"mahal.dist"</code> and <code>"buffer_sdm"</code>. The two last are
+most of the algorithms to run. We implemented four methods: <code>"random"</code>, which is
+self-explanatory, <code>"buffer_sdm"</code>, <code>"mahal.dist"</code> and <code>"bioclim"</code>. The two last are
 built with the idea that pseudoabsences should be environmentally different from presences. Thus,
 we implemented two presence-only methods to infer the distribution of the species. <code>"bioclim"</code>
 uses an envelope approach (bioclimatic envelope), while <code>"mahal.dist"</code> uses a distance
@@ -133,7 +133,8 @@ results. Pseudoabsences are retrieved outside the projected distribution of the 
 provides a custom function, it must have the arguments <code>env_sf</code> and <code>occ_sf</code>, which will
 consist of two <code>"sf"</code>s. The first has the predictor values for the whole study area, while
 the second has the presence records for the species. The function must return a vector with
-cell_ids of the pseudoabsences.</p>
+cell_ids of the pseudoabsences.For <code>buffer_sdm</code>, user needs to specifiy the size of the
+buffer compatible with buffer CRS.</p>
 <p><code>n_pseudoabsences</code> returns the number of pseudoabsences obtained per species.</p>
 <p><code>pseudoabsence_method</code> returns the method used to obtain pseudoabsences.</p>
 <p><code>pseudoabsence_data</code> returns a <code>list</code> of species names. Each species name will have a

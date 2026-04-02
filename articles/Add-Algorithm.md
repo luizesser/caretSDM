@@ -405,8 +405,8 @@ i
 #>     Number                    : 3 
 #>     Metrics                   :
 #> $`Araucaria angustifolia`
-#>           algo       ROC       TSS Sensitivity Specificity
-#> 1 mahal.custom 0.9906817 0.8306326   0.8305556           1
+#>           algo      ROC       TSS Sensitivity Specificity
+#> 1 mahal.custom 0.978312 0.8139431       0.814           1
 ```
 
 Note that the algorithm name will be set as the name of the object
@@ -425,7 +425,7 @@ mean_validation_metrics(i)
 #> # A tibble: 1 × 59
 #>   algo       ROC   TSS Sensitivity Specificity `Pos Pred Value` `Neg Pred Value`
 #>   <chr>    <dbl> <dbl>       <dbl>       <dbl>            <dbl>            <dbl>
-#> 1 mahal.c… 0.991 0.831       0.831           1                1            0.336
+#> 1 mahal.c… 0.978 0.814       0.814           1                1            0.289
 #> # ℹ 52 more variables: Precision <dbl>, Recall <dbl>, F1 <dbl>,
 #> #   Prevalence <dbl>, `Detection Rate` <dbl>, `Detection Prevalence` <dbl>,
 #> #   `Balanced Accuracy` <dbl>, Accuracy <dbl>, Kappa <dbl>,
@@ -482,8 +482,8 @@ i2
 #>     Number                    : 3 
 #>     Metrics                   :
 #> $`Araucaria angustifolia`
-#>     algo       ROC       TSS Sensitivity Specificity
-#> 1 custom 0.9907247 0.8527099   0.9826667   0.8821111
+#>     algo      ROC       TSS Sensitivity Specificity
+#> 1 custom 0.996803 0.9315789   0.9952222   0.9363333
 ```
 
 Plotting the result of mahal.dismo.

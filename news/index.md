@@ -109,3 +109,4 @@ CRAN release: 2026-03-10
 - New wrapper for multicollinearity reduction with PCA, VIF and custom
   functions.
 - Pseudoabsences and ensemble now accept custom functions.
+- crop_by in sdm_area now performs masking.

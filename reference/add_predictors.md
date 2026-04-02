@@ -5,7 +5,8 @@ This function includes new predictors to the `sdm_area` object.
 ## Usage
 
 ``` r
-add_predictors(sa, pred, variables_selected = NULL, gdal = TRUE)
+add_predictors(sa, pred, variables_selected = NULL, gdal = TRUE,
+                      lines_as_sdm_area = FALSE)
 
 get_predictors(i)
 ```
@@ -30,6 +31,11 @@ get_predictors(i)
 
   Boolean. Force the use or not of GDAL when available. See details.
 
+- lines_as_sdm_area:
+
+  Boolean. If `x` is a `sf` with LINESTRING geometry, it can be used to
+  model species distribution in lines and not grid cells.
+
 - i:
 
   `input_sdm` or `sdm_area` object to retrieve data from.
@@ -46,7 +52,10 @@ including the `pred` data binded to the previous `grid`.
 `x` parameter. There are two ways to make the grid and resample the
 variables in `sdm_area`: with and without gdal. As standard, if gdal is
 available in you machine it will be used (`gdal = TRUE`), otherwise
-sf/stars will be used.
+sf/stars will be used. `lines_as_sdm_area` and `gdal` parameters are
+passed to `sdm_area` function, so they will be used in the grid creation
+and resampling of predictors. They will be retrieved automatically from
+the `sdm_area` object.
 
 ## See also
 
@@ -79,16 +88,16 @@ get_predictors(sa)
 #> Projected CRS: WGS 84 / NSIDC EASE-Grid 2.0 Global
 #> First 10 features:
 #>    cell_id GID0 CODIGOIB1 NOMEUF2 SIGLAUF3     bio1 bio4    bio12
-#> 1        6   19        41       0        0 22.45938 1285 261.4752
-#> 2        7   19        41       0        0 22.45938 1285 261.4752
-#> 3        8   19        41       0        0 22.39415 1243 258.4977
-#> 4        9   19        41       0        0 22.25541 1220 258.4987
-#> 5       10   19        41       0        0 22.19232 1203 259.3725
-#> 6       11   19        41       0        0 22.12438 1189 257.6924
-#> 7       12   19        41       0        0 22.38992 1192 257.7096
-#> 8       13   19        41       0        0 22.40336 1234 254.7985
-#> 9       14   19        41       0        0 22.39525 1247 255.8951
-#> 10      31   19        41       0        0 22.45938 1285 261.4752
+#> 1        6   19        41       0        0 22.39812 1268 262.4270
+#> 2        7   19        41       0        0 22.39812 1268 262.4270
+#> 3        8   19        41       0        0 22.24774 1243 259.8303
+#> 4        9   19        41       0        0 22.13017 1230 260.5331
+#> 5       10   19        41       0        0 22.08299 1203 260.9101
+#> 6       11   19        41       0        0 22.06016 1192 259.2609
+#> 7       12   19        41       0        0 22.24014 1234 258.5582
+#> 8       13   19        41       0        0 22.28710 1236 257.0163
+#> 9       14   19        41       0        0 22.29775 1247 258.6638
+#> 10      31   19        41       0        0 22.15600 1317 267.6054
 #>                          geometry
 #> 1  POLYGON ((-5151744 -2795037...
 #> 2  POLYGON ((-5126744 -2795037...

@@ -38,7 +38,7 @@ i <- input_sdm(oc, sa) |>
   vif_predictors() |> 
   pseudoabsences(method = "bioclim", variables_selected = "vif") |> 
   train_sdm(algo = c("naive_bayes", "kknn"), 
-            crtl = caret::trainControl(method = "repeatedcv", 
+            ctrl = caret::trainControl(method = "repeatedcv", 
                                        number = 4, 
                                        repeats = 1, 
                                        classProbs = TRUE, 
@@ -100,8 +100,8 @@ i
 #>     Metrics                   :
 #> $`Salminus brasiliensis`
 #>          algo       ROC       TSS Sensitivity Specificity
-#> 1        kknn 0.7793611 0.4883333       0.755      0.7425
-#> 2 naive_bayes 0.7883889 0.4408333       0.745      0.7142
+#> 1        kknn 0.7600972 0.3641667    0.736625     0.63165
+#> 2 naive_bayes 0.7784722 0.4150000    0.760850     0.67335
 #> 
 #> --------  Predictions  --------
 #> Thresholds                    :
