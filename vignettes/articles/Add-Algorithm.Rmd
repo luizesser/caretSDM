@@ -1,12 +1,20 @@
 ---
 title: "2. Adding New Algorithms to caretSDM"
-output: rmarkdown::html_vignette
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+    toc_depth: 3
+    theme: flatly
+    highlight: tango
+    code_folding: show
+    df_print: paged
 vignette: >
   %\VignetteIndexEntry{Adding New Algorithms to caretSDM}
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::knitr}
-editor_options: 
-  markdown: 
+editor_options:
+  markdown:
     wrap: 100
 ---
 
