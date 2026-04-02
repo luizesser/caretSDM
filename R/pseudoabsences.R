@@ -11,7 +11,8 @@
 #'                variables_selected = NULL,
 #'                th = 0,
 #'                size = 1,
-#'                crs = 4326)
+#'                crs = 4326,
+#'                mcp = FALSE)
 #'
 #' @param occ A \code{occurrences_sdm} or \code{input_sdm} object.
 #' @param pred A \code{sdm_area} object. If \code{NULL} and \code{occ} is a \code{input_sdm},
@@ -29,6 +30,8 @@
 #' @param size \code{numeric} The distance between the record and the margin of the buffer (i.e.
 #' buffer radius).
 #' @param crs \code{numeric} Indicates which EPSG it the size in.
+#' @param mcp \code{boolean}. Should the buffer be applied in each record (FALSE) or in a minimum
+#' convex polygon/convex hull (TRUE)? Standard is \code{FALSE}.
 #'
 #' @param i A \code{input_sdm} object.
 #'
@@ -113,7 +116,7 @@
 #' @import checkCLI
 #'
 #' @export
-pseudoabsences <- function(occ, pred = NULL, method = "random", n_set = 10, n_pa = NULL, variables_selected = NULL, th = 0, size = 1, crs = 4326) {
+pseudoabsences <- function(occ, pred = NULL, method = "random", n_set = 10, n_pa = NULL, variables_selected = NULL, th = 0, size = 1, crs = 4326, mcp = FALSE) {
   assert_class_cli(occ, "input_sdm")
   if (is_input_sdm(occ)) {
     y <- occ$occurrences
@@ -283,7 +286,7 @@ pseudoabsences <- function(occ, pred = NULL, method = "random", n_set = 10, n_pa
     }
     if (method == "buffer_sdm") {
       l <- sapply(y$spp_names, function(sp) {
-        buf <- buffer_sdm(y, size, crs)
+        buf <- buffer_sdm(y, size, crs, mcp)
         if(!sf::st_crs(buf) == sf::st_crs(df)) {
           buf <- sf::st_transform(buf, sf::st_crs(df))
         }
