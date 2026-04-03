@@ -1172,5 +1172,5 @@ cells in a grid.
 ``` r
 end_time <- Sys.time()
 end_time - start_time
-#> Time difference of 24.55189 secs
+#> Time difference of 24.81956 secs
 ```
