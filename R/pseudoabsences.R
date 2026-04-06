@@ -49,8 +49,8 @@
 #' provides a custom function, it must have the arguments \code{env_sf} and \code{occ_sf}, which will
 #' consist of two \code{"sf"}s. The first has the predictor values for the whole study area, while
 #' the second has the presence records for the species. The function must return a vector with
-#' cell_ids of the pseudoabsences.For \code{buffer_sdm}, user needs to specifiy the size of the
-#' buffer compatible with buffer CRS.
+#' cell_ids of the pseudoabsences, which is the first column of both objects. For \code{buffer_sdm},
+#' user needs to specifiy the size of the buffer compatible with buffer CRS.
 #'
 #' \code{n_pseudoabsences} returns the number of pseudoabsences obtained per species.
 #'
@@ -85,23 +85,20 @@
 #' i0 <- pseudoabsences(i, method="random")
 #'
 #' # Custom method example:
-#' env_distance_pa <- function(env_sf, occ_sf, n_pa=n_pa) {
+#' buffer_pa_custom <- function(env_sf, occ_sf, buffer_dist = 3) {
+#'   # Create buffer around occurrence points
+#'   buffer <- sf::st_buffer(occ_sf, dist = buffer_dist)
 #'
-#'   # Transform the environmental data to a data frame and remove the cell_id and geometry columns
-#'   df <- as.data.frame(env_sf)[, -which(names(env_sf) %in% c("cell_id", "geometry"))]
+#'   # Union buffers into a single geometry
+#'   buffer_union <- sf::st_union(buffer)
 #'
-#'   # Define the center of the environmental space based on the mean of the predictors
-#'   center <- colMeans(df)
+#'   # Identify cells outside the buffer
+#'   outside_buffer <- sf::st_difference(env_sf, buffer_union)[,1]
 #'
-#'   # Calculate the distance of each cell in the environmental space to the center
-#'   d <- sqrt(rowSums((df - center)^2))
+#'   # Randomly extract cell_ids outside the buffer
+#'   pa_ids_sample <- sample(outside_buffer$cell_id, nrow(occ_sf))
 #'
-#'   # Convert distances to probabilities (the closer to the center, the higher the probability)
-#'   p <- d / sum(d)
-#'
-#'   # Sample pseudo-absences based on the calculated probabilities
-#'   sample(env_sf$cell_id, size = n_pa, prob = p)
-#'
+#'   return(pa_ids_sample)
 #' }
 #'
 #' i1 <- pseudoabsences(i, method=env_distance_pa)

@@ -1,6 +1,7 @@
-#' Predict SDM models in new data
+#' Ensemble Species Distribution Models
 #'
-#' This function projects SDM models to new scenarios
+#' Calculates ensemble predictions for species distribution models using custom or implemented
+#' methods.
 #'
 #' @usage
 #' ensemble_sdm(m,

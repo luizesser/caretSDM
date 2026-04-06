@@ -4,7 +4,7 @@
 \alias{ensemble_sdm}
 \alias{get_ensembles}
 \alias{add_ensembles}
-\title{Predict SDM models in new data}
+\title{Ensemble Species Distribution Models}
 \usage{
 ensemble_sdm(m,
             scen = NULL,
@@ -42,7 +42,8 @@ see details).}
 A \code{input_sdm} or a \code{predictions} object.
 }
 \description{
-This function projects SDM models to new scenarios
+Calculates ensemble predictions for species distribution models using custom or implemented
+methods.
 }
 \details{
 \code{ensembles} could be set to three different strategies OR a custom function.
