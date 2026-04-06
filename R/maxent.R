@@ -182,30 +182,92 @@
     })
   },
 
-  varImp = function(object, ...) {
+  varImp = function(object, lambda = NULL, normalize = TRUE, ...) {
+
     # Handle failed models
     if (!is.null(object$failed) && object$failed) {
       return(NULL)
     }
 
-    # Check if beta coefficients are present
-    if (is.null(object$betas) || length(object$betas) == 0) return(NULL)
+    # Check coefficients
+    if (is.null(object$betas) || length(object$betas) == 0) {
+      return(NULL)
+    }
 
-    # Extract feature names involved in the model
-    all_terms <- names(object$betas)
+    # Extract coefficients
+    coefs <- object$betas
 
-    # Get the original predictor names
-    original_vars <- object$varnames
+    # Remove zero coefficients (important for LASSO sparsity)
+    coefs <- coefs[coefs != 0]
 
-    # Calculate importance by summing absolute beta values for each original variable
-    importance <- sapply(original_vars, function(var) {
-      # Use grepl to find all terms that contain the original variable name
-      related_betas <- grepl(var, all_terms, fixed = TRUE)
-      sum(abs(object$betas[related_betas]))
-    })
+    if (length(coefs) == 0) return(NULL)
 
-    imp_df <- as.data.frame(importance)
-    colnames(imp_df) <- "Overall"
+    # --------------------------------------------
+    # STEP 1 — Map features → original variables
+    # --------------------------------------------
+
+    # Feature names
+    feat_names <- names(coefs)
+
+    # Extract base variable names robustly
+    # Handles:
+    #   var
+    #   var_l1
+    #   var_hinge(...)
+    #   var:interaction
+    extract_var <- function(x) {
+      # Case 1: hinge(), threshold(), etc.
+      x <- sub(".*\\(([^)]+)\\).*", "\\1", x)
+
+      # Case 2: interactions (bio1:bio2 → bio1)
+      x <- sub(":.*", "", x)
+
+      # Case 3: suffixes (_l1, _l4, etc.)
+      x <- sub("_.*", "", x)
+
+      return(x)
+    }
+
+    base_vars <- vapply(feat_names, extract_var, character(1))
+
+    #base_vars <- sub("([:]._.*$)|(:.*$)", "", feat_names)
+
+    # --------------------------------------------
+    # STEP 2 — Aggregate importance
+    # --------------------------------------------
+
+    imp <- tapply(abs(coefs), base_vars, sum)
+
+    # --------------------------------------------
+    # STEP 3 — Optional penalty correction
+    # --------------------------------------------
+
+    if (!is.null(object$penalty.factor)) {
+      pf <- object$penalty.factor
+
+      # Align penalty factors with variables
+      pf_vars <- pf[names(pf) %in% names(imp)]
+
+      # Avoid division by zero
+      pf_vars[pf_vars == 0] <- 1
+
+      # Reweight importance (experimental but useful)
+      imp[names(pf_vars)] <- imp[names(pf_vars)] / pf_vars
+    }
+
+    # --------------------------------------------
+    # STEP 4 — Normalize
+    # --------------------------------------------
+
+    if (normalize) {
+      imp <- imp / sum(imp)
+    }
+
+    # --------------------------------------------
+    # STEP 5 — Format for caret
+    # --------------------------------------------
+
+    imp_df <- data.frame(Overall = imp)
     imp_df <- imp_df[order(-imp_df$Overall), , drop = FALSE]
 
     return(imp_df)
