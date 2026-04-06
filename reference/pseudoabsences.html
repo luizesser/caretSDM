@@ -56,7 +56,8 @@
 <span>               variables_selected <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>               th <span class="op">=</span> <span class="fl">0</span>,</span>
 <span>               size <span class="op">=</span> <span class="fl">1</span>,</span>
-<span>               crs <span class="op">=</span> <span class="fl">4326</span><span class="op">)</span></span>
+<span>               crs <span class="op">=</span> <span class="fl">4326</span>,</span>
+<span>               mcp <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">n_pseudoabsences</span><span class="op">(</span><span class="va">i</span><span class="op">)</span></span>
 <span></span>
@@ -112,6 +113,11 @@ buffer radius).</p></dd>
 <dd><p><code>numeric</code> Indicates which EPSG it the size in.</p></dd>
 
 
+<dt id="arg-mcp">mcp<a class="anchor" aria-label="anchor" href="#arg-mcp"></a></dt>
+<dd><p><code>boolean</code>. Should the buffer be applied in each record (FALSE) or in a minimum
+convex polygon/convex hull (TRUE)? Standard is <code>FALSE</code>.</p></dd>
+
+
 <dt id="arg-i">i<a class="anchor" aria-label="anchor" href="#arg-i"></a></dt>
 <dd><p>A <code>input_sdm</code> object.</p></dd>
 
@@ -133,8 +139,8 @@ results. Pseudoabsences are retrieved outside the projected distribution of the 
 provides a custom function, it must have the arguments <code>env_sf</code> and <code>occ_sf</code>, which will
 consist of two <code>"sf"</code>s. The first has the predictor values for the whole study area, while
 the second has the presence records for the species. The function must return a vector with
-cell_ids of the pseudoabsences.For <code>buffer_sdm</code>, user needs to specifiy the size of the
-buffer compatible with buffer CRS.</p>
+cell_ids of the pseudoabsences, which is the first column of both objects. For <code>buffer_sdm</code>,
+user needs to specifiy the size of the buffer compatible with buffer CRS.</p>
 <p><code>n_pseudoabsences</code> returns the number of pseudoabsences obtained per species.</p>
 <p><code>pseudoabsence_method</code> returns the method used to obtain pseudoabsences.</p>
 <p><code>pseudoabsence_data</code> returns a <code>list</code> of species names. Each species name will have a
@@ -176,26 +182,24 @@ https://luizfesser.wordpress.com</p>
 <span class="r-in"><span><span class="va">i0</span> <span class="op">&lt;-</span> <span class="fu">pseudoabsences</span><span class="op">(</span><span class="va">i</span>, method<span class="op">=</span><span class="st">"random"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Custom method example:</span></span></span>
-<span class="r-in"><span><span class="va">env_distance_pa</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">env_sf</span>, <span class="va">occ_sf</span>, <span class="va">n_pa</span><span class="op">=</span><span class="va">n_pa</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span><span class="va">buffer_pa_custom</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">env_sf</span>, <span class="va">occ_sf</span>, <span class="va">buffer_dist</span> <span class="op">=</span> <span class="fl">3</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span>  <span class="co"># Create buffer around occurrence points</span></span></span>
+<span class="r-in"><span>  <span class="va">buffer</span> <span class="op">&lt;-</span> <span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/geos_unary.html" class="external-link">st_buffer</a></span><span class="op">(</span><span class="va">occ_sf</span>, dist <span class="op">=</span> <span class="va">buffer_dist</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span>  <span class="co"># Transform the environmental data to a data frame and remove the cell_id and geometry columns</span></span></span>
-<span class="r-in"><span>  <span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="va">env_sf</span><span class="op">)</span><span class="op">[</span>, <span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/which.html" class="external-link">which</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">env_sf</span><span class="op">)</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"cell_id"</span>, <span class="st">"geometry"</span><span class="op">)</span><span class="op">)</span><span class="op">]</span></span></span>
+<span class="r-in"><span>  <span class="co"># Union buffers into a single geometry</span></span></span>
+<span class="r-in"><span>  <span class="va">buffer_union</span> <span class="op">&lt;-</span> <span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/geos_combine.html" class="external-link">st_union</a></span><span class="op">(</span><span class="va">buffer</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span>  <span class="co"># Define the center of the environmental space based on the mean of the predictors</span></span></span>
-<span class="r-in"><span>  <span class="va">center</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colSums.html" class="external-link">colMeans</a></span><span class="op">(</span><span class="va">df</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="co"># Identify cells outside the buffer</span></span></span>
+<span class="r-in"><span>  <span class="va">outside_buffer</span> <span class="op">&lt;-</span> <span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/geos_binary_ops.html" class="external-link">st_difference</a></span><span class="op">(</span><span class="va">env_sf</span>, <span class="va">buffer_union</span><span class="op">)</span><span class="op">[</span>,<span class="fl">1</span><span class="op">]</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span>  <span class="co"># Calculate the distance of each cell in the environmental space to the center</span></span></span>
-<span class="r-in"><span>  <span class="va">d</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">sqrt</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/colSums.html" class="external-link">rowSums</a></span><span class="op">(</span><span class="op">(</span><span class="va">df</span> <span class="op">-</span> <span class="va">center</span><span class="op">)</span><span class="op">^</span><span class="fl">2</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="co"># Randomly extract cell_ids outside the buffer</span></span></span>
+<span class="r-in"><span>  <span class="va">pa_ids_sample</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="va">outside_buffer</span><span class="op">$</span><span class="va">cell_id</span>, <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">occ_sf</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span>  <span class="co"># Convert distances to probabilities (the closer to the center, the higher the probability)</span></span></span>
-<span class="r-in"><span>  <span class="va">p</span> <span class="op">&lt;-</span> <span class="va">d</span> <span class="op">/</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">d</span><span class="op">)</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span>  <span class="co"># Sample pseudo-absences based on the calculated probabilities</span></span></span>
-<span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="va">env_sf</span><span class="op">$</span><span class="va">cell_id</span>, size <span class="op">=</span> <span class="va">n_pa</span>, prob <span class="op">=</span> <span class="va">p</span><span class="op">)</span></span></span>
-<span class="r-in"><span></span></span>
+<span class="r-in"><span>  <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="va">pa_ids_sample</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">i1</span> <span class="op">&lt;-</span> <span class="fu">pseudoabsences</span><span class="op">(</span><span class="va">i</span>, method<span class="op">=</span><span class="va">env_distance_pa</span><span class="op">)</span></span></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error:</span> object 'env_distance_pa' not found</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

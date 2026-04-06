@@ -124,7 +124,7 @@ website:
 - [`ensemble_sdm()`](https://luizesser.github.io/caretSDM/reference/ensemble_sdm.md)
   [`get_ensembles()`](https://luizesser.github.io/caretSDM/reference/ensemble_sdm.md)
   [`add_ensembles()`](https://luizesser.github.io/caretSDM/reference/ensemble_sdm.md)
-  : Predict SDM models in new data
+  : Ensemble Species Distribution Models
 
 - [`gcms_ensembles()`](https://luizesser.github.io/caretSDM/reference/gcms_ensembles.md)
   : Ensemble GCMs into one scenario
