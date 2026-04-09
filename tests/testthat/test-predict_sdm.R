@@ -51,7 +51,6 @@ test_that("predict_sdm2", {
   p <- predict_sdm(i, th = 0.5)
 
   expect_true("predictions" %in% names(p))
-  expect_true("ensembles" %in% names(p$predictions))
 
   expect_equal(get_scenarios_data(p), p$scenarios$data)
 
@@ -88,7 +87,6 @@ test_that("predict_sdm2 - th 0", {
   p <- predict_sdm(i, th=0)
 
   expect_true("predictions" %in% names(p))
-  expect_true("ensembles" %in% names(p$predictions))
 
   pred <- get_predictions(p)
   expect_equal(names(pred$current$`Araucaria angustifolia`),
@@ -117,7 +115,6 @@ test_that("predict_sdm - th function", {
   skip_on_cran()
   p <- predict_sdm(i, th=mean)
   expect_true("predictions" %in% names(p))
-  expect_true("ensembles" %in% names(p$predictions))
 
   pred <- get_predictions(p)
   expect_true(all(names(pred$current$`Araucaria angustifolia`) %in%

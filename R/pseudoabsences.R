@@ -101,7 +101,7 @@
 #'   return(pa_ids_sample)
 #' }
 #'
-#' i1 <- pseudoabsences(i, method=env_distance_pa)
+#' i1 <- pseudoabsences(i, method=buffer_pa_custom)
 #'
 #' @importFrom sf st_as_sf st_crs st_transform st_intersection st_geometry_type st_difference
 #' @importFrom dplyr select all_of filter

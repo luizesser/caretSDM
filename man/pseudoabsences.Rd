@@ -119,7 +119,7 @@ buffer_pa_custom <- function(env_sf, occ_sf, buffer_dist = 3) {
   return(pa_ids_sample)
 }
 
-i1 <- pseudoabsences(i, method=env_distance_pa)
+i1 <- pseudoabsences(i, method=buffer_pa_custom)
 
 }
 \seealso{

@@ -63,7 +63,6 @@ test_that("gcms_ensembles/names", {
   #
   # ensemble
   i <- gcms_ensembles(i, gcms = c("ca", "mi")) ######
-  expect_true("ensembles" %in% names(i$predictions))
   expect_true(all(c("matrix", "array") == class(i$ensembles$data)))
   expect_true(ncol(i$ensembles$data) == length(scenarios_names(i))+2)
   expect_true(nrow(i$ensembles$data) == length(species_names(i)))

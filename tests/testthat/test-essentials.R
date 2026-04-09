@@ -459,10 +459,10 @@ test_that("full structure check", {
   expect_equal(class(i_mm$models$models[[1]][[1]]), c("train", "train.formula"))
 
   # predictions
-  expect_equal(names(i_ss$predictions), c("thresholds", "predictions", "file", "ensembles", "grid"))
-  expect_equal(names(i_sm$predictions), c("thresholds", "predictions", "file", "ensembles", "grid"))
-  expect_equal(names(i_ms$predictions), c("thresholds", "predictions", "file", "ensembles", "grid"))
-  expect_equal(names(i_mm$predictions), c("thresholds", "predictions", "file", "ensembles", "grid"))
+  expect_equal(names(i_ss$predictions), c("thresholds", "predictions", "file", "grid"))
+  expect_equal(names(i_sm$predictions), c("thresholds", "predictions", "file", "grid"))
+  expect_equal(names(i_ms$predictions), c("thresholds", "predictions", "file", "grid"))
+  expect_equal(names(i_mm$predictions), c("thresholds", "predictions", "file", "grid"))
 
   expect_equal(class(i_ss$predictions), c("predictions"))
   expect_equal(class(i_sm$predictions), c("predictions"))

@@ -21,13 +21,11 @@
 #' https://luizfesser.wordpress.com
 #'
 #' @examples
-#' \donttest{
-#' # Select species names:
-#' s <- c("Araucaria angustifolia", "Salminus brasiliensis")
+#' ## Select species names:
+#' #s <- c("Araucaria angustifolia", "Salminus brasiliensis")
 #'
-#' # Run function:
-#' oc <- GBIF_data(s)
-#' }
+#' ## Run function:
+#' #oc <- GBIF_data(s)
 #'
 #' @importFrom rgbif occ_data
 #' @importFrom dplyr bind_rows
