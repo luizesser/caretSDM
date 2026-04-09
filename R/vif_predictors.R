@@ -105,5 +105,6 @@ vif_summary <- function(i){
   assert_subset_cli("predictors", names(i), empty.ok = FALSE)
   assert_subset_cli("variable_selection", names(i$predictors), empty.ok = FALSE)
   assert_subset_cli("vif", names(i$predictors$variable_selection), empty.ok = FALSE)
-  return(i$predictors$variable_selection$vif[[3]])
+  vif <- i$predictors$variable_selection$vif[[which(lapply(i$predictors$variable_selection$vif, class) == "VIF")]]
+  return(vif)
 }

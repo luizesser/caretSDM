@@ -153,11 +153,14 @@ predict_sdm.sdm_area <- function(m, scen, metric = "ROC", th = 0.9, tp = "prob",
   env_list <- scen$data
 
   env_long <- lapply(names(env_list), function(sc) {
-    df <- env_list[[sc]]
+    df <- env_list[[sc]] |>
+      dplyr::select(colnames(scen$grid))
     df$scenario  <- sc
     df
-  }) |>
-    dplyr::bind_rows() |>
+  })
+  #dplyr::bind_rows(.id = "scenarios") |>
+  #  na.omit()
+  env_long <- do.call(rbind, env_long) |>
     na.omit()
 
   pred_cols <- names(env_long)[!names(env_long) %in% c("cell_id", "geometry", "scenario")]
@@ -171,14 +174,20 @@ predict_sdm.sdm_area <- function(m, scen, metric = "ROC", th = 0.9, tp = "prob",
     dplyr::left_join(env_unique, by = pred_cols)
 
   # Prepare data for prediction
-  newdata_for_pred <- env_unique |> dplyr::select(dplyr::all_of(pred_cols))
+  prepare_predictors <- function(df, vars) {
+    df <- sf::st_drop_geometry(df)
+    df <- df[, vars, drop = FALSE]
+    as.data.frame(df)
+  }
+
+  newdata_for_pred <- prepare_predictors(env_unique, pred_cols)
 
   # Predict with your fitted model (e.g., a caret or caretSDM model)
   # Example with a single model:
   p <- lapply(m1, function(m2) {
     p1 <- predict(m2,
                   newdata = newdata_for_pred,
-                  type = "prob")
+                  type = tp)
     p0 <- lapply(p1, function(p2) {
       p2 <- cbind(p2, env_unique$unique_id)[,c("env_unique$unique_id", "presence", "pseudoabsence")]
       names(p2) <- c("unique_id", "presence", "pseudoabsence")
@@ -248,7 +257,6 @@ add_predictions <- function(p1, p2) {
                               criteria = unique(c(p1$thresholds$criteria, p2$thresholds$criteria))),
             predictions = c(p1$predictions, p2$predictions),
             file = c(p1$file, p2$file),
-            ensembles = rbind(p1$ensembles, p2$ensembles),
             grid = grd
   )
   pred <- .predictions(p)
@@ -261,7 +269,6 @@ add_predictions <- function(p1, p2) {
       thresholds = x$thresholds,
       predictions = x$predictions,
       file = x$file,
-      ensembles = x$ensembles,
       grid = x$grid
     ),
     class = "predictions"
