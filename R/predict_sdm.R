@@ -154,7 +154,7 @@ predict_sdm.sdm_area <- function(m, scen, metric = "ROC", th = 0.9, tp = "prob",
 
   env_long <- lapply(names(env_list), function(sc) {
     df <- env_list[[sc]] |>
-      dplyr::select(colnames(scen$grid))
+      dplyr::select(c("cell_id",y$predictors, "geometry"))
     df$scenario  <- sc
     df
   })
