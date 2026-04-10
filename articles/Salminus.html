@@ -25,7 +25,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">caretSDM</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.8</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.8.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -361,10 +361,10 @@ will be replicated between scenarios.</p>
 <span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Using GDAL to make the grid and resample the variables.</span></span>
 <span><span class="co">#&gt; <span style="color: #BBBB00;">!</span> Making grid over the study area is an expensive task. Please, be patient!</span></span>
 <span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Using GDAL to make the grid and resample the variables.</span></span>
+<span><span class="co">#&gt; Reescaling data <span style="color: #00BB00;">■■■■■■■■■■■■■■■■                </span>  50% | ETA:  2s</span></span>
+<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; <span style="color: #BBBB00;">!</span> Making grid over the study area is an expensive task. Please, be patient!</span></span>
 <span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Using GDAL to make the grid and resample the variables.</span></span>
-<span><span class="co">#&gt; Reescaling data <span style="color: #00BB00;">■■■■■■■■■■■■■■■■■■■■■■■         </span>  75% | ETA:  1s</span></span>
-<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; <span style="color: #BBBB00;">!</span> Making grid over the study area is an expensive task. Please, be patient!</span></span>
 <span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Using GDAL to make the grid and resample the variables.</span></span>
 <span><span class="va">sa</span></span>
@@ -521,7 +521,19 @@ maximum threshold of colinearity. The standard is 0.5.</p>
 <code>vif_summary</code> functions, which is very self-explanatory.</p>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/vif_predictors.html">vif_summary</a></span><span class="op">(</span><span class="va">i</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 0.5</span></span></code></pre></div>
+<span><span class="co">#&gt; 2 variables from the 5 input variables have collinearity problem: </span></span>
+<span><span class="co">#&gt;  </span></span>
+<span><span class="co">#&gt; bio12 bio4 </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; After excluding the collinear variables, the linear correlation coefficients ranges between: </span></span>
+<span><span class="co">#&gt; min correlation ( DIST_DN_KM ~ LENGTH_KM ):  -0.03727042 </span></span>
+<span><span class="co">#&gt; max correlation ( bio1 ~ DIST_DN_KM ):  -0.3014315 </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; ---------- VIFs of the remained variables -------- </span></span>
+<span><span class="co">#&gt;    Variables      VIF</span></span>
+<span><span class="co">#&gt; 1  LENGTH_KM 1.007376</span></span>
+<span><span class="co">#&gt; 2 DIST_DN_KM 1.100110</span></span>
+<span><span class="co">#&gt; 3       bio1 1.106515</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="obtaining-pseudoabsence-data">Obtaining pseudoabsence data<a class="anchor" aria-label="anchor" href="#obtaining-pseudoabsence-data"></a>
@@ -1158,7 +1170,7 @@ instead of lines.</p>
 <div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">end_time</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">end_time</span> <span class="op">-</span> <span class="va">start_time</span></span>
-<span><span class="co">#&gt; Time difference of 38.95573 secs</span></span></code></pre></div>
+<span><span class="co">#&gt; Time difference of 35.73587 secs</span></span></code></pre></div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>

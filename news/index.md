@@ -110,3 +110,8 @@ CRAN release: 2026-03-10
   functions.
 - Pseudoabsences and ensemble now accept custom functions.
 - crop_by in sdm_area now performs masking.
+
+## caretSDM 1.8.1
+
+- A minor adjustment to predict_sdm was necessary to allow for multiple
+  scenarios.

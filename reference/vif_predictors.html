@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">caretSDM</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.8</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.8.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -154,7 +154,18 @@ https://luizfesser.wordpress.com</p>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Retrieve information about vif:</span></span></span>
 <span class="r-in"><span><span class="fu">vif_summary</span><span class="op">(</span><span class="va">i</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 variables from the 3 input variables have collinearity problem: </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> bio4 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> After excluding the collinear variables, the linear correlation coefficients ranges between: </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> min correlation ( bio12 ~ bio1 ):  -0.3182326 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> max correlation ( bio12 ~ bio1 ):  -0.3182326 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ---------- VIFs of the remained variables -------- </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   Variables      VIF</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1      bio1 1.112684</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2     bio12 1.112684</span>
 <span class="r-in"><span><span class="fu"><a href="multicollinearity_sdm.html">selected_variables</a></span><span class="op">(</span><span class="va">i</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "bio1"  "bio12"</span>
 <span class="r-in"><span></span></span>

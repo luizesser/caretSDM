@@ -163,6 +163,15 @@ buffer_pa_custom <- function(env_sf, occ_sf, buffer_dist = 3) {
   return(pa_ids_sample)
 }
 
-i1 <- pseudoabsences(i, method=env_distance_pa)
-#> Error: object 'env_distance_pa' not found
+i1 <- pseudoabsences(i, method=buffer_pa_custom)
+#> Warning: attribute variables are assumed to be spatially constant throughout all geometries
+#> Warning: attribute variables are assumed to be spatially constant throughout all geometries
+#> Warning: attribute variables are assumed to be spatially constant throughout all geometries
+#> Warning: attribute variables are assumed to be spatially constant throughout all geometries
+#> Warning: attribute variables are assumed to be spatially constant throughout all geometries
+#> Warning: attribute variables are assumed to be spatially constant throughout all geometries
+#> Warning: attribute variables are assumed to be spatially constant throughout all geometries
+#> Warning: attribute variables are assumed to be spatially constant throughout all geometries
+#> Warning: attribute variables are assumed to be spatially constant throughout all geometries
+#> Warning: attribute variables are assumed to be spatially constant throughout all geometries
 ```

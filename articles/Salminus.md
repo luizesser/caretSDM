@@ -316,10 +316,10 @@ sa <- add_scenarios(sa,
 #> ℹ Using GDAL to make the grid and resample the variables.
 #> ! Making grid over the study area is an expensive task. Please, be patient!
 #> ℹ Using GDAL to make the grid and resample the variables.
+#> Reescaling data ■■■■■■■■■■■■■■■■                  50% | ETA:  2s
+#> 
 #> ! Making grid over the study area is an expensive task. Please, be patient!
 #> ℹ Using GDAL to make the grid and resample the variables.
-#> Reescaling data ■■■■■■■■■■■■■■■■■■■■■■■           75% | ETA:  1s
-#> 
 #> ! Making grid over the study area is an expensive task. Please, be patient!
 #> ℹ Using GDAL to make the grid and resample the variables.
 sa
@@ -486,7 +486,19 @@ which is very self-explanatory.
 
 ``` r
 vif_summary(i)
-#> [1] 0.5
+#> 2 variables from the 5 input variables have collinearity problem: 
+#>  
+#> bio12 bio4 
+#> 
+#> After excluding the collinear variables, the linear correlation coefficients ranges between: 
+#> min correlation ( DIST_DN_KM ~ LENGTH_KM ):  -0.03727042 
+#> max correlation ( bio1 ~ DIST_DN_KM ):  -0.3014315 
+#> 
+#> ---------- VIFs of the remained variables -------- 
+#>    Variables      VIF
+#> 1  LENGTH_KM 1.007376
+#> 2 DIST_DN_KM 1.100110
+#> 3       bio1 1.106515
 ```
 
 ### Obtaining pseudoabsence data
@@ -1141,5 +1153,5 @@ species using a grid simplefeatures instead of lines.
 ``` r
 end_time <- Sys.time()
 end_time - start_time
-#> Time difference of 38.95573 secs
+#> Time difference of 35.73587 secs
 ```
