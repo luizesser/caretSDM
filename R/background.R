@@ -22,7 +22,7 @@
 #' a named vector (as in \code{n_records(occ)}).
 #' @param proportion \code{numeric}. A number between 0 and 1 representing a proportion of the area
 #' to be mapped as background. E.g.: if the whole area has 5,000 cells and proportion is 0.1, then
-#' \code{n} is set to 500. Standard is NULL. This argument overwrites \code{n}.
+#' \code{n_bg} is set to 500. Standard is NULL. This argument overwrites \code{n_bg}.
 #'
 #' @param i A \code{input_sdm} object.
 #'
@@ -35,7 +35,7 @@
 #' If user provides a custom function, it must have the arguments \code{env_sf} and \code{occ_sf},
 #' which will consist of two \code{"sf"}s. The first has the predictor values for the whole study
 #' area, while the second has the presence records for the species. The function must return a
-#' vector with cell_ids of the pseudoabsences.
+#' vector with cell_ids of the background data.
 #'
 #' \code{n_background} returns the number of background records obtained per species.
 #'

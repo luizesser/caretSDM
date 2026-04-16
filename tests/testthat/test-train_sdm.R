@@ -64,7 +64,7 @@ if (!identical(Sys.getenv("NOT_CRAN"), "false")) {
     predict = function(modelFit, newdata, preProc = NULL, submodels = NULL) {
       # 'predict' generates class labels based on the probabilities.
       # 1. Get the probabilities by calling the 'prob' function.
-      probs <- .mahal.dist$prob(modelFit, newdata)
+      probs <- mahal.custom$prob(modelFit, newdata)
 
       # 2. The 'abs' parameter determines the binarization type.
       if (modelFit$abs) {
@@ -231,7 +231,7 @@ test_that("train_sdm - ESM", {
   #expect_snapshot(i2)
 })
 
-test_that("mahal.dist train", {
+test_that("mahal.custom train", {
   skip_on_cran()
   sa <- sdm_area(parana,
                  cell_size = 50000, # Using a coarse resolution for speed
@@ -404,4 +404,38 @@ test_that("train_sdm - background and pseudoabsence algorithms", {
   expect_true(all(names(m1) == c("Salminus brasiliensis", "Araucaria angustifolia")))
   expect_true(length(m1$`Araucaria angustifolia`) == 11)
   expect_true(length(m1$`Salminus brasiliensis`) == 11)
+})
+
+
+test_that("mahal.custom train", {
+  skip_on_cran()
+  sa <- sdm_area(parana,
+                 cell_size = 50000, # Using a coarse resolution for speed
+                 crs = 6933)
+  sa <- add_predictors(sa, bioc)
+  oc <- occurrences_sdm(occ, crs = 6933)
+  suppressWarnings(oc <- join_area(oc, sa))
+  i <- input_sdm(oc, sa)
+  i <- pseudoabsences(i,
+                      method = "bioclim",
+                      n_set = 3)
+  ctrl_sdm <- caret::trainControl(method = "cv",
+                                  number = 3,
+                                  classProbs = TRUE,
+                                  summaryFunction = summary_sdm,
+                                  savePredictions = "final")
+  i2 <- train_sdm(i,
+                  algo = "mahal.dist",
+                  variables_selected = c("bio1", "bio4", "bio12"), # Using only two variables for simplicity
+                  ctrl = ctrl_sdm) |>
+    suppressWarnings()
+  expect_true("models" %in% names(i2))
+  expect_equal(10, get_tune_length(i2))
+  expect_equal(c("mahal.dist"), algorithms_used(i2))
+  expect_equal(c("mahal.dist"),
+               unique(get_validation_metrics(i2)[[1]][,"algo"]))
+  expect_true(all(c("algo", "ROC") %in% colnames(get_validation_metrics(i2)[[1]])))
+  expect_true(all(c("bio1", "bio4", "bio12") %in%
+                    colnames(i2$models$models$`Araucaria angustifolia`$m1.1$trainingData)))
+
 })

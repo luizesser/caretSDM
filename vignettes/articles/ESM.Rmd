@@ -1,13 +1,23 @@
 ---
 title: "7. Modeling Rare Species using Ensemble of Small Models"
-output: rmarkdown::html_vignette
+author: "Luíz Fernando Esser"
+date: "`r Sys.Date()`"
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+    toc_depth: 3
+    theme: flatly
+    highlight: tango
+    code_folding: show
+    df_print: paged
 vignette: >
-  %\VignetteIndexEntry{Modeling Rare Species using Ensemble of Small Models}
+  %\VignetteIndexEntry{7. Modeling Rare Species using Ensemble of Small Models}
   %\VignetteEncoding{UTF-8}
-  %\VignetteEngine{knitr::rmarkdown}
-editor_options: 
-  markdown: 
-    wrap: 80
+  %\VignetteEngine{knitr::knitr}
+editor_options:
+  markdown:
+    wrap: 100
 ---
 
 ```{r, include = FALSE}

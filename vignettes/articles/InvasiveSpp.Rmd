@@ -1,12 +1,22 @@
 ---
 title: "6. Projecting Non-native Distribution using SDMs"
-output: rmarkdown::html_vignette
+author: "Luíz Fernando Esser"
+date: "`r Sys.Date()`"
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+    toc_depth: 3
+    theme: flatly
+    highlight: tango
+    code_folding: show
+    df_print: paged
 vignette: >
-  %\VignetteIndexEntry{Projecting Non-native Distribution using SDMs}
+  %\VignetteIndexEntry{6. Projecting Non-native Distribution using SDMs}
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::knitr}
-editor_options: 
-  markdown: 
+editor_options:
+  markdown:
     wrap: 100
 ---
 

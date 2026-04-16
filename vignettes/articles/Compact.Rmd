@@ -1,13 +1,23 @@
 ---
 title: "1. Concatenate functions in caretSDM"
-output: rmarkdown::html_vignette
+author: "Luíz Fernando Esser"
+date: "`r Sys.Date()`"
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+    toc_depth: 3
+    theme: flatly
+    highlight: tango
+    code_folding: show
+    df_print: paged
 vignette: >
-  %\VignetteIndexEntry{Concatenate functions in caretSDM}
+  %\VignetteIndexEntry{1. Concatenate functions in caretSDM}
   %\VignetteEncoding{UTF-8}
-  %\VignetteEngine{knitr::rmarkdown}
-editor_options: 
-  markdown: 
-    wrap: 80
+  %\VignetteEngine{knitr::knitr}
+editor_options:
+  markdown:
+    wrap: 100
 ---
 
 In caretSDM we always use one central object through out the framework, the

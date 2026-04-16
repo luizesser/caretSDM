@@ -1,13 +1,23 @@
 ---
 title: "8. Benchmarking SDM Package Performance in R"
-output: rmarkdown::html_vignette
+author: "Luíz Fernando Esser"
+date: "`r Sys.Date()`"
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+    toc_depth: 3
+    theme: flatly
+    highlight: tango
+    code_folding: show
+    df_print: paged
 vignette: >
-  %\VignetteIndexEntry{runtime-benchmark}
-  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteIndexEntry{8. Benchmarking SDM Package Performance in R}
   %\VignetteEncoding{UTF-8}
-editor_options: 
-  markdown: 
-    wrap: 80
+  %\VignetteEngine{knitr::knitr}
+editor_options:
+  markdown:
+    wrap: 100
 ---
 
 ```{r, include = FALSE}

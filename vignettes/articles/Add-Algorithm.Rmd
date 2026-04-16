@@ -1,5 +1,7 @@
 ---
 title: "2. Adding New Algorithms to caretSDM"
+author: "Luíz Fernando Esser"
+date: "`r Sys.Date()`"
 output: 
   html_document:
     toc: true
@@ -10,7 +12,7 @@ output:
     code_folding: show
     df_print: paged
 vignette: >
-  %\VignetteIndexEntry{Adding New Algorithms to caretSDM}
+  %\VignetteIndexEntry{2. Adding New Algorithms to caretSDM}
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::knitr}
 editor_options:
