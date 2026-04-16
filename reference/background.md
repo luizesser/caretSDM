@@ -51,8 +51,8 @@ background_data(i)
 
   `numeric`. A number between 0 and 1 representing a proportion of the
   area to be mapped as background. E.g.: if the whole area has 5,000
-  cells and proportion is 0.1, then `n` is set to 500. Standard is NULL.
-  This argument overwrites `n`.
+  cells and proportion is 0.1, then `n_bg` is set to 500. Standard is
+  NULL. This argument overwrites `n_bg`.
 
 - i:
 
@@ -72,7 +72,7 @@ user provides a custom function, it must have the arguments `env_sf` and
 `occ_sf`, which will consist of two `"sf"`s. The first has the predictor
 values for the whole study area, while the second has the presence
 records for the species. The function must return a vector with cell_ids
-of the pseudoabsences.
+of the background data.
 
 `n_background` returns the number of background records obtained per
 species.

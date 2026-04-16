@@ -12,6 +12,8 @@
   Models](https://luizesser.github.io/caretSDM/articles/ESM.md):
 - [6. Projecting Non-native Distribution using
   SDMs](https://luizesser.github.io/caretSDM/articles/InvasiveSpp.md):
+- [8. Applying MaxEnt in
+  caretSDM](https://luizesser.github.io/caretSDM/articles/maxent.md):
 - [8. Benchmarking SDM Package Performance in
   R](https://luizesser.github.io/caretSDM/articles/runtime-benchmark.md):
 - [5. Modeling Species Distributions in Continental Water

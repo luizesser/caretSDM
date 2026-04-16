@@ -47,11 +47,9 @@ https://luizfesser.wordpress.com
 ## Examples
 
 ``` r
-# \donttest{
-# Select species names:
-s <- c("Araucaria angustifolia", "Salminus brasiliensis")
+## Select species names:
+#s <- c("Araucaria angustifolia", "Salminus brasiliensis")
 
-# Run function:
-oc <- GBIF_data(s)
-# }
+## Run function:
+#oc <- GBIF_data(s)
 ```

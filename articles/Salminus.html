@@ -43,6 +43,7 @@
     <li><a class="dropdown-item" href="../articles/Compact.html">1. Concatenate functions in caretSDM</a></li>
     <li><a class="dropdown-item" href="../articles/ESM.html">7. Modeling Rare Species using Ensemble of Small Models</a></li>
     <li><a class="dropdown-item" href="../articles/InvasiveSpp.html">6. Projecting Non-native Distribution using SDMs</a></li>
+    <li><a class="dropdown-item" href="../articles/maxent.html">8. Applying MaxEnt in caretSDM</a></li>
     <li><a class="dropdown-item" href="../articles/runtime-benchmark.html">8. Benchmarking SDM Package Performance in R</a></li>
     <li><a class="dropdown-item" href="../articles/Salminus.html">5. Modeling Species Distributions in Continental Water Bodies</a></li>
   </ul>
@@ -67,7 +68,10 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>5. Modeling Species Distributions in Continental Water Bodies</h1>
+                        <h4 data-toc-skip class="author">Luíz Fernando
+Esser</h4>
             
+            <h4 data-toc-skip class="date">2026-04-16</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/luizesser/caretSDM/blob/main/vignettes/articles/Salminus.Rmd" class="external-link"><code>vignettes/articles/Salminus.Rmd</code></a></small>
       <div class="d-none name"><code>Salminus.Rmd</code></div>
@@ -361,8 +365,6 @@ will be replicated between scenarios.</p>
 <span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Using GDAL to make the grid and resample the variables.</span></span>
 <span><span class="co">#&gt; <span style="color: #BBBB00;">!</span> Making grid over the study area is an expensive task. Please, be patient!</span></span>
 <span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Using GDAL to make the grid and resample the variables.</span></span>
-<span><span class="co">#&gt; Reescaling data <span style="color: #00BB00;">■■■■■■■■■■■■■■■■                </span>  50% | ETA:  2s</span></span>
-<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; <span style="color: #BBBB00;">!</span> Making grid over the study area is an expensive task. Please, be patient!</span></span>
 <span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Using GDAL to make the grid and resample the variables.</span></span>
 <span><span class="co">#&gt; <span style="color: #BBBB00;">!</span> Making grid over the study area is an expensive task. Please, be patient!</span></span>
@@ -1170,7 +1172,7 @@ instead of lines.</p>
 <div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">end_time</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">end_time</span> <span class="op">-</span> <span class="va">start_time</span></span>
-<span><span class="co">#&gt; Time difference of 35.73587 secs</span></span></code></pre></div>
+<span><span class="co">#&gt; Time difference of 37.22992 secs</span></span></code></pre></div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>

@@ -23,6 +23,7 @@
     <li><a class="dropdown-item" href="../articles/Compact.html">1. Concatenate functions in caretSDM</a></li>
     <li><a class="dropdown-item" href="../articles/ESM.html">7. Modeling Rare Species using Ensemble of Small Models</a></li>
     <li><a class="dropdown-item" href="../articles/InvasiveSpp.html">6. Projecting Non-native Distribution using SDMs</a></li>
+    <li><a class="dropdown-item" href="../articles/maxent.html">8. Applying MaxEnt in caretSDM</a></li>
     <li><a class="dropdown-item" href="../articles/runtime-benchmark.html">8. Benchmarking SDM Package Performance in R</a></li>
     <li><a class="dropdown-item" href="../articles/Salminus.html">5. Modeling Species Distributions in Continental Water Bodies</a></li>
   </ul></li>
@@ -94,7 +95,7 @@ a named vector (as in <code>n_records(occ)</code>).</p></dd>
 <dt id="arg-proportion">proportion<a class="anchor" aria-label="anchor" href="#arg-proportion"></a></dt>
 <dd><p><code>numeric</code>. A number between 0 and 1 representing a proportion of the area
 to be mapped as background. E.g.: if the whole area has 5,000 cells and proportion is 0.1, then
-<code>n</code> is set to 500. Standard is NULL. This argument overwrites <code>n</code>.</p></dd>
+<code>n_bg</code> is set to 500. Standard is NULL. This argument overwrites <code>n_bg</code>.</p></dd>
 
 
 <dt id="arg-i">i<a class="anchor" aria-label="anchor" href="#arg-i"></a></dt>
@@ -113,7 +114,7 @@ algorithms and the use of background data in pseudoabsence algorithms, a very co
 If user provides a custom function, it must have the arguments <code>env_sf</code> and <code>occ_sf</code>,
 which will consist of two <code>"sf"</code>s. The first has the predictor values for the whole study
 area, while the second has the presence records for the species. The function must return a
-vector with cell_ids of the pseudoabsences.</p>
+vector with cell_ids of the background data.</p>
 <p><code>n_background</code> returns the number of background records obtained per species.</p>
 <p><code>background_data</code> returns a <code>list</code> of species names. Each species name will have a
 <code>list</code>s with background data from class <code>sf</code>.</p>
