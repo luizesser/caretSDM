@@ -1,5 +1,5 @@
 ---
-title: "8. Applying MaxEnt in caretSDM"
+title: "7. Applying MaxEnt in caretSDM"
 author: "Luíz Fernando Esser"
 date: "`r Sys.Date()`"
 output: 
@@ -12,7 +12,7 @@ output:
     code_folding: show
     df_print: paged
 vignette: >
-  %\VignetteIndexEntry{8. Applying MaxEnt in caretSDM}
+  %\VignetteIndexEntry{7. Applying MaxEnt in caretSDM}
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::knitr}
 editor_options:

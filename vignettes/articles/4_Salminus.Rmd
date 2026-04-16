@@ -1,5 +1,5 @@
 ---
-title: "5. Modeling Species Distributions in Continental Water Bodies"
+title: "4. Modeling Species Distributions in Continental Water Bodies"
 author: "Luíz Fernando Esser"
 date: "`r Sys.Date()`"
 output: 
@@ -12,7 +12,7 @@ output:
     code_folding: show
     df_print: paged
 vignette: >
-  %\VignetteIndexEntry{5. Modeling Species Distributions in Continental Water Bodies}
+  %\VignetteIndexEntry{4. Modeling Species Distributions in Continental Water Bodies}
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::knitr}
 editor_options:

@@ -1,5 +1,5 @@
 ---
-title: "7. Modeling Rare Species using Ensemble of Small Models"
+title: "6. Modeling Rare Species using Ensemble of Small Models"
 author: "Luíz Fernando Esser"
 date: "`r Sys.Date()`"
 output: 
@@ -12,7 +12,7 @@ output:
     code_folding: show
     df_print: paged
 vignette: >
-  %\VignetteIndexEntry{7. Modeling Rare Species using Ensemble of Small Models}
+  %\VignetteIndexEntry{6. Modeling Rare Species using Ensemble of Small Models}
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::knitr}
 editor_options:

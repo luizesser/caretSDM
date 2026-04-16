@@ -1,5 +1,5 @@
 ---
-title: "6. Projecting Non-native Distribution using SDMs"
+title: "5. Projecting Non-native Distribution using SDMs"
 author: "Luíz Fernando Esser"
 date: "`r Sys.Date()`"
 output: 
@@ -12,7 +12,7 @@ output:
     code_folding: show
     df_print: paged
 vignette: >
-  %\VignetteIndexEntry{6. Projecting Non-native Distribution using SDMs}
+  %\VignetteIndexEntry{5. Projecting Non-native Distribution using SDMs}
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::knitr}
 editor_options:
