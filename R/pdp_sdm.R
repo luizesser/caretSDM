@@ -107,26 +107,27 @@ get_pdp_sdm <- function(i, spp = NULL, algo = NULL, variables_selected = NULL){
   if(is.null(algo)){ algo <- algorithms_used(i) }
   if(is.null(variables_selected)){ variables_selected <- i$models$predictors }
 
-  if("esm" %in% names(i$occurrences)) {
-    n_algo <- length(match(algo, algorithms_used(i)))
-    n_vars <- ncol(utils::combn(get_predictor_names(i), 2))
-    n_algo <- 1:(n_algo*n_vars)
-  } else {
-    n_algo <- match(algo, algorithms_used(i))
-  }
+  #if("esm" %in% names(i$occurrences)) {
+  #  n_algo <- length(match(algo, algorithms_used(i)))
+  #  n_vars <- ncol(utils::combn(get_predictor_names(i), 2))
+  #  n_algo <- 1:(n_algo*n_vars)
+  #} else {
+  #  n_algo <- match(algo, algorithms_used(i))
+  #}
 
-  l <- lapply(n_algo, function(y){
-    n <- names(m[[spp]])[grep(paste0("\\.",y,"$"), names(m[[spp]]))]
+
+  l <- lapply(algo, function(y){
+    n <- grep(y, names(m[[spp]]))
     l <- list()
     for(v in variables_selected){
-      l1 <- try(lapply(m[[spp]][n], function(x){pdp::partial(x,
-                                                             pred.var = v,
-                                                             plot = FALSE,
-                                                             prob = TRUE)}),
-                silent = TRUE)
-      if(is(l1, "try-error")) {
-        next
-      }
+      l1 <- lapply(m[[spp]][n], function(x){
+        res <- try(pdp::partial(x, pred.var = v, plot = FALSE, prob = TRUE), silent = TRUE)
+        if(is(res, "try-error")) {
+          return(NULL)
+        } else {
+          return(res)
+        }
+      })
       l[[v]] <- dplyr::bind_rows(l1, .id="id")
     }
     df <- dplyr::bind_rows(l)
@@ -139,6 +140,31 @@ get_pdp_sdm <- function(i, spp = NULL, algo = NULL, variables_selected = NULL){
       dplyr::filter(!is.na(value))
     return(df_long)
   })
+
+  #l <- lapply(n_algo, function(y){
+  #  n <- names(m[[spp]])[grep(paste0("\\.",y,"$"), names(m[[spp]]))]
+  #  l <- list()
+  #  for(v in variables_selected){
+  #    l1 <- try(lapply(m[[spp]][n], function(x){pdp::partial(x,
+  #                                                           pred.var = v,
+  #                                                           plot = FALSE,
+  #                                                           prob = TRUE)}),
+  #              silent = TRUE)
+  #    if(is(l1, "try-error")) {
+  #      next
+  #    }
+  #    l[[v]] <- dplyr::bind_rows(l1, .id="id")
+  #  }
+  #  df <- dplyr::bind_rows(l)
+  #  df_long <- df |>
+  #    tidyr::pivot_longer(
+  #      cols = dplyr::all_of(variables_selected[variables_selected %in% colnames(df)]), # Select columns that start with "var"
+  #      names_to = "variable",     # New column for variable names
+  #      values_to = "value"        # New column for variable values
+  #    ) |>
+  #    dplyr::filter(!is.na(value))
+  #  return(df_long)
+  #})
 
   names(l) <- rep(algo, length.out=length(l))
 

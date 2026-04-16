@@ -18,7 +18,7 @@ test_that("varImp_sdm works", {
   expect_equal(names(v), species_names(i))
   expect_equal(rownames(v[[1]]),  get_predictor_names(i))
 
-  v <- varImp_sdm(i, id=paste0("m",1:10,".2"))
+  v <- varImp_sdm(i, id=paste0("naive_bayes_pa",1:10))
   expect_equal(names(v), species_names(i))
   expect_equal(rownames(v[[1]]),  get_predictor_names(i))
 

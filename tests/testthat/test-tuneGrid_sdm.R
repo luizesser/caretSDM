@@ -18,7 +18,7 @@ test_that("tuneGrid_sdm", {
   expect_no_error(tuneGrid_sdm(i))
   expect_equal(class(tuneGrid_sdm(i)), "list")
   expect_equal(names(tuneGrid_sdm(i)), species_names(i))
-  expect_equal(names(tuneGrid_sdm(i)[[1]]), c("m1.1", "m2.1"))
+  expect_equal(names(tuneGrid_sdm(i)[[1]]), c("naive_bayes_pa1", "naive_bayes_pa2"))
   expect_equal(names(tuneGrid_sdm(i)[[1]][[1]]), c("laplace", "usekernel", "adjust"))
   expect_equal(class(tuneGrid_sdm(i)[[1]][[1]][,1]), "numeric")
   expect_equal(class(tuneGrid_sdm(i)[[1]][[1]][,2]), "logical")

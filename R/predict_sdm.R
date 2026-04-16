@@ -182,15 +182,14 @@ predict_sdm.sdm_area <- function(m, scen, metric = "ROC", th = 0.9, tp = "prob",
 
   newdata_for_pred <- prepare_predictors(env_unique, pred_cols)
 
-  # Predict with your fitted model (e.g., a caret or caretSDM model)
-  # Example with a single model:
   p <- lapply(m1, function(m2) {
     p1 <- predict(m2,
                   newdata = newdata_for_pred,
                   type = tp)
     p0 <- lapply(p1, function(p2) {
-      p2 <- cbind(p2, env_unique$unique_id)[,c("env_unique$unique_id", "presence", "pseudoabsence")]
-      names(p2) <- c("unique_id", "presence", "pseudoabsence")
+      negative <- ifelse("maxent" %in% m2[[1]]$modelInfo$tags, "background", "pseudoabsence")
+      p2 <- cbind(p2, env_unique$unique_id)[,c("env_unique$unique_id", "presence", negative)]
+      names(p2) <- c("unique_id", "presence", negative)
       env_long2 <- env_long |>
         dplyr::left_join(p2, by = "unique_id")
       pred_by_scenario <- env_long2 |>

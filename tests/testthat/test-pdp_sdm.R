@@ -22,7 +22,7 @@ test_that("pdp_sdm", {
   x <- pdp_sdm(i, algo = "kknn")
   expect_true(ggplot2::is_ggplot(x))
   expect_true(all(c("id", "yhat", "variable", "value") %in% colnames(x$data)))
-  expect_equal(c("m1.2", "m2.2", "m3.2"),
+  expect_equal(c( "kknn_pa1", "kknn_pa2", "kknn_pa3"),
                unique(x$data$id))
 
   x <- get_pdp_sdm(i)
@@ -42,7 +42,7 @@ test_that("pdp_sdm", {
   x <- get_pdp_sdm(i, algo = "kknn")
   expect_equal(class(x), c("list"))
   expect_true(all(c("id", "yhat", "variable", "value") %in% colnames(x$kknn)))
-  expect_equal(c("m1.2", "m2.2", "m3.2"),
+  expect_equal(c( "kknn_pa1", "kknn_pa2", "kknn_pa3"),
                unique(x$kknn$id))
 })
 
@@ -56,6 +56,7 @@ test_that("pdp_sdm", {
   i <- use_esm(i, n_records = 999)
   suppressWarnings(i <- train_sdm(i, algo = c("naive_bayes", "kknn")))
   x <- get_pdp_sdm(i)
-  expect_true(length(x) == 6)
+  expect_true(length(x) == 2)
   expect_true(all(c("id", "yhat", "variable", "value") %in% colnames(x[[1]])))
 })
+

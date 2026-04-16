@@ -448,10 +448,10 @@ test_that("full structure check", {
   expect_equal(names(i_ms$models$models), species_names(i_ms))
   expect_equal(names(i_mm$models$models), species_names(i_mm))
 
-  expect_equal(names(i_ss$models$models[[1]]), c("m1.1", "m2.1"))
-  expect_equal(names(i_sm$models$models[[1]]), c("m1.1", "m2.1"))
-  expect_equal(names(i_ms$models$models[[1]]), c("m1.1", "m2.1"))
-  expect_equal(names(i_mm$models$models[[1]]), c("m1.1", "m2.1"))
+  expect_equal(names(i_ss$models$models[[1]]), c("naive_bayes_pa1", "naive_bayes_pa2"))
+  expect_equal(names(i_sm$models$models[[1]]), c("naive_bayes_pa1", "naive_bayes_pa2"))
+  expect_equal(names(i_ms$models$models[[1]]), c("naive_bayes_pa1", "naive_bayes_pa2"))
+  expect_equal(names(i_mm$models$models[[1]]), c("naive_bayes_pa1", "naive_bayes_pa2"))
 
   expect_equal(class(i_ss$models$models[[1]][[1]]), c("train", "train.formula"))
   expect_equal(class(i_sm$models$models[[1]][[1]]), c("train", "train.formula"))
@@ -534,10 +534,10 @@ test_that("full structure check", {
   expect_true(all(names(i_ms$predictions$predictions[[1]]) %in% species_names(i_ms)))
   expect_true(all(names(i_mm$predictions$predictions[[1]]) %in% species_names(i_mm)))
 
-  expect_equal(names(i_ss$predictions$predictions[[1]][[1]]), c("m1.1", "m2.1"))
-  expect_equal(names(i_sm$predictions$predictions[[1]][[1]]), c("m1.1", "m2.1"))
-  expect_equal(names(i_ms$predictions$predictions[[1]][[1]]), c("m1.1", "m2.1"))
-  expect_equal(names(i_mm$predictions$predictions[[1]][[1]]), c("m1.1", "m2.1"))
+  expect_equal(names(i_ss$predictions$predictions[[1]][[1]]), c("naive_bayes_pa1", "naive_bayes_pa2"))
+  expect_equal(names(i_sm$predictions$predictions[[1]][[1]]), c("naive_bayes_pa1", "naive_bayes_pa2"))
+  expect_equal(names(i_ms$predictions$predictions[[1]][[1]]), c("naive_bayes_pa1", "naive_bayes_pa2"))
+  expect_equal(names(i_mm$predictions$predictions[[1]][[1]]), c("naive_bayes_pa1", "naive_bayes_pa2"))
 
   expect_equal(names(i_ss$predictions$predictions[[1]][[1]][[1]]), c("cell_id", "bio1", "bio12", "presence", "pseudoabsence", "geometry"))
   expect_equal(names(i_sm$predictions$predictions[[1]][[1]][[1]]), c("cell_id", "bio1", "bio12", "presence", "pseudoabsence", "geometry"))

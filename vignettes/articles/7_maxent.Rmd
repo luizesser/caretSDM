@@ -48,6 +48,7 @@ bioc
 To show how to run MaxEnt in `caretSDM`, we use an adaptation of the article *1. Concatenate functions in caretSDM* example, but using an terrestrial example. Before reading the code, it is fundamental to understand a key difference between MaxEnt and other algorithms. MaxEnt is a presence-background algorithm, while other methods applied in this package can be either presence-only or presence-pseudoabsence algorithms. In this sense, we implemented a separate function to retrieve background data instead of pseudoabsences, i.e. presence-background algorithms need to have background data, while presence-pseudoabsence algorithms need to have pseudoabsence data.
 
 ```{r fit-model}
+set.seed(1)
 sa <- sdm_area(bioc, 
                cell_size = 25000, 
                crs = 6933, 
@@ -67,7 +68,7 @@ i <- input_sdm(oc, sa) |>
                                        returnResamp = "all", 
                                        summaryFunction = summary_sdm, 
                                        savePredictions = "all")) |> 
-  predict_sdm(th = 0.7)
+  predict_sdm(th = 0.8)
 i
 ```
 
@@ -110,6 +111,14 @@ i <- input_sdm(oc, sa) |>
                                        returnResamp = "all", 
                                        summaryFunction = summary_sdm, 
                                        savePredictions = "all"))
+```
+
+## `caret`'s output for MaxEnt
+
+By correctly applying the workflow, the package will properly use the caret package engine to perform the necessary analysis. It is possible to scrutinize the model by retrieving them using the get_models function:
+
+```{r models}
+get_models(i)
 ```
 
 ## Implementation of MaxEnt in `caretSDM` workflow
