@@ -57,6 +57,7 @@ i.e. presence-background algorithms need to have background data, while
 presence-pseudoabsence algorithms need to have pseudoabsence data.
 
 ``` r
+set.seed(1)
 sa <- sdm_area(bioc, 
                cell_size = 25000, 
                crs = 6933, 
@@ -76,7 +77,7 @@ i <- input_sdm(oc, sa) |>
                                        returnResamp = "all", 
                                        summaryFunction = summary_sdm, 
                                        savePredictions = "all")) |> 
-  predict_sdm(th = 0.7)
+  predict_sdm(th = 0.8)
 i
 ```
 
@@ -106,12 +107,12 @@ i
     ##     Metrics                   :
     ## $`Araucaria angustifolia`
     ##     algo       ROC       TSS Sensitivity Specificity
-    ## 1 maxent 0.8896861 0.5711794     0.76825     0.94275
+    ## 1 maxent 0.8648194 0.5324845     0.69475     0.91625
     ## 
     ## --------  Predictions  --------
     ## Thresholds                    :
     ##     Method                    : threshold 
-    ##     Criteria                  : 0.7
+    ##     Criteria                  : 0.8
 
 ## The use of the `background` function
 
@@ -172,6 +173,59 @@ i <- input_sdm(oc, sa) |>
     ## Error in `train_sdm()`:
     ## ! `algo` contains maxent, but no background data is provided.
     ## ℹ Perhaps you have confused the concepts of pseudoabsence and background data.
+
+## `caret`’s output for MaxEnt
+
+By correctly applying the workflow, the package will properly use the
+caret package engine to perform the necessary analysis. It is possible
+to scrutinize the model by retrieving them using the get_models
+function:
+
+``` r
+get_models(i)
+```
+
+    ## $`Araucaria angustifolia`
+    ## $`Araucaria angustifolia`$maxent_bg1
+    ## Maximum Entropy Modeling 
+    ## 
+    ## 1012 samples
+    ##    3 predictor
+    ##    2 classes: 'background', 'presence' 
+    ## 
+    ## No pre-processing
+    ## Resampling: Cross-Validated (4 fold, repeated 1 times) 
+    ## Summary of sample sizes: 759, 760, 759, 758 
+    ## Resampling results across tuning parameters:
+    ## 
+    ##   regmult  linear  quadratic  product  threshold  hinge  ROC        TSS      
+    ##   0.5       TRUE    TRUE       TRUE    FALSE      FALSE  0.8373528  0.3852351
+    ##   2.0      FALSE   FALSE      FALSE     TRUE       TRUE  0.8648194  0.5324845
+    ##   4.0       TRUE    TRUE       TRUE     TRUE       TRUE  0.8555023  0.4105201
+    ##   Sensitivity  Specificity  Pos Pred Value  Neg Pred Value  Precision  Recall 
+    ##   0.49725      0.88775      0.86375         0.55575         0.86375    0.49725
+    ##   0.69475      0.83775      0.85900         0.66000         0.85900    0.69475
+    ##   0.49425      0.91625      0.89375         0.56175         0.89375    0.49425
+    ##   F1      Prevalence  Detection Rate  Detection Prevalence  Balanced Accuracy
+    ##   0.6300  0.586       0.2915          0.33800               0.69275          
+    ##   0.7680  0.586       0.4070          0.47425               0.76625          
+    ##   0.6355  0.586       0.2895          0.32375               0.70525          
+    ##   Accuracy  Kappa    AccuracyLower  AccuracyUpper  AccuracyNull  AccuracyPValue
+    ##   0.65925   0.35400  0.59700        0.71725        0.586         0.02075       
+    ##   0.75400   0.51200  0.69625        0.80575        0.586         0.00000       
+    ##   0.66875   0.37575  0.60750        0.72675        0.586         0.00800       
+    ##   McnemarPValue  Positive  Negative  True Positive  False Positive
+    ##   0.00000        148.25    104.75     73.75         74.50         
+    ##   0.00275        148.25    104.75    103.00         45.25         
+    ##   0.00000        148.25    104.75     73.25         75.00         
+    ##   True Negative  False Negative  CBI      pAUC  Omission_10pct
+    ##   93.00          11.75           0.78225  NaN   0.101         
+    ##   87.75          17.00           0.81775  NaN   0.101         
+    ##   96.00           8.75           0.68700  NaN   0.101         
+    ## 
+    ## Accuracy was used to select the optimal model using the largest value.
+    ## The final values used for the model were regmult = 2, linear = FALSE,
+    ##  quadratic = FALSE, product = FALSE, threshold = TRUE and hinge = TRUE.
 
 ## Implementation of MaxEnt in `caretSDM` workflow
 

@@ -69,18 +69,8 @@ i_esm <- input_sdm(oc, sa) |>
 #> Testing sea coordinates
 #> Reading ne_110m_land.zip from naturalearth...Removed 0 records.
 #> Predictors identified, procceding with grid filter (removing NA and duplicated data).
-#> ESM species
 #> Loading required package: ggplot2
 #> Loading required package: lattice
-#> ESM species
-#> ESM species
-#> ESM species
-#> ESM species
-#> ESM species
-#> ESM species
-#> ESM species
-#> ESM species
-#> ESM species
 #> Ensemble function: average
 #>   current
 ```
@@ -189,5 +179,5 @@ bivariate models.
 ``` r
 end_time <- Sys.time()
 end_time - start_time
-#> Time difference of 1.06294 mins
+#> Time difference of 1.096382 mins
 ```

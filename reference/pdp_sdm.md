@@ -95,18 +95,18 @@ pdp_sdm(i)
 get_pdp_sdm(i)
 #> $naive_bayes
 #> # A tibble: 132 × 4
-#>    id     yhat variable value
-#>    <chr> <dbl> <chr>    <dbl>
-#>  1 m1.1  0.967 bio1      16.6
-#>  2 m1.1  0.982 bio1      16.9
-#>  3 m1.1  0.991 bio1      17.1
-#>  4 m1.1  0.993 bio1      17.4
-#>  5 m1.1  0.990 bio1      17.6
-#>  6 m1.1  0.975 bio1      17.9
-#>  7 m1.1  0.954 bio1      18.1
-#>  8 m1.1  0.961 bio1      18.4
-#>  9 m1.1  0.968 bio1      18.6
-#> 10 m1.1  0.965 bio1      18.9
+#>    id               yhat variable value
+#>    <chr>           <dbl> <chr>    <dbl>
+#>  1 naive_bayes_pa1 0.967 bio1      16.6
+#>  2 naive_bayes_pa1 0.982 bio1      16.9
+#>  3 naive_bayes_pa1 0.991 bio1      17.1
+#>  4 naive_bayes_pa1 0.993 bio1      17.4
+#>  5 naive_bayes_pa1 0.990 bio1      17.6
+#>  6 naive_bayes_pa1 0.975 bio1      17.9
+#>  7 naive_bayes_pa1 0.954 bio1      18.1
+#>  8 naive_bayes_pa1 0.961 bio1      18.4
+#>  9 naive_bayes_pa1 0.968 bio1      18.6
+#> 10 naive_bayes_pa1 0.965 bio1      18.9
 #> # ℹ 122 more rows
 #> 
 ```

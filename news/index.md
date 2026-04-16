@@ -115,3 +115,7 @@ CRAN release: 2026-03-10
 
 - A minor adjustment to predict_sdm was necessary to allow for multiple
   scenarios.
+
+## caretSDM 1.8.2
+
+- Models IDs were changed.

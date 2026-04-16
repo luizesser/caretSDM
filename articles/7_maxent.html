@@ -25,7 +25,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">caretSDM</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.8.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.8.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -132,7 +132,8 @@ separate function to retrieve background data instead of pseudoabsences,
 i.e. presence-background algorithms need to have background data, while
 presence-pseudoabsence algorithms need to have pseudoabsence data.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">sa</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sdm_area.html">sdm_area</a></span><span class="op">(</span><span class="va">bioc</span>, </span>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span>
+<span><span class="va">sa</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sdm_area.html">sdm_area</a></span><span class="op">(</span><span class="va">bioc</span>, </span>
 <span>               cell_size <span class="op">=</span> <span class="fl">25000</span>, </span>
 <span>               crs <span class="op">=</span> <span class="fl">6933</span>, </span>
 <span>               gdal <span class="op">=</span> <span class="cn">T</span><span class="op">)</span> <span class="op">|&gt;</span></span>
@@ -151,7 +152,7 @@ presence-pseudoabsence algorithms need to have pseudoabsence data.</p>
 <span>                                       returnResamp <span class="op">=</span> <span class="st">"all"</span>, </span>
 <span>                                       summaryFunction <span class="op">=</span> <span class="va">summary_sdm</span>, </span>
 <span>                                       savePredictions <span class="op">=</span> <span class="st">"all"</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
-<span>  <span class="fu"><a href="../reference/predict_sdm.html">predict_sdm</a></span><span class="op">(</span>th <span class="op">=</span> <span class="fl">0.7</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="../reference/predict_sdm.html">predict_sdm</a></span><span class="op">(</span>th <span class="op">=</span> <span class="fl">0.8</span><span class="op">)</span></span>
 <span><span class="va">i</span></span></code></pre></div>
 <pre><code><span><span class="co">##             caretSDM           </span></span>
 <span><span class="co">## ...............................</span></span>
@@ -179,12 +180,12 @@ presence-pseudoabsence algorithms need to have pseudoabsence data.</p>
 <span><span class="co">##     Metrics                   :</span></span>
 <span><span class="co">## $`Araucaria angustifolia`</span></span>
 <span><span class="co">##     algo       ROC       TSS Sensitivity Specificity</span></span>
-<span><span class="co">## 1 maxent 0.8896861 0.5711794     0.76825     0.94275</span></span>
+<span><span class="co">## 1 maxent 0.8648194 0.5324845     0.69475     0.91625</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## --------  Predictions  --------</span></span>
 <span><span class="co">## Thresholds                    :</span></span>
 <span><span class="co">##     Method                    : threshold </span></span>
-<span><span class="co">##     Criteria                  : 0.7</span></span></code></pre>
+<span><span class="co">##     Criteria                  : 0.8</span></span></code></pre>
 </div>
 <div class="section level2">
 <h2 id="the-use-of-the-background-function">The use of the <code>background</code> function<a class="anchor" aria-label="anchor" href="#the-use-of-the-background-function"></a>
@@ -246,6 +247,58 @@ an error:</p>
 <span><span class="co">## <span style="color: #00BBBB;">ℹ</span> Perhaps you have confused the concepts of pseudoabsence and background data.</span></span></code></pre>
 </div>
 <div class="section level2">
+<h2 id="carets-output-for-maxent">
+<code>caret</code>’s output for MaxEnt<a class="anchor" aria-label="anchor" href="#carets-output-for-maxent"></a>
+</h2>
+<p>By correctly applying the workflow, the package will properly use the
+caret package engine to perform the necessary analysis. It is possible
+to scrutinize the model by retrieving them using the get_models
+function:</p>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/train_sdm.html">get_models</a></span><span class="op">(</span><span class="va">i</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## $`Araucaria angustifolia`</span></span>
+<span><span class="co">## $`Araucaria angustifolia`$maxent_bg1</span></span>
+<span><span class="co">## Maximum Entropy Modeling </span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## 1012 samples</span></span>
+<span><span class="co">##    3 predictor</span></span>
+<span><span class="co">##    2 classes: 'background', 'presence' </span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## No pre-processing</span></span>
+<span><span class="co">## Resampling: Cross-Validated (4 fold, repeated 1 times) </span></span>
+<span><span class="co">## Summary of sample sizes: 759, 760, 759, 758 </span></span>
+<span><span class="co">## Resampling results across tuning parameters:</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">##   regmult  linear  quadratic  product  threshold  hinge  ROC        TSS      </span></span>
+<span><span class="co">##   0.5       TRUE    TRUE       TRUE    FALSE      FALSE  0.8373528  0.3852351</span></span>
+<span><span class="co">##   2.0      FALSE   FALSE      FALSE     TRUE       TRUE  0.8648194  0.5324845</span></span>
+<span><span class="co">##   4.0       TRUE    TRUE       TRUE     TRUE       TRUE  0.8555023  0.4105201</span></span>
+<span><span class="co">##   Sensitivity  Specificity  Pos Pred Value  Neg Pred Value  Precision  Recall </span></span>
+<span><span class="co">##   0.49725      0.88775      0.86375         0.55575         0.86375    0.49725</span></span>
+<span><span class="co">##   0.69475      0.83775      0.85900         0.66000         0.85900    0.69475</span></span>
+<span><span class="co">##   0.49425      0.91625      0.89375         0.56175         0.89375    0.49425</span></span>
+<span><span class="co">##   F1      Prevalence  Detection Rate  Detection Prevalence  Balanced Accuracy</span></span>
+<span><span class="co">##   0.6300  0.586       0.2915          0.33800               0.69275          </span></span>
+<span><span class="co">##   0.7680  0.586       0.4070          0.47425               0.76625          </span></span>
+<span><span class="co">##   0.6355  0.586       0.2895          0.32375               0.70525          </span></span>
+<span><span class="co">##   Accuracy  Kappa    AccuracyLower  AccuracyUpper  AccuracyNull  AccuracyPValue</span></span>
+<span><span class="co">##   0.65925   0.35400  0.59700        0.71725        0.586         0.02075       </span></span>
+<span><span class="co">##   0.75400   0.51200  0.69625        0.80575        0.586         0.00000       </span></span>
+<span><span class="co">##   0.66875   0.37575  0.60750        0.72675        0.586         0.00800       </span></span>
+<span><span class="co">##   McnemarPValue  Positive  Negative  True Positive  False Positive</span></span>
+<span><span class="co">##   0.00000        148.25    104.75     73.75         74.50         </span></span>
+<span><span class="co">##   0.00275        148.25    104.75    103.00         45.25         </span></span>
+<span><span class="co">##   0.00000        148.25    104.75     73.25         75.00         </span></span>
+<span><span class="co">##   True Negative  False Negative  CBI      pAUC  Omission_10pct</span></span>
+<span><span class="co">##   93.00          11.75           0.78225  NaN   0.101         </span></span>
+<span><span class="co">##   87.75          17.00           0.81775  NaN   0.101         </span></span>
+<span><span class="co">##   96.00           8.75           0.68700  NaN   0.101         </span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## Accuracy was used to select the optimal model using the largest value.</span></span>
+<span><span class="co">## The final values used for the model were regmult = 2, linear = FALSE,</span></span>
+<span><span class="co">##  quadratic = FALSE, product = FALSE, threshold = TRUE and hinge = TRUE.</span></span></code></pre>
+</div>
+<div class="section level2">
 <h2 id="implementation-of-maxent-in-caretsdm-workflow">Implementation of MaxEnt in <code>caretSDM</code> workflow<a class="anchor" aria-label="anchor" href="#implementation-of-maxent-in-caretsdm-workflow"></a>
 </h2>
 <p>As the <code>caretSDM</code> package is an extensible workflow, we
@@ -258,7 +311,7 @@ tuning, validation, and other tools, we implemented the following object
 as a method within <code>caretSDM</code>’s <code>train_sdm</code>
 function. Together with each piece of code, we included comments
 describing each step of the process.</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Custom MaxEnt model to be implemented in caret:</span></span>
 <span><span class="co">#' @keywords internal</span></span>
 <span><span class="co">#' @importFrom maxnet maxnet</span></span>

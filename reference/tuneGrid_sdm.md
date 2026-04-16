@@ -67,12 +67,12 @@ i <- train_sdm(i, algo = c("naive_bayes"), ctrl=ctrl_sdm) |>
 # Retrieve tuneGrid from model:
 tuneGrid_sdm(i)
 #> $`Araucaria angustifolia`
-#> $`Araucaria angustifolia`$m1.1
+#> $`Araucaria angustifolia`$naive_bayes_pa1
 #>   laplace usekernel adjust
 #> 1       0     FALSE      1
 #> 2       0      TRUE      1
 #> 
-#> $`Araucaria angustifolia`$m2.1
+#> $`Araucaria angustifolia`$naive_bayes_pa2
 #>   laplace usekernel adjust
 #> 1       0     FALSE      1
 #> 2       0      TRUE      1
