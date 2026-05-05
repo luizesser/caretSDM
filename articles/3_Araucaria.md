@@ -15,7 +15,12 @@ species from South Brazil.
 First, we need to open our library.
 
 ``` r
+
 library(caretSDM)
+#> Registered S3 methods overwritten by 'ggpp':
+#>   method                  from   
+#>   heightDetails.titleGrob ggplot2
+#>   widthDetails.titleGrob  ggplot2
 start_time <- Sys.time()
 set.seed(1)
 ```
@@ -48,6 +53,7 @@ retrieve an example table. As standard, `GBIF_data` function sets
 (more about that further below). An example code for this step would be:
 
 ``` r
+
 occ <- GBIF_data(c("Araucaria angustifolia"), as_df = TRUE)
 ```
 
@@ -56,6 +62,7 @@ same output, but with filtered records to match our study area. Note
 that coordinates are in a metric CRS (EPSG: 6933).
 
 ``` r
+
 occ |> head()
 #>                    species decimalLongitude decimalLatitude
 #> 327 Araucaria angustifolia         -4700678        -3065133
@@ -81,6 +88,7 @@ works, we will use a resolution of 10 arc-minutes, which is very coarse,
 but quicker to download and run.
 
 ``` r
+
 # Download current bioclimatic variables
 WorldClim_data(path = NULL, 
                period = "current", 
@@ -96,10 +104,11 @@ the package, which is the same output, but masked to match our study
 area and with fewer variables.
 
 ``` r
+
 bioc
 #> stars object with 3 dimensions and 1 attribute
 #> attribute(s):
-#>              Min.  1st Qu.   Median     Mean 3rd Qu. Max. NA's
+#>              Min.  1st Qu.   Median     Mean 3rd Qu. Max.  NAs
 #> current  14.58698 21.19678 298.9147 622.9417  1353.5 2368 1845
 #> dimension(s):
 #>      from  to offset   delta refsys point              values x/y
@@ -123,6 +132,7 @@ state boundaries that is available in caretSDM as the `parana` object
 for more information on the data)..
 
 ``` r
+
 parana
 #> Simple feature collection with 1 feature and 4 fields
 #> Geometry type: MULTIPOLYGON
@@ -134,6 +144,7 @@ parana
 ```
 
 ``` r
+
 parana |> select_predictors(NOMEUF2) |> plot()
 ```
 
@@ -164,6 +175,7 @@ other arguments meaning see
 [`?sdm_area`](https://luizesser.github.io/caretSDM/reference/sdm_area.md).
 
 ``` r
+
 sa <- sdm_area(parana, 
                cell_size = 25000, 
                crs = 6933, 
@@ -196,6 +208,7 @@ or
 [`plot_grid()`](https://luizesser.github.io/caretSDM/reference/plot_occurrences.md).
 
 ``` r
+
 plot_grid(sa)
 ```
 
@@ -209,6 +222,7 @@ predictors data. Note that `add_predictors` also has a `gdal` argument,
 which works as the previous one in `sdm_area` function.
 
 ``` r
+
 sa <- add_predictors(sa, 
                      bioc, 
                      variables_selected = NULL, 
@@ -234,6 +248,7 @@ predictors data as the current scenario by applying the function
 because the argument `pred_as_scen` is standarly set to `TRUE`.
 
 ``` r
+
 add_scenarios(sa)
 ```
 
@@ -241,6 +256,7 @@ If we are aiming to project species distributions in other scenarios, we
 can download data and add in the same way we did for current data.
 
 ``` r
+
 WorldClim_data(path = NULL, 
                period = "future", 
                variable = "bioc",
@@ -259,10 +275,11 @@ to match our study area and with fewer variables (see
 more information on the data).
 
 ``` r
+
 scen
 #> stars object with 3 dimensions and 4 attributes
 #> attribute(s):
-#>                 Min. 1st Qu. Median     Mean  3rd Qu.   Max. NA's
+#>                 Min. 1st Qu. Median     Mean  3rd Qu.   Max.  NAs
 #> ca_ssp245_2090  18.4  26.100 296.50 570.0926 1188.975 2049.2 1908
 #> ca_ssp585_2090  22.2  31.275 293.25 516.0384 1033.150 1862.2 1908
 #> mi_ssp245_2090  16.3  23.000 314.65 660.9749 1426.800 2414.8 1908
@@ -285,6 +302,7 @@ the modeler can inform variables that do not change between scenarios.
 These variables can be, e.g., soil variables.
 
 ``` r
+
 sa <- add_scenarios(sa, 
                     scen = scen, 
                     scenarios_names = NULL,
@@ -340,6 +358,7 @@ but our records stored in `occ` object is transformed to 6933 (see
 information on the data).
 
 ``` r
+
 oc <- occurrences_sdm(occ, crs = 6933)
 oc
 #>         caretSDM       
@@ -364,6 +383,7 @@ oc
 ```
 
 ``` r
+
 plot_occurrences(oc)
 ```
 
@@ -383,6 +403,7 @@ step assigns occurrences into a study area, excluding records outside
 the study area or with NAs as predictors.
 
 ``` r
+
 i <- input_sdm(oc, sa)
 #> Warning: Some records from `occ` do not fall in `pred`.
 #> ℹ 2 elements from `occ` were excluded.
@@ -419,6 +440,7 @@ method. This method is only possible when we have both the `occurrence`
 and `predictors` data.
 
 ``` r
+
 i <- data_clean(i,
                 capitals = TRUE,
                 centroids = TRUE,
@@ -459,6 +481,7 @@ are kept given a maximum threshold of colinearity. The standard is 0.5.
 Here is a example code for demonstration:
 
 ``` r
+
 i <- vif_predictors(i, 
                     th = 0.5, 
                     maxobservations = 5000, 
@@ -473,6 +496,7 @@ predictors. `pca_predictors` does not have arguments other than the
 with raw variables.
 
 ``` r
+
 i <- pca_predictors(i, cumulative_proportion = 1)
 i
 #>             caretSDM           
@@ -497,6 +521,7 @@ To better visualize PCA parameters, users can run `pca_summary` and
 `get_pca_model` functions, which are very self-explanatory.
 
 ``` r
+
 pca_summary(i)
 #> Importance of components:
 #>                             PC1      PC2     PC3
@@ -533,6 +558,7 @@ pseudoabsences/models. This can either be a vector of variables names or
 a previously performed selection method.
 
 ``` r
+
 i <- pseudoabsences(i, 
                     method = "bioclim", 
                     n_set = 10,
@@ -587,6 +613,7 @@ will ask you to install the relevant packages to properly run the
 algorithm.
 
 ``` r
+
 ctrl_sdm <- caret::trainControl(method = "repeatedcv", 
                                 number = 4, 
                                 repeats = 1, 
@@ -647,6 +674,7 @@ validation threshold. This validation metric is set using `metric` and
 used in predictions and ensembles.
 
 ``` r
+
 i <- predict_sdm(i,
                  metric = "ROC",
                  th = 0.9,
@@ -693,6 +721,7 @@ i
 Finally, we can ensemble the predictions using:
 
 ``` r
+
 i <- ensemble_sdm(i,
                   method = "average")
 #> Ensemble function: average
@@ -754,6 +783,7 @@ Besides the AUC/ROC metric, users can get every available metric by
 model using the following code before commit to “ROC”:
 
 ``` r
+
 get_validation_metrics(i)
 #> $`Araucaria angustifolia`
 #>                         algo       ROC       TSS Sensitivity Specificity
@@ -1056,6 +1086,7 @@ Otherwise, the mean validation metric values per algorithm can also be
 obtained with the following code:
 
 ``` r
+
 mean_validation_metrics(i)
 #> $`Araucaria angustifolia`
 #> # A tibble: 2 × 59
@@ -1088,6 +1119,7 @@ names generated in this last step and are included in object `i`
 scenarios.
 
 ``` r
+
 i <- gcms_ensembles(i, gcms = c("ca", "mi"))
 #> New names:
 #> New names:
@@ -1158,6 +1190,7 @@ the model `id` (see row names of `get_validation_metrics` above to
 retrieve models ids).
 
 ``` r
+
 plot_ensembles(i,
                scenario = "current",
                ensemble_type = "average")
@@ -1166,6 +1199,7 @@ plot_ensembles(i,
 ![](3_Araucaria_files/figure-html/plot_current_results-1.png)
 
 ``` r
+
 plot_ensembles(i,
                scenario = "_ssp245_2090",
                ensemble_type = "average")
@@ -1180,6 +1214,7 @@ curves, but if someone want to do that, it is possible through the
 `pdp_sdm` function.
 
 ``` r
+
 pdp_sdm(i)
 #> `geom_smooth()` using method = 'gam' and formula = 'y ~ s(x, bs = "cs")'
 ```
@@ -1196,6 +1231,7 @@ outputs in a straightforward fashion. Common functions are the
 following:
 
 ``` r
+
 write_occurrences(i, path = "results/occurrences.csv", grid = FALSE)
 write_pseudoabsences(i, path = "results/pseudoabsences", ext = ".csv", centroid = FALSE)
 write_grid(i, path = "results/grid_study_area.gpkg", centroid = FALSE)
@@ -1212,7 +1248,8 @@ fish species using river lines in a simplefeatures object instead of
 cells in a grid.
 
 ``` r
+
 end_time <- Sys.time()
 end_time - start_time
-#> Time difference of 24.98718 secs
+#> Time difference of 24.22773 secs
 ```

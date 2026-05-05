@@ -7,12 +7,18 @@ we provide a functioning way to easily run your framework with only
 three objects.
 
 ``` r
+
 # Open library
 library(caretSDM)
+#> Registered S3 methods overwritten by 'ggpp':
+#>   method                  from   
+#>   heightDetails.titleGrob ggplot2
+#>   widthDetails.titleGrob  ggplot2
 set.seed(1)
 ```
 
 ``` r
+
 # Build sdm_area object
 sa <- sdm_area(rivs, 
                cell_size = 25000, 
@@ -71,6 +77,7 @@ i <- input_sdm(oc, sa) |>
 ```
 
 ``` r
+
 i
 #>             caretSDM           
 #> ...............................
@@ -113,6 +120,7 @@ i
 ```
 
 ``` r
+
 plot(i)
 ```
 

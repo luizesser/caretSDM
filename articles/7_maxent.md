@@ -16,6 +16,7 @@ The package provides `occ` (*Araucaria* occurrences) and `bioc`
 (bioclimatic rasters for Paraná).
 
 ``` r
+
 # Occurrences
 head(occ)
 ```
@@ -29,13 +30,14 @@ head(occ)
     ## 124 Araucaria angustifolia         -4727265        -3148517
 
 ``` r
+
 # Bioclimatic data
 bioc
 ```
 
     ## stars object with 3 dimensions and 1 attribute
     ## attribute(s):
-    ##              Min.  1st Qu.   Median     Mean 3rd Qu. Max. NA's
+    ##              Min.  1st Qu.   Median     Mean 3rd Qu. Max.  NAs
     ## current  14.58698 21.19678 298.9147 622.9417  1353.5 2368 1845
     ## dimension(s):
     ##      from  to offset   delta refsys point              values x/y
@@ -57,6 +59,7 @@ i.e. presence-background algorithms need to have background data, while
 presence-pseudoabsence algorithms need to have pseudoabsence data.
 
 ``` r
+
 set.seed(1)
 sa <- sdm_area(bioc, 
                cell_size = 25000, 
@@ -125,6 +128,7 @@ function, but with parameters slightly different and with different
 standard values:
 
 ``` r
+
 background(occ,
            pred = NULL,
            method = "random",
@@ -149,6 +153,7 @@ When the misconception of using pseudoabsences instead of background is
 applied in the `caretSDM` workflow, the workflow stops in an error:
 
 ``` r
+
 sa <- sdm_area(bioc, 
                cell_size = 25000, 
                crs = 6933, 
@@ -182,6 +187,7 @@ to scrutinize the model by retrieving them using the get_models
 function:
 
 ``` r
+
 get_models(i)
 ```
 
@@ -240,6 +246,7 @@ Together with each piece of code, we included comments describing each
 step of the process.
 
 ``` r
+
 # Custom MaxEnt model to be implemented in caret:
 #' @keywords internal
 #' @importFrom maxnet maxnet

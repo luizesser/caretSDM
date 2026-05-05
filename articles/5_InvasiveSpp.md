@@ -19,7 +19,12 @@ as from other articles.
 First, we need to open our library.
 
 ``` r
+
 library(caretSDM)
+#> Registered S3 methods overwritten by 'ggpp':
+#>   method                  from   
+#>   heightDetails.titleGrob ggplot2
+#>   widthDetails.titleGrob  ggplot2
 start_time <- Sys.time()
 set.seed(1)
 ```
@@ -52,6 +57,7 @@ retrieve an example table. As standard, `GBIF_data` function sets
 (more about that further below). An example code for this step would be:
 
 ``` r
+
 occ <- GBIF_data(c("Araucaria angustifolia"), as_df = TRUE)
 ```
 
@@ -60,6 +66,7 @@ same output, but with filtered records to match our study area. Note
 that coordinates are in a metric CRS (EPSG: 6933).
 
 ``` r
+
 occ |> head()
 #>                    species decimalLongitude decimalLatitude
 #> 327 Araucaria angustifolia         -4700678        -3065133
@@ -85,6 +92,7 @@ works, we will use a resolution of 10 arc-minutes, which is very coarse,
 but quicker to download and run.
 
 ``` r
+
 # Download current bioclimatic variables
 WorldClim_data(path = NULL, 
                period = "current", 
@@ -99,6 +107,7 @@ As we are aiming for a climate change assessment, we will also download
 future data.
 
 ``` r
+
 WorldClim_data(path = NULL, 
                period = "future", 
                variable = "bioc",
@@ -118,6 +127,7 @@ package an object with current and future data for the Rio Grande do Sul
 state. To build it, we used an adaptation of the following code:
 
 ``` r
+
 # THIS IS AN EXAMPLE CODE, IT MUST BE ADAPTED TO RUN CORRECTLY!!!
 # Import aim area shape
 rs <- st_read("Rio_Grande_do_Sul.shp")
@@ -156,10 +166,11 @@ The result should resemble the included object (see
 for more information on the data).:
 
 ``` r
+
 scen_rs
 #> stars object with 3 dimensions and 5 attributes
 #> attribute(s):
-#>                     Min. 1st Qu.   Median     Mean  3rd Qu.   Max. NA's
+#>                     Min. 1st Qu.   Median     Mean  3rd Qu.   Max.  NAs
 #> current         14.38403 19.5185 397.1582 668.0422 1467.000 2079.0 3204
 #> ca_ssp245_2090  17.60000 23.0000 414.1000 677.0502 1516.225 2134.2 3264
 #> ca_ssp585_2090  20.70000 26.6000 446.2500 688.5646 1551.125 2098.2 3264
@@ -188,6 +199,7 @@ available in caretSDM as the `parana` object (see
 for more information on the data).
 
 ``` r
+
 parana
 #> Simple feature collection with 1 feature and 4 fields
 #> Geometry type: MULTIPOLYGON
@@ -199,6 +211,7 @@ parana
 ```
 
 ``` r
+
 parana |> select_predictors(NOMEUF2) |> plot()
 ```
 
@@ -229,6 +242,7 @@ other arguments meaning see
 [`?sdm_area`](https://luizesser.github.io/caretSDM/reference/sdm_area.md).
 
 ``` r
+
 sa <- sdm_area(parana, 
                cell_size = 25000, 
                crs = 6933, 
@@ -261,6 +275,7 @@ or
 [`plot_grid()`](https://luizesser.github.io/caretSDM/reference/plot_occurrences.md).
 
 ``` r
+
 plot_grid(sa)
 ```
 
@@ -274,6 +289,7 @@ predictors data. Note that `add_predictors` also has a `gdal` argument,
 which works as the previous one in `sdm_area` function.
 
 ``` r
+
 sa <- add_predictors(sa, 
                      bioc, 
                      variables_selected = NULL, 
@@ -301,6 +317,7 @@ in invasiveness assessments, we want to project models into another
 region. This region was previously set as the `scen_rs` object.
 
 ``` r
+
 sa <- add_scenarios(sa, 
                     scen = scen_rs, 
                     scenarios_names = NULL,
@@ -358,6 +375,7 @@ but our records stored in `occ` object is transformed to 6933 (see
 information on the data).
 
 ``` r
+
 oc <- occurrences_sdm(occ, crs = 6933)
 oc
 #>         caretSDM       
@@ -382,6 +400,7 @@ oc
 ```
 
 ``` r
+
 plot_occurrences(oc)
 ```
 
@@ -399,6 +418,7 @@ possible when two or more of these classes are available. First, we
 create the object by informing the occurrences and the sdm_area.
 
 ``` r
+
 i <- input_sdm(oc, sa)
 #> Warning: Some records from `occ` do not fall in `pred`.
 #> ℹ 2 elements from `occ` were excluded.
@@ -435,6 +455,7 @@ method. This method is only possible when we have both the `occurrence`
 and `predictors` data.
 
 ``` r
+
 i <- data_clean(i,
                 capitals = TRUE,
                 centroids = TRUE,
@@ -475,6 +496,7 @@ are kept given a maximum threshold of colinearity. The standard is 0.5.
 Here is a example code for demonstration:
 
 ``` r
+
 i <- vif_predictors(i, 
                     th = 0.5, 
                     maxobservations = 5000, 
@@ -500,6 +522,7 @@ pseudoabsences/models. This can either be a vector of variables names or
 a previously performed selection method.
 
 ``` r
+
 i <- pseudoabsences(i, 
                     method = "bioclim", 
                     n_set = 10,
@@ -553,6 +576,7 @@ will ask you to install the relevant packages to properly run the
 algorithm.
 
 ``` r
+
 ctrl_sdm <- caret::trainControl(method = "repeatedcv", 
                                 number = 4, 
                                 repeats = 1, 
@@ -613,6 +637,7 @@ set to be “ROC” and th is equal 0.9. This means that only models with
 ROC \> 0.9 will be used in predictions and ensembles.
 
 ``` r
+
 i <- predict_sdm(i,
                  metric = "ROC",
                  th = 0.9,
@@ -658,6 +683,7 @@ i
 Finally, we can ensemble the predictions using:
 
 ``` r
+
 i <- ensemble_sdm(i,
                   method = "average")
 #> Ensemble function: average
@@ -718,6 +744,7 @@ Besides the AUC/ROC metric, users can get every available metric by
 model using the following code before commit to “ROC”:
 
 ``` r
+
 get_validation_metrics(i)
 #> $`Araucaria angustifolia`
 #>                         algo       ROC       TSS Sensitivity Specificity
@@ -1020,6 +1047,7 @@ Otherwise, the mean validation metric values per algorithm can also be
 obtained with the following code:
 
 ``` r
+
 mean_validation_metrics(i)
 #> $`Araucaria angustifolia`
 #> # A tibble: 2 × 59
@@ -1052,6 +1080,7 @@ names generated in this last step and are included in object `i`
 scenarios.
 
 ``` r
+
 i <- gcms_ensembles(i, gcms = c("ca", "mi"))
 #> New names:
 #> New names:
@@ -1121,6 +1150,7 @@ the model `id` (see row names of `get_validation_metrics` above to
 retrieve models ids).
 
 ``` r
+
 plot_ensembles(i,
                scenario = "current",
                ensemble_type = "average")
@@ -1129,6 +1159,7 @@ plot_ensembles(i,
 ![](5_InvasiveSpp_files/figure-html/plot_current_results-1.png)
 
 ``` r
+
 plot_ensembles(i,
                scenario = "_ssp585_2090",
                ensemble_type = "average")
@@ -1143,6 +1174,7 @@ curves, but if someone want to do that, it is possible through the
 `pdp_sdm` function.
 
 ``` r
+
 pdp_sdm(i)
 #> `geom_smooth()` using method = 'gam' and formula = 'y ~ s(x, bs = "cs")'
 ```
@@ -1159,6 +1191,7 @@ outputs in a straightforward fashion. Common functions are the
 following:
 
 ``` r
+
 write_occurrences(i, path = "results/occurrences.csv", grid = FALSE)
 write_pseudoabsences(i, path = "results/pseudoabsences", ext = ".csv", centroid = FALSE)
 write_grid(i, path = "results/grid_study_area.gpkg", centroid = FALSE)
@@ -1175,7 +1208,8 @@ fish species using river lines in a simplefeatures object instead of
 cells in a grid.
 
 ``` r
+
 end_time <- Sys.time()
 end_time - start_time
-#> Time difference of 20.49651 secs
+#> Time difference of 19.78399 secs
 ```

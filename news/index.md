@@ -119,3 +119,7 @@ CRAN release: 2026-03-10
 ## caretSDM 1.8.2
 
 - Models IDs were changed.
+
+## caretSDM 1.8.3
+
+- Inclusion of ECDFniche to provide the mahalanobis distance method.

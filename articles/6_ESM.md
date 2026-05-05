@@ -17,7 +17,12 @@ use_esm. This function should be used before training the model to
 adjust the settings properly. A compact code for ESM is the following:
 
 ``` r
+
 library(caretSDM)
+#> Registered S3 methods overwritten by 'ggpp':
+#>   method                  from   
+#>   heightDetails.titleGrob ggplot2
+#>   widthDetails.titleGrob  ggplot2
 start_time <- Sys.time()
 set.seed(1)
 
@@ -88,6 +93,7 @@ to create the standard SDM. We will do that by just removing the
 `use_esm` function from previous chunk.
 
 ``` r
+
 i_sdm <- input_sdm(oc, sa) |> 
   data_clean() |> 
   pseudoabsences(method = "bioclim") |> 
@@ -129,6 +135,7 @@ i_sdm <- input_sdm(oc, sa) |>
 Now let’s compare both results:
 
 ``` r
+
 # Plotting ESM result for current scenario
 plot_ensembles(i_esm,
                scenario = "current",
@@ -138,6 +145,7 @@ plot_ensembles(i_esm,
 ![](6_ESM_files/figure-html/plot_esm-1.png)
 
 ``` r
+
 # Plotting standard result for current scenario
 plot_ensembles(i_sdm,
                scenario = "current",
@@ -155,6 +163,7 @@ models. However, a good level of concordance is achieved, when comparing
 to ESMs with standard SDMs, as shown bellow.
 
 ``` r
+
 pdp_sdm(i_esm)
 #> `geom_smooth()` using method = 'gam' and formula = 'y ~ s(x, bs = "cs")'
 ```
@@ -162,6 +171,7 @@ pdp_sdm(i_esm)
 ![](6_ESM_files/figure-html/pdp_sdm_esm-1.png)
 
 ``` r
+
 pdp_sdm(i_sdm)
 #> `geom_smooth()` using method = 'gam' and formula = 'y ~ s(x, bs = "cs")'
 ```
@@ -177,7 +187,8 @@ threshold or nominally indicate which species it wants to apply
 bivariate models.
 
 ``` r
+
 end_time <- Sys.time()
 end_time - start_time
-#> Time difference of 1.096382 mins
+#> Time difference of 1.053768 mins
 ```

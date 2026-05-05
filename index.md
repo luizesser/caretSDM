@@ -15,6 +15,7 @@ You can install the development version of caretSDM from
 [GitHub](https://github.com/luizesser/caretSDM) with:
 
 ``` r
+
 install.packages("devtools")
 devtools::install_github("luizesser/caretSDM")
 ```
@@ -23,6 +24,7 @@ The package is also available on CRAN. Users are able to install it
 using the following code:
 
 ``` r
+
 install.packages("caretSDM")
 ```
 

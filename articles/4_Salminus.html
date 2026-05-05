@@ -25,7 +25,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">caretSDM</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.8.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.8.3</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -71,7 +71,7 @@
                         <h4 data-toc-skip class="author">Luíz Fernando
 Esser</h4>
             
-            <h4 data-toc-skip class="date">2026-04-16</h4>
+            <h4 data-toc-skip class="date">2026-05-05</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/luizesser/caretSDM/blob/main/vignettes/articles/4_Salminus.Rmd" class="external-link"><code>vignettes/articles/4_Salminus.Rmd</code></a></small>
       <div class="d-none name"><code>4_Salminus.Rmd</code></div>
@@ -96,6 +96,10 @@ Brazil.</p>
 <p>First, we need to open our library.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://luizesser.github.io/caretSDM/">caretSDM</a></span><span class="op">)</span></span>
+<span><span class="co">#&gt; Registered S3 methods overwritten by 'ggpp':</span></span>
+<span><span class="co">#&gt;   method                  from   </span></span>
+<span><span class="co">#&gt;   heightDetails.titleGrob ggplot2</span></span>
+<span><span class="co">#&gt;   widthDetails.titleGrob  ggplot2</span></span>
 <span><span class="va">start_time</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span></code></pre></div>
 </div>
@@ -172,7 +176,7 @@ match our study area and with fewer variables.</p>
 <code class="sourceCode R"><span><span class="va">bioc</span></span>
 <span><span class="co">#&gt; stars object with 3 dimensions and 1 attribute</span></span>
 <span><span class="co">#&gt; attribute(s):</span></span>
-<span><span class="co">#&gt;              Min.  1st Qu.   Median     Mean 3rd Qu. Max. NA's</span></span>
+<span><span class="co">#&gt;              Min.  1st Qu.   Median     Mean 3rd Qu. Max.  NAs</span></span>
 <span><span class="co">#&gt; current  14.58698 21.19678 298.9147 622.9417  1353.5 2368 1845</span></span>
 <span><span class="co">#&gt; dimension(s):</span></span>
 <span><span class="co">#&gt;      from  to offset   delta refsys point              values x/y</span></span>
@@ -335,7 +339,7 @@ above, but masked to match our study area and with fewer variables (see
 <code class="sourceCode R"><span><span class="va">scen</span></span>
 <span><span class="co">#&gt; stars object with 3 dimensions and 4 attributes</span></span>
 <span><span class="co">#&gt; attribute(s):</span></span>
-<span><span class="co">#&gt;                 Min. 1st Qu. Median     Mean  3rd Qu.   Max. NA's</span></span>
+<span><span class="co">#&gt;                 Min. 1st Qu. Median     Mean  3rd Qu.   Max.  NAs</span></span>
 <span><span class="co">#&gt; ca_ssp245_2090  18.4  26.100 296.50 570.0926 1188.975 2049.2 1908</span></span>
 <span><span class="co">#&gt; ca_ssp585_2090  22.2  31.275 293.25 516.0384 1033.150 1862.2 1908</span></span>
 <span><span class="co">#&gt; mi_ssp245_2090  16.3  23.000 314.65 660.9749 1426.800 2414.8 1908</span></span>
@@ -1216,7 +1220,7 @@ instead of lines.</p>
 <div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">end_time</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">end_time</span> <span class="op">-</span> <span class="va">start_time</span></span>
-<span><span class="co">#&gt; Time difference of 38.30364 secs</span></span></code></pre></div>
+<span><span class="co">#&gt; Time difference of 37.48179 secs</span></span></code></pre></div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>

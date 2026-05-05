@@ -22,7 +22,12 @@ train](https://topepo.github.io/caret/using-your-own-model-in-train.html).
 First, let’s load the `caretSDM` library to set up our environment.
 
 ``` r
+
 library(caretSDM)
+#> Registered S3 methods overwritten by 'ggpp':
+#>   method                  from   
+#>   heightDetails.titleGrob ggplot2
+#>   widthDetails.titleGrob  ggplot2
 library(dismo)
 #> Loading required package: raster
 #> Loading required package: sp
@@ -68,12 +73,14 @@ You can find these informations for any method by substituting the
 object):
 
 ``` r
+
 caret::getModelInfo("METHOD", regex = FALSE)[[1]]
 ```
 
 See how the list is built for nayve_bayes algorithm:
 
 ``` r
+
 caret::getModelInfo("naive_bayes", regex = FALSE)[[1]]
 #> $label
 #> [1] "Naive Bayes"
@@ -153,6 +160,7 @@ Mahalanobis Distance using the `dismo` package. This structure can be
 changed to include new algorithms into caretSDM.
 
 ``` r
+
 mahal.dismo <- list(
   label = "Mahalanobis Distance",
   library = "dismo",
@@ -216,6 +224,7 @@ through the same method. Here I show the code for a custom Mahalanobis
 Distance.
 
 ``` r
+
 # Define a custom Mahalanobis model
 mahal.custom <- list(
   label = "Mahalanobis Distance Classifier",
@@ -330,6 +339,7 @@ simple `input_sdm` object. This simulates the pre-processing steps of a
 typical SDM analysis.
 
 ``` r
+
 # Create an sdm_area object
 sa <- sdm_area(parana, 
                cell_size = 50000, # Using a coarse resolution for speed
@@ -362,6 +372,7 @@ parameters using
 [`caret::trainControl`](https://rdrr.io/pkg/caret/man/trainControl.html).
 
 ``` r
+
 # Define training controls
 ctrl_sdm <- caret::trainControl(method = "cv", 
                                 number = 3, 
@@ -383,6 +394,7 @@ Let’s check the output. The printout shows that “Mahalanobis Distance”
 was successfully trained and evaluated.
 
 ``` r
+
 i
 #>             caretSDM           
 #> ...............................
@@ -413,6 +425,7 @@ Note that the algorithm name will be set as the name of the object
 passed to `algo`:
 
 ``` r
+
 algorithms_used(i)
 #> [1] "mahal.custom"
 ```
@@ -420,6 +433,7 @@ algorithms_used(i)
 We can also inspect the model’s performance metrics.
 
 ``` r
+
 mean_validation_metrics(i)
 #> $`Araucaria angustifolia`
 #> # A tibble: 1 × 59
@@ -438,6 +452,7 @@ mean_validation_metrics(i)
 A final plot that can be useful is the Partial Dependence Plot
 
 ``` r
+
 pdp_sdm(i)
 #> `geom_smooth()` using method = 'loess' and formula = 'y ~ x'
 ```
@@ -450,6 +465,7 @@ To compare the output of both algorithms implemented we need to first
 build models using the mahal.dismo method.
 
 ``` r
+
 # Create a new input_sdm object
 i2 <- input_sdm(oc, sa) |>
       pseudoabsences(method = "bioclim", 
@@ -460,6 +476,7 @@ i2 <- input_sdm(oc, sa) |>
 ```
 
 ``` r
+
 i2
 #>             caretSDM           
 #> ...............................
@@ -489,6 +506,7 @@ i2
 Plotting the result of mahal.dismo.
 
 ``` r
+
 i2 |> add_scenarios() |> predict_sdm() |> ensemble_sdm() |> plot_ensembles()
 #> Ensemble function: average
 #>   current
@@ -499,6 +517,7 @@ i2 |> add_scenarios() |> predict_sdm() |> ensemble_sdm() |> plot_ensembles()
 Plotting the result of mahal.custom.
 
 ``` r
+
 i |> add_scenarios() |> predict_sdm() |> ensemble_sdm() |> plot_ensembles()
 #> Ensemble function: average
 #>   current
