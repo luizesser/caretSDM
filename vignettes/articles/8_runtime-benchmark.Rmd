@@ -477,7 +477,7 @@ run_caretSDM <- function() {
                                          summaryFunction = summary_sdm)) |> 
     add_scenarios(scen, pred_as_scen = FALSE) |>
     predict_sdm(th = 0.5) |>
-    ensemble_sdm()
+    ensemble_sdm(c("average", "weighted_average", "committee_average"))
   
 }
 ```
