@@ -72,7 +72,6 @@
 #' @importFrom tidyr replace_na
 #' @importFrom dplyr full_join mutate select filter
 #' @importFrom sf st_join
-#' @importFrom mapview mapview
 #' @importFrom ggplot2 ggplot geom_sf aes scale_fill_viridis_d xlab ylab ggtitle theme_minimal unit
 #' @importFrom ggspatial north_arrow_fancy_orienteering annotation_north_arrow
 #' @import checkCLI

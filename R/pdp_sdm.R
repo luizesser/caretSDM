@@ -57,7 +57,6 @@
 #'
 #' @importFrom dplyr bind_rows all_of filter group_by summarise
 #' @importFrom tidyr pivot_longer
-#' @importFrom pdp partial
 #' @importFrom ggplot2 ggplot aes geom_ribbon geom_smooth facet_wrap labs theme_minimal
 #' @importFrom utils combn
 #' @import checkCLI
@@ -66,6 +65,7 @@
 #'
 #' @export
 pdp_sdm <- function(i, spp = NULL, algo = NULL, variables_selected = NULL, mean.only = FALSE) {
+  .check_suggested("pdp", "pdp_sdm")
   assert_class_cli(i, "input_sdm")
   assert_subset_cli(algo, algorithms_used(i))
   assert_subset_cli(spp, species_names(i))
@@ -97,6 +97,7 @@ pdp_sdm <- function(i, spp = NULL, algo = NULL, variables_selected = NULL, mean.
 #' @rdname pdp_sdm
 #' @export
 get_pdp_sdm <- function(i, spp = NULL, algo = NULL, variables_selected = NULL){
+  .check_suggested("pdp", "get_pdp_sdm")
   assert_class_cli(i, "input_sdm")
   assert_subset_cli(algo, algorithms_used(i))
   assert_subset_cli(spp, species_names(i))

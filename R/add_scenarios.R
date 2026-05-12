@@ -72,6 +72,7 @@
 #' @importFrom dplyr select all_of relocate
 #' @importFrom tidyr drop_na
 #' @importFrom cli cli_progress_along cli_abort cli_warn
+#' @importFrom checkmate testDirectory testFile
 #' @importFrom stats aggregate
 #' @import checkCLI
 #'

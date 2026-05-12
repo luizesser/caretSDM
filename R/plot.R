@@ -30,7 +30,6 @@
 #' @author Luíz Fernando Esser (luizesser@gmail.com)
 #' https://luizfesser.wordpress.com
 #'
-#' @importFrom mapview mapview
 #' @importFrom ggplot2 ggplot geom_sf aes scale_fill_viridis_c xlab ylab ggtitle theme_minimal unit
 #' scale_color_viridis_c geom_point scale_y_continuous scale_x_continuous stat_density_2d_filled
 #' after_stat stat_summary_2d
@@ -359,6 +358,7 @@ plot_ensembles <- function(i, spp_name = NULL, scenario = NULL, id = NULL, ensem
 #' @rdname plot_occurrences
 #' @export
 mapview_grid <- function(i) {
+  .check_suggested("mapview", "mapview_grid")
   assert_subset_cli(class(i), c("sdm_area", "input_sdm"))
 
   if(is_input_sdm(i)) {
@@ -375,6 +375,7 @@ mapview_grid <- function(i) {
 #' @rdname plot_occurrences
 #' @export
 mapview_occurrences <- function(i, spp_name = NULL, pa = TRUE) {
+  .check_suggested("mapview", "mapview_occurrences")
   assert_subset_cli(class(i), c("occurrences", "input_sdm"))
   assert_subset_cli(spp_name, species_names(i))
   assert_logical_cli(pa)
@@ -401,6 +402,7 @@ mapview_occurrences <- function(i, spp_name = NULL, pa = TRUE) {
 #' @rdname plot_occurrences
 #' @export
 mapview_predictors <- function(i, variables_selected = NULL) {
+  .check_suggested("mapview", "mapview_predictors")
   assert_subset_cli(class(i), c("input_sdm", "sdm_area"))
   assert_subset_cli(variables_selected, c(get_predictor_names(i), "vif", "pca"))
 
@@ -425,6 +427,7 @@ mapview_predictors <- function(i, variables_selected = NULL) {
 #' @rdname plot_occurrences
 #' @export
 mapview_scenarios <- function(i, variables_selected = NULL, scenario = NULL) {
+  .check_suggested("mapview", "mapview_scenarios")
   assert_subset_cli(class(i), c("input_sdm", "sdm_area"))
   assert_subset_cli(variables_selected, c(get_predictor_names(i), "vif", "pca"))
   assert_subset_cli(scenario, scenarios_names(i))
@@ -449,6 +452,7 @@ mapview_scenarios <- function(i, variables_selected = NULL, scenario = NULL) {
 #' @rdname plot_occurrences
 #' @export
 mapview_predictions <- function(i, spp_name = NULL, scenario = NULL, id = NULL) {
+  .check_suggested("mapview", "mapview_predictions")
   assert_class_cli(i, "input_sdm")
 
   x <- i$predictions
@@ -477,6 +481,7 @@ mapview_predictions <- function(i, spp_name = NULL, scenario = NULL, id = NULL) 
 #' @rdname plot_occurrences
 #' @export
 mapview_ensembles <- function(i, spp_name = NULL, scenario = NULL, id = NULL, ensemble_type = "average") {
+  .check_suggested("mapview", "mapview_ensembles")
   assert_class_cli(i, "input_sdm")
   x <- i$predictions
   valid_spp <- names(x$predictions[[1]])

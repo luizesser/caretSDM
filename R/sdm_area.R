@@ -57,17 +57,12 @@
 #' @importFrom cli cli_abort cli_inform cli_warn
 #' @importFrom dplyr setdiff select all_of any_of join_by relocate mutate arrange desc filter
 #' group_by reframe across inner_join join_by distinct n rename row_number where
-#' @importFrom checkmate test_class makeAssertCollection test_list
+#' @importFrom checkmate makeAssertCollection test_list
 #' @importFrom tidyr drop_na
 #' @importFrom fs path dir_exists dir_delete dir_create dir_ls path_file path_ext_remove
 #' @importFrom purrr map map_chr compact list_rbind detect_index
-#' @importFrom future plan multisession sequential
-#' @importFrom parallelly availableCores
-#' @importFrom progressr handlers progressor
 #' @importFrom glue glue
-#' @importFrom furrr future_map2
 #' @importFrom stringr str_replace_all str_replace
-#' @importFrom lwgeom st_split
 #' @importFrom stats setNames
 #' @importFrom methods as
 #' @importFrom utils file_test
@@ -470,7 +465,7 @@ sdm_area.stars <- function(x, cell_size = NULL, crs = NULL, variables_selected =
   var_names <- ""
   file_list <- ""
   del_in_dir <- FALSE
-  if (checkmate::test_class(x, "stars", ordered = TRUE)) {
+  if (checkCLI::check_class_cli(x, "stars", ordered = TRUE) == TRUE) {
     tryCatch(
       {
         fs::dir_create(in_dir)
@@ -681,7 +676,7 @@ sdm_area.sf <- function(x, cell_size = NULL, crs = NULL, variables_selected = NU
   }
 
   sa <- .detect_sdm_area(x, cell_size, crs, gdal, lines_as_sdm_area)
-  if (checkmate::test_class(sa, "sdm_area")){
+  if (checkCLI::check_class_cli(sa, "sdm_area") == TRUE){
     return(invisible(sa))
   }
 
@@ -757,6 +752,7 @@ sdm_area.sf <- function(x, cell_size = NULL, crs = NULL, variables_selected = NU
 }
 
 .sdm_area_from_sf_using_gdal <- function(x, cell_size = NULL, crs = NULL) {
+  .check_suggested("progressr", "sdm_area")
   in_dir <- fs::path(
     tempdir(),
     Sys.time() |> as.integer() |> as.character(),
@@ -942,6 +938,10 @@ sdm_area.sf <- function(x, cell_size = NULL, crs = NULL, variables_selected = NU
   is_linestring <- .is_line_string(x)
 
   if (has_num_cols) {
+    .check_suggested("furrr", "sdm_area")
+    .check_suggested("parallelly", "sdm_area")
+    .check_suggested("progressr", "sdm_area")
+    .check_suggested("future", "sdm_area")
     int_list <- grd |>
       sf::st_intersects(x) |>
       stats::setNames(seq(1, nrow(grd))) |>
@@ -1061,6 +1061,7 @@ sdm_area.sf <- function(x, cell_size = NULL, crs = NULL, variables_selected = NU
         #}
         #print(sf::st_geometry(intersecting_grids))
         # Split line by grid boundaries
+        .check_suggested("lwgeom", "sdm_area with lines_as_sdm_area = TRUE")
         suppressWarnings(split_lines <- lwgeom::st_split(sf::st_geometry(line), intersecting_grids) |>
           sf::st_collection_extract("LINESTRING") |>
           sf::st_as_sf() |>

@@ -27,7 +27,6 @@
 #' ## Run function:
 #' #oc <- GBIF_data(s)
 #'
-#' @importFrom rgbif occ_data
 #' @importFrom dplyr bind_rows
 #' @importFrom stats na.omit
 #' @importFrom utils head write.csv read.csv
@@ -35,6 +34,7 @@
 #'
 #' @export
 GBIF_data <- function(s, file = NULL, as_df = FALSE, ...) {
+  .check_suggested("rgbif", "GBIF_data")
   assert_logical_cli(
     as_df,
     any.missing = FALSE,

@@ -56,7 +56,6 @@
 #' #               resolution = 10)
 #'
 #'
-#' @importFrom httr2 request req_url req_error req_perform resp_is_error resp_status
 #' @importFrom cli cli_alert_warning cli_abort cli_inform
 #' @importFrom utils unzip
 #' @import checkCLI
@@ -69,7 +68,7 @@ WorldClim_data <- function(path = NULL,
                            gcm = "mi",
                            ssp = "585",
                            resolution = 10) {
-
+  .check_suggested("httr2", "WorldClim_data")
   ## argument checks (unchanged)
   if (!all(period %in% c("current", "future"))) {
     cli::cli_abort(c(

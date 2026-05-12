@@ -16,7 +16,6 @@
 #'
 #' @importFrom ggplot2 ggplot aes xlab ylab ggtitle geom_point scale_color_manual
 #' @importFrom raster extract
-#' @importFrom Rtsne Rtsne
 #' @importFrom dplyr select filter all_of
 #' @importFrom sf st_as_sf
 #'
@@ -24,6 +23,7 @@
 #'
 #' @export
 tsne_sdm <- function(occ, pred = NULL, variables_selected = NULL) {
+  .check_suggested("Rtsne", "tsne_sdm")
   if (is_input_sdm(occ)) {
     y <- occ$occurrences
     pred <- occ$predictors

@@ -1,7 +1,7 @@
 Type: Package
 Package: caretSDM
 Title: Build Species Distribution Modeling using 'caret'
-Version: 1.8.3
+Version: 1.9
 Authors@R: c(
     person("Luíz Fernando", "Esser", , "luizesser@gmail.com", role = c("aut", "cre", "cph"),
            comment = c(ORCID = "0000-0003-2982-7223")),
@@ -24,7 +24,6 @@ Description: Use machine learning algorithms and advanced geographic information
 License: MIT + file LICENSE
 BugReports: https://github.com/luizesser/caretSDM/issues
 Imports:
-    blockCV,
     caret,
     checkCLI,
     checkmate,
@@ -36,25 +35,16 @@ Imports:
     ECDFniche,
     ecospat,
     fs,
-    furrr,
-    future,
     ggplot2,
     ggspatial,
     glue,
     gtools,
-    httr2,
     lwgeom,
-    mapview,
     maxnet,
     methods,
-    parallelly,
-    pdp,
     pROC,
-    progressr,
     purrr,
     raster,
-    rgbif,
-    Rtsne,
     sf,
     stars,
     stats,
@@ -62,7 +52,6 @@ Imports:
     stringr,
     terra,
     tidyr,
-    usdm,
     utils
 Encoding: UTF-8
 LazyData: true
@@ -70,26 +59,37 @@ RoxygenNote: 7.3.3
 Suggests: 
     bench,
     biomod2,
+    blockCV,
     gbm,
     cito,
     covr,
     e1071,
     earth,
+    furrr,
+    future,
     gam,
     here,
+    httr2,
     kknn,
     knitr,
+    mapview,
     mda,
     naivebayes,
     nnet,
+    parallelly,
+    pdp,
+    progressr,
     R.utils,
     randomForest,
+    rgbif,
     rmarkdown,
     roxyglobals,
     rpart,
     RSNNS,
+    Rtsne,
     sdm,
     tibble,
+    usdm,
     withr,
     xgboost,
     testthat (>= 3.0.0)

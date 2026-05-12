@@ -48,7 +48,6 @@
 #' vif_summary(i)
 #' selected_variables(i)
 #'
-#' @importFrom usdm vifcor
 #' @importFrom dplyr filter select mutate_if all_of
 #' @importFrom sf st_centroid st_as_sf
 #' @importFrom stars st_extract
@@ -56,6 +55,7 @@
 #'
 #' @export
 vif_predictors <- function(pred, area = "all", th = 0.5, maxobservations = 5000, variables_selected = NULL) {
+  .check_suggested("usdm", "vif_predictors")
   assert_class_cli(pred, "input_sdm")
   assert_subset_cli("predictors", names(pred), empty.ok = FALSE)
   assert_class_cli(pred$predictors, "sdm_area")

@@ -94,3 +94,7 @@
 # caretSDM 1.8.3
 
 -   Inclusion of ECDFniche to provide the mahalanobis distance method.
+
+# caretSDM 1.9
+
+-   Some packages were moved from Imports do Suggestions and now are used conditionally along the package functions.

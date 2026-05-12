@@ -19,33 +19,33 @@
 #' @author Luíz Fernando Esser (luizesser@gmail.com)
 #' https://luizfesser.wordpress.com
 #'
-#' @importFrom checkmate test_class
+#' @import checkCLI
 #'
 #' @export
 is_input_sdm <- function(x) {
-  return(checkmate::test_class(x, classes = "input_sdm", null.ok = FALSE))
+  return(checkCLI::check_class_cli(x, classes = "input_sdm", null.ok = FALSE) == TRUE)
 }
 
 #' @rdname is_input_sdm
 #' @export
 is_sdm_area <- function(x) {
-  return(checkmate::test_class(x, classes = "sdm_area", null.ok = FALSE))
+  return(checkCLI::check_class_cli(x, classes = "sdm_area", null.ok = FALSE) == TRUE)
 }
 
 #' @rdname is_input_sdm
 #' @export
 is_occurrences <- function(x) {
-  return(checkmate::test_class(x, classes = "occurrences", null.ok = FALSE))
+  return(checkCLI::check_class_cli(x, classes = "occurrences", null.ok = FALSE) == TRUE)
 }
 
 #' @rdname is_input_sdm
 #' @export
 is_models <- function(x) {
-  return(checkmate::test_class(x, classes = "models", null.ok = FALSE))
+  return(checkCLI::check_class_cli(x, classes = "models", null.ok = FALSE) == TRUE)
 }
 
 #' @rdname is_input_sdm
 #' @export
 is_predictions <- function(x) {
-  return(checkmate::test_class(x, classes = "predictions", null.ok = FALSE))
+  return(checkCLI::check_class_cli(x, classes = "predictions", null.ok = FALSE) == TRUE)
 }

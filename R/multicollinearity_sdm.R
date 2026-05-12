@@ -69,7 +69,6 @@
 #'   return(selected)
 #' }
 #'
-#' @importFrom usdm vifcor vifstep
 #' @importFrom dplyr filter select mutate_if all_of
 #' @importFrom sf st_centroid st_as_sf
 #' @importFrom stars st_extract
@@ -102,7 +101,9 @@ multicollinearity_sdm <- function(pred,
   if (is.character(method)) {
 
     assert_subset_cli(method, c("vifcor", "vifstep", "pca"))
-
+    if (method %in% c("vifcor", "vifstep")) {
+      .check_suggested("usdm", "multicollinearity_sdm")
+    }
     if (method == "vifcor") {
       assert_numeric_cli(th, len = 1, null.ok = FALSE, upper = 1, lower = 0, any.missing = FALSE)
       v <- x$grid |>

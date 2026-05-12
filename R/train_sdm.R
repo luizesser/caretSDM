@@ -92,11 +92,9 @@
 #' @importFrom sf st_centroid st_as_sf st_join st_intersection st_geometry_type
 #' @importFrom dplyr arrange select filter all_of bind_cols summarise group_by across everything mutate
 #' @importFrom raster extract
-#' @importFrom pROC roc
 #' @importFrom caret train trainControl
 #' @importFrom stars st_extract
 #' @importFrom utils combn
-#' @importFrom blockCV cv_spatial cv_cluster
 #' @importFrom cli cli_abort
 #' @import checkCLI
 #'
@@ -125,7 +123,9 @@ train_sdm <- function(occ, pred = NULL, algo, ctrl = NULL, variables_selected = 
       method = "repeatedcv", number = 4, repeats = 1, classProbs = TRUE, returnResamp = "all",
       summaryFunction = summary_sdm, savePredictions = "all", allowParallel = FALSE)
   }
-
+  if (ctrl$method %in% c("cv_spatial", "cv_cluster")) {
+    .check_suggested("blockCV", "train_sdm with ctrl$method = 'cv_spatial' or 'cv_cluster'")
+  }
   assert_subset_cli(variables_selected, c(get_predictor_names(pred), "vif", "pca"), empty.ok = TRUE)
 
   if (is_sdm_area(pred)) {
