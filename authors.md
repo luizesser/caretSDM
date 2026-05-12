@@ -21,7 +21,7 @@
 ## Citation
 
 Source:
-[`DESCRIPTION`](https://github.com/luizesser/caretSDM/blob/main/DESCRIPTION)
+[`DESCRIPTION`](https://github.com/luizesser/caretSDM/blob/v.1.8.3/DESCRIPTION)
 
 Esser L, Ré R, R. Lima M, Couto E, Hilário Delconte Ferreira J, Batista
 V, Bailly D (2026). *caretSDM: Build Species Distribution Modeling using

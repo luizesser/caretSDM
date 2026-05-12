@@ -71,9 +71,9 @@
                         <h4 data-toc-skip class="author">Luíz Fernando
 Esser</h4>
             
-            <h4 data-toc-skip class="date">2026-05-05</h4>
+            <h4 data-toc-skip class="date">2026-05-12</h4>
       
-      <small class="dont-index">Source: <a href="https://github.com/luizesser/caretSDM/blob/main/vignettes/articles/8_runtime-benchmark.Rmd" class="external-link"><code>vignettes/articles/8_runtime-benchmark.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/luizesser/caretSDM/blob/v.1.8.3/vignettes/articles/8_runtime-benchmark.Rmd" class="external-link"><code>vignettes/articles/8_runtime-benchmark.Rmd</code></a></small>
       <div class="d-none name"><code>8_runtime-benchmark.Rmd</code></div>
     </div>
 
@@ -629,33 +629,33 @@ to avoid first-run overhead (e.g. package initialization).</p>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 3 × 6</span></span></span>
 <span><span class="co">#&gt;   expression      min   median `itr/sec` mem_alloc `gc/sec`</span></span>
 <span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;bch:expr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;bch:tm&gt;</span> <span style="color: #949494; font-style: italic;">&lt;bch:tm&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;bch:byt&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> biomod2     159.6ms 160.38ms     6.04     7.76MB     1.21</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> sdm         129.6ms 131.21ms     7.36     6.02MB     1.47</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> caretSDM       1.6s    1.61s     0.617    7.21MB     1.73</span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> biomod2    162.29ms    165ms     5.91     7.76MB     1.18</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> sdm        133.97ms 138.09ms     7.07     6.02MB     1.41</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> caretSDM      1.62s    1.67s     0.602    7.21MB     1.56</span></span></code></pre></div>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">bench_res_fit</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 3 × 6</span></span></span>
 <span><span class="co">#&gt;   expression      min   median `itr/sec` mem_alloc `gc/sec`</span></span>
 <span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;bch:expr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;bch:tm&gt;</span> <span style="color: #949494; font-style: italic;">&lt;bch:tm&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;bch:byt&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> biomod2       7.87s    7.98s    0.121  1010.84MB    0.531</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> sdm           16.1s    16.2s    0.061<span style="text-decoration: underline;">8</span>    2.18GB    0.433</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> caretSDM     21.16s   23.01s    0.040<span style="text-decoration: underline;">3</span>  805.03MB    0.871</span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> biomod2       7.95s    8.03s    0.120   1011.5MB    0.551</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> sdm           16.3s   16.32s    0.061<span style="text-decoration: underline;">1</span>    2.17GB    0.476</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> caretSDM     22.52s      24s    0.040<span style="text-decoration: underline;">5</span>  805.28MB    0.916</span></span></code></pre></div>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">bench_res_post</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 3 × 6</span></span></span>
 <span><span class="co">#&gt;   expression      min   median `itr/sec` mem_alloc `gc/sec`</span></span>
 <span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;bch:expr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;bch:tm&gt;</span> <span style="color: #949494; font-style: italic;">&lt;bch:tm&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;bch:byt&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> biomod2       10.3s   10.69s    0.094<span style="text-decoration: underline;">5</span>   952.3MB   0.435 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> sdm             17s   17.22s    0.058<span style="text-decoration: underline;">0</span>   560.2MB   0.011<span style="text-decoration: underline;">6</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> caretSDM         1s    1.02s    0.983     44.8MB   0</span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> biomod2       9.76s   10.39s    0.095<span style="text-decoration: underline;">8</span>   960.6MB    0.364</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> sdm          17.12s   17.25s    0.057<span style="text-decoration: underline;">3</span>   560.1MB    0    </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> caretSDM      1.01s    1.04s    0.950     44.9MB    0</span></span></code></pre></div>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">bench_res_complete</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 3 × 6</span></span></span>
 <span><span class="co">#&gt;   expression      min   median `itr/sec` mem_alloc `gc/sec`</span></span>
 <span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;bch:expr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;bch:tm&gt;</span> <span style="color: #949494; font-style: italic;">&lt;bch:tm&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;bch:byt&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> biomod2       17.8s    18.9s    0.052<span style="text-decoration: underline;">7</span>    1.92GB   0.569 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> sdm           38.8s    39.2s    0.025<span style="text-decoration: underline;">5</span>    2.97GB   0.076<span style="text-decoration: underline;">4</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> caretSDM      23.1s    27.4s    0.037<span style="text-decoration: underline;">7</span>   857.2MB   0.882</span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> biomod2       18.2s      19s    0.051<span style="text-decoration: underline;">3</span>    1.91GB   0.400 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> sdm           40.2s    40.7s    0.024<span style="text-decoration: underline;">5</span>    2.92GB   0.073<span style="text-decoration: underline;">4</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> caretSDM        23s    28.3s    0.036<span style="text-decoration: underline;">4</span>  859.75MB   0.801</span></span></code></pre></div>
 <p>The table above summarizes the median runtime, iteration rate, and
 memory allocation for each package under identical conditions.</p>
 <hr>
@@ -829,8 +829,8 @@ some coding or function from sdm and/or biomod2, please contact me on <a href="m
 <span><span class="co">#&gt; [22] mgcv_1.9-4           nlme_3.1-169         gam_1.22-7          </span></span>
 <span><span class="co">#&gt; [25] foreach_1.5.2        mda_0.5-5            class_7.3-23        </span></span>
 <span><span class="co">#&gt; [28] cito_1.1             rpart_4.1.27         nnet_7.3-20         </span></span>
-<span><span class="co">#&gt; [31] biomod2_4.3-4-5      bench_1.1.4          sf_1.1-0            </span></span>
-<span><span class="co">#&gt; [34] terra_1.9-11        </span></span>
+<span><span class="co">#&gt; [31] biomod2_4.3-4-5      bench_1.1.4          sf_1.1-1            </span></span>
+<span><span class="co">#&gt; [34] terra_1.9-27        </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; loaded via a namespace (and not attached):</span></span>
 <span><span class="co">#&gt;   [1] blockCV_3.2-0           rnaturalearth_1.2.0     R.oo_1.27.1            </span></span>
@@ -859,7 +859,7 @@ some coding or function from sdm and/or biomod2, please contact me on <a href="m
 <span><span class="co">#&gt;  [70] CoordinateCleaner_3.0.1 timechange_0.4.0        R6_2.6.1               </span></span>
 <span><span class="co">#&gt;  [73] wk_0.9.5                textshaping_1.0.5       gtools_3.9.5           </span></span>
 <span><span class="co">#&gt;  [76] R.methodsS3_1.8.2       utf8_1.2.6              tidyr_1.3.2            </span></span>
-<span><span class="co">#&gt;  [79] generics_0.1.4          data.table_1.18.2.1     recipes_1.3.2          </span></span>
+<span><span class="co">#&gt;  [79] generics_0.1.4          data.table_1.18.4       recipes_1.3.2          </span></span>
 <span><span class="co">#&gt;  [82] httr_1.4.8              htmlwidgets_1.6.4       whisker_0.4.1          </span></span>
 <span><span class="co">#&gt;  [85] ModelMetrics_1.2.2.2    pkgconfig_2.0.3         gtable_0.3.6           </span></span>
 <span><span class="co">#&gt;  [88] timeDate_4052.112       S7_0.2.2                furrr_0.4.0            </span></span>
