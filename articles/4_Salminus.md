@@ -1229,5 +1229,5 @@ species using a grid simplefeatures instead of lines.
 
 end_time <- Sys.time()
 end_time - start_time
-#> Time difference of 40.58219 secs
+#> Time difference of 37.30217 secs
 ```
