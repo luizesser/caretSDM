@@ -18,3 +18,5 @@
   caretSDM](https://luizesser.github.io/caretSDM/articles/7_maxent.md):
 - [8. Benchmarking SDM Package Performance in
   R](https://luizesser.github.io/caretSDM/articles/8_runtime-benchmark.md):
+- [9. Comparing Pseudoabsence Methods in Species Distribution
+  Modelling](https://luizesser.github.io/caretSDM/articles/9_pseudoabsence_comparison.md):

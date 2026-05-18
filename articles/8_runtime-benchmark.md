@@ -575,9 +575,9 @@ bench_res_prep
 #> # A tibble: 3 × 6
 #>   expression      min   median `itr/sec` mem_alloc `gc/sec`
 #>   <bch:expr> <bch:tm> <bch:tm>     <dbl> <bch:byt>    <dbl>
-#> 1 biomod2    163.91ms  165.9ms     5.92     7.76MB     1.18
-#> 2 sdm        134.23ms  138.6ms     6.24     6.02MB     2.50
-#> 3 caretSDM      1.62s     1.7s     0.566    7.21MB     1.58
+#> 1 biomod2    168.19ms 170.27ms     5.37     7.76MB    2.15 
+#> 2 sdm        132.22ms 140.49ms     3.79     6.02MB    0.758
+#> 3 caretSDM      1.36s    1.37s     0.669    7.21MB    1.87
 ```
 
 ``` r
@@ -586,9 +586,9 @@ bench_res_fit
 #> # A tibble: 3 × 6
 #>   expression      min   median `itr/sec` mem_alloc `gc/sec`
 #>   <bch:expr> <bch:tm> <bch:tm>     <dbl> <bch:byt>    <dbl>
-#> 1 biomod2       7.91s    8.63s    0.115  1012.01MB    0.779
-#> 2 sdm          15.92s   16.03s    0.0624    2.19GB    0.437
-#> 3 caretSDM     21.53s   25.24s    0.0411  802.31MB    1.16
+#> 1 biomod2       8.06s    8.25s    0.121  1011.32MB    0.606
+#> 2 sdm          17.09s   17.43s    0.0565    2.17GB    0.339
+#> 3 caretSDM     21.24s   26.36s    0.0380  802.67MB    0.791
 ```
 
 ``` r
@@ -597,9 +597,9 @@ bench_res_post
 #> # A tibble: 3 × 6
 #>   expression      min   median `itr/sec` mem_alloc `gc/sec`
 #>   <bch:expr> <bch:tm> <bch:tm>     <dbl> <bch:byt>    <dbl>
-#> 1 biomod2       10.1s   10.36s    0.0946     957MB    0.492
-#> 2 sdm           16.1s   16.16s    0.0618     563MB    0    
-#> 3 caretSDM         1s    1.02s    0.940       45MB    0.188
+#> 1 biomod2      10.32s   10.56s    0.0935     953MB  0.430  
+#> 2 sdm           20.4s   20.86s    0.0480   560.1MB  0.00960
+#> 3 caretSDM      1.04s    1.06s    0.883     44.8MB  0.177
 ```
 
 ``` r
@@ -608,9 +608,9 @@ bench_res_complete
 #> # A tibble: 3 × 6
 #>   expression      min   median `itr/sec` mem_alloc `gc/sec`
 #>   <bch:expr> <bch:tm> <bch:tm>     <dbl> <bch:byt>    <dbl>
-#> 1 biomod2       18.1s    19.5s    0.0508    1.93GB   0.559 
-#> 2 sdm           39.3s    39.5s    0.0253    2.97GB   0.0910
-#> 3 caretSDM      23.9s      26s    0.0372  854.22MB   0.774
+#> 1 biomod2       19.4s      22s    0.0459    1.91GB   0.634 
+#> 2 sdm           45.8s    46.6s    0.0214    3.02GB   0.0726
+#> 3 caretSDM      25.3s    30.9s    0.0327  860.45MB   0.876
 ```
 
 The table above summarizes the median runtime, iteration rate, and
@@ -745,7 +745,7 @@ differences.
   hardware
 - If you want to see your package here or if you think I am missing some
   coding or function from sdm and/or biomod2, please contact me on
-  <luizesser@gmail.com>.
+  \[authors name\]@gmail.com.
 
 ------------------------------------------------------------------------
 
@@ -779,7 +779,7 @@ sessionInfo()
 #>  [1] caret_7.0-1          lattice_0.22-9       ggplot2_4.0.3       
 #>  [4] kernlab_0.9-33       glmnet_5.0           Matrix_1.7-5        
 #>  [7] dismo_1.3-16         raster_3.6-32        sp_2.2-1            
-#> [10] RSNNS_0.4-18         Rcpp_1.1.1-1.1       caretSDM_1.9        
+#> [10] RSNNS_0.4-18         Rcpp_1.1.1-1.1       caretSDM_1.9.1      
 #> [13] sdm_1.2-59           xgboost_3.2.1.1      randomForest_4.7-1.2
 #> [16] maxnet_0.1.4         earth_5.3.5          plotmo_3.7.0        
 #> [19] plotrix_3.8-14       Formula_1.2-5        gbm_2.2.3           
@@ -796,7 +796,7 @@ sessionInfo()
 #>  [10] rmarkdown_2.31          fs_2.1.0                ragg_1.5.2             
 #>  [13] vctrs_0.7.3             htmltools_0.5.9         polynom_1.4-1          
 #>  [16] s2_1.1.9                pROC_1.19.0.1           parallelly_1.47.0      
-#>  [19] sass_0.4.10             KernSmooth_2.23-26      bslib_0.10.0           
+#>  [19] sass_0.4.10             KernSmooth_2.23-26      bslib_0.11.0           
 #>  [22] htmlwidgets_1.6.4       desc_1.4.3              plyr_1.8.9             
 #>  [25] stars_0.7-2             lubridate_1.9.5         cachem_1.1.0           
 #>  [28] whisker_0.4.1           lifecycle_1.0.5         iterators_1.0.14       
@@ -807,7 +807,7 @@ sessionInfo()
 #>  [43] proxy_0.4-29            withr_3.0.2             bit64_4.8.0            
 #>  [46] S7_0.2.2                backports_1.5.1         DBI_1.3.0              
 #>  [49] R.utils_2.13.0          ecospat_4.1.3           MASS_7.3-65            
-#>  [52] lava_1.9.0              classInt_0.4-11         ggpp_0.6.0             
+#>  [52] lava_1.9.1              classInt_0.4-11         ggpp_0.6.0             
 #>  [55] gtools_3.9.5            ModelMetrics_1.2.2.2    oai_0.4.0              
 #>  [58] tools_4.6.0             units_1.0-1             otel_0.2.0             
 #>  [61] rgbif_3.8.5             future.apply_1.20.2     R.oo_1.27.1            

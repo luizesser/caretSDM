@@ -334,6 +334,8 @@ sa <- add_scenarios(sa,
 #> ℹ Using GDAL to make the grid and resample the variables.
 #> ! Making grid over the study area is an expensive task. Please, be patient!
 #> ℹ Using GDAL to make the grid and resample the variables.
+#> Reescaling data ■■■■■■■■■■■■■■■■                  50% | ETA:  2s
+#> 
 #> ! Making grid over the study area is an expensive task. Please, be patient!
 #> ℹ Using GDAL to make the grid and resample the variables.
 #> ! Making grid over the study area is an expensive task. Please, be patient!
@@ -1229,5 +1231,5 @@ species using a grid simplefeatures instead of lines.
 
 end_time <- Sys.time()
 end_time - start_time
-#> Time difference of 37.30217 secs
+#> Time difference of 37.77226 secs
 ```
