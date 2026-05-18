@@ -98,3 +98,7 @@
 # caretSDM 1.9
 
 -   Some packages were moved from Imports do Suggestions and now are used conditionally along the package functions.
+
+# caretSDM 1.9.1
+
+-   The process now accepts that models can fail.

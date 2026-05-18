@@ -1,0 +1,379 @@
+---
+title: "9. Comparing Pseudoabsence Methods in Species Distribution Modelling"
+author: "[author name]"
+date: "`r Sys.Date()`"
+output:
+  pdf_document:
+    toc: true
+    toc_depth: '3'
+  html_document:
+    toc: true
+    toc_float: true
+    toc_depth: 3
+    theme: flatly
+    highlight: tango
+    code_folding: show
+    df_print: paged
+vignette: "%\\VignetteIndexEntry{9. Comparing Pseudoabsence Methods in Species Distribution Modelling} %\\VignetteEncoding{UTF-8}
+  %\\VignetteEngine{knitr::knitr}\n"
+editor_options:
+  markdown:
+    wrap: 100
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo    = TRUE,
+  message = FALSE,
+  warning = FALSE,
+  fig.align = "center",
+  fig.width = 8,
+  fig.height = 5
+)
+```
+
+------------------------------------------------------------------------
+
+## Overview
+
+This document compares four **pseudoabsence generation strategies** for
+modelling the distribution of *Araucaria angustifolia* (Brazilian pine),
+a critically endangered conifer endemic to the Atlantic Forest and
+Southern Cone. Pseudoabsences — locations assumed to be unoccupied — are
+required by most SDM algorithms that expect both presence and absence
+records. Their placement profoundly influences model performance and
+spatial predictions.
+
+The three strategies evaluated here are:
+
+| Strategy | Key assumption |
+|-------------------------|-----------------------------------------------|
+| **Random** | Absences can occur anywhere in the study area |
+| **Environmental constraint (BIOCLIM/SRE)** | Absences are drawn from regions outside a surface range envelope |
+| **Geographic constraint** | Absences must be separated from presences by a minimum distance |
+
+All other modelling decisions (algorithms, cross-validation scheme,
+predictor selection) are held constant so that observed differences in
+the final maps are attributable solely to the pseudoabsence approach.
+
+------------------------------------------------------------------------
+
+## 1 · Setup
+
+### 1.1 Load package
+
+```{r packages}
+library(caretSDM)
+library(ggplot2)
+```
+
+### 1.2 Load built-in data
+
+`caretSDM` ships with occurrence records and a set of bioclimatic
+predictors for *A. angustifolia*. We load them here and take a quick
+look at their structure.
+
+```{r occ}
+# Occurrence records: a data.frame with columns lon, lat
+head(occ)
+
+# Build occurrences_sdm object
+oc <- occurrences_sdm(occ, crs = 6933)
+```
+
+```{r bioc}
+# Bioclimatic data covering the species' range retrieved using the following code:
+WorldClim_data("current", variable = "bioc", resolution = 10)
+
+# Import bioclimatic data
+bioc <- raster::stack(list.files("current", pattern = ".tif", full.names=T)[c(1,14,4)])
+names(bioc) <- c("bio1", "bio4", "bio12")
+
+# Build sdm_area object
+sa <- sdm_area(bioc, crs = 4326, crop_by = buffer_sdm(occ, size = 500000, crs = 6933)) |> 
+  add_scenarios()
+```
+
+------------------------------------------------------------------------
+
+## 2 · Standardised modelling workflow
+
+A helper function encapsulates the entire pipeline — from constructing
+the `sdm_area` object through to a final continuous suitability map. The
+only argument that changes across runs is `pseudoabsence_method`, which 
+controls how pseudoabsences are generated.
+
+```{r workflow-function}
+# Build workflow function
+run_sdm <- function(pseudoabsence_method, ...) {
+    set.seed(1)
+  # Merge sdm_area and occurrences_sdm and perform pre-processing, processing and projecting.
+  i <- input_sdm(oc, sa) |> 
+    data_clean() |> 
+    multicollinearity_sdm(method = "vifcor", th = 0.5) |> 
+    pseudoabsences(method = pseudoabsence_method, 
+                   variables_selected = "vif", ...) |> 
+    train_sdm(algo = c("naive_bayes", "kknn", "svmRadial", "nnet", "rf", "fda", "glm"), 
+              ctrl = caret::trainControl(method = "repeatedcv", 
+                                         number = 4, 
+                                         repeats = 10, 
+                                         classProbs = TRUE, 
+                                         returnResamp = "all", 
+                                         summaryFunction = summary_sdm, 
+                                         savePredictions = "all"), 
+              variables_selected = "vif") |> 
+    predict_sdm(th = 0.9) |> 
+    ensemble_sdm()
+  return(i)
+}
+```
+
+------------------------------------------------------------------------
+
+## 3 · Run models with each pseudoabsence strategy
+
+Each call below is identical except for `pseudoabsence_method`. The geographic
+constraint is applied as a custom method, with a 2-degree buffer around presences. 
+The random and Bioclim (SRE) methods are built into `caretSDM` and can be invoked by name.
+
+```{r run-models, echo=TRUE, results='hide', warning=FALSE, message=FALSE}
+# Run workflow with random pseudoabsences
+sdm_random   <- run_sdm(pseudoabsence_method = "random")
+
+# Run workflow with pseudoabsences obtained outside a bioclim (SRE) envelope
+sdm_bioclim  <- run_sdm(pseudoabsence_method = "bioclim")
+
+# Run workflow with a custom pseudoabsences method, creating a 2-degree-wide buffer.
+buffer_pa_custom <- function(env_sf, occ_sf, buffer_dist = 2) {
+  sf::sf_use_s2(FALSE) # Disable s2 geometry for buffering
+  # Create buffer around occurrence points
+  buffer <- sf::st_buffer(occ_sf, dist = buffer_dist)
+  
+  # Union buffers into a single geometry
+  buffer_union <- sf::st_union(buffer)
+  
+  # Identify cells outside the buffer
+  outside_buffer <- sf::st_difference(env_sf, buffer_union)[,1]
+
+  # Randomly extract cell_ids outside the buffer
+  pa_ids_sample <- sample(outside_buffer$cell_id, nrow(occ_sf))
+  
+  return(pa_ids_sample)
+}
+sdm_buffer    <- run_sdm(pseudoabsence_method = buffer_pa_custom)
+```
+
+------------------------------------------------------------------------
+
+## 4 · Evaluate model performance
+
+Cross-validated performance metrics (ROC/AUC) are extracted for each
+run. Because all other settings are fixed, differences in these metrics
+reflect the influence of pseudoabsence placement on model calibration.
+
+```{r performance}
+# Extract cross-validated metrics stored inside each sdm object
+perf_random  <- get_validation_metrics(sdm_random)[[1]] |> 
+  as.data.frame() |>
+  dplyr::mutate(method = "Random") |> 
+  dplyr::select(c("method", "algo", "ROC", "ROCSD"))
+
+perf_bioclim <- get_validation_metrics(sdm_bioclim)[[1]]|> 
+  as.data.frame() |> 
+  dplyr::mutate(method = "Environmental Constrain") |>
+  dplyr::select(c("method", "algo", "ROC", "ROCSD"))
+  
+
+perf_buffer   <- get_validation_metrics(sdm_buffer)[[1]]  |> 
+  as.data.frame() |> 
+  dplyr::mutate(method = "Geographical Constrain") |>
+  dplyr::select(c("method", "algo", "ROC", "ROCSD"))
+
+perf_all <- dplyr::bind_rows(perf_random, perf_bioclim, perf_buffer)
+
+# Show mean values:
+# Extract cross-validated metrics stored inside each sdm object
+mean_perf_random  <- mean_validation_metrics(sdm_random)[[1]] |> 
+  as.data.frame() |>
+  dplyr::mutate(method = "Random") |> 
+  dplyr::select(c("method", "algo", "ROC", "ROCSD"))
+
+mean_perf_bioclim <- mean_validation_metrics(sdm_bioclim)[[1]]|> 
+  as.data.frame() |> 
+  dplyr::mutate(method = "Environmental Constrain") |>
+  dplyr::select(c("method", "algo", "ROC", "ROCSD"))
+  
+
+mean_perf_buffer   <- mean_validation_metrics(sdm_buffer)[[1]]  |> 
+  as.data.frame() |> 
+  dplyr::mutate(method = "Geographical Constrain") |>
+  dplyr::select(c("method", "algo", "ROC", "ROCSD"))
+
+mean_perf_all <- dplyr::bind_rows(mean_perf_random, mean_perf_bioclim, mean_perf_buffer)
+mean_perf_all
+```
+
+```{r performance-plot, fig.height=5, fig.width=7}
+# Visualise ROC/AUC distributions across folds per method and algorithm
+ggplot(perf_all, aes(x = algo, y = ROC, fill = method)) +
+  geom_boxplot(alpha = 0.75, outlier.size = 1.2) +
+  geom_hline(yintercept = 0.9, linetype = "dashed", colour = "grey40") +
+  scale_fill_manual(values = c("Random"                   = "#4DA6C8",
+                               "Environmental Constrain"    = "#E07B54",
+                               "Geographical Constrain" = "#6DBF67")) +
+  labs(
+    title    = expression(italic("Araucaria angustifolia") ~ "— ROC/AUC by pseudoabsence method"),
+    subtitle = "Dashed line: ROC/AUC = 0.9 (commonly used good-model threshold)",
+    x        = "Algorithm",
+    y        = "Validation Metric (ROC/AUC)",
+    fill     = "Pseudoabsence method"
+  ) +
+  theme_bw(base_size = 12) +
+  theme(legend.position = "bottom")
+```
+
+------------------------------------------------------------------------
+
+## 5 · Visualise suitability maps and pseudoabsence data
+
+Ensemble predictions for each method are plotted side by side so that
+spatial differences in predicted suitability can be assessed visually.
+
+```{r plot-random-e, fig.height=5, fig.width=8}
+plot_ensembles(sdm_random)
+```
+```{r plot-random-pa, fig.height=5, fig.width=8}
+plot_occurrences(sdm_random)
+```
+
+```{r plot-bioclim, fig.height=5, fig.width=8}
+plot_ensembles(sdm_bioclim)
+```
+
+```{r plot-bioclim-pa, fig.height=5, fig.width=8}
+plot_occurrences(sdm_bioclim)
+```
+
+```{r plot-buffer, fig.height=5, fig.width=8}
+plot_ensembles(sdm_buffer)
+```
+
+```{r plot-buffer-pa, fig.height=5, fig.width=8}
+plot_occurrences(sdm_buffer)
+```
+
+------------------------------------------------------------------------
+
+## 6 · Quantitative comparison of predictions
+
+### 6.1 Pearson correlation matrix
+
+Prediction values are extracted from all three rasters and organised
+into a single data frame. Only cells with complete data (no NAs) are
+retained. Pearson correlations between the three prediction surfaces 
+quantify the degree of agreement. High correlations suggest that the 
+choice of pseudoabsence method has limited impact on the spatial 
+structure of the final map; low correlations flag meaningful sensitivity 
+to this decision.
+
+```{r correlation-matrix}
+pred_vals <- data.frame(random = get_ensembles(sdm_random)[1,1][[1]][,"average"],
+                        bioclim = get_ensembles(sdm_bioclim)[1,1][[1]][,"average"],
+                        buffer   = get_ensembles(sdm_buffer)[1,1][[1]][,"average"]) 
+cor_mat <- cor(pred_vals, method = "pearson") |> 
+  as.table() |>
+  as.data.frame()
+```
+
+```{r corrplot, fig.width=6, fig.height=5}
+ggplot2::ggplot(cor_mat, aes(Var1, Var2, fill = Freq)) +
+  geom_tile(color = "black") +
+  geom_text(aes(label = round(Freq, 2))) +
+  scale_fill_gradient2(
+    low = "#154360", mid = "#1ABC9C", high = "#FFC300",
+    midpoint = 0.95, limits = c(0.9, 1)
+  ) +
+  coord_fixed() +
+  theme_minimal() +
+  ylab("") +
+  xlab("")
+```
+
+### 6.2 Scatter plots
+
+Pairwise scatter plots reveal where predictions agree and where they
+diverge. Points above or below the 1:1 diagonal indicate cells where one
+method predicts higher suitability than the other.
+
+```{r scatterplots, fig.height=4, fig.width=5}
+ggplot(pred_vals, aes(x = random, y = bioclim)) +
+  geom_hex(bins = 60) +
+  geom_abline(slope = 1, intercept = 0, colour = "red", linetype = "dashed") +
+  scale_fill_viridis_c(option = "plasma", name = "Count") +
+  annotate("text", x = 0.7, y = 0.1,
+           label = paste0("r = ", round(cor_mat[2,3], 3)),
+           hjust = 0, size = 4, colour = "black",
+           fontface = "bold") +
+  labs(title = "Random vs. Environmental Constrain", x = "Random", y = "Environmental Constrain") +
+  theme_minimal(base_size = 11)
+```
+
+```{r scatterplots2, fig.height=4, fig.width=5}
+ggplot(pred_vals, aes(x = random, y = buffer)) +
+  geom_hex(bins = 60) +
+  geom_abline(slope = 1, intercept = 0, colour = "red", linetype = "dashed") +
+  scale_fill_viridis_c(option = "plasma", name = "Count") +
+  annotate("text", x = 0.7, y = 0.1,
+           label = paste0("r = ", round(cor_mat[3,3], 3)),
+           hjust = 0, size = 4, colour = "black",
+           fontface = "bold") +
+  labs(title = "Random vs. Geographical Constrain", x = "Random", y = "Geographical Constrain") +
+  theme_minimal(base_size = 11)
+```
+
+```{r scatterplots3, fig.height=4, fig.width=5}
+ggplot(pred_vals, aes(x = bioclim, y = buffer)) +
+  geom_hex(bins = 60) +
+  geom_abline(slope = 1, intercept = 0, colour = "red", linetype = "dashed") +
+  scale_fill_viridis_c(option = "plasma", name = "Count") +
+  annotate("text", x = 0.7, y = 0.1,
+           label = paste0("r = ", round(cor_mat[4,3], 3)),
+           hjust = 0, size = 4, colour = "black",
+           fontface = "bold") +
+  labs(title = "Environmental Constrain vs. Geographical Constrain",
+       x = "Environmental Constrain", y = "Geographical Constrain") +
+  theme_minimal(base_size = 11)
+```
+
+------------------------------------------------------------------------
+
+## 7 · Discussion
+
+**Performance differences.** Bioclim (SRE), the Environmental Constrain 
+method, tend to generate more ecologically realistic pseudoabsences
+because they avoid placing pseudoabsence points in areas environmentally
+similar to presences. This commonly results in inflated but potentially
+biased ROC/AUC scores compared to the random approach. The same happens
+with the buffer method, which retrieves pseudoabsences  very far from
+presences, yelding drastically different environmental information.
+
+**Spatial congruence.** Pearson correlations between prediction surfaces
+reveal that the three strategies converge on similar spatial patterns,
+producing similar maps. High correlation (r > 0.95)
+suggests the spatial signal is robust to pseudoabsence choice.
+
+**Predictions differences.** Bioclim (SRE), probably due to its more 
+extreme approach, produces the most divergent predictions, with a larger 
+number of cells predicted as highly suitable (values > 0.7) compared to 
+the other two methods. The random method, by contrast, yields more 
+conservative predictions with fewer highly suitable cells. The buffer 
+method produces intermediate predictions, with a moderate number of 
+highly suitable cells.
+
+------------------------------------------------------------------------
+
+## Session information
+
+```{r session-info}
+sessionInfo()
+```

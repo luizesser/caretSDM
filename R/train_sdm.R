@@ -568,10 +568,12 @@ train_sdm <- function(occ, pred = NULL, algo, ctrl = NULL, variables_selected = 
                 algo_name <- .get_algo_name(a, algo2)
                 name <- .build_model_name(algo_name, "pa", j)
 
-                attr(model, "sdm_info") <- list(
-                  species = sp, type = "pa", dataset = j,
-                  algorithm = algo_name
-                )
+                if(!is.null(model)) {
+                  attr(model, "sdm_info") <- list(
+                    species = sp, type = "pa", dataset = j,
+                    algorithm = algo_name
+                  )
+                }
 
                 l_all[[name]] <- model
               }

@@ -1,8 +1,11 @@
 ---
 title: "8. Benchmarking SDM Package Performance in R"
-author: "Luíz Fernando Esser"
+author: '[author name]'
 date: "`r Sys.Date()`"
-output: 
+output:
+  pdf_document:
+    toc: true
+    toc_depth: '3'
   html_document:
     toc: true
     toc_float: true
@@ -11,10 +14,8 @@ output:
     highlight: tango
     code_folding: show
     df_print: paged
-vignette: >
-  %\VignetteIndexEntry{8. Benchmarking SDM Package Performance in R}
-  %\VignetteEncoding{UTF-8}
-  %\VignetteEngine{knitr::knitr}
+vignette: "%\\VignetteIndexEntry{8. Benchmarking SDM Package Performance in R} %\\VignetteEncoding{UTF-8}
+  %\\VignetteEngine{knitr::knitr}\n"
 editor_options:
   markdown:
     wrap: 100
@@ -622,7 +623,7 @@ This benchmark is fully reproducible and can be executed on any system with the 
 
 * No parallel processing was used
 * Performance may vary with dataset size, predictor dimensionality, and hardware
-* If you want to see your package here or if you think I am missing some coding or function from sdm and/or biomod2, please contact me on luizesser@gmail.com.
+* If you want to see your package here or if you think I am missing some coding or function from sdm and/or biomod2, please contact me on [authors name]@gmail.com.
 
 ---
 
