@@ -6,8 +6,8 @@
 \alias{add_sdm_area}
 \title{Create a \code{sdm_area} object}
 \usage{
-sdm_area(x, cell_size = NULL, crs = NULL, variables_selected = NULL,
-                gdal = TRUE, crop_by = NULL, lines_as_sdm_area = FALSE)
+sdm_area(x, cell_size = NULL, output_crs = NULL, variables_selected = NULL,
+                gdal = TRUE, crop_by = NULL, lines_as_sdm_area = FALSE, crs = NULL)
 
 get_sdm_area(i)
 
@@ -19,7 +19,7 @@ add_sdm_area(sa1, sa2)
 
 \item{cell_size}{\code{numeric}. The cell size to be used in models.}
 
-\item{crs}{\code{numeric}. Indicates which EPSG should the output grid be in. If \code{NULL},
+\item{output_crs}{\code{numeric}. Indicates which EPSG should the output grid be in. If \code{NULL},
 epsg from \code{x} is used.}
 
 \item{variables_selected}{A \code{character} vector with variables in \code{x} to be used in
@@ -32,6 +32,8 @@ If \code{NULL} (standard), all variables in \code{x} are used.}
 
 \item{lines_as_sdm_area}{Boolean. If \code{x} is a \code{sf} with LINESTRING geometry, it can be
 used to model species distribution in lines and not grid cells.}
+
+\item{crs}{Deprecated. Use output_crs instead.}
 
 \item{i}{A \code{sdm_area} or a \code{input_sdm} object.}
 
@@ -61,10 +63,10 @@ different areas.
 }
 \examples{
 # Create sdm_area object:
-sa_area <- sdm_area(parana, cell_size = 50000, crs = 6933)
+sa_area <- sdm_area(parana, cell_size = 50000, output_crs = 6933)
 
 # Create sdm_area using a subset of rivs (lines):
-sa_rivers <- sdm_area(rivs[c(1:100),], cell_size = 100000, crs = 6933, lines_as_sdm_area = TRUE)
+sa_rivers <- sdm_area(rivs[c(1:100),], cell_size = 100000, output_crs = 6933, lines_as_sdm_area = TRUE)
 
 }
 \seealso{

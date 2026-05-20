@@ -1,12 +1,12 @@
 test_that("change_sdm", {
   skip_on_cran()
   set.seed(1)
-  sa <- sdm_area(parana, cell_size = 100000, crs = 6933)
+  sa <- sdm_area(parana, cell_size = 100000, output_crs = 6933)
   sa <- add_predictors(sa, bioc)
   sa <- add_scenarios(sa, scen) |>
     select_predictors(c("bio1", "bio12")) |>
     suppressWarnings()
-  oc <- occurrences_sdm(occ, crs = 6933) |> join_area(sa)
+  oc <- occurrences_sdm(occ, occ_crs = 6933) |> join_area(sa)
   i <- input_sdm(oc, sa)
   i <- pseudoabsences(i, method="random", n_set = 2)
   ctrl_sdm <- caret::trainControl(method = "boot",

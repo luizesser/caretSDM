@@ -59,7 +59,7 @@
 # sdm_area - sdm_area para ser detectado com avisos
 
     Code
-      expect_equal(sa2 <- sdm_area(sa$grid, cell_size = 90000, crs = 5839), sa)
+      expect_equal(sa2 <- sdm_area(sa$grid, cell_size = 90000, output_crs = 5839), sa)
     Condition
       Warning:
       ! A sdm_area object was detected but some parameters are different. Please check it!

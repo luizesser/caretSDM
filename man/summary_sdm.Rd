@@ -40,7 +40,7 @@ See \code{?caret::defaultSummary} for more details and options to pass on
 }
 \examples{
 # Create sdm_area object:
-sa <- sdm_area(parana, cell_size = 100000, crs = 6933)
+sa <- sdm_area(parana, cell_size = 100000, output_crs = 6933)
 
 # Include predictors:
 sa <- add_predictors(sa, bioc) |> select_predictors(c("bio1", "bio12"))
@@ -49,7 +49,7 @@ sa <- add_predictors(sa, bioc) |> select_predictors(c("bio1", "bio12"))
 sa <- add_scenarios(sa)
 
 # Create occurrences:
-oc <- occurrences_sdm(occ, crs = 6933) |> join_area(sa)
+oc <- occurrences_sdm(occ, occ_crs = 6933)
 
 # Create input_sdm:
 i <- input_sdm(oc, sa)
@@ -67,7 +67,7 @@ ctrl_sdm <- caret::trainControl(method = "repeatedcv",
                                 savePredictions = "all")
 
 # Train models:
-i <- train_sdm(i, algo = c("naive_bayes"), ctrl=ctrl_sdm) |>
+i <- train_sdm(i, algo = c("naive_bayes"), ctrl = ctrl_sdm) |>
 suppressWarnings()
 
 }

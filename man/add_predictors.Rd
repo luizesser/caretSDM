@@ -44,7 +44,7 @@ predictors. They will be retrieved automatically from the \code{sdm_area} object
 }
 \examples{
 # Create sdm_area object:
-sa <- sdm_area(parana, cell_size = 25000, crs = 6933)
+sa <- sdm_area(parana, cell_size = 25000, output_crs = 6933)
 
 # Include predictors:
 sa <- add_predictors(sa, bioc)

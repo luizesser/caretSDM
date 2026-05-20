@@ -1,9 +1,9 @@
 test_that("pdp_sdm", {
   skip_on_cran()
-  sa <- sdm_area(parana, cell_size = 50000, crs = 6933)
+  sa <- sdm_area(parana, cell_size = 50000, output_crs = 6933)
   sa <- add_predictors(sa, bioc)
   sa <- select_predictors(sa, c("bio1", "bio12"))
-  i <- input_sdm(occurrences_sdm(occ, crs=6933), sa)
+  i <- input_sdm(occurrences_sdm(occ, occ_crs=6933), sa)
   i <- pseudoabsences(i, method="random", n_set = 3)
   suppressWarnings(i <- train_sdm(i, algo = c("naive_bayes", "kknn")))
   expect_error(pdp_sdm("i"))
@@ -48,10 +48,10 @@ test_that("pdp_sdm", {
 
 test_that("pdp_sdm", {
   skip_on_cran()
-  sa <- sdm_area(parana, cell_size = 50000, crs = 6933)
+  sa <- sdm_area(parana, cell_size = 50000, output_crs = 6933)
   sa <- add_predictors(sa, bioc)
   sa <- select_predictors(sa, c("bio1", "bio4", "bio12"))
-  i <- input_sdm(occurrences_sdm(occ, crs=6933), sa)
+  i <- input_sdm(occurrences_sdm(occ, occ_crs=6933), sa)
   i <- pseudoabsences(i, method="random", n_set = 3)
   i <- use_esm(i, n_records = 999)
   suppressWarnings(i <- train_sdm(i, algo = c("naive_bayes", "kknn")))

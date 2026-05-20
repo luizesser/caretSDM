@@ -99,19 +99,14 @@ if(!identical(Sys.getenv("NOT_CRAN"), "false")){
   test_that("occurrences - crs out of range", {
     tb <- tibble::tibble(decimalLatitude = runif(100), longitude = runif(100), sp = c(rep("Aa", 50),
                                                                               rep("Bb", 50)))
-    expect_error(occurrences_sdm(tb, crs = 1))
-  })
-
-  test_that("occurrences - crs not numeric", {
-    tb <- tibble::tibble(decimalLatitude = runif(100), longitude = runif(100), sp = c(rep("Aa", 50),
-                                                                              rep("Bb", 50)))
-    expect_error(occurrences_sdm(tb, crs = "a"))
+    expect_error(occurrences_sdm(tb, occ_crs = 1))
+    expect_error(occurrences_sdm(tb, occ_crs = "a"))
   })
 
   test_that("occurrences - valid crs", {
     tb <- tibble::tibble(decimalLatitude = runif(100), longitude = runif(100), sp = c(rep("Aa", 50),
                                                                               rep("Bb", 50)))
-    oc <- occurrences_sdm(tb, crs = 4326)
+    oc <- occurrences_sdm(tb, occ_crs = 4326)
     expect_true(oc$crs==4326)
   })
 
@@ -119,7 +114,7 @@ if(!identical(Sys.getenv("NOT_CRAN"), "false")){
     set.seed(1)
     tb <- tibble::tibble(decimalLatitude = runif(100), longitude = runif(100), sp = c(rep("Aa", 100)))
     indep_tb <- tibble::tibble(y = runif(100), x = runif(100), spp = c(rep("Aa", 100)))
-    oc <- occurrences_sdm(tb, independent_test = indep_tb, crs = 6933, independent_test_crs = 4326)
+    oc <- occurrences_sdm(tb, independent_test = indep_tb, occ_crs = 6933, independent_test_crs = 4326)
     s <- oc$occurrences
     expect_equal(as.character(sf::st_crs(oc$occurrences)[1]), "EPSG:6933")
     expect_equal(as.character(sf::st_crs(oc$independent_test)[1]), "EPSG:6933")
@@ -129,7 +124,7 @@ if(!identical(Sys.getenv("NOT_CRAN"), "false")){
     set.seed(1)
     tb <- tibble::tibble(decimalLatitude = runif(100), longitude = runif(100), sp = c(rep("Aa", 100)))
     indep_tb <- tibble::tibble(y = runif(100), x = runif(100), spp = c(rep("Aa", 100)))
-    expect_error(occurrences_sdm(tb, independent_test = indep_tb, crs = 6933))
+    expect_error(occurrences_sdm(tb, independent_test = indep_tb, occ_crs = 6933))
   })
 
   #### testar dados independentes
@@ -226,7 +221,7 @@ if(!identical(Sys.getenv("NOT_CRAN"), "false")){
     tb <- tibble::tibble(decimalLatitude = runif(100), longitude = runif(100), sp = c(rep("Aa", 100)))
     indep_sf <- tibble::tibble(decimalLatitude = runif(100), longitude = runif(100), sp = c(rep("Aa", 100)))
     indep_sf <- sf::st_as_sf(indep_sf, coords=colnames(indep_sf)[c(2,1)])
-    oc <- occurrences_sdm(tb, independent_test = indep_sf, crs=6933, independent_test_crs = 4326)
+    oc <- occurrences_sdm(tb, independent_test = indep_sf, occ_crs = 6933, independent_test_crs = 4326)
     expect_true(sf::st_crs(oc$independent_test) == sf::st_crs(oc$occurrences))
   })
 
@@ -235,7 +230,7 @@ if(!identical(Sys.getenv("NOT_CRAN"), "false")){
     indep_sf <- tibble::tibble(decimalLatitude = runif(100), longitude = runif(100), sp = c(rep("Aa", 100)))
     indep_sf <- sf::st_as_sf(indep_sf, coords=colnames(indep_sf)[c(2,1)])
     sf::st_crs(indep_sf) <- 4326
-    oc <- occurrences_sdm(tb, independent_test = indep_sf, crs=6933)
+    oc <- occurrences_sdm(tb, independent_test = indep_sf, occ_crs = 6933)
     expect_true(sf::st_crs(oc$independent_test) == sf::st_crs(oc$occurrences))
   })
 
@@ -244,7 +239,7 @@ if(!identical(Sys.getenv("NOT_CRAN"), "false")){
     indep_sf <- tibble::tibble(decimalLatitude = runif(100), longitude = runif(100))
     indep_sf <- sf::st_as_sf(indep_sf, coords=colnames(indep_sf)[c(2,1)])
     sf::st_crs(indep_sf) <- 4326
-    oc <- occurrences_sdm(tb, independent_test = indep_sf, crs=6933)
+    oc <- occurrences_sdm(tb, independent_test = indep_sf, occ_crs = 6933)
     expect_true("species" %in% colnames(oc$independent_test))
   })
 
@@ -254,7 +249,7 @@ if(!identical(Sys.getenv("NOT_CRAN"), "false")){
     indep_sf <- tibble::tibble(decimalLatitude = runif(100), longitude = runif(100))
     indep_sf <- sf::st_as_sf(indep_sf, coords=colnames(indep_sf)[c(2,1)])
     sf::st_crs(indep_sf) <- 4326
-    expect_error(occurrences_sdm(tb, independent_test = indep_sf, crs=6933))
+    expect_error(occurrences_sdm(tb, independent_test = indep_sf, occ_crs=6933))
   })
 
   test_that("occurrences - indep_data is sf has species column, but there are missing species.", {
@@ -264,7 +259,7 @@ if(!identical(Sys.getenv("NOT_CRAN"), "false")){
                        species = c(rep("Aa", 100)))
     indep_sf <- sf::st_as_sf(indep_sf, coords=colnames(indep_sf)[c(2,1)])
     sf::st_crs(indep_sf) <- 4326
-    expect_error(occurrences_sdm(tb, independent_test = indep_sf, crs=6933))
+    expect_error(occurrences_sdm(tb, independent_test = indep_sf, occ_crs=6933))
   })
 
   # Test species_names
@@ -361,7 +356,7 @@ if(!identical(Sys.getenv("NOT_CRAN"), "false")){
   test_that("occurrences - sf_output crs", {
     set.seed(1)
     tb <- tibble::tibble(decimalLatitude = runif(100), longitude = runif(100), sp = c(rep("Aa", 100)))
-    oc <- occurrences_sdm(tb, independent_test = TRUE, crs=6933)
+    expect_warning(oc <- occurrences_sdm(tb, independent_test = TRUE, crs=6933))
     s <- oc$occurrences
     expect_equal(as.character(sf::st_crs(oc$occurrences)[1]), "EPSG:6933")
     expect_equal(as.character(sf::st_crs(oc$independent_test)[1]), "EPSG:6933")

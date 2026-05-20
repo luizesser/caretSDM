@@ -5,7 +5,7 @@ test_that("vif_predictors - normal path", {
   sa <- add_predictors(sa, bioc)
   sa <- dplyr::select(sa, c("bio1", "bio12"))
   sa <- sa |> dplyr::mutate(div=bio1/bio12, prod=bio1*bio12, sub=bio12-bio1, soma=bio1+bio12)
-  oc <- occurrences_sdm(occ, crs=6933)
+  oc <- occurrences_sdm(occ, occ_crs=6933)
   oc <- join_area(oc, sa)
   i <- input_sdm(oc, sa)
   th=0.8
@@ -25,7 +25,7 @@ test_that("vif_predictors - normal path", {
   sa <- add_predictors(sa, bioc)
   sa <- dplyr::select(sa, c("bio1", "bio12"))
   sa <- sa |> dplyr::mutate(div=bio1/bio12, prod=bio1*bio12, sub=bio12-bio1, soma=bio1+bio12)
-  oc <- occurrences_sdm(occ, crs=6933)
+  oc <- occurrences_sdm(occ, occ_crs=6933)
   oc <- join_area(oc, sa)
   i <- input_sdm(oc, sa)
   expect_error(vif_predictors(i, th=NA))
@@ -45,7 +45,7 @@ test_that("vif_predictors - facnum", {
   sa <- add_predictors(sa, bioc)
   sa <- dplyr::select(sa, c("bio1", "bio12"))
   sa <- sa |> dplyr::mutate(test=c(rep("a", 19), rep("b", 10)))
-  oc <- occurrences_sdm(occ, crs=6933)
+  oc <- occurrences_sdm(occ, occ_crs=6933)
   oc <- join_area(oc, sa)
   i <- input_sdm(oc, sa)
   th=0.9

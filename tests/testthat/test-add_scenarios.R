@@ -17,7 +17,7 @@ if (!identical(Sys.getenv("NOT_CRAN"), "false")) {
     pr_gpkg <- test_path("testdata", "parana.gpkg") |>
       sf::st_read(quiet = TRUE)
   }
-  sa <- sdm_area(pr_gpkg, cell_size = 100000, crs = 6933)
+  sa <- sdm_area(pr_gpkg, cell_size = 100000, output_crs = 6933)
   sa <- add_predictors(sa, pr_raster)
   sa <- select_predictors(sa, c("wc2.1_10m_bio_1","wc2.1_10m_bio_12"))
   sa <- set_predictor_names(sa, c("bio1", "bio12"))
@@ -137,7 +137,7 @@ if (!identical(Sys.getenv("NOT_CRAN"), "false")) {
   })
 
   test_that("add_scenarios - stars e vars tem nomes diferentes", {
-    sa <- sdm_area(pr_gpkg, cell_size = 20000, crs = 6933)
+    sa <- sdm_area(pr_gpkg, cell_size = 20000, output_crs = 6933)
     sa <- add_predictors(sa, pr_raster)
     sa <- select_predictors(sa, c("wc2.1_10m_bio_1","wc2.1_10m_bio_12"))
     expect_no_error(sa_scen <- add_scenarios(sa, scen))
@@ -146,7 +146,7 @@ if (!identical(Sys.getenv("NOT_CRAN"), "false")) {
   })
 
   test_that("add_scenarios - stationary data", {
-    sa <- sdm_area(pr_gpkg, cell_size = 20000, crs = 6933)
+    sa <- sdm_area(pr_gpkg, cell_size = 20000, output_crs = 6933)
     names(pr_raster) <- c("bio1","bio12")
     sa <- add_predictors(sa, pr_raster)
     sa_pred <- add_scenarios(sa, pr_raster, stationary = c("GID0", "CODIGOIB1",
@@ -173,7 +173,7 @@ if (!identical(Sys.getenv("NOT_CRAN"), "false")) {
   })
 
   test_that("add_scenarios - stationary data/input_sdm", {
-    sa <- sdm_area(pr_gpkg, cell_size = 20000, crs = 6933)
+    sa <- sdm_area(pr_gpkg, cell_size = 20000, output_crs = 6933)
     names(pr_raster) <- c("bio1","bio12")
     sa <- add_predictors(sa, pr_raster)
     sa <- add_scenarios(sa)
@@ -266,17 +266,17 @@ if (!identical(Sys.getenv("NOT_CRAN"), "false")) {
     skip_on_cran()
     bioc <- bioc[,,,c(1,3)]
     expect_error(
-      sdm_area(parana, cell_size = 100000, crs = 6933) |>
+      sdm_area(parana, cell_size = 100000, output_crs = 6933) |>
         add_predictors(bioc) |>
         add_scenarios(scen_rs, stationary = c("GID0", "CODIGOIB1", "NOMEUF2", "SIGLAUF3"))
     )
     expect_error(
-      sdm_area(parana, cell_size = 100000, crs = 6933) |>
+      sdm_area(parana, cell_size = 100000, output_crs = 6933) |>
         add_predictors(bioc) |>
         input_sdm() |>
         add_scenarios(scen_rs, stationary = c("GID0", "CODIGOIB1", "NOMEUF2", "SIGLAUF3"))
     )
-    sa <- sdm_area(bioc, cell_size = 100000, crs = 6933)
+    sa <- sdm_area(bioc, cell_size = 100000, output_crs = 6933)
     sa_pred <- add_scenarios(sa, scen, crop_area = parana)
     expect_equal(
       scenarios_names(sa_pred),
@@ -285,25 +285,25 @@ if (!identical(Sys.getenv("NOT_CRAN"), "false")) {
     expect_true(sum(na.omit(as.data.frame(bioc))$band == "bio1") > sa_pred$scenarios$data$current |> nrow())
     expect_true(sum(na.omit(as.data.frame(scen["ca_ssp245_2090"]))$band == "bio1") >
                  sa_pred$scenarios$data$ca_ssp245_2090 |> nrow())
-    expect_warning(sa <- sdm_area(parana, cell_size = 100000, crs = 6933) |>
+    expect_warning(sa <- sdm_area(parana, cell_size = 100000, output_crs = 6933) |>
       add_predictors(bioc) |>
       add_scenarios(scen_rs[,,,c(1,3)], pred_as_scen = FALSE))
     #expect_true(!"current" %in% scenarios_names(sa))
 
-    sa <- sdm_area(rivs, cell_size = 100000, crs = 6933, lines_as_sdm_area = TRUE) |>
+    sa <- sdm_area(rivs, cell_size = 100000, output_crs = 6933, lines_as_sdm_area = TRUE) |>
       add_predictors(bioc) |>
       add_scenarios(scen, stationary = c("LENGTH_KM", "DIST_DN_KM"), pred_as_scen = FALSE)
     expect_true(all(c("LENGTH_KM", "DIST_DN_KM") %in% colnames(sa$scenarios$data$ca_ssp245_2090)))
     expect_equal(as.character(unique(sf::st_geometry_type(sa$grid))), "LINESTRING")
 
-    sa <- sdm_area(rivs, cell_size = 100000, crs = 6933, lines_as_sdm_area = TRUE) |>
+    sa <- sdm_area(rivs, cell_size = 100000, output_crs = 6933, lines_as_sdm_area = TRUE) |>
       add_predictors(bioc) |>
       input_sdm() |>
       add_scenarios(scen, stationary = c("LENGTH_KM", "DIST_DN_KM"), pred_as_scen = FALSE)
     expect_true(all(c("LENGTH_KM", "DIST_DN_KM") %in% colnames(sa$scenarios$data$ca_ssp245_2090)))
     expect_equal(as.character(unique(sf::st_geometry_type(sa$scenarios$data$ca_ssp245_2090))), "LINESTRING")
 
-    sa <- sdm_area(rivs, cell_size = 100000, crs = 6933, lines_as_sdm_area = TRUE) |>
+    sa <- sdm_area(rivs, cell_size = 100000, output_crs = 6933, lines_as_sdm_area = TRUE) |>
       add_predictors(bioc) |>
       select_predictors(c("bio1", "bio12")) |>
       input_sdm() |>

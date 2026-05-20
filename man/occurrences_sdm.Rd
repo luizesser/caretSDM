@@ -10,11 +10,12 @@
 \alias{add_occurrences}
 \title{Occurrences Managing}
 \usage{
-occurrences_sdm(x,
+occurrences_sdm(occ,
                 independent_test = NULL,
                 p = 0.1,
-                crs = NULL,
+                occ_crs = NULL,
                 independent_test_crs = NULL,
+                crs = NULL,
                 ...)
 
 n_records(i)
@@ -30,7 +31,7 @@ occurrences_as_df(i)
 add_occurrences(oc1, oc2)
 }
 \arguments{
-\item{x}{A \code{data.frame}, \code{tibble} or \code{sf} with species records.}
+\item{occ}{A \code{data.frame}, \code{tibble} or \code{sf} with species records.}
 
 \item{independent_test}{Boolean. If \code{independet_test} is \code{TRUE}, a fraction of the data
 is kept for independent testing. Otherwise, the whole dataset \code{x} is used. It can also be a
@@ -39,13 +40,15 @@ and names should be identical to those in \code{x}.}
 
 \item{p}{Numeric. Fraction of data to be used as independent test. Standard is 0.1.}
 
-\item{crs}{Numeric. CRS of \code{x}.}
+\item{occ_crs}{Numeric. CRS of \code{occ}.}
 
 \item{independent_test_crs}{Numeric. CRS of \code{independent_test} if it is a
 \code{data.frame}.}
 
+\item{crs}{Deprecated. Use occ_crs instead.}
+
 \item{...}{A vector with column names addressing the columns with species names, longitude and
-latitude, respectively, in \code{x}.}
+latitude, respectively, in \code{occ}.}
 
 \item{i}{\code{input_sdm} or \code{occurrences} object.}
 
@@ -60,7 +63,7 @@ A \code{occurrences} object.
 This function creates and manage \code{occurrences} objects.
 }
 \details{
-\code{x} must have three columns: species, decimalLongitude and decimalLatitude. When \code{sf}
+\code{occ} must have three columns: species, decimalLongitude and decimalLatitude. When \code{sf}
 it is only necessary a species column.
 \code{n_records} return the number of presence records to each species.
 \code{species_names} return the species names.

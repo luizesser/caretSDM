@@ -15,7 +15,7 @@
 #'
 #' @examples
 #' # Create sdm_area object:
-#' sa <- sdm_area(parana, cell_size = 25000, crs = 6933)
+#' sa <- sdm_area(parana, cell_size = 25000, output_crs = 6933)
 #'
 #' # Include predictors:
 #' sa <- add_predictors(sa, bioc) |> select_predictors(c("bio1", "bio4", "bio12"))

@@ -1,6 +1,6 @@
 if (!identical(Sys.getenv("NOT_CRAN"), "false")){
   set.seed(1)
-  sa <- sdm_area(parana, 100000, crs=6933) |>
+  sa <- sdm_area(parana, 100000, output_crs=6933) |>
     add_predictors(bioc) |>
     select_predictors(c("bio1", "bio12")) |>
     add_scenarios()
@@ -8,7 +8,7 @@ if (!identical(Sys.getenv("NOT_CRAN"), "false")){
     expect_equal(names(sa$scenarios$data), scenarios_names(sa))
     expect_equal(get_scenarios_data(sa), sa$scenarios$data)
   })
-  oc <- occurrences_sdm(occ, crs=6933)
+  oc <- occurrences_sdm(occ, occ_crs=6933)
   test_that("scenarios_names - NULL", {
     expect_null(scenarios_names(oc))
     expect_null(get_scenarios_data(oc))
@@ -202,11 +202,11 @@ test_that("test ensembles", {
 test_that("add_input_sdm", {
   skip_on_cran()
   set.seed(1234)
-  sa <- sdm_area(parana, cell_size = 100000, crs = 6933) |>
+  sa <- sdm_area(parana, cell_size = 100000, output_crs = 6933) |>
     add_predictors(bioc) |>
     select_predictors(c("bio1", "bio12")) |>
     add_scenarios()
-  oc <- occurrences_sdm(occ, crs = 6933) |>
+  oc <- occurrences_sdm(occ, occ_crs = 6933) |>
                    join_area(sa)
   i_aa <- input_sdm(oc, sa) |>
     pseudoabsences(method="random", n_set=2) |>
@@ -220,11 +220,11 @@ test_that("add_input_sdm", {
                                        savePredictions = "all")) |>
     suppressWarnings() |>
     predict_sdm(th = 0.6)
-  sa <- sdm_area(parana, cell_size = 100000, crs = 6933) |>
+  sa <- sdm_area(parana, cell_size = 100000, output_crs = 6933) |>
     add_predictors(bioc) |>
     select_predictors(c("bio1", "bio12")) |>
     add_scenarios()
-  oc <- occurrences_sdm(salm, crs = 6933) |>
+  oc <- occurrences_sdm(salm, occ_crs = 6933) |>
     join_area(sa)
   i_sb <- input_sdm(oc, sa) |>
     pseudoabsences(method="random", n_set=2) |>

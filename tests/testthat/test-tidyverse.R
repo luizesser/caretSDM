@@ -11,7 +11,7 @@ if (!identical(Sys.getenv("NOT_CRAN"), "false")){
 
 test_that("select - tidyverse sa", {
   skip_on_cran()
-  sa <- sdm_area(pr_gpkg, cell_size = 10000, crs = 6933)
+  sa <- sdm_area(pr_gpkg, cell_size = 10000, output_crs = 6933)
   sa <- dplyr::select(sa, c("CODIGOIB1", "NOMEUF2"))
   sa_col_names <- sa$grid |> colnames()
   expect_true("cell_id" %in% sa_col_names)
@@ -20,7 +20,7 @@ test_that("select - tidyverse sa", {
 
 test_that("select - tidyverse i", {
   skip_on_cran()
-  sa <- sdm_area(pr_gpkg, cell_size = 10000, crs = 6933)
+  sa <- sdm_area(pr_gpkg, cell_size = 10000, output_crs = 6933)
   i <- input_sdm(sa)
   i <- dplyr::select(i, c("CODIGOIB1", "NOMEUF2"))
   i_col_names <- i$predictors$grid |> colnames()
@@ -30,7 +30,7 @@ test_that("select - tidyverse i", {
 
 test_that("mutate - tidyverse sa", {
   skip_on_cran()
-  sa <- sdm_area(pr_gpkg, cell_size = 10000, crs = 6933)
+  sa <- sdm_area(pr_gpkg, cell_size = 10000, output_crs = 6933)
   sa <- sa |> dplyr::mutate(teste=GID0/CODIGOIB1)
   sa_col_names <- sa$grid |> colnames()
   expect_true("cell_id" %in% sa_col_names)
@@ -40,7 +40,7 @@ test_that("mutate - tidyverse sa", {
 
 test_that("mutate - tidyverse i", {
   skip_on_cran()
-  sa <- sdm_area(pr_gpkg, cell_size = 10000, crs = 6933)
+  sa <- sdm_area(pr_gpkg, cell_size = 10000, output_crs = 6933)
   i <- input_sdm(sa)
   i <- i |> dplyr::mutate(teste=GID0/CODIGOIB1)
   sa_col_names <- i$predictors$grid |> colnames()
@@ -51,7 +51,7 @@ test_that("mutate - tidyverse i", {
 
 test_that("select/filter scenarios", {
   skip_on_cran()
-  expect_warning(sa <- sdm_area(parana, cell_size = 100000, crs = 6933) |>
+  expect_warning(sa <- sdm_area(parana, cell_size = 100000, output_crs = 6933) |>
     add_predictors(bioc) |>
     add_scenarios(scen) )
   sa1 <- dplyr::select(sa, c("bio1"))
@@ -60,8 +60,8 @@ test_that("select/filter scenarios", {
   expect_equal(c("cell_id", "bio1", "geometry"), colnames(sa1$scenarios$data$ca_ssp245_2090))
   sa1 <- dplyr::filter(sa1, cell_id < 30)
   expect_true(all( sa1$grid$cell_id < 30 ))
-  oc1 <- occurrences_sdm(occ, crs=6933)
-  oc2 <- occurrences_sdm(salm, crs=6933)
+  oc1 <- occurrences_sdm(occ, occ_crs=6933)
+  oc2 <- occurrences_sdm(salm, occ_crs=6933)
   oc <- add_occurrences(oc1, oc2)
   expect_equal(species_names(oc), unique(oc$occurrences$species))
 
@@ -96,12 +96,12 @@ test_that("select/filter scenarios", {
 test_that("filter_species", {
   skip_on_cran()
   set.seed(1)
-  sa <- sdm_area(parana, cell_size = 100000, crs = 6933) |>
+  sa <- sdm_area(parana, cell_size = 100000, output_crs = 6933) |>
     add_predictors(bioc) |>
     dplyr::select(c("bio1", "bio4", "bio12")) |>
     add_scenarios()
-  oc <- occurrences_sdm(occ, crs = 6933) |>
-    add_occurrences(occurrences_sdm(salm, crs = 6933)) |>
+  oc <- occurrences_sdm(occ, occ_crs = 6933) |>
+    add_occurrences(occurrences_sdm(salm, occ_crs = 6933)) |>
     join_area(sa)
   i <- input_sdm(oc, sa)
   i <- dplyr::select(i, c("bio1", "bio12"))

@@ -1,18 +1,18 @@
 test_that("full structure check", {
   set.seed(1)
   # prepare data
-  sa_m <- sdm_area(parana, cell_size = 100000, crs = 6933) |>
+  sa_m <- sdm_area(parana, cell_size = 100000, output_crs = 6933) |>
     add_predictors(bioc) |>
     add_scenarios(scen) |>
     select_predictors(c("bio1", "bio12")) |>
     suppressWarnings()
-  sa_s <- sdm_area(parana, cell_size = 100000, crs = 6933) |>
+  sa_s <- sdm_area(parana, cell_size = 100000, output_crs = 6933) |>
     add_predictors(bioc) |>
     add_scenarios() |>
     select_predictors(c("bio1", "bio12")) |>
     suppressWarnings()
-  oc_s <- occurrences_sdm(occ, crs = 6933)
-  oc_m <- occurrences_sdm(rbind(salm, occ), crs = 6933)
+  oc_s <- occurrences_sdm(occ, occ_crs = 6933)
+  oc_m <- occurrences_sdm(rbind(salm, occ), occ_crs = 6933)
 
   # multispecies multiscenario
   i_mm <- input_sdm(oc_m, sa_m) |>

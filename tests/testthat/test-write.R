@@ -2,12 +2,12 @@ test_that("write", {
   skip_on_cran()
   # Prepare Data
   set.seed(1)
-  sa <- sdm_area(parana, cell_size = 100000, crs = 6933) |>
+  sa <- sdm_area(parana, cell_size = 100000, output_crs = 6933) |>
     add_predictors(bioc) |>
     add_scenarios(scen) |>
     select_predictors(c("bio1", "bio12")) |>
     suppressWarnings()
-  oc <- occurrences_sdm(occ, crs = 6933) |>
+  oc <- occurrences_sdm(occ, occ_crs = 6933) |>
     join_area(sa) |>
     suppressWarnings()
   i <- input_sdm(oc, sa) |>
@@ -80,13 +80,13 @@ test_that("write", {
   withr::with_tempdir(
     pattern = "tmp_sdm_area",
     {
-      sa <- sdm_area(parana, cell_size = 50000, crs = 6933)
+      sa <- sdm_area(parana, cell_size = 50000, output_crs = 6933)
       sa |> write_gpkg(file_path = ".", file_name = "parana")
       checkmate::expect_file_exists(fs::path("parana.gpkg"))
     },
     tmpdir = tmp_dir
   )
-  sa <- sdm_area(parana, cell_size = 50000, crs = 6933)
+  sa <- sdm_area(parana, cell_size = 50000, output_crs = 6933)
   expect_error(
     sa |> write_gpkg(file_path = "parana.gpkg", file_name = "parana"),
     "x Assertion on file_path failed."

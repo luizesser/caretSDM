@@ -3,24 +3,26 @@
 #' This function creates and manage \code{occurrences} objects.
 #'
 #' @usage
-#' occurrences_sdm(x,
+#' occurrences_sdm(occ,
 #'                 independent_test = NULL,
 #'                 p = 0.1,
-#'                 crs = NULL,
+#'                 occ_crs = NULL,
 #'                 independent_test_crs = NULL,
+#'                 crs = NULL,
 #'                 ...)
 #'
-#' @param x A \code{data.frame}, \code{tibble} or \code{sf} with species records.
+#' @param occ A \code{data.frame}, \code{tibble} or \code{sf} with species records.
 #' @param independent_test Boolean. If \code{independet_test} is \code{TRUE}, a fraction of the data
 #' is kept for independent testing. Otherwise, the whole dataset \code{x} is used. It can also be a
 #' \code{data.frame} or a \code{sf}, with species records to be used as independent test. Structure
 #' and names should be identical to those in \code{x}.
 #' @param p Numeric. Fraction of data to be used as independent test. Standard is 0.1.
-#' @param crs Numeric. CRS of \code{x}.
+#' @param occ_crs Numeric. CRS of \code{occ}.
 #' @param independent_test_crs Numeric. CRS of \code{independent_test} if it is a
 #' \code{data.frame}.
+#' @param crs Deprecated. Use occ_crs instead.
 #' @param ... A vector with column names addressing the columns with species names, longitude and
-#' latitude, respectively, in \code{x}.
+#' latitude, respectively, in \code{occ}.
 #' @param i \code{input_sdm} or \code{occurrences} object.
 #' @param oc1 A \code{occurrences} object to be summed with.
 #' @param oc2 A \code{occurrences} object to be summed with.
@@ -28,7 +30,7 @@
 #' @return A \code{occurrences} object.
 #'
 #' @details
-#' \code{x} must have three columns: species, decimalLongitude and decimalLatitude. When \code{sf}
+#' \code{occ} must have three columns: species, decimalLongitude and decimalLatitude. When \code{sf}
 #' it is only necessary a species column.
 #' \code{n_records} return the number of presence records to each species.
 #' \code{species_names} return the species names.
@@ -59,39 +61,45 @@
 #' @global X Y
 #'
 #' @export
-occurrences_sdm <- function(x, independent_test = NULL, p = 0.1, crs = NULL,
-                            independent_test_crs = NULL, ...) {
+occurrences_sdm <- function(occ, independent_test = NULL, p = 0.1, occ_crs = NULL,
+                            independent_test_crs = NULL, crs = NULL, ...) {
+
   UseMethod("occurrences_sdm")
 }
 
 #' @export
-occurrences_sdm.data.frame <- function(x, independent_test = NULL, p = 0.1, crs = NULL,
-                                       independent_test_crs = NULL, ...) {
-  occ <- .occurrences(x, independent_test, p, crs, independent_test_crs, ...)
+occurrences_sdm.data.frame <- function(occ, independent_test = NULL, p = 0.1, occ_crs = NULL,
+                                       independent_test_crs = NULL, crs = NULL, ...) {
+  occ <- .occurrences(occ, independent_test, p, occ_crs, independent_test_crs, crs, ...)
   return(occ)
 }
 
 #' @export
-occurrences_sdm.tbl_df <- function(x, independent_test = NULL, p = 0.1, crs = NULL,
-                                   independent_test_crs = NULL, ...) {
-  x <- as.data.frame(x)
-  occ <- .occurrences(x, independent_test, p, crs, independent_test_crs, ...)
+occurrences_sdm.tbl_df <- function(occ, independent_test = NULL, p = 0.1, occ_crs = NULL,
+                                   independent_test_crs = NULL, crs = NULL, ...) {
+  occ <- as.data.frame(occ)
+  occ <- .occurrences(occ, independent_test, p, occ_crs, independent_test_crs, crs, ...)
   return(occ)
 }
 
 #' @export
-occurrences_sdm.sf <- function(x, independent_test = NULL, p = 0.1, crs = NULL,
-                               independent_test_crs = NULL, ...) {
-  x <- cbind(dplyr::select(as.data.frame(x), -"geometry"), sf::st_coordinates(x))
-  occ <- .occurrences(x, independent_test, p, crs, independent_test_crs, ...)
+occurrences_sdm.sf <- function(occ, independent_test = NULL, p = 0.1, occ_crs = NULL,
+                               independent_test_crs = NULL, crs = NULL, ...) {
+
+  if(!is.null(occ_crs)){
+    cli::cli_alert_warning(paste0("CRS detected from {.var occ}, but {.var occ_crs} is not null. Overwriting {.var occ_crs} with value detected from {.var occ}"))
+  }
+  occ_crs <- sf::st_crs(occ)
+  occ <- cbind(dplyr::select(as.data.frame(occ), -"geometry"), sf::st_coordinates(occ))
+  occ <- .occurrences(occ, independent_test, p, occ_crs, independent_test_crs, crs, ...)
   return(occ)
 }
 
 #' @export
-occurrences_sdm.character <- function(x, independent_test = NULL, p = 0.1, crs = NULL,
-                               independent_test_crs = NULL, ...) {
-  x <- utils::read.csv(x)
-  occ <- .occurrences(x, independent_test, p, crs, independent_test_crs, ...)
+occurrences_sdm.character <- function(occ, independent_test = NULL, p = 0.1, occ_crs = NULL,
+                                      independent_test_crs = NULL, crs = NULL, ...) {
+  occ <- utils::read.csv(occ)
+  occ <- .occurrences(occ, independent_test, p, occ_crs, independent_test_crs, crs, ...)
   return(occ)
 }
 
@@ -162,15 +170,42 @@ occurrences_as_df <- function(i) {
   return(res)
 }
 
-.occurrences <- function(x, independent_test = NULL, p = 0.1, crs = NULL,
-                         independent_test_crs = NULL, ...) {
-  assert_int_cli(crs, lower = 1024, upper = 32766, null.ok = TRUE)
-  assert_int_cli(independent_test_crs, lower = 1024, upper = 32766, null.ok = TRUE)
+.occurrences <- function(occ, independent_test = NULL, p = 0.1, occ_crs = NULL,
+                         independent_test_crs = NULL, crs = NULL, ...) {
+
+  if (!is.null(crs)) {
+    if (is.null(occ_crs)) {
+      occ_crs <- crs
+    }
+    warning(
+      paste(
+        "'crs' is deprecated and will be removed in a future version.",
+        "Please use 'occ_crs' instead."
+      ),
+      call. = FALSE
+    )
+  }
+
+  if(is.numeric(occ_crs)) {
+    assert_int_cli(occ_crs, lower = 1024, upper = 32766)
+  } else {
+    assert_class_cli(occ_crs, "crs", null.ok = TRUE)
+  }
+  crs <- occ_crs
+  if (is.null(crs)) {
+    crs <- 4326
+  }
+  if(is.numeric(independent_test_crs)) {
+    assert_int_cli(independent_test_crs, lower = 1024, upper = 32766, null.ok = TRUE)
+  } else {
+    assert_class_cli(independent_test_crs, "crs", null.ok = TRUE)
+  }
+
   if(isTRUE(independent_test)){
     assert_numeric_cli(p, lower = 0.0001, upper = 0.9999, len=1)
   }
-  col_names <- .find_columns(x, ...)
-  x <- x[, col_names] |> stats::na.omit()
+  col_names <- .find_columns(occ, ...)
+  x <- occ[, col_names] |> stats::na.omit()
   if (length(col_names) == 2) {
     cli::cli_alert_warning("Species column not found. Addressing all records to a unknown species.")
     colnames(x) <- c("decimalLongitude", "decimalLatitude")
@@ -179,9 +214,7 @@ occurrences_as_df <- function(i) {
     colnames(x) <- c("species", "decimalLongitude", "decimalLatitude")
   }
   spp_names <- unique(x[,1])
-  if (is.null(crs)) {
-    crs <- 4326
-  }
+
   x <- sf::st_as_sf(x, coords = colnames(x)[c(2, 3)])
   sf::st_crs(x) <- crs
   if (!is.null(independent_test)) {

@@ -22,7 +22,7 @@ if (!identical(Sys.getenv("NOT_CRAN"), "false")) {
     pr_file <- test_path("testdata", "parana.tiff")
   }
 
-  sa <- sdm_area(pr_gpkg, cell_size = 100000, crs = 6933)
+  sa <- sdm_area(pr_gpkg, cell_size = 100000, output_crs = 6933)
 
   # Parana
   test_that("add_predictors - rasterStack", {
@@ -55,7 +55,7 @@ if (!identical(Sys.getenv("NOT_CRAN"), "false")) {
     pr_gpkg2 <- pr_gpkg
     names(pr_raster2) <- 1:2
     colnames(pr_gpkg2) <- c(3:5, "SIGLAUF3",  "geom")
-    sa2 <- sdm_area(pr_gpkg2, cell_size = 100000, crs = 6933)
+    sa2 <- sdm_area(pr_gpkg2, cell_size = 100000, output_crs = 6933)
     sa_pred <- add_predictors(sa2, pr_raster2)
     expect_equal(
       get_predictor_names(sa_pred),
@@ -229,7 +229,7 @@ if (!identical(Sys.getenv("NOT_CRAN"), "false")) {
   })
 
   # Rivs
-  sa_rivs <- sdm_area(rivs, cell_size = 100000, crs = 6933, lines_as_sdm_area = TRUE)
+  sa_rivs <- sdm_area(rivs, cell_size = 100000, output_crs = 6933, lines_as_sdm_area = TRUE)
   test_that("add_predictors - rasterStack", {
     sa_pred <- add_predictors(sa_rivs, bioc)
     expect_equal(
@@ -419,14 +419,14 @@ if (!identical(Sys.getenv("NOT_CRAN"), "false")) {
      sf::st_buffer(dist = 100000) |>
      sf::st_union() |>
      sf::st_as_sf(crs=sf::st_crs(6933))
-   sa_buf <- sdm_area(buf_sa, cell_size = 100000, crs = 6933)
+   sa_buf <- sdm_area(buf_sa, cell_size = 100000, output_crs = 6933)
    sa_pred <- add_predictors(sa_buf, bioc)
    suppressWarnings(bbox_intersect <- sf::st_bbox(sf::st_intersection(sa_buf$grid, sa_pred$grid))) #find intersection between sdm_area and add_pred.
    expect_equal(bbox_intersect, sf::st_bbox(sa_pred$grid))
   })
 
   test_that("add_predictors - correção do tidyr::drop_na: drop_na modifica o bbox Gpkg+gdal", {
-   sa_buf <- sdm_area(pr_gpkg, cell_size = 100000, crs = 6933)
+   sa_buf <- sdm_area(pr_gpkg, cell_size = 100000, output_crs = 6933)
    sa_pred <- add_predictors(sa_buf, bioc)
    suppressWarnings(bbox_intersect <- sf::st_bbox(sf::st_intersection(sa_buf$grid, sa_pred$grid))) #find intersection between sdm_area and add_pred.
    expect_equal(bbox_intersect, sf::st_bbox(sa_pred$grid))
@@ -439,7 +439,7 @@ if (!identical(Sys.getenv("NOT_CRAN"), "false")) {
      sf::st_buffer(dist = 100000) |>
      sf::st_union() |>
      sf::st_as_sf(crs=sf::st_crs(6933))
-   sa_buf <- sdm_area(buf_sa, cell_size = 100000, crs = 6933, gdal = FALSE)
+   sa_buf <- sdm_area(buf_sa, cell_size = 100000, output_crs = 6933, gdal = FALSE)
    sa_pred <- add_predictors(sa_buf, bioc, gdal = FALSE)
    suppressWarnings(bbox_intersect <- sf::st_bbox(sf::st_intersection(sa_buf$grid, sa_pred$grid))) #find intersection between sdm_area and add_pred.
    expect_equal(bbox_intersect, sf::st_bbox(sa_pred$grid))
@@ -447,7 +447,7 @@ if (!identical(Sys.getenv("NOT_CRAN"), "false")) {
 
   test_that("add_predictors - correção do tidyr::drop_na: drop_na modifica o bbox Gpkg-nogdal", {
    skip_on_cran()
-   sa_buf <- sdm_area(pr_gpkg, cell_size = 100000, crs = 6933, gdal = FALSE)
+   sa_buf <- sdm_area(pr_gpkg, cell_size = 100000, output_crs = 6933, gdal = FALSE)
    sa_pred <- add_predictors(sa_buf, bioc, gdal = FALSE)
    suppressWarnings(bbox_intersect <- sf::st_bbox(sf::st_intersection(sa_buf$grid, sa_pred$grid))) #find intersection between sdm_area and add_pred.
    expect_equal(bbox_intersect, sf::st_bbox(sa_pred$grid))

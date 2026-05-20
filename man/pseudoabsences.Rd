@@ -15,7 +15,7 @@ pseudoabsences(occ,
                variables_selected = NULL,
                th = 0,
                size = 1,
-               crs = 4326,
+               size_crs = 4326,
                mcp = FALSE)
 
 n_pseudoabsences(i)
@@ -48,7 +48,7 @@ Only used when method is not "random".}
 \item{size}{\code{numeric} The distance between the record and the margin of the buffer (i.e.
 buffer radius).}
 
-\item{crs}{\code{numeric} Indicates which EPSG it the size in.}
+\item{size_crs}{\code{numeric} Indicates which EPSG it the size in.}
 
 \item{mcp}{\code{boolean}. Should the buffer be applied in each record (FALSE) or in a minimum
 convex polygon/convex hull (TRUE)? Standard is \code{FALSE}.}
@@ -85,7 +85,7 @@ user needs to specifiy the size of the buffer compatible with buffer CRS.
 }
 \examples{
 # Create sdm_area object:
-sa <- sdm_area(parana, cell_size = 25000, crs = 6933)
+sa <- sdm_area(parana, cell_size = 25000, output_crs = 6933)
 
 # Include predictors:
 sa <- add_predictors(sa, bioc) |> select_predictors(c("bio1", "bio4", "bio12"))
@@ -94,7 +94,7 @@ sa <- add_predictors(sa, bioc) |> select_predictors(c("bio1", "bio4", "bio12"))
 sa <- add_scenarios(sa)
 
 # Create occurrences:
-oc <- occurrences_sdm(occ[1:50,], crs = 6933)
+oc <- occurrences_sdm(occ[1:50,], occ_crs = 6933)
 
 # Create input_sdm:
 i <- input_sdm(oc, sa)

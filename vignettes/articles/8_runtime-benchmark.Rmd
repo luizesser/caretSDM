@@ -416,7 +416,7 @@ prep_caretSDM <- function() {
   
   sa <- sdm_area(bioc) |>
     add_scenarios(scen)
-  oc <- occurrences_sdm(occ, crs = 6933)
+  oc <- occurrences_sdm(occ, occ_crs = 6933)
   input_sdm(oc, sa) |> 
     pseudoabsences(method = "random", n_set = 1)
   
@@ -464,7 +464,7 @@ run_caretSDM <- function() {
   
   sa <- sdm_area(bioc)
 
-  oc <- occurrences_sdm(occ, crs = 6933)
+  oc <- occurrences_sdm(occ, occ_crs = 6933)
   
   i <- input_sdm(oc, sa) |> 
     pseudoabsences(method = "random", n_set = 1) |> 

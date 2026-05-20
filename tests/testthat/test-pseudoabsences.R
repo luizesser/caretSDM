@@ -1,11 +1,11 @@
 test_that("pseudoabsences - normal", {
   skip_on_cran()
 
-  sa <- sdm_area(parana, 100000, crs=6933) |>
+  sa <- sdm_area(parana, 100000, output_crs=6933) |>
     add_predictors(bioc) |>
     select_predictors(c("bio1", "bio12")) |>
     add_scenarios()
-  oc <- occurrences_sdm(occ, crs=6933)
+  oc <- occurrences_sdm(occ, occ_crs=6933)
   suppressWarnings(oc <- join_area(oc, sa))
   i <- input_sdm(oc, sa)
 
@@ -36,7 +36,7 @@ test_that("pseudoabsences - normal", {
   expect_warning(i6 <- pseudoabsences(i, method = "random", n_pa=n_pa, n_set=1))
   expect_true(n_pa == n_pseudoabsences(i6))
   expect_true(n_pa == n_pseudoabsences(i6$occurrences))
-  suppressWarnings(oc <- occurrences_sdm(rbind(occ, salm), crs=6933) |> join_area(sa))
+  suppressWarnings(oc <- occurrences_sdm(rbind(occ, salm), occ_crs=6933) |> join_area(sa))
   i6 <- input_sdm(oc, sa)
   test <- capture_warnings(i6 <- pseudoabsences(i6, method = "random", n_pa=n_pa))
   expect_equal(length(test), 2)

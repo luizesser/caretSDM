@@ -23,7 +23,7 @@
 #'
 #' @examples
 #' # Create sdm_area object:
-#' sa <- sdm_area(parana, cell_size = 50000, crs = 6933)
+#' sa <- sdm_area(parana, cell_size = 50000, output_crs = 6933)
 #'
 #' # Include predictors:
 #' sa <- add_predictors(sa, bioc) |> select_predictors(c("bio1", "bio4", "bio12"))
@@ -32,7 +32,7 @@
 #' sa <- add_scenarios(sa, scen)
 #'
 #' # Create occurrences:
-#' oc <- occurrences_sdm(occ, crs = 6933) |> join_area(sa)
+#' oc <- occurrences_sdm(occ, occ_crs = 6933) |> join_area(sa)
 #'
 #' @importFrom sf st_crs st_transform st_join st_geometry_type st_nearest_feature
 #' @importFrom dplyr select relocate

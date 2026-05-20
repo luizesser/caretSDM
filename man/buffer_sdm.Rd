@@ -4,7 +4,7 @@
 \alias{buffer_sdm}
 \title{Create buffer around occurrences}
 \usage{
-buffer_sdm(occ_data, size = NULL, crs = NULL, mcp = FALSE)
+buffer_sdm(occ_data, size = NULL, occ_crs = NULL, mcp = FALSE)
 }
 \arguments{
 \item{occ_data}{A \code{data.frame} object with species, decimalLongitude and decimalLatitude columns.
@@ -13,7 +13,7 @@ Usually the output from \code{GBIF_data}.}
 \item{size}{\code{numeric}. The distance between the record and the margin of the buffer (i.e.
 buffer radius).}
 
-\item{crs}{\code{numeric}. Indicates which EPSG is the \code{occ_data} in.}
+\item{occ_crs}{\code{numeric}. Indicates which EPSG is the \code{occ_data} in.}
 
 \item{mcp}{\code{boolean}. Should the buffer be applied in each record (FALSE) or in a minimum
 convex polygon/convex hull (TRUE)? Standard is \code{FALSE}.}
@@ -26,7 +26,7 @@ Create buffer around records in \code{occ_data} to be used as study area
 }
 \examples{
 # Create sdm_area object:
-study_area <- buffer_sdm(occ, size=50000, crs=6933)
+study_area <- buffer_sdm(occ, size=50000, occ_crs=6933)
 plot(study_area)
 
 }

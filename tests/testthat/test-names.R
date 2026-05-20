@@ -14,7 +14,7 @@ if(!identical(Sys.getenv("NOT_CRAN"), "false")){
   # Predictors
 
   test_that("predictors - sdm_area", {
-    sa <- sdm_area(pr_gpkg, cell_size = 50000, crs = 6399)
+    sa <- sdm_area(pr_gpkg, cell_size = 50000, output_crs = 6399)
     expect_equal(
       get_predictor_names(sa),
       c("GID0", "CODIGOIB1", "NOMEUF2", "SIGLAUF3")
@@ -23,7 +23,7 @@ if(!identical(Sys.getenv("NOT_CRAN"), "false")){
 
 
   test_that("predictors - set/get rename predictors", {
-    sa <- sdm_area(pr_gpkg, cell_size = 50000, crs = 6399)
+    sa <- sdm_area(pr_gpkg, cell_size = 50000, output_crs = 6399)
     expect_equal(
       set_predictor_names(sa, get_predictor_names(sa) |> tolower()) |> get_predictor_names(),
       c("gid0", "codigoib1", "nomeuf2", "siglauf3")
@@ -32,7 +32,7 @@ if(!identical(Sys.getenv("NOT_CRAN"), "false")){
 
   test_that("predictors - set/get invalid rename predictors", {
     skip_on_cran()
-    sa <- sdm_area(pr_gpkg, cell_size = 50000, crs = 6399)
+    sa <- sdm_area(pr_gpkg, cell_size = 50000, output_crs = 6399)
     expect_snapshot(
       expect_error(
         set_predictor_names(sa, c("gid0", "codigoib1")),
@@ -46,7 +46,7 @@ if(!identical(Sys.getenv("NOT_CRAN"), "false")){
     expect_true(all(stars::st_get_dimension_values(scen2, "band") == c("a", "b", "c")))
     scen2 <- set_variables_names(scen2, bioc)
     expect_true(all(stars::st_get_dimension_values(scen2, "band") == c("bio1", "bio4", "bio12")))
-    sa <- sdm_area(bioc, cell_size = 100000, crs = 6933)
+    sa <- sdm_area(bioc, cell_size = 100000, output_crs = 6933)
     scen2 <- set_variables_names(scen, new_names = c("a", "b", "c"))
     scen2 <- set_variables_names(scen2, sa)
     expect_true(all(stars::st_get_dimension_values(scen2, "band") == c("bio1", "bio4", "bio12")))

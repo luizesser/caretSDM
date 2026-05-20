@@ -61,7 +61,7 @@ if (!identical(Sys.getenv("NOT_CRAN"), "false")){
   })
 
   test_that("sdm_area - sf/predictors lines instead of polygons", {
-    sa <- sdm_area(rivs, cell_size = 100000, crs = 6933)
+    sa <- sdm_area(rivs, cell_size = 100000, output_crs = 6933)
     checkmate::expect_names(
       get_predictor_names(sa),
       permutation.of = c("LENGTH_KM", "DIST_DN_KM"))
@@ -90,8 +90,8 @@ if (!identical(Sys.getenv("NOT_CRAN"), "false")){
   })
 
   test_that("sdm_area - sf/grid erro tamanho celula", {
-    sa <- sdm_area(pr_gpkg, cell_size = 100000, crs = 6933)
-    sa2 <- sdm_area(pr_gpkg, cell_size = 99000, crs = 6933)
+    sa <- sdm_area(pr_gpkg, cell_size = 100000, output_crs = 6933)
+    sa2 <- sdm_area(pr_gpkg, cell_size = 99000, output_crs = 6933)
     sa$grid <- sa2$grid
     expect_error(
       caretSDM:::.check_sdm_area(sa),
@@ -106,7 +106,7 @@ if (!identical(Sys.getenv("NOT_CRAN"), "false")){
   })
 
   test_that("sdm_area - stars/epsg", {
-    sa <- sdm_area(pr_gpkg, cell_size = 100000, crs = 6933)
+    sa <- sdm_area(pr_gpkg, cell_size = 100000, output_crs = 6933)
     expect_true(sf::st_crs(sa$grid) == sf::st_crs(6933))
     expect_equal(as.character(unique(sf::st_geometry_type(sa$grid))), "POLYGON")
   })
@@ -148,7 +148,7 @@ if (!identical(Sys.getenv("NOT_CRAN"), "false")){
   })
 
   test_that("sdm_area - stars/epsg", {
-    sa <- sdm_area(pr_tif, cell_size = 100000, crs = 6933)
+    sa <- sdm_area(pr_tif, cell_size = 100000, output_crs = 6933)
     expect_true(sf::st_crs(sa$grid) == sf::st_crs(6933))
   })
 
@@ -222,16 +222,16 @@ if (!identical(Sys.getenv("NOT_CRAN"), "false")){
     expect_snapshot(print(sa), error = FALSE)
   })
 
-  test_that("sdm_area - stars' crs = NA", {
+  test_that("sdm_area - stars' output_crs = NA", {
     skip_on_cran()
     pr_tif2 <- pr_tif
     sf::st_crs(pr_tif2) <- NA
-    expect_error(sdm_area(pr_tif2, cell_size = 50000, crs=6933, gdal=F))
+    expect_error(sdm_area(pr_tif2, cell_size = 50000, output_crs=6933, gdal=F))
   })
 
-  test_that("sdm_area - crs=NA", {
+  test_that("sdm_area - output_crs=NA", {
     skip_on_cran()
-    expect_error(sdm_area(pr_tif, cell_size = 50000, crs=NA, gdal=F))
+    expect_error(sdm_area(pr_tif, cell_size = 50000, output_crs=NA, gdal=F))
   })
 
   ## Test outputs
@@ -269,7 +269,7 @@ if (!identical(Sys.getenv("NOT_CRAN"), "false")){
   ## Test .detect_sdm_area
   test_that("sdm_area - sdm_area para ser detectado", {
     skip_on_cran()
-    sa <- sdm_area(pr_gpkg, cell_size = 100000, crs = 6933, gdal = TRUE, lines_as_sdm_area = FALSE)
+    sa <- sdm_area(pr_gpkg, cell_size = 100000, output_crs = 6933, gdal = TRUE, lines_as_sdm_area = FALSE)
     expect_snapshot(
       expect_equal(
         caretSDM:::.detect_sdm_area(sa$grid, 100000, 6933, gdal = TRUE, lines_as_sdm_area = FALSE),
@@ -291,7 +291,7 @@ if (!identical(Sys.getenv("NOT_CRAN"), "false")){
 
   test_that("sdm_area - sdm_area para ser detectado com parametros diferentes", {
     skip_on_cran()
-    sa <- sdm_area(pr_gpkg, cell_size = 100000, crs = 6933, gdal = TRUE, lines_as_sdm_area = FALSE)
+    sa <- sdm_area(pr_gpkg, cell_size = 100000, output_crs = 6933, gdal = TRUE, lines_as_sdm_area = FALSE)
     expect_snapshot(
       expect_equal(
         caretSDM:::.detect_sdm_area(sa$grid, 90000, 5839, gdal = TRUE, lines_as_sdm_area = FALSE),
@@ -313,18 +313,18 @@ if (!identical(Sys.getenv("NOT_CRAN"), "false")){
 
   ## Test .detect_sdm_area
   test_that("sdm_area - sdm_area para ser detectado", {
-    sa <- sdm_area(pr_gpkg, cell_size = 100000, crs = 6933)
-    sa2 <- sdm_area(sa$grid, cell_size = 100000, crs = 6933)
+    sa <- sdm_area(pr_gpkg, cell_size = 100000, output_crs = 6933)
+    sa2 <- sdm_area(sa$grid, cell_size = 100000, output_crs = 6933)
     expect_equal(sa2, sa)
   })
 
   ## Test .detect_sdm_area
   test_that("sdm_area - sdm_area para ser detectado com avisos", {
     skip_on_cran()
-    sa <- sdm_area(pr_gpkg, cell_size = 100000, crs = 6933)
+    sa <- sdm_area(pr_gpkg, cell_size = 100000, output_crs = 6933)
     expect_snapshot(
       expect_equal(
-        sa2 <- sdm_area(sa$grid, cell_size = 90000, crs = 5839),
+        sa2 <- sdm_area(sa$grid, cell_size = 90000, output_crs = 5839),
         sa
       )
     )
@@ -332,52 +332,52 @@ if (!identical(Sys.getenv("NOT_CRAN"), "false")){
 
   # test crop!=NULL
   test_that("sdm_area - crop_by tem crs diferente", {
-    expect_no_error(sdm_area(bioc, cell_size = 100000, crs = 6933, crop_by = pr_gpkg))
+    expect_no_error(sdm_area(bioc, cell_size = 100000, output_crs = 6933, crop_by = pr_gpkg))
   })
 
   test_that("sdm_area - crop_by tem crs igual", {
-    pr <- sf::st_transform(pr_gpkg, crs=6933)
-    sa <- sdm_area(bioc, cell_size = 100000, crs = 6933, crop_by = pr)
+    pr <- sf::st_transform(pr_gpkg, crs = 6933)
+    sa <- sdm_area(bioc, cell_size = 100000, output_crs = 6933, crop_by = pr)
     expect_equal(sf::st_crs(pr)[2], sf::st_crs(sa$grid)[2])
   })
 
-  test_that("sdm_area - crop_by tem crs diferente de bioc e crs=NULL", {
-    pr <- sf::st_transform(pr_gpkg, crs=6933)
-    expect_no_error(sdm_area(bioc, cell_size = 1, crs = NULL, crop_by = pr))
+  test_that("sdm_area - crop_by tem crs diferente de bioc e output_crs=NULL", {
+    pr <- sf::st_transform(pr_gpkg, crs = 6933)
+    expect_no_error(sdm_area(bioc, cell_size = 1, output_crs = NULL, crop_by = pr))
   })
 
   # print
   test_that("sdm_area - print", {
     skip_on_cran()
-    sa <- sdm_area(bioc, cell_size = 100000, crs = 6933)
+    sa <- sdm_area(bioc, cell_size = 100000, output_crs = 6933)
     expect_snapshot(sa)
   })
 
   # test gdal=F
   test_that("sdm_area - sf+gdal=F", {
     skip_on_cran()
-    sa <- sdm_area(pr_gpkg, cell_size = 100000, crs=6933, gdal=F)
+    sa <- sdm_area(pr_gpkg, cell_size = 100000, output_crs=6933, gdal=F)
     expect_snapshot(sa)
   })
 
   test_that("sdm_area - sf+gdal=F areas do not intersect", {
     skip_on_cran()
     box <- sf::st_bbox(c(xmin = 16.1, xmax = 16.6, ymax = 48.6, ymin = 47.9), crs = sf::st_crs(4326))
-    box <- sf::st_transform(box, crs=6933)
-    expect_warning(sdm_area(parana, cell_size = 100000, crs=6933, crop_by = box, gdal=F))
+    box <- sf::st_transform(box, crs = 6933)
+    expect_warning(sdm_area(parana, cell_size = 100000, output_crs = 6933, crop_by = box, gdal=F))
   })
 
   test_that("sdm_area - sf+gdal=F numeric col", {
     skip_on_cran()
     pr_gpkg2 <- pr_gpkg
     class(pr_gpkg2$CODIGOIB1) <- "numeric"
-    sa <- sdm_area(pr_gpkg2, cell_size = 100000, crs=6933, gdal=F)
+    sa <- sdm_area(pr_gpkg2, cell_size = 100000, output_crs=6933, gdal=F)
     expect_true(is.numeric(sa$grid$CODIGOIB1))
   })
 
   test_that("sdm_area - stars+gdal=F", {
     skip_on_cran()
-    sa <- sdm_area(pr_tif, cell_size = 100000, crs=6933, gdal=F)
+    sa <- sdm_area(pr_tif, cell_size = 100000, output_crs=6933, gdal=F)
     expect_snapshot(sa)
     expect_no_error(grd <- get_sdm_area(sa))
     expect_true(all(c("cell_id", "geometry") %in% colnames(grd)))
@@ -389,7 +389,7 @@ if (!identical(Sys.getenv("NOT_CRAN"), "false")){
     skip_on_cran()
     box <- sf::st_bbox(c(xmin = 16.1, xmax = 16.6, ymax = 48.6, ymin = 47.9), crs = sf::st_crs(4326))
     box <- sf::st_transform(box, crs=6933)
-    expect_warning(sdm_area(pr_tif, cell_size = 100000, crs=6933, crop_by = box, gdal=F))
+    expect_warning(sdm_area(pr_tif, cell_size = 100000, output_crs=6933, crop_by = box, gdal=F))
   })
 
   # test lines
@@ -419,7 +419,7 @@ if (!identical(Sys.getenv("NOT_CRAN"), "false")){
     sa1 <- sdm_area(bioc, cell_size = 1)
     sa2 <- sdm_area(scen_rs, cell_size = 1)
     expect_error(add_sdm_area(sa1, sa2))
-    sa2 <- sdm_area(bioc, cell_size = 100000, crs = 6933)
+    sa2 <- sdm_area(bioc, cell_size = 100000, output_crs = 6933)
     expect_error(add_sdm_area(sa1, sa2))
     sa2 <- sdm_area(scen_rs, cell_size = 1) |>
       select_predictors(c("current.bio1", "current.bio4", "current.bio12")) |>

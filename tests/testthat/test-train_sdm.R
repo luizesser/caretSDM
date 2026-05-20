@@ -1,10 +1,10 @@
 if (!identical(Sys.getenv("NOT_CRAN"), "false")) {
   set.seed(2)
-  sa <- sdm_area(parana, 100000, crs=6933)
+  sa <- sdm_area(parana, 100000, output_crs=6933)
   sa <- add_predictors(sa, bioc)
   sa <- select_predictors(sa, c("bio1", "bio12"))
   sa <- add_scenarios(sa)
-  oc <- occurrences_sdm(occ, crs=6933)
+  oc <- occurrences_sdm(occ, occ_crs=6933)
   suppressWarnings(oc <- join_area(oc, sa))
   i <- input_sdm(oc, sa)
   i_pca <- pca_predictors(i)
@@ -214,11 +214,11 @@ test_that("train_sdm - selecting vars", {
 test_that("train_sdm - ESM", {
   skip_on_cran()
   set.seed(2)
-  sa <- sdm_area(parana, 100000, crs=6933)
+  sa <- sdm_area(parana, 100000, output_crs=6933)
   sa <- add_predictors(sa, bioc)
   sa <- select_predictors(sa, c("bio1", "bio4", "bio12"))
   sa <- add_scenarios(sa)
-  oc <- occurrences_sdm(occ, crs=6933)
+  oc <- occurrences_sdm(occ, occ_crs=6933)
   suppressWarnings(oc <- join_area(oc, sa))
   i <- input_sdm(oc, sa)
   i <- pseudoabsences(i, method = "random", n_set = 3)
@@ -251,9 +251,9 @@ test_that("mahal.custom train", {
   skip_on_cran()
   sa <- sdm_area(parana,
                  cell_size = 50000, # Using a coarse resolution for speed
-                 crs = 6933)
+                 output_crs = 6933)
   sa <- add_predictors(sa, bioc)
-  oc <- occurrences_sdm(occ, crs = 6933)
+  oc <- occurrences_sdm(occ, occ_crs = 6933)
   suppressWarnings(oc <- join_area(oc, sa))
   i <- input_sdm(oc, sa)
   i <- pseudoabsences(i,
@@ -286,12 +286,12 @@ test_that("train_sdm - two species ESM", {
   set.seed(2)
   sa <- sdm_area(parana,
                  cell_size = 25000,
-                 crs = 6933,
+                 output_crs = 6933,
                  gdal = T) |>
     add_predictors(bioc) |>
     add_scenarios() |>
     select_predictors(c("bio1", "bio4", "bio12"))
-  oc <- occurrences_sdm(rbind(salm,occ), crs = 6933) |>
+  oc <- occurrences_sdm(rbind(salm,occ), occ_crs = 6933) |>
     join_area(sa) |>
     suppressWarnings()
   i <- input_sdm(oc, sa) |>
@@ -365,12 +365,12 @@ test_that("train_sdm - independent data", {
   set.seed(2)
   sa <- sdm_area(parana,
                  cell_size = 25000,
-                 crs = 6933,
+                 output_crs = 6933,
                  gdal = T) |>
     add_predictors(bioc) |>
     add_scenarios() |>
     select_predictors(c("bio1", "bio4", "bio12"))
-  oc <- occurrences_sdm(rbind(salm, occ), crs = 6933, independent_test = TRUE) |>
+  oc <- occurrences_sdm(rbind(salm, occ), occ_crs = 6933, independent_test = TRUE) |>
     join_area(sa) |>
     suppressWarnings()
   i <- input_sdm(oc, sa) |>
@@ -399,12 +399,12 @@ test_that("train_sdm - maxent test", {
   set.seed(2)
   sa <- sdm_area(parana,
                  cell_size = 25000,
-                 crs = 6933,
+                 output_crs = 6933,
                  gdal = T) |>
     add_predictors(bioc) |>
     add_scenarios() |>
     select_predictors(c("bio1", "bio4", "bio12"))
-  oc <- occurrences_sdm(salm, crs = 6933) |>
+  oc <- occurrences_sdm(salm, occ_crs = 6933) |>
     join_area(sa) |>
     suppressWarnings()
   i <- input_sdm(oc, sa) |>
@@ -433,12 +433,12 @@ test_that("train_sdm - background and pseudoabsence algorithms", {
   set.seed(2)
   sa <- sdm_area(parana,
                  cell_size = 25000,
-                 crs = 6933,
+                 output_crs = 6933,
                  gdal = T) |>
     add_predictors(bioc) |>
     add_scenarios() |>
     select_predictors(c("bio1", "bio4", "bio12"))
-  oc <- occurrences_sdm(rbind(salm, occ), crs = 6933) |>
+  oc <- occurrences_sdm(rbind(salm, occ), occ_crs = 6933) |>
     join_area(sa) |>
     suppressWarnings()
   i <- input_sdm(oc, sa) |>
@@ -463,9 +463,9 @@ test_that("mahal.custom train", {
   skip_on_cran()
   sa <- sdm_area(parana,
                  cell_size = 50000, # Using a coarse resolution for speed
-                 crs = 6933)
+                 output_crs = 6933)
   sa <- add_predictors(sa, bioc)
-  oc <- occurrences_sdm(occ, crs = 6933)
+  oc <- occurrences_sdm(occ, occ_crs = 6933)
   suppressWarnings(oc <- join_area(oc, sa))
   i <- input_sdm(oc, sa)
   i <- pseudoabsences(i,

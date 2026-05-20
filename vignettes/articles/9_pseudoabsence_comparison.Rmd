@@ -78,7 +78,7 @@ look at their structure.
 head(occ)
 
 # Build occurrences_sdm object
-oc <- occurrences_sdm(occ, crs = 6933)
+oc <- occurrences_sdm(occ, occ_crs = 6933)
 ```
 
 ```{r bioc}
@@ -90,7 +90,9 @@ bioc <- raster::stack(list.files("current", pattern = ".tif", full.names=T)[c(1,
 names(bioc) <- c("bio1", "bio4", "bio12")
 
 # Build sdm_area object
-sa <- sdm_area(bioc, crs = 4326, crop_by = buffer_sdm(occ, size = 500000, crs = 6933)) |> 
+sa <- sdm_area(bioc, 
+               output_crs = 4326, 
+               crop_by = buffer_sdm(occ, size = 500000, occ_crs = 6933)) |> 
   add_scenarios()
 ```
 

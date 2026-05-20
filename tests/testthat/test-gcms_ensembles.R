@@ -1,7 +1,7 @@
 test_that("gcms_ensembles/names", {
   skip_on_cran()
   set.seed(1)
-  sa <- sdm_area(parana, cell_size = 100000, crs = 6933)
+  sa <- sdm_area(parana, cell_size = 100000, output_crs = 6933)
   sa <- add_predictors(sa, bioc)
   # name changes
   pred_names <- c("a", "b", "c", "d", "bio1", "bio4", "bio12")
@@ -24,7 +24,7 @@ test_that("gcms_ensembles/names", {
   expect_true(all(sanames$scenarios$data$current$a == sa$scenarios$data$current$bio1))
   expect_true(all(sanames$scenarios$data$ca_ssp245_2090$a == sa$scenarios$data$ca_ssp245_2090$bio1))
   #
-  oc <- occurrences_sdm(occ, crs = 6933) |>
+  oc <- occurrences_sdm(occ, occ_crs = 6933) |>
     join_area(sa)
   i <- input_sdm(oc, sa)
   # name changes

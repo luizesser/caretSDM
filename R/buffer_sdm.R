@@ -2,13 +2,13 @@
 #'
 #' Create buffer around records in \code{occ_data} to be used as study area
 #'
-#' @usage buffer_sdm(occ_data, size = NULL, crs = NULL, mcp = FALSE)
+#' @usage buffer_sdm(occ_data, size = NULL, occ_crs = NULL, mcp = FALSE)
 #'
 #' @param occ_data A \code{data.frame} object with species, decimalLongitude and decimalLatitude columns.
 #' Usually the output from \code{GBIF_data}.
 #' @param size \code{numeric}. The distance between the record and the margin of the buffer (i.e.
 #' buffer radius).
-#' @param crs \code{numeric}. Indicates which EPSG is the \code{occ_data} in.
+#' @param occ_crs \code{numeric}. Indicates which EPSG is the \code{occ_data} in.
 #' @param mcp \code{boolean}. Should the buffer be applied in each record (FALSE) or in a minimum
 #' convex polygon/convex hull (TRUE)? Standard is \code{FALSE}.
 #'
@@ -21,16 +21,16 @@
 #'
 #' @examples
 #' # Create sdm_area object:
-#' study_area <- buffer_sdm(occ, size=50000, crs=6933)
+#' study_area <- buffer_sdm(occ, size=50000, occ_crs=6933)
 #' plot(study_area)
 #'
 #' @importFrom sf st_as_sf st_buffer st_union st_crs st_set_geometry st_convex_hull st_combine
 #' @import checkCLI
 #'
 #' @export
-buffer_sdm <- function(occ_data, size = NULL, crs = NULL, mcp = FALSE) {
+buffer_sdm <- function(occ_data, size = NULL, occ_crs = NULL, mcp = FALSE) {
   assert_class_cli(size, "numeric")
-  assert_class_cli(crs, "numeric")
+  assert_class_cli(occ_crs, "numeric")
   assert_class_cli(mcp, "logical")
 
   if(is_occurrences(occ_data)){
@@ -45,14 +45,14 @@ buffer_sdm <- function(occ_data, size = NULL, crs = NULL, mcp = FALSE) {
   }
   if ( mcp ) {
     x <- occ_data |>
-      sf::st_as_sf(coords=cnames[c(1,2)], crs=sf::st_crs(crs)) |>
+      sf::st_as_sf(coords=cnames[c(1,2)], crs=sf::st_crs(occ_crs)) |>
       sf::st_combine() |>
       sf::st_convex_hull() |>
       sf::st_buffer(dist=size) |>
       sf::st_union()
   } else {
     x <- occ_data |>
-      sf::st_as_sf(coords=cnames[c(1,2)], crs=sf::st_crs(crs)) |>
+      sf::st_as_sf(coords=cnames[c(1,2)], crs=sf::st_crs(occ_crs)) |>
       sf::st_buffer(dist=size) |>
       sf::st_union()
   }

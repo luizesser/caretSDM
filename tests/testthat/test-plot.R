@@ -5,7 +5,7 @@ test_that("plot works with i", {
     add_predictors(bioc) |>
     select_predictors(c("bio1", "bio12")) |>
     add_scenarios()
-  oc <- occurrences_sdm(occ, crs=6933) |>
+  oc <- occurrences_sdm(occ, occ_crs=6933) |>
     join_area(sa)
 
   expect_no_error(plot(input_sdm(oc)))

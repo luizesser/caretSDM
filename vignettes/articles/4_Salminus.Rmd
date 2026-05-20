@@ -149,7 +149,7 @@ modeling. For other arguments meaning see `?sdm_area`.
 ```{r sdm_area}
 sa <- sdm_area(rivs, 
                cell_size = 25000, 
-               crs = 6933, 
+               output_crs = 6933, 
                variables_selected = NULL,
                gdal = TRUE, 
                crop_by = NULL, 
@@ -245,11 +245,11 @@ As `caretSDM` has a strong GIS background, it is necessary to explicitly tell wh
 in. This will assure that every GIS transformation is correct. `occurrences_sdm` function creates a
 occurrences class (*i.e.* "response variable", "target" or "label") that will be used in
 occurrences' transformations and functions, as pseudoabsences generation. For a reference, GBIF data
-is in crs = 4326, but our records stored in `salm` object is transformed to 6933 (see `?salm` for
+is in occ_crs = 4326, but our records stored in `salm` object is transformed to 6933 (see `?salm` for
 more information on the data).
 
 ```{r occurrences_sdm}
-oc <- occurrences_sdm(salm, crs = 6933)
+oc <- occurrences_sdm(salm, occ_crs = 6933)
 oc
 ```
 

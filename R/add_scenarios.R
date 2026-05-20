@@ -41,7 +41,7 @@
 #'
 #' @examples
 #' # Create sdm_area object:
-#' sa <- sdm_area(parana, cell_size = 100000, crs = 6933)
+#' sa <- sdm_area(parana, cell_size = 100000, output_crs = 6933)
 #'
 #' # Include predictors:
 #' sa <- add_predictors(sa, bioc)
@@ -62,7 +62,7 @@
 #' sa <- select_scenarios(sa, scenarios_names = c("future_1"))
 #'
 #' # Setting stationary variables in scenarios:
-#' sa <- sdm_area(rivs[c(1:200),], cell_size = 100000, crs = 6933, lines_as_sdm_area = TRUE) |>
+#' sa <- sdm_area(rivs[c(1:200),], cell_size = 100000, output_crs = 6933, lines_as_sdm_area = TRUE) |>
 #'   add_predictors(bioc) |>
 #'   add_scenarios(scen, stationary = c("LENGTH_KM", "DIST_DN_KM"))
 #'
@@ -259,7 +259,7 @@ add_scenarios.stars <- function(sa, scen = NULL, scenarios_names = NULL, pred_as
         scen_area <- scen[i] |>
           sdm_area(
             cell_size = sa$cell_size,
-            crs = stationary_grd |> sf::st_crs(),
+            output_crs = stationary_grd |> sf::st_crs(),
             variables_selected = variables_selected,
             gdal = TRUE,
             crop_by = stationary_grd
@@ -345,7 +345,7 @@ add_scenarios.stars <- function(sa, scen = NULL, scenarios_names = NULL, pred_as
         scen_area <- scen[i] |>
           sdm_area(
             cell_size = sa$cell_size,
-            crs = grid_t |> sf::st_crs(),
+            output_crs = grid_t |> sf::st_crs(),
             variables_selected = variables_selected,
             gdal = sa$parameters$gdal,
             lines_as_sdm_area = sa$parameters$lines_as_sdm_area
@@ -364,7 +364,7 @@ add_scenarios.stars <- function(sa, scen = NULL, scenarios_names = NULL, pred_as
       if(!is.null(crop_area)) {
         sa_crop <- sdm_area(x = crop_area,
                  cell_size = sa$cell_size,
-                 crs = grid_t |> sf::st_crs(),
+                 output_crs = grid_t |> sf::st_crs(),
                  variables_selected = NULL, # Remove
                  gdal = sa$parameters$gdal,
                  crop_by = NULL, # Remove
@@ -382,7 +382,7 @@ add_scenarios.stars <- function(sa, scen = NULL, scenarios_names = NULL, pred_as
           scen_area <- scen[i] |>
             sdm_area(
               cell_size = sa$cell_size,
-              crs = grid_t |> sf::st_crs(),
+              output_crs = grid_t |> sf::st_crs(),
               variables_selected = variables_selected,
               gdal = sa$parameters$gdal,
               crop_by = crop_area,

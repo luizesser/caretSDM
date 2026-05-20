@@ -52,14 +52,20 @@ caretSDM is vastly documented and has included some objects that can guide your 
 
 *Articles*
 
--   `Adding New Algorithms to caretSDM` do not found your ideal algorithm already implemented? Here we show how to implement any custom algorithm in our package.
+-   `1. Concatenate functions in caretSDM` This vignette shows how to build compact scripts, which is very useful to run your first tests.
 
--   `caretSDM Workflow for Species Distribution Modeling` is the main vignette for terrestrial species modeling, where we model the tree species *Araucaria angustifolia*.
+-   `2. Adding New Algorithms to caretSDM` Do not found your ideal algorithm already implemented? Here we show how to implement any custom algorithm in our package.
 
--   `Concatenate functions in caretSDM` shows how to build compact scripts, which is very useful to run your first tests.
+-   `3. caretSDM Workflow for Species Distribution Modeling` This is the main vignette for terrestrial species modeling, where we model the tree species *Araucaria angustifolia*.
 
--   `Projecting Non-native Distribution using SDMs` a vignette demonstrating how to make invasiveness assessments.
+-   `4. Modeling Species Distributions in Continental Water Bodies` This is the main vignette for continental aquatic species modeling, where we model the fish species *Salminus brasiliensis*.
 
--   `Modeling Species Distributions in Continental Water Bodies` is the main vignette for continental aquatic species modeling, where we model the fish species *Salminus brasiliensis*.
+-   `5. Projecting Non-native Distribution using SDMs` Here we demonstrate how to make invasiveness assessments using the package.
 
--   `Modeling Rare Species using Ensemble of Small Models` we showcase how easy it is to apply SDMs to rare species with low number of records.
+-   `6. Modeling Rare Species using Ensemble of Small Models` Want to model rare species? This vignette showcases how easy it is to apply SDMs to rare species with low number of records.
+
+-   `7. Applying MaxEnt in caretSDM` You are a MaxEnt-only type of modeler? Then this vignette is for you. Here we show how to obtain SDMs using MaxEnt with automatic feature selection.
+
+-   `8. Benchmarking SDM Package Performance in R` Want to know how this package performs in comparison with other popular packages? Here we address this question through benchmarking.
+
+-   `9. Comparing Pseudoabsence Methods in Species Distribution Modelling` To build a script to compare different approaches in SDMs you can use this vignette as a starting-point.

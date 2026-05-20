@@ -57,7 +57,7 @@ GBIF_data <- function(s, file = NULL, as_df = FALSE, ...) {
       message(paste0("File already exists. Importing from: ", file))
       data <- utils::read.csv(file)
       if(!as_df){
-        data <- occurrences_sdm(data, crs = 4326)
+        data <- occurrences_sdm(data, occ_crs = 4326)
       }
       return(data)
     }
@@ -93,7 +93,7 @@ GBIF_data <- function(s, file = NULL, as_df = FALSE, ...) {
   }
 
   if(!as_df){
-    data <- occurrences_sdm(data, crs = 4326)
+    data <- occurrences_sdm(data, occ_crs = 4326)
   }
 
   return(data)

@@ -2,13 +2,13 @@
 #'
 #' This function creates a new \code{sdm_area} object.
 #'
-#' @usage sdm_area(x, cell_size = NULL, crs = NULL, variables_selected = NULL,
-#'                 gdal = TRUE, crop_by = NULL, lines_as_sdm_area = FALSE)
+#' @usage sdm_area(x, cell_size = NULL, output_crs = NULL, variables_selected = NULL,
+#'                 gdal = TRUE, crop_by = NULL, lines_as_sdm_area = FALSE, crs = NULL)
 #'
 #' @param x A shape or a raster. Usually a shape from \code{sf} class, but rasters from
 #' \code{stars}, \code{rasterStack} or \code{SpatRaster} class are also allowed.
 #' @param cell_size \code{numeric}. The cell size to be used in models.
-#' @param crs \code{numeric}. Indicates which EPSG should the output grid be in. If \code{NULL},
+#' @param output_crs \code{numeric}. Indicates which EPSG should the output grid be in. If \code{NULL},
 #' epsg from \code{x} is used.
 #' @param variables_selected A \code{character} vector with variables in \code{x} to be used in
 #' models.
@@ -17,6 +17,7 @@
 #' @param crop_by A shape from \code{sf} to crop \code{x}.
 #' @param lines_as_sdm_area Boolean. If \code{x} is a \code{sf} with LINESTRING geometry, it can be
 #' used to model species distribution in lines and not grid cells.
+#' @param crs Deprecated. Use output_crs instead.
 #' @param i A \code{sdm_area} or a \code{input_sdm} object.
 #' @param sa1 A \code{sdm_area} object.
 #' @param sa2 A \code{sdm_area} object.
@@ -44,10 +45,10 @@
 #'
 #' @examples
 #' # Create sdm_area object:
-#' sa_area <- sdm_area(parana, cell_size = 50000, crs = 6933)
+#' sa_area <- sdm_area(parana, cell_size = 50000, output_crs = 6933)
 #'
 #' # Create sdm_area using a subset of rivs (lines):
-#' sa_rivers <- sdm_area(rivs[c(1:100),], cell_size = 100000, crs = 6933, lines_as_sdm_area = TRUE)
+#' sa_rivers <- sdm_area(rivs[c(1:100),], cell_size = 100000, output_crs = 6933, lines_as_sdm_area = TRUE)
 #'
 #' @importFrom stars st_as_stars read_stars write_stars st_dimensions st_warp
 #' @importFrom sf st_crs st_read st_bbox st_as_sf gdal_utils st_crop st_make_valid st_transform
@@ -71,16 +72,16 @@
 #' @global original_id ..weighting_factor
 #'
 #' @export
-sdm_area <- function(x, cell_size = NULL, crs = NULL, variables_selected = NULL,
-                       gdal = TRUE, crop_by = NULL, lines_as_sdm_area = FALSE) {
+sdm_area <- function(x, cell_size = NULL, output_crs = NULL, variables_selected = NULL,
+                       gdal = TRUE, crop_by = NULL, lines_as_sdm_area = FALSE, crs = NULL) {
   assert_cli(
     check_int_cli(
-      crs,
+      output_crs,
       na.ok = TRUE,
       null.ok = TRUE
     ),
     check_class_cli(
-      crs,
+      output_crs,
       "crs",
       null.ok = TRUE
     )
@@ -122,25 +123,25 @@ sdm_area <- function(x, cell_size = NULL, crs = NULL, variables_selected = NULL,
 }
 
 #' @export
-sdm_area.RasterStack <- function(x, cell_size = NULL, crs = NULL, variables_selected = NULL,
-                                 gdal= TRUE, crop_by = NULL, lines_as_sdm_area = FALSE) {
+sdm_area.RasterStack <- function(x, cell_size = NULL, output_crs = NULL, variables_selected = NULL,
+                                 gdal= TRUE, crop_by = NULL, lines_as_sdm_area = FALSE, crs = NULL) {
   xs <- stars::st_as_stars(x)
-  sa <- sdm_area(xs, cell_size, crs, variables_selected, gdal, crop_by, lines_as_sdm_area)
+  sa <- sdm_area(xs, cell_size, output_crs, variables_selected, gdal, crop_by, lines_as_sdm_area, crs)
   return(invisible(sa))
 }
 
 #' @export
-sdm_area.SpatRaster <- function(x, cell_size = NULL, crs = NULL, variables_selected = NULL,
-                                gdal= TRUE, crop_by = NULL, lines_as_sdm_area = FALSE) {
+sdm_area.SpatRaster <- function(x, cell_size = NULL, output_crs = NULL, variables_selected = NULL,
+                                gdal= TRUE, crop_by = NULL, lines_as_sdm_area = FALSE, crs = NULL) {
   xs <- stars::st_as_stars(x)
   names(stars::st_dimensions(xs)) <- c("x", "y", "band")
-  sa <- sdm_area(xs, cell_size, crs, variables_selected, gdal, crop_by, lines_as_sdm_area)
+  sa <- sdm_area(xs, cell_size, output_crs, variables_selected, gdal, crop_by, lines_as_sdm_area, crs)
   return(invisible(sa))
 }
 
 #' @export
-sdm_area.character <- function(x, cell_size = NULL, crs = NULL, variables_selected = NULL,
-                               gdal= TRUE, crop_by = NULL, lines_as_sdm_area = FALSE) {
+sdm_area.character <- function(x, cell_size = NULL, output_crs = NULL, variables_selected = NULL,
+                               gdal= TRUE, crop_by = NULL, lines_as_sdm_area = FALSE, crs = NULL) {
   xs <- tryCatch(
     sf::st_read(x, quiet = TRUE),
     error = function(e) NA
@@ -167,13 +168,26 @@ sdm_area.character <- function(x, cell_size = NULL, crs = NULL, variables_select
       cli::cli_abort(c("x" = "Files not found."))
     }
   }
-  sa <- sdm_area(xs, cell_size, crs, variables_selected, gdal, crop_by, lines_as_sdm_area)
+  sa <- sdm_area(xs, cell_size, output_crs, variables_selected, gdal, crop_by, lines_as_sdm_area, crs)
   return(invisible(sa))
 }
 
 #' @export
-sdm_area.stars <- function(x, cell_size = NULL, crs = NULL, variables_selected = NULL,
-                           gdal= TRUE, crop_by = NULL, lines_as_sdm_area = FALSE) {
+sdm_area.stars <- function(x, cell_size = NULL, output_crs = NULL, variables_selected = NULL,
+                           gdal= TRUE, crop_by = NULL, lines_as_sdm_area = FALSE, crs = NULL) {
+  if (!is.null(crs)) {
+    if (is.null(output_crs)) {
+      output_crs <- crs
+    }
+    warning(
+      paste(
+        "'crs' is deprecated and will be removed in a future version.",
+        "Please use 'output_crs' instead."
+      ),
+      call. = FALSE
+    )
+  }
+
   assert_number_cli(
     cell_size,
     na.ok = FALSE,
@@ -205,17 +219,18 @@ sdm_area.stars <- function(x, cell_size = NULL, crs = NULL, variables_selected =
     null.ok = TRUE,
     .var.name = "x"
   )
-  if (is.null(crs)) {
+
+  if (is.null(output_crs)) {
     crs <- sf::st_crs(x)
   } else {
     crs <- tryCatch(
-      suppressWarnings(sf::st_crs(crs)),
+      suppressWarnings(sf::st_crs(output_crs)),
       error = function(e) NA
     )
   }
 
   if (is.na(crs) || is.na(crs$input)){
-    cli_abort(c("x" = "crs is invalid."))
+    cli_abort(c("x" = "output_crs is invalid."))
   }
 
 ##############################
@@ -647,8 +662,21 @@ sdm_area.stars <- function(x, cell_size = NULL, crs = NULL, variables_selected =
 }
 
 #' @export
-sdm_area.sf <- function(x, cell_size = NULL, crs = NULL, variables_selected = NULL,
-                        gdal= TRUE, crop_by = NULL, lines_as_sdm_area = FALSE) {
+sdm_area.sf <- function(x, cell_size = NULL, output_crs = NULL, variables_selected = NULL,
+                        gdal= TRUE, crop_by = NULL, lines_as_sdm_area = FALSE, crs = NULL) {
+  if (!is.null(crs)) {
+    if (is.null(output_crs)) {
+      output_crs <- crs
+    }
+    warning(
+      paste(
+        "'crs' is deprecated and will be removed in a future version.",
+        "Please use 'output_crs' instead."
+      ),
+      call. = FALSE
+    )
+  }
+
   assert_class_cli(
     sf::st_crs(x),
     classes = "crs",
@@ -663,16 +691,16 @@ sdm_area.sf <- function(x, cell_size = NULL, crs = NULL, variables_selected = NU
     lower = 0
   )
 
-  if (is.null(crs)) {
+  if (is.null(output_crs)) {
     crs <- sf::st_crs(x)
   } else {
     crs <- tryCatch(
-      suppressWarnings(sf::st_crs(crs)),
+      suppressWarnings(sf::st_crs(output_crs)),
       error = function(e) NA
     )
   }
   if (is.na(crs) || is.na(crs$input)){
-    cli_abort(c("x" = "crs is invalid."))
+    cli_abort(c("x" = "output_crs is invalid."))
   }
 
   sa <- .detect_sdm_area(x, cell_size, crs, gdal, lines_as_sdm_area)
