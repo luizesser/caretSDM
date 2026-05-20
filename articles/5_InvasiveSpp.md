@@ -245,7 +245,7 @@ other arguments meaning see
 
 sa <- sdm_area(parana, 
                cell_size = 25000, 
-               crs = 6933, 
+               output_crs = 6933, 
                variables_selected = NULL,
                gdal = TRUE, 
                crop_by = NULL, 
@@ -369,14 +369,14 @@ tell which CRS is your data in. This will assure that every GIS
 transformation is correct. `occurrences_sdm` function creates a
 occurrences class (*i.e.* “response variable”, “target” or “label”) that
 will be used in occurrences’ transformations and functions, as
-pseudoabsences generation. For a reference, GBIF data is in crs = 4326,
-but our records stored in `occ` object is transformed to 6933 (see
+pseudoabsences generation. For a reference, GBIF data is in occ_crs =
+4326, but our records stored in `occ` object is transformed to 6933 (see
 [`?occ`](https://luizesser.github.io/caretSDM/reference/occ.md) for more
 information on the data).
 
 ``` r
 
-oc <- occurrences_sdm(occ, crs = 6933)
+oc <- occurrences_sdm(occ, occ_crs = 6933)
 oc
 #>         caretSDM       
 #> .......................
@@ -1211,5 +1211,5 @@ cells in a grid.
 
 end_time <- Sys.time()
 end_time - start_time
-#> Time difference of 19.13204 secs
+#> Time difference of 19.93193 secs
 ```

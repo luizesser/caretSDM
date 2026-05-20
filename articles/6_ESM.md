@@ -29,7 +29,7 @@ set.seed(1)
 # Build sdm_area object
 sa <- sdm_area(parana, 
                cell_size = 25000, 
-               crs = 6933, 
+               output_crs = 6933, 
                gdal = T) |> 
   add_predictors(bioc) |> 
   add_scenarios() |>
@@ -40,7 +40,7 @@ sa <- sdm_area(parana,
 #> ℹ Using GDAL to make the grid and resample the variables.
 
 # Build occurrences_sdm object
-oc <- occurrences_sdm(occ, crs = 6933)
+oc <- occurrences_sdm(occ, occ_crs = 6933)
 
 # Merge sdm_area and occurrences_sdm and perform pre-processing, processing and projecting.
 i_esm <- input_sdm(oc, sa) |> 
@@ -190,5 +190,5 @@ bivariate models.
 
 end_time <- Sys.time()
 end_time - start_time
-#> Time difference of 1.046099 mins
+#> Time difference of 1.077452 mins
 ```

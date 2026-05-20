@@ -134,3 +134,8 @@ CRAN release: 2026-05-12
 ## caretSDM 1.9.1
 
 - The process now accepts that models can fail.
+
+## caretSDM 1.9.2
+
+- ‘crs’ argument in occurrences_sdm and sdm_area is now changed to
+  ‘occ_crs’ and ‘output_crs’, respectively.

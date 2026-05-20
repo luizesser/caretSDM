@@ -343,7 +343,7 @@ typical SDM analysis.
 # Create an sdm_area object
 sa <- sdm_area(parana, 
                cell_size = 50000, # Using a coarse resolution for speed
-               crs = 6933)
+               output_crs = 6933)
 #> ! Making grid over study area is an expensive task. Please, be patient!
 #> ℹ Using GDAL to make the grid and resample the variables.
 
@@ -353,7 +353,7 @@ sa <- add_predictors(sa, bioc)
 #> ℹ Using GDAL to make the grid and resample the variables.
 
 # Format occurrences
-oc <- occurrences_sdm(occ, crs = 6933)
+oc <- occurrences_sdm(occ, occ_crs = 6933)
 
 # Create the final input_sdm object
 i <- input_sdm(oc, sa)

@@ -94,6 +94,7 @@ https://luizfesser.wordpress.com
 ``` r
 # Create sdm_area object:
 sa <- sdm_area(parana, cell_size = 25000, crs = 6933)
+#> Warning: 'crs' is deprecated and will be removed in a future version. Please use 'output_crs' instead.
 #> ! Making grid over study area is an expensive task. Please, be patient!
 #> ℹ Using GDAL to make the grid and resample the variables.
 
@@ -107,6 +108,7 @@ sa <- add_scenarios(sa)
 
 # Create occurrences:
 oc <- occurrences_sdm(occ, crs = 6933)
+#> Warning: 'crs' is deprecated and will be removed in a future version. Please use 'occ_crs' instead.
 
 # Create input_sdm:
 i <- input_sdm(oc, sa)

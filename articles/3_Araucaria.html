@@ -25,7 +25,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">caretSDM</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.9.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.9.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -72,7 +72,7 @@
                         <h4 data-toc-skip class="author">[author
 name]</h4>
             
-            <h4 data-toc-skip class="date">2026-05-18</h4>
+            <h4 data-toc-skip class="date">2026-05-20</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/luizesser/caretSDM/blob/main/vignettes/articles/3_Araucaria.Rmd" class="external-link"><code>vignettes/articles/3_Araucaria.Rmd</code></a></small>
       <div class="d-none name"><code>3_Araucaria.Rmd</code></div>
@@ -236,7 +236,7 @@ see <code><a href="../reference/sdm_area.html">?sdm_area</a></code>.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">sa</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sdm_area.html">sdm_area</a></span><span class="op">(</span><span class="va">parana</span>, </span>
 <span>               cell_size <span class="op">=</span> <span class="fl">25000</span>, </span>
-<span>               crs <span class="op">=</span> <span class="fl">6933</span>, </span>
+<span>               output_crs <span class="op">=</span> <span class="fl">6933</span>, </span>
 <span>               variables_selected <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>               gdal <span class="op">=</span> <span class="cn">TRUE</span>, </span>
 <span>               crop_by <span class="op">=</span> <span class="cn">NULL</span>, </span>
@@ -382,11 +382,11 @@ every GIS transformation is correct. <code>occurrences_sdm</code>
 function creates a occurrences class (<em>i.e.</em> “response variable”,
 “target” or “label”) that will be used in occurrences’ transformations
 and functions, as pseudoabsences generation. For a reference, GBIF data
-is in crs = 4326, but our records stored in <code>occ</code> object is
-transformed to 6933 (see <code><a href="../reference/occ.html">?occ</a></code> for more information on the
-data).</p>
+is in occ_crs = 4326, but our records stored in <code>occ</code> object
+is transformed to 6933 (see <code><a href="../reference/occ.html">?occ</a></code> for more information on
+the data).</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">oc</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/occurrences_sdm.html">occurrences_sdm</a></span><span class="op">(</span><span class="va">occ</span>, crs <span class="op">=</span> <span class="fl">6933</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">oc</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/occurrences_sdm.html">occurrences_sdm</a></span><span class="op">(</span><span class="va">occ</span>, occ_crs <span class="op">=</span> <span class="fl">6933</span><span class="op">)</span></span>
 <span><span class="va">oc</span></span>
 <span><span class="co">#&gt;         caretSDM       </span></span>
 <span><span class="co">#&gt; .......................</span></span>
@@ -1231,7 +1231,7 @@ simplefeatures object instead of cells in a grid.</p>
 <div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">end_time</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">end_time</span> <span class="op">-</span> <span class="va">start_time</span></span>
-<span><span class="co">#&gt; Time difference of 23.74551 secs</span></span></code></pre></div>
+<span><span class="co">#&gt; Time difference of 24.38342 secs</span></span></code></pre></div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>

@@ -5,11 +5,12 @@ This function creates and manage `occurrences` objects.
 ## Usage
 
 ``` r
-occurrences_sdm(x,
+occurrences_sdm(occ,
                 independent_test = NULL,
                 p = 0.1,
-                crs = NULL,
+                occ_crs = NULL,
                 independent_test_crs = NULL,
+                crs = NULL,
                 ...)
 
 n_records(i)
@@ -27,7 +28,7 @@ add_occurrences(oc1, oc2)
 
 ## Arguments
 
-- x:
+- occ:
 
   A `data.frame`, `tibble` or `sf` with species records.
 
@@ -44,18 +45,22 @@ add_occurrences(oc1, oc2)
   Numeric. Fraction of data to be used as independent test. Standard is
   0.1.
 
-- crs:
+- occ_crs:
 
-  Numeric. CRS of `x`.
+  Numeric. CRS of `occ`.
 
 - independent_test_crs:
 
   Numeric. CRS of `independent_test` if it is a `data.frame`.
 
+- crs:
+
+  Deprecated. Use occ_crs instead.
+
 - ...:
 
   A vector with column names addressing the columns with species names,
-  longitude and latitude, respectively, in `x`.
+  longitude and latitude, respectively, in `occ`.
 
 - i:
 
@@ -75,7 +80,7 @@ A `occurrences` object.
 
 ## Details
 
-`x` must have three columns: species, decimalLongitude and
+`occ` must have three columns: species, decimalLongitude and
 decimalLatitude. When `sf` it is only necessary a species column.
 `n_records` return the number of presence records to each species.
 `species_names` return the species names. `get_coords` return a
@@ -100,4 +105,5 @@ https://luizfesser.wordpress.com
 ``` r
 # Create occurrences:
 oc <- occurrences_sdm(occ, crs = 6933)
+#> Warning: 'crs' is deprecated and will be removed in a future version. Please use 'occ_crs' instead.
 ```

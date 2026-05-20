@@ -22,7 +22,7 @@ set.seed(1)
 # Build sdm_area object
 sa <- sdm_area(rivs, 
                cell_size = 25000, 
-               crs = 6933, 
+               output_crs = 6933, 
                gdal = T,
                lines_as_sdm_area = TRUE) |> 
   add_predictors(bioc) |> 
@@ -36,7 +36,7 @@ sa <- sdm_area(rivs,
 #> ℹ Using GDAL to make the grid and resample the variables.
 
 # Build occurrences_sdm object
-oc <- occurrences_sdm(salm, crs = 6933)
+oc <- occurrences_sdm(salm, occ_crs = 6933)
 
 # Merge sdm_area and occurrences_sdm and perform pre-processing, processing and projecting.
 i <- input_sdm(oc, sa) |> 

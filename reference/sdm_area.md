@@ -5,8 +5,8 @@ This function creates a new `sdm_area` object.
 ## Usage
 
 ``` r
-sdm_area(x, cell_size = NULL, crs = NULL, variables_selected = NULL,
-                gdal = TRUE, crop_by = NULL, lines_as_sdm_area = FALSE)
+sdm_area(x, cell_size = NULL, output_crs = NULL, variables_selected = NULL,
+                gdal = TRUE, crop_by = NULL, lines_as_sdm_area = FALSE, crs = NULL)
 
 get_sdm_area(i)
 
@@ -24,7 +24,7 @@ add_sdm_area(sa1, sa2)
 
   `numeric`. The cell size to be used in models.
 
-- crs:
+- output_crs:
 
   `numeric`. Indicates which EPSG should the output grid be in. If
   `NULL`, epsg from `x` is used.
@@ -46,6 +46,10 @@ add_sdm_area(sa1, sa2)
 
   Boolean. If `x` is a `sf` with LINESTRING geometry, it can be used to
   model species distribution in lines and not grid cells.
+
+- crs:
+
+  Deprecated. Use output_crs instead.
 
 - i:
 
@@ -97,12 +101,12 @@ https://luizfesser.wordpress.com
 
 ``` r
 # Create sdm_area object:
-sa_area <- sdm_area(parana, cell_size = 50000, crs = 6933)
+sa_area <- sdm_area(parana, cell_size = 50000, output_crs = 6933)
 #> ! Making grid over study area is an expensive task. Please, be patient!
 #> ℹ Using GDAL to make the grid and resample the variables.
 
 # Create sdm_area using a subset of rivs (lines):
-sa_rivers <- sdm_area(rivs[c(1:100),], cell_size = 100000, crs = 6933, lines_as_sdm_area = TRUE)
+sa_rivers <- sdm_area(rivs[c(1:100),], cell_size = 100000, output_crs = 6933, lines_as_sdm_area = TRUE)
 #> ! Making grid over study area is an expensive task. Please, be patient!
 #> ℹ Using GDAL to make the grid and resample the variables.
 ```

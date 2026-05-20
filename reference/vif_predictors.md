@@ -61,7 +61,7 @@ https://luizfesser.wordpress.com
 
 ``` r
 # Create sdm_area object:
-sa <- sdm_area(parana, cell_size = 25000, crs = 6933)
+sa <- sdm_area(parana, cell_size = 25000, output_crs = 6933)
 #> ! Making grid over study area is an expensive task. Please, be patient!
 #> ℹ Using GDAL to make the grid and resample the variables.
 
@@ -82,7 +82,7 @@ sa <- add_scenarios(sa, scen)
 #> ℹ Using GDAL to make the grid and resample the variables.
 
 # Create occurrences:
-oc <- occurrences_sdm(occ, crs = 6933)
+oc <- occurrences_sdm(occ, occ_crs = 6933)
 
 # Create input_sdm:
 i <- input_sdm(oc, sa)

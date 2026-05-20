@@ -59,7 +59,7 @@ head(occ)
 ``` r
 
 # Build occurrences_sdm object
-oc <- occurrences_sdm(occ, crs = 6933)
+oc <- occurrences_sdm(occ, occ_crs = 6933)
 ```
 
 ``` r
@@ -72,7 +72,9 @@ bioc <- raster::stack(list.files("current", pattern = ".tif", full.names=T)[c(1,
 names(bioc) <- c("bio1", "bio4", "bio12")
 
 # Build sdm_area object
-sa <- sdm_area(bioc, crs = 4326, crop_by = buffer_sdm(occ, size = 500000, crs = 6933)) |> 
+sa <- sdm_area(bioc, 
+               output_crs = 4326, 
+               crop_by = buffer_sdm(occ, size = 500000, occ_crs = 6933)) |> 
   add_scenarios()
 ```
 
@@ -445,7 +447,7 @@ sessionInfo()
     ## 
     ## other attached packages:
     ## [1] earth_5.3.5    plotmo_3.7.0   plotrix_3.8-14 Formula_1.2-5  caret_7.0-1   
-    ## [6] lattice_0.22-9 ggplot2_4.0.3  caretSDM_1.9.1
+    ## [6] lattice_0.22-9 ggplot2_4.0.3  caretSDM_1.9.2
     ## 
     ## loaded via a namespace (and not attached):
     ##   [1] RColorBrewer_1.1-3      ECDFniche_0.5           jsonlite_2.0.0         

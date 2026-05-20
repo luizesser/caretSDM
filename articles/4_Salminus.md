@@ -196,7 +196,7 @@ meaning see
 
 sa <- sdm_area(rivs, 
                cell_size = 25000, 
-               crs = 6933, 
+               output_crs = 6933, 
                variables_selected = NULL,
                gdal = TRUE, 
                crop_by = NULL, 
@@ -334,10 +334,10 @@ sa <- add_scenarios(sa,
 #> ℹ Using GDAL to make the grid and resample the variables.
 #> ! Making grid over the study area is an expensive task. Please, be patient!
 #> ℹ Using GDAL to make the grid and resample the variables.
-#> Reescaling data ■■■■■■■■■■■■■■■■                  50% | ETA:  2s
-#> 
 #> ! Making grid over the study area is an expensive task. Please, be patient!
 #> ℹ Using GDAL to make the grid and resample the variables.
+#> Reescaling data ■■■■■■■■■■■■■■■■■■■■■■■           75% | ETA:  1s
+#> 
 #> ! Making grid over the study area is an expensive task. Please, be patient!
 #> ℹ Using GDAL to make the grid and resample the variables.
 sa
@@ -373,14 +373,14 @@ tell which CRS is your data in. This will assure that every GIS
 transformation is correct. `occurrences_sdm` function creates a
 occurrences class (*i.e.* “response variable”, “target” or “label”) that
 will be used in occurrences’ transformations and functions, as
-pseudoabsences generation. For a reference, GBIF data is in crs = 4326,
-but our records stored in `salm` object is transformed to 6933 (see
-[`?salm`](https://luizesser.github.io/caretSDM/reference/salm.md) for
-more information on the data).
+pseudoabsences generation. For a reference, GBIF data is in occ_crs =
+4326, but our records stored in `salm` object is transformed to 6933
+(see [`?salm`](https://luizesser.github.io/caretSDM/reference/salm.md)
+for more information on the data).
 
 ``` r
 
-oc <- occurrences_sdm(salm, crs = 6933)
+oc <- occurrences_sdm(salm, occ_crs = 6933)
 oc
 #>         caretSDM       
 #> .......................
@@ -1231,5 +1231,5 @@ species using a grid simplefeatures instead of lines.
 
 end_time <- Sys.time()
 end_time - start_time
-#> Time difference of 37.77226 secs
+#> Time difference of 38.31654 secs
 ```

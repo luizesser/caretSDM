@@ -5,7 +5,7 @@ Create buffer around records in `occ_data` to be used as study area
 ## Usage
 
 ``` r
-buffer_sdm(occ_data, size = NULL, crs = NULL, mcp = FALSE)
+buffer_sdm(occ_data, size = NULL, occ_crs = NULL, mcp = FALSE)
 ```
 
 ## Arguments
@@ -20,7 +20,7 @@ buffer_sdm(occ_data, size = NULL, crs = NULL, mcp = FALSE)
   `numeric`. The distance between the record and the margin of the
   buffer (i.e. buffer radius).
 
-- crs:
+- occ_crs:
 
   `numeric`. Indicates which EPSG is the `occ_data` in.
 
@@ -46,7 +46,7 @@ https://luizfesser.wordpress.com
 
 ``` r
 # Create sdm_area object:
-study_area <- buffer_sdm(occ, size=50000, crs=6933)
+study_area <- buffer_sdm(occ, size=50000, occ_crs=6933)
 plot(study_area)
 
 ```

@@ -13,7 +13,7 @@ pseudoabsences(occ,
                variables_selected = NULL,
                th = 0,
                size = 1,
-               crs = 4326,
+               size_crs = 4326,
                mcp = FALSE)
 
 n_pseudoabsences(i)
@@ -67,7 +67,7 @@ pseudoabsence_data(i)
   `numeric` The distance between the record and the margin of the buffer
   (i.e. buffer radius).
 
-- crs:
+- size_crs:
 
   `numeric` Indicates which EPSG it the size in.
 
@@ -125,7 +125,7 @@ https://luizfesser.wordpress.com
 
 ``` r
 # Create sdm_area object:
-sa <- sdm_area(parana, cell_size = 25000, crs = 6933)
+sa <- sdm_area(parana, cell_size = 25000, output_crs = 6933)
 #> ! Making grid over study area is an expensive task. Please, be patient!
 #> ℹ Using GDAL to make the grid and resample the variables.
 
@@ -138,7 +138,7 @@ sa <- add_predictors(sa, bioc) |> select_predictors(c("bio1", "bio4", "bio12"))
 sa <- add_scenarios(sa)
 
 # Create occurrences:
-oc <- occurrences_sdm(occ[1:50,], crs = 6933)
+oc <- occurrences_sdm(occ[1:50,], occ_crs = 6933)
 
 # Create input_sdm:
 i <- input_sdm(oc, sa)

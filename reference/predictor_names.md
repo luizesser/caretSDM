@@ -77,7 +77,7 @@ https://luizfesser.wordpress.com
 
 ``` r
 # Create sdm_area object:
-sa <- sdm_area(parana, cell_size = 50000, crs = 6933)
+sa <- sdm_area(parana, cell_size = 50000, output_crs = 6933)
 #> ! Making grid over study area is an expensive task. Please, be patient!
 #> ℹ Using GDAL to make the grid and resample the variables.
 

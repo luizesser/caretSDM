@@ -114,7 +114,7 @@ https://luizfesser.wordpress.com
 if (interactive()) {
   # Create sdm_area object:
   set.seed(1)
-  sa <- sdm_area(parana, cell_size = 100000, crs = 6933)
+  sa <- sdm_area(parana, cell_size = 100000, output_crs = 6933)
 
   # Include predictors:
   sa <- add_predictors(sa, bioc) |> select_predictors(c("bio1", "bio12"))
@@ -123,7 +123,7 @@ if (interactive()) {
   sa <- add_scenarios(sa)
 
   # Create occurrences:
-  oc <- occurrences_sdm(occ, crs = 6933) |> join_area(sa)
+  oc <- occurrences_sdm(occ, occ_crs = 6933)
 
   # Create input_sdm:
   i <- input_sdm(oc, sa)

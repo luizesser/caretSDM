@@ -63,11 +63,11 @@ presence-pseudoabsence algorithms need to have pseudoabsence data.
 set.seed(1)
 sa <- sdm_area(bioc, 
                cell_size = 25000, 
-               crs = 6933, 
+               output_crs = 6933, 
                gdal = T) |>
   add_scenarios()
 
-oc <- occurrences_sdm(occ, crs = 6933)
+oc <- occurrences_sdm(occ, occ_crs = 6933)
 
 i <- input_sdm(oc, sa) |> 
   ### KEY DIFFERENCE: the background function. In other cases, here we should have a pseudoabsences function.
@@ -156,11 +156,11 @@ applied in the `caretSDM` workflow, the workflow stops in an error:
 
 sa <- sdm_area(bioc, 
                cell_size = 25000, 
-               crs = 6933, 
+               output_crs = 6933, 
                gdal = T) |>
   add_scenarios()
 
-oc <- occurrences_sdm(occ, crs = 6933)
+oc <- occurrences_sdm(occ, occ_crs = 6933)
 
 i <- input_sdm(oc, sa) |> 
   ### Using the wrong function will return an error:

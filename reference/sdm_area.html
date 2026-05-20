@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">caretSDM</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.9.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.9.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -50,8 +50,8 @@
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">sdm_area</span><span class="op">(</span><span class="va">x</span>, cell_size <span class="op">=</span> <span class="cn">NULL</span>, crs <span class="op">=</span> <span class="cn">NULL</span>, variables_selected <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>                gdal <span class="op">=</span> <span class="cn">TRUE</span>, crop_by <span class="op">=</span> <span class="cn">NULL</span>, lines_as_sdm_area <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">sdm_area</span><span class="op">(</span><span class="va">x</span>, cell_size <span class="op">=</span> <span class="cn">NULL</span>, output_crs <span class="op">=</span> <span class="cn">NULL</span>, variables_selected <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>                gdal <span class="op">=</span> <span class="cn">TRUE</span>, crop_by <span class="op">=</span> <span class="cn">NULL</span>, lines_as_sdm_area <span class="op">=</span> <span class="cn">FALSE</span>, crs <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">get_sdm_area</span><span class="op">(</span><span class="va">i</span><span class="op">)</span></span>
 <span></span>
@@ -71,7 +71,7 @@
 <dd><p><code>numeric</code>. The cell size to be used in models.</p></dd>
 
 
-<dt id="arg-crs">crs<a class="anchor" aria-label="anchor" href="#arg-crs"></a></dt>
+<dt id="arg-output-crs">output_crs<a class="anchor" aria-label="anchor" href="#arg-output-crs"></a></dt>
 <dd><p><code>numeric</code>. Indicates which EPSG should the output grid be in. If <code>NULL</code>,
 epsg from <code>x</code> is used.</p></dd>
 
@@ -93,6 +93,10 @@ If <code>NULL</code> (standard), all variables in <code>x</code> are used.</p></
 <dt id="arg-lines-as-sdm-area">lines_as_sdm_area<a class="anchor" aria-label="anchor" href="#arg-lines-as-sdm-area"></a></dt>
 <dd><p>Boolean. If <code>x</code> is a <code>sf</code> with LINESTRING geometry, it can be
 used to model species distribution in lines and not grid cells.</p></dd>
+
+
+<dt id="arg-crs">crs<a class="anchor" aria-label="anchor" href="#arg-crs"></a></dt>
+<dd><p>Deprecated. Use output_crs instead.</p></dd>
 
 
 <dt id="arg-i">i<a class="anchor" aria-label="anchor" href="#arg-i"></a></dt>
@@ -143,12 +147,12 @@ https://luizfesser.wordpress.com</p>
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Create sdm_area object:</span></span></span>
-<span class="r-in"><span><span class="va">sa_area</span> <span class="op">&lt;-</span> <span class="fu">sdm_area</span><span class="op">(</span><span class="va">parana</span>, cell_size <span class="op">=</span> <span class="fl">50000</span>, crs <span class="op">=</span> <span class="fl">6933</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">sa_area</span> <span class="op">&lt;-</span> <span class="fu">sdm_area</span><span class="op">(</span><span class="va">parana</span>, cell_size <span class="op">=</span> <span class="fl">50000</span>, output_crs <span class="op">=</span> <span class="fl">6933</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> Making grid over study area is an expensive task. Please, be patient!</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Using GDAL to make the grid and resample the variables.</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Create sdm_area using a subset of rivs (lines):</span></span></span>
-<span class="r-in"><span><span class="va">sa_rivers</span> <span class="op">&lt;-</span> <span class="fu">sdm_area</span><span class="op">(</span><span class="va">rivs</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">100</span><span class="op">)</span>,<span class="op">]</span>, cell_size <span class="op">=</span> <span class="fl">100000</span>, crs <span class="op">=</span> <span class="fl">6933</span>, lines_as_sdm_area <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">sa_rivers</span> <span class="op">&lt;-</span> <span class="fu">sdm_area</span><span class="op">(</span><span class="va">rivs</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">100</span><span class="op">)</span>,<span class="op">]</span>, cell_size <span class="op">=</span> <span class="fl">100000</span>, output_crs <span class="op">=</span> <span class="fl">6933</span>, lines_as_sdm_area <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> Making grid over study area is an expensive task. Please, be patient!</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Using GDAL to make the grid and resample the variables.</span>
 <span class="r-in"><span></span></span>

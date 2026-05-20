@@ -25,7 +25,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">caretSDM</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.9.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.9.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -72,7 +72,7 @@
                         <h4 data-toc-skip class="author">[author
 name]</h4>
             
-            <h4 data-toc-skip class="date">2026-05-18</h4>
+            <h4 data-toc-skip class="date">2026-05-20</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/luizesser/caretSDM/blob/main/vignettes/articles/2_Add-Algorithm.Rmd" class="external-link"><code>vignettes/articles/2_Add-Algorithm.Rmd</code></a></small>
       <div class="d-none name"><code>2_Add-Algorithm.Rmd</code></div>
@@ -431,7 +431,7 @@ pre-processing steps of a typical SDM analysis.</p>
 <code class="sourceCode R"><span><span class="co"># Create an sdm_area object</span></span>
 <span><span class="va">sa</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sdm_area.html">sdm_area</a></span><span class="op">(</span><span class="va">parana</span>, </span>
 <span>               cell_size <span class="op">=</span> <span class="fl">50000</span>, <span class="co"># Using a coarse resolution for speed</span></span>
-<span>               crs <span class="op">=</span> <span class="fl">6933</span><span class="op">)</span></span>
+<span>               output_crs <span class="op">=</span> <span class="fl">6933</span><span class="op">)</span></span>
 <span><span class="co">#&gt; <span style="color: #BBBB00;">!</span> Making grid over study area is an expensive task. Please, be patient!</span></span>
 <span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Using GDAL to make the grid and resample the variables.</span></span>
 <span></span>
@@ -441,7 +441,7 @@ pre-processing steps of a typical SDM analysis.</p>
 <span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Using GDAL to make the grid and resample the variables.</span></span>
 <span></span>
 <span><span class="co"># Format occurrences</span></span>
-<span><span class="va">oc</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/occurrences_sdm.html">occurrences_sdm</a></span><span class="op">(</span><span class="va">occ</span>, crs <span class="op">=</span> <span class="fl">6933</span><span class="op">)</span></span>
+<span><span class="va">oc</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/occurrences_sdm.html">occurrences_sdm</a></span><span class="op">(</span><span class="va">occ</span>, occ_crs <span class="op">=</span> <span class="fl">6933</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Create the final input_sdm object</span></span>
 <span><span class="va">i</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/input_sdm.html">input_sdm</a></span><span class="op">(</span><span class="va">oc</span>, <span class="va">sa</span><span class="op">)</span></span>

@@ -25,7 +25,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">caretSDM</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.9.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.9.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -72,7 +72,7 @@
                         <h4 data-toc-skip class="author">[author
 name]</h4>
             
-            <h4 data-toc-skip class="date">2026-05-18</h4>
+            <h4 data-toc-skip class="date">2026-05-20</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/luizesser/caretSDM/blob/main/vignettes/articles/7_maxent.Rmd" class="external-link"><code>vignettes/articles/7_maxent.Rmd</code></a></small>
       <div class="d-none name"><code>7_maxent.Rmd</code></div>
@@ -136,11 +136,11 @@ presence-pseudoabsence algorithms need to have pseudoabsence data.</p>
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span>
 <span><span class="va">sa</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sdm_area.html">sdm_area</a></span><span class="op">(</span><span class="va">bioc</span>, </span>
 <span>               cell_size <span class="op">=</span> <span class="fl">25000</span>, </span>
-<span>               crs <span class="op">=</span> <span class="fl">6933</span>, </span>
+<span>               output_crs <span class="op">=</span> <span class="fl">6933</span>, </span>
 <span>               gdal <span class="op">=</span> <span class="cn">T</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="../reference/add_scenarios.html">add_scenarios</a></span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">oc</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/occurrences_sdm.html">occurrences_sdm</a></span><span class="op">(</span><span class="va">occ</span>, crs <span class="op">=</span> <span class="fl">6933</span><span class="op">)</span></span>
+<span><span class="va">oc</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/occurrences_sdm.html">occurrences_sdm</a></span><span class="op">(</span><span class="va">occ</span>, occ_crs <span class="op">=</span> <span class="fl">6933</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">i</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/input_sdm.html">input_sdm</a></span><span class="op">(</span><span class="va">oc</span>, <span class="va">sa</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="co">### KEY DIFFERENCE: the background function. In other cases, here we should have a pseudoabsences function.</span></span>
@@ -226,11 +226,11 @@ an error:</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">sa</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sdm_area.html">sdm_area</a></span><span class="op">(</span><span class="va">bioc</span>, </span>
 <span>               cell_size <span class="op">=</span> <span class="fl">25000</span>, </span>
-<span>               crs <span class="op">=</span> <span class="fl">6933</span>, </span>
+<span>               output_crs <span class="op">=</span> <span class="fl">6933</span>, </span>
 <span>               gdal <span class="op">=</span> <span class="cn">T</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="../reference/add_scenarios.html">add_scenarios</a></span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">oc</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/occurrences_sdm.html">occurrences_sdm</a></span><span class="op">(</span><span class="va">occ</span>, crs <span class="op">=</span> <span class="fl">6933</span><span class="op">)</span></span>
+<span><span class="va">oc</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/occurrences_sdm.html">occurrences_sdm</a></span><span class="op">(</span><span class="va">occ</span>, occ_crs <span class="op">=</span> <span class="fl">6933</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">i</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/input_sdm.html">input_sdm</a></span><span class="op">(</span><span class="va">oc</span>, <span class="va">sa</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="co">### Using the wrong function will return an error:</span></span>
