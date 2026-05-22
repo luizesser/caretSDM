@@ -2,16 +2,17 @@ pandoc: 3.8.3
 pkgdown: 2.2.0
 pkgdown_sha: ~
 articles:
-  articles/1_Compact: 1_Compact.html
-  articles/2_Add-Algorithm: 2_Add-Algorithm.html
-  articles/3_Araucaria: 3_Araucaria.html
-  articles/4_Salminus: 4_Salminus.html
-  articles/5_InvasiveSpp: 5_InvasiveSpp.html
-  articles/6_ESM: 6_ESM.html
-  articles/7_maxent: 7_maxent.html
-  articles/8_runtime-benchmark: 8_runtime-benchmark.html
-  articles/9_pseudoabsence_comparison: 9_pseudoabsence_comparison.html
-last_built: 2026-05-20T22:13Z
+  articles/01_Compact: 01_Compact.html
+  articles/02_Add-Algorithm: 02_Add-Algorithm.html
+  articles/03_Araucaria: 03_Araucaria.html
+  articles/04_Salminus: 04_Salminus.html
+  articles/05_InvasiveSpp: 05_InvasiveSpp.html
+  articles/06_ESM: 06_ESM.html
+  articles/07_maxent: 07_maxent.html
+  articles/08_runtime-benchmark: 08_runtime-benchmark.html
+  articles/09_pseudoabsence_comparison: 09_pseudoabsence_comparison.html
+  articles/10_tunelength-ablation: 10_tunelength-ablation.html
+last_built: 2026-05-22T17:52Z
 urls:
   reference: https://luizesser.github.io/caretSDM/reference
   article: https://luizesser.github.io/caretSDM/articles

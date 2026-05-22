@@ -89,3 +89,7 @@ website:
 - `9. Comparing Pseudoabsence Methods in Species Distribution Modelling`
   To build a script to compare different approaches in SDMs you can use
   this vignette as a starting-point.
+
+- `10. Ablation Analysis of Hyperparameter Tuning Length in caretSDM`
+  Unveils the impact of searching for optimized hyperparameters in the
+  final models.

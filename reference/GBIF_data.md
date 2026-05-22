@@ -48,8 +48,8 @@ https://luizfesser.wordpress.com
 
 ``` r
 ## Select species names:
-#s <- c("Araucaria angustifolia", "Salminus brasiliensis")
+# s <- c("Araucaria angustifolia", "Salminus brasiliensis")
 
 ## Run function:
-#oc <- GBIF_data(s)
+# oc <- GBIF_data(s)
 ```

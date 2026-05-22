@@ -46,7 +46,7 @@ https://luizfesser.wordpress.com
 
 ``` r
 # Create sdm_area object:
-study_area <- buffer_sdm(occ, size=50000, occ_crs=6933)
+study_area <- buffer_sdm(occ, size = 50000, occ_crs = 6933)
 plot(study_area)
 
 ```

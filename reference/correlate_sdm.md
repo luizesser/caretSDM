@@ -51,23 +51,25 @@ if (interactive()) {
   i <- input_sdm(oc, sa)
 
   # Pseudoabsence generation:
-  i <- pseudoabsences(i, method="random", n_set=2)
+  i <- pseudoabsences(i, method = "random", n_set = 2)
 
   # Custom trainControl:
-  ctrl_sdm <- caret::trainControl(method = "boot",
-                                  number = 1,
-                                  repeats = 1,
-                                  classProbs = TRUE,
-                                  returnResamp = "all",
-                                  summaryFunction = summary_sdm,
-                                  savePredictions = "all")
+  ctrl_sdm <- caret::trainControl(
+    method = "boot",
+    number = 1,
+    repeats = 1,
+    classProbs = TRUE,
+    returnResamp = "all",
+    summaryFunction = summary_sdm,
+    savePredictions = "all"
+  )
 
   # Train models:
-  i <- train_sdm(i, algo = c("naive_bayes"), ctrl=ctrl_sdm) |>
+  i <- train_sdm(i, algo = c("naive_bayes"), ctrl = ctrl_sdm) |>
     suppressWarnings()
 
   # Predict models:
-  i  <- predict_sdm(i, th = 0.8)
+  i <- predict_sdm(i, th = 0.8)
 
   # Check correlations:
   correlate_sdm(i)

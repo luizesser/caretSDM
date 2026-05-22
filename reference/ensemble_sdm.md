@@ -129,23 +129,25 @@ if (interactive()) {
   i <- input_sdm(oc, sa)
 
   # Pseudoabsence generation:
-  i <- pseudoabsences(i, method="random", n_set=2)
+  i <- pseudoabsences(i, method = "random", n_set = 2)
 
   # Custom trainControl:
-  ctrl_sdm <- caret::trainControl(method = "boot",
-                                  number = 1,
-                                  repeats = 1,
-                                  classProbs = TRUE,
-                                  returnResamp = "all",
-                                  summaryFunction = summary_sdm,
-                                  savePredictions = "all")
+  ctrl_sdm <- caret::trainControl(
+    method = "boot",
+    number = 1,
+    repeats = 1,
+    classProbs = TRUE,
+    returnResamp = "all",
+    summaryFunction = summary_sdm,
+    savePredictions = "all"
+  )
 
   # Train models:
-  i <- train_sdm(i, algo = c("naive_bayes"), ctrl=ctrl_sdm) |>
+  i <- train_sdm(i, algo = c("naive_bayes"), ctrl = ctrl_sdm) |>
     suppressWarnings()
 
   # Predict models:
-  i  <- predict_sdm(i, th = 0.8)
+  i <- predict_sdm(i, th = 0.8)
 
   # Ensemble:
   i <- ensemble_sdm(i, method = "average")
@@ -155,17 +157,17 @@ if (interactive()) {
 # Example from a custom function to obtain the threshold that maximizes
 # the sensitivity plus specificity:
 MaxSeSp <- function(mod) {
-   th <- caret::thresholder(mod,
-                            threshold = seq(0, 1, by = 0.001),
-                            final = TRUE,
-                            statistics = c("Sensitivity", "Specificity")
-                            )
-   th <- th$prob_threshold[which.max(th$Sensitivity + th$Specificity)]
-   if (length(th) > 1) mean(th) else th
+  th <- caret::thresholder(mod,
+    threshold = seq(0, 1, by = 0.001),
+    final = TRUE,
+    statistics = c("Sensitivity", "Specificity")
+  )
+  th <- th$prob_threshold[which.max(th$Sensitivity + th$Specificity)]
+  if (length(th) > 1) mean(th) else th
 }
 
 # Example from a custom function to obtain ensembles using the median instead of the mean:
 median_ensemble <- function(pred_mat) {
- apply(pred_mat, 1, median, na.rm = TRUE)
+  apply(pred_mat, 1, median, na.rm = TRUE)
 }
 ```

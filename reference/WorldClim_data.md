@@ -77,8 +77,8 @@ Luíz Fernando Esser (luizesser@gmail.com)
 
 ``` r
 ## download data from multiple periods:
-#year <- c("2050", "2090")
-#WorldClim_data(path = "",
+# year <- c("2050", "2090")
+# WorldClim_data(path = "",
 #               period = "future",
 #               variable = "bioc",
 #               year = year,
@@ -87,12 +87,11 @@ Luíz Fernando Esser (luizesser@gmail.com)
 #               resolution = 10)
 
 ## download data from one specific period
-#WorldClim_data(path = "",
+# WorldClim_data(path = "",
 #               period = "future",
 #               variable = "bioc",
 #               year = "2070",
 #               gcm = "mi",
 #               ssp = "585",
 #               resolution = 10)
-
 ```
