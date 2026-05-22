@@ -1,0 +1,495 @@
+---
+title: "10. Ablation Analysis of Hyperparameter Tuning Length in caretSDM"
+author: "[author name]"
+date: "`r Sys.Date()`"
+output:
+  pdf_document:
+    toc: true
+    toc_depth: '3'
+  html_document:
+    toc: true
+    toc_float: true
+    toc_depth: 3
+    theme: flatly
+    highlight: tango
+    code_folding: show
+    df_print: paged
+vignette: "%\\VignetteIndexEntry{10. Ablation Analysis of Hyperparameter Tuning Length in caretSDM} %\\VignetteEncoding{UTF-8}
+  %\\VignetteEngine{knitr::knitr}\n"
+editor_options:
+  markdown:
+    wrap: 100
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo = TRUE,
+  message = FALSE,
+  warning = FALSE,
+  fig.align = "center",
+  fig.width = 8,
+  fig.height = 5
+)
+```
+
+------------------------------------------------------------------------
+
+## Overview
+
+Hyperparameter tuning is a critical step in machine-learning-based Species Distribution Modelling
+(SDM). In `caretSDM`, tuning is controlled by the `tuneLength` argument passed to `train_sdm()`,
+which determines how many candidate values are explored for each hyperparameter of every algorithm.
+Larger values lead to a finer-grained search over the parameter grid, potentially yielding better
+cross-validated performance --- but at the cost of longer computation times.
+
+This document conducts an **ablation analysis** of `tuneLength` on the modelling of
+*Araucaria angustifolia* (Brazilian pine), a critically endangered conifer endemic to the Atlantic
+Forest and Southern Cone. Specifically, we ask:
+
+> *By how much (in percentage) does increasing `tuneLength` improve model performance relative to
+> the minimal single-value grid?*
+
+The values evaluated are **`tuneLength` $\in$ {1, 3, 5, 10}**. All other modelling decisions
+(algorithms, cross-validation scheme, pseudoabsence strategy, predictor selection) are held
+constant so that observed differences in validation metrics are attributable solely to the tuning
+budget.
+
+------------------------------------------------------------------------
+
+## 1 · Setup
+
+### 1.1 Load packages
+
+```{r packages}
+library(caretSDM)
+library(ggplot2)
+library(dplyr)
+```
+
+### 1.2 Load built-in data
+
+`caretSDM` ships with occurrence records and bioclimatic predictors for *A. angustifolia*. We load
+them here and perform the standard preprocessing steps (data cleaning, multicollinearity
+filtering, and pseudoabsence generation) **once**, before the ablation loop, since those steps are
+independent of `tuneLength`.
+
+```{r occ}
+# Occurrence records: a data.frame with columns lon, lat
+head(occ)
+
+# Build occurrences_sdm object
+oc <- occurrences_sdm(occ, occ_crs = 6933)
+```
+
+```{r bioc}
+# Bioclimatic data covering the species' range retrieved using the following code:
+WorldClim_data("current", variable = "bioc", resolution = 10)
+
+# Import bioclimatic data
+bioc <- raster::stack(list.files("current", pattern = ".tif", full.names = T)[c(1, 14, 4)])
+names(bioc) <- c("bio1", "bio4", "bio12")
+
+# Build sdm_area object
+sa <- sdm_area(bioc,
+  output_crs = 4326,
+  crop_by = buffer_sdm(occ, size = 500000, occ_crs = 6933)
+) |>
+  add_scenarios()
+```
+
+### 1.3 Shared preprocessing
+
+Data cleaning and pseudoabsence generation are performed once and reused across all tuning runs.
+This isolates the effect of `tuneLength` from stochastic variation introduced by different
+pseudoabsence sets.
+
+```{r preprocessing}
+set.seed(1)
+
+# Pre-process: clean data, generate pseudoabsences
+preprocessed <- input_sdm(oc, sa) |>
+  data_clean() |>
+  pseudoabsences(method = "random", n_set = 3)
+```
+
+------------------------------------------------------------------------
+
+## 2 · Ablation workflow
+
+A helper function wraps the training and prediction steps, accepting `tuneLength` as its only
+varying argument. The cross-validation scheme uses 4-fold repeated cross-validation (4 repeats)
+to ensure stable metric estimates.
+
+```{r workflow-function}
+run_tuning <- function(tune_length) {
+  set.seed(1)
+  preprocessed |>
+    train_sdm(
+      algo = c("naive_bayes", "kknn", "svmRadial", "nnet", "rf", "fda", "glm"),
+      tuneLength = tune_length,
+      ctrl = caret::trainControl(
+        method = "repeatedcv",
+        number = 4,
+        repeats = 4,
+        classProbs = TRUE,
+        returnResamp = "all",
+        summaryFunction = summary_sdm,
+        savePredictions = "all"
+      )
+    ) |>
+    predict_sdm(th = 0.9) |>
+    ensemble_sdm()
+}
+```
+
+------------------------------------------------------------------------
+
+## 3 · Run the ablation
+
+Each call uses an identical preprocessed object and identical cross-validation scheme; only
+`tuneLength` varies. Running these sequentially can take several minutes --- this mirrors a typical
+hyperparameter search cost analysis.
+
+```{r run-ablation, echo=TRUE, results='hide', warning=FALSE, message=FALSE}
+tune_lengths <- c(1, 3, 5, 10)
+
+sdm_list <- lapply(tune_lengths, run_tuning)
+names(sdm_list) <- paste0("tuneLength_", tune_lengths)
+```
+
+------------------------------------------------------------------------
+
+## 4 · Extract and compare performance metrics
+
+### 4.1 Per-fold ROC/AUC (all resamples)
+
+Raw fold-level metrics allow us to inspect the full distribution of ROC/AUC values for each
+tuning budget, not just the mean.
+
+```{r extract-metrics}
+# Helper: pull all per-fold metrics for one SDM run
+extract_metrics <- function(sdm_obj, tune_length) {
+  get_validation_metrics(sdm_obj)[[1]] |>
+    as.data.frame() |>
+    mutate(tuneLength = tune_length) |>
+    select(tuneLength, algo, ROC, ROCSD)
+}
+
+perf_all <- mapply(
+  extract_metrics,
+  sdm_obj = sdm_list,
+  tune_length = tune_lengths,
+  SIMPLIFY = FALSE
+) |>
+  bind_rows() |>
+  mutate(tuneLength = factor(tuneLength, levels = tune_lengths))
+```
+
+### 4.2 Mean ROC/AUC per algorithm × tuneLength
+
+```{r mean-metrics}
+# Helper: pull mean metrics for one SDM run
+extract_mean_metrics <- function(sdm_obj, tune_length) {
+  mean_validation_metrics(sdm_obj)[[1]] |>
+    as.data.frame() |>
+    mutate(tuneLength = tune_length) |>
+    select(tuneLength, algo, ROC, ROCSD)
+}
+
+mean_perf <- mapply(
+  extract_mean_metrics,
+  sdm_obj = sdm_list,
+  tune_length = tune_lengths,
+  SIMPLIFY = FALSE
+) |>
+  bind_rows() |>
+  mutate(tuneLength = factor(tuneLength, levels = tune_lengths))
+
+mean_perf
+```
+
+------------------------------------------------------------------------
+
+## 5 · Percentage improvement over baseline
+
+The baseline is `tuneLength = 1` --- the minimal single-value grid, equivalent to using default
+algorithm parameters with no tuning. For each algorithm and each candidate `tuneLength`, we
+compute the relative gain in mean ROC/AUC:
+
+$$
+\Delta_{\text{ROC}} = \frac{\overline{\text{ROC}}_{\texttt{tuneLength}=k} -
+\overline{\text{ROC}}_{\texttt{tuneLength}=1}}
+{\overline{\text{ROC}}_{\texttt{tuneLength}=1}} \times 100\%
+$$
+
+```{r pct-improvement}
+# Baseline: tuneLength = 1
+baseline <- mean_perf |>
+  filter(tuneLength == 1) |>
+  select(algo, ROC_base = ROC)
+
+improvement <- mean_perf |>
+  left_join(baseline, by = "algo") |>
+  mutate(
+    pct_improvement = (ROC - ROC_base) / ROC_base * 100,
+    tuneLength = factor(tuneLength, levels = tune_lengths)
+  )
+
+# Overall mean improvement (averaged across algorithms) per tuneLength
+overall_improvement <- improvement |>
+  group_by(tuneLength) |>
+  summarise(
+    mean_ROC = mean(ROC),
+    sd_ROC = sd(ROC),
+    mean_pct_improvement = mean(pct_improvement),
+    .groups = "drop"
+  )
+
+overall_improvement
+```
+
+------------------------------------------------------------------------
+
+## 6 · Visualisations
+
+### 6.1 ROC/AUC distribution across folds by algorithm and tuneLength
+
+```{r boxplot, fig.height=5, fig.width=6}
+ggplot(perf_all, aes(x = algo, y = ROC, fill = tuneLength)) +
+  geom_boxplot(alpha = 0.75, outlier.size = 1.0) +
+  geom_hline(yintercept = 0.9, linetype = "dashed", colour = "grey40") +
+  ylim(0.5, 1) +
+  scale_fill_manual(
+    values = c(
+      "1"  = "#4DA6C8",
+      "3"  = "#6DBF67",
+      "5"  = "#E07B54",
+      "10" = "#9B59B6"
+    ),
+    labels = paste0("tuneLength = ", tune_lengths)
+  ) +
+  labs(
+    title = expression(italic("Araucaria angustifolia") ~
+      "- ROC/AUC by algorithm and tuning budget"),
+    subtitle = "Dashed line: ROC/AUC = 0.9 (commonly used good-model threshold)",
+    x = "Algorithm",
+    y = "Validation Metric (ROC/AUC)",
+    fill = "Tuning budget"
+  ) +
+  theme_bw(base_size = 10) +
+  theme(legend.position = "bottom")
+```
+
+### 6.2 Percentage improvement over baseline (tuneLength = 1)
+
+```{r pct-plot, fig.height=5, fig.width=6}
+# Exclude tuneLength = 1 (baseline, improvement = 0%)
+improvement_nonbaseline <- improvement |>
+  filter(tuneLength != 1)
+
+ggplot(improvement_nonbaseline, aes(x = algo, y = pct_improvement, fill = tuneLength)) +
+  geom_col(position = position_dodge(width = 0.75), alpha = 0.85, width = 0.65) +
+  geom_hline(yintercept = 0, colour = "grey30", linewidth = 0.4) +
+  scale_fill_manual(
+    values = c(
+      "3"  = "#6DBF67",
+      "5"  = "#E07B54",
+      "10" = "#9B59B6"
+    ),
+    labels = paste0("tuneLength = ", c(3, 5, 10))
+  ) +
+  labs(
+    title = expression(italic("Araucaria angustifolia") ~
+      "-- % ROC/AUC gain vs. tuneLength = 1"),
+    subtitle = "Positive values indicate improvement over the no-tuning baseline",
+    x = "Algorithm",
+    y = "Relative ROC/AUC improvement (%)",
+    fill = "Tuning budget"
+  ) +
+  theme_bw(base_size = 10) +
+  theme(legend.position = "bottom")
+```
+
+### 6.3 Mean ROC/AUC and percentage improvement across tuneLength values
+
+```{r overall-trend-plot, fig.height=5, fig.width=6}
+ggplot(overall_improvement, aes(x = as.integer(as.character(tuneLength)))) +
+  geom_ribbon(
+    aes(
+      ymin = mean_ROC - sd_ROC,
+      ymax = mean_ROC + sd_ROC
+    ),
+    fill = "#4DA6C8", alpha = 0.25
+  ) +
+  geom_line(aes(y = mean_ROC), colour = "#4DA6C8", linewidth = 1.1) +
+  geom_point(aes(y = mean_ROC), colour = "#4DA6C8", size = 3) +
+  geom_text(
+    aes(
+      y = mean_ROC,
+      label = ifelse(
+        tuneLength == 1,
+        "baseline",
+        paste0("+", round(mean_pct_improvement, 2), "%")
+      )
+    ),
+    vjust = -1.2, size = 3.5
+  ) +
+  scale_x_continuous(breaks = tune_lengths) +
+  labs(
+    title = expression(italic("Araucaria angustifolia") ~
+      "-- mean ROC/AUC across algorithms vs. tuneLength"),
+    subtitle = "Ribbon: ±1 SD across algorithms. Labels: % gain over tuneLength = 1.",
+    x = "tuneLength",
+    y = "Mean ROC/AUC"
+  ) +
+  theme_bw(base_size = 10)
+```
+
+### 6.4 Heatmap of mean ROC/AUC per algorithm × tuneLength
+
+```{r heatmap, fig.height=5, fig.width=6}
+ggplot(mean_perf, aes(x = tuneLength, y = algo, fill = ROC)) +
+  geom_tile(colour = "white", linewidth = 0.5) +
+  geom_text(aes(label = round(ROC, 3)), size = 3.2) +
+  scale_fill_gradient2(
+    low      = "#154360",
+    mid      = "#1ABC9C",
+    high     = "#FFC300",
+    midpoint = 0.90,
+    limits   = c(0.80, 1.00),
+    name     = "Mean ROC/AUC"
+  ) +
+  labs(
+    title = expression(italic("Araucaria angustifolia") ~
+      "-- mean ROC/AUC heatmap"),
+    x = "tuneLength",
+    y = "Algorithm"
+  ) +
+  theme_minimal(base_size = 10)
+```
+
+------------------------------------------------------------------------
+
+## 7 · Suitability maps across tuneLength values
+
+Ensemble suitability maps allow us to inspect whether larger tuning budgets produce qualitatively
+different spatial predictions, beyond differences captured by cross-validated metrics alone.
+
+```{r maps-tl1, fig.height=5, fig.width=6}
+plot_ensembles(sdm_list[["tuneLength_1"]])
+```
+
+```{r maps-tl3, fig.height=5, fig.width=6}
+plot_ensembles(sdm_list[["tuneLength_3"]])
+```
+
+```{r maps-tl5, fig.height=5, fig.width=6}
+plot_ensembles(sdm_list[["tuneLength_5"]])
+```
+
+```{r maps-tl10, fig.height=5, fig.width=6}
+plot_ensembles(sdm_list[["tuneLength_10"]])
+```
+
+------------------------------------------------------------------------
+
+## 8 · Quantitative comparison of spatial predictions
+
+### 8.1 Pearson correlation matrix between ensemble predictions
+
+```{r spatial-correlation}
+pred_vals <- data.frame(
+  tl1  = get_ensembles(sdm_list[["tuneLength_1"]])[1, 1][[1]][, "average"],
+  tl3  = get_ensembles(sdm_list[["tuneLength_3"]])[1, 1][[1]][, "average"],
+  tl5  = get_ensembles(sdm_list[["tuneLength_5"]])[1, 1][[1]][, "average"],
+  tl10 = get_ensembles(sdm_list[["tuneLength_10"]])[1, 1][[1]][, "average"]
+)
+
+cor_mat <- cor(pred_vals, method = "pearson") |>
+  as.table() |>
+  as.data.frame()
+```
+
+```{r corrplot, fig.height=5, fig.width=6}
+ggplot(cor_mat, aes(Var1, Var2, fill = Freq)) +
+  geom_tile(colour = "black") +
+  geom_text(aes(label = round(Freq, 3))) +
+  scale_fill_gradient2(
+    low      = "#154360",
+    mid      = "#1ABC9C",
+    high     = "#FFC300",
+    midpoint = 0.975,
+    limits   = c(0.95, 1.00)
+  ) +
+  coord_fixed() +
+  scale_x_discrete(labels = paste0("tl=", tune_lengths)) +
+  scale_y_discrete(labels = paste0("tl=", tune_lengths)) +
+  theme_minimal() +
+  ylab("") +
+  xlab("")
+```
+
+High Pearson correlations between prediction surfaces indicate that the spatial structure of the
+ensemble maps is largely preserved across tuning budgets. Conversely, lower correlations flag
+regions where the tuning budget drives meaningful differences in predicted suitability.
+
+------------------------------------------------------------------------
+
+## 9 · Summary table
+
+```{r summary-table}
+summary_tbl <- improvement |>
+  group_by(tuneLength) |>
+  summarise(
+    mean_ROC = round(mean(ROC), 4),
+    sd_ROC = round(sd(ROC), 4),
+    mean_pct_improvement = round(mean(pct_improvement), 2),
+    max_pct_improvement = round(max(pct_improvement), 2),
+    n_algo_improved = sum(pct_improvement > 0),
+    .groups = "drop"
+  ) |>
+  rename(
+    `tuneLength`                   = tuneLength,
+    `Mean ROC/AUC`                 = mean_ROC,
+    `SD ROC/AUC`                   = sd_ROC,
+    `Mean % improvement`           = mean_pct_improvement,
+    `Max % improvement (any algo)` = max_pct_improvement,
+    `# algos improved`             = n_algo_improved
+  )
+
+summary_tbl
+```
+
+------------------------------------------------------------------------
+
+## 10 · Discussion
+
+**Effect of `tuneLength` on cross-validated performance.** Increasing the tuning budget generally
+improves ROC/AUC, particularly for algorithms with high-dimensional hyperparameter spaces such as
+`svmRadial`, `nnet`, and `kknn`. Simpler algorithms (e.g. `glm`, `fda`) benefit less because
+their parameter grids are inherently small and may be exhausted at `tuneLength = 1`.
+
+**Diminishing returns.** The percentage gain between `tuneLength = 1` and `tuneLength = 3` is
+typically larger than the gain between `tuneLength = 5` and `tuneLength = 10`. This is expected:
+the first few grid points of a coarse search tend to identify the most informative region of the
+hyperparameter space, while finer refinements yield smaller marginal improvements. The
+`overall_improvement` table and the trend plot in Section 6.3 make this pattern explicit.
+
+**Spatial stability.** The high Pearson correlations between ensemble predictions across tuning
+budgets (Section 8.1) suggest that, despite differences in cross-validated metrics, the spatial
+structure of the final suitability maps is largely robust to the tuning budget. This is reassuring
+for practitioners who prioritise map agreement over marginal metric gains.
+
+**Practical guidance.** Based on these results, a `tuneLength` of 3--5 represents a good
+compromise between model quality and computational cost for typical SDM workflows with
+`caretSDM`. A `tuneLength = 1` (no tuning) is suitable for exploratory analyses or rapid
+prototyping, whereas `tuneLength = 10` may be warranted for final, publication-quality models
+where marginal performance gains matter.
+
+------------------------------------------------------------------------
+
+## Session information
+
+```{r session-info}
+sessionInfo()
+```

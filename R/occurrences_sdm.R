@@ -63,7 +63,6 @@
 #' @export
 occurrences_sdm <- function(occ, independent_test = NULL, p = 0.1, occ_crs = NULL,
                             independent_test_crs = NULL, crs = NULL, ...) {
-
   UseMethod("occurrences_sdm")
 }
 
@@ -85,8 +84,7 @@ occurrences_sdm.tbl_df <- function(occ, independent_test = NULL, p = 0.1, occ_cr
 #' @export
 occurrences_sdm.sf <- function(occ, independent_test = NULL, p = 0.1, occ_crs = NULL,
                                independent_test_crs = NULL, crs = NULL, ...) {
-
-  if(!is.null(occ_crs)){
+  if (!is.null(occ_crs)) {
     cli::cli_alert_warning(paste0("CRS detected from {.var occ}, but {.var occ_crs} is not null. Overwriting {.var occ_crs} with value detected from {.var occ}"))
   }
   occ_crs <- sf::st_crs(occ)
@@ -106,7 +104,7 @@ occurrences_sdm.character <- function(occ, independent_test = NULL, p = 0.1, occ
 #' @rdname occurrences_sdm
 #' @export
 n_records <- function(i) {
-  x=i
+  x <- i
   if (is_input_sdm(x)) {
     y <- x$occurrences
   } else {
@@ -118,7 +116,7 @@ n_records <- function(i) {
 #' @rdname occurrences_sdm
 #' @export
 species_names <- function(i) {
-  x=i
+  x <- i
   if (is_input_sdm(x)) {
     y <- x$occurrences
   } else {
@@ -130,7 +128,7 @@ species_names <- function(i) {
 #' @rdname occurrences_sdm
 #' @export
 get_coords <- function(i) {
-  x=i
+  x <- i
   if (is_input_sdm(x)) {
     y <- x$occurrences
   } else {
@@ -146,7 +144,7 @@ get_coords <- function(i) {
 #' @rdname occurrences_sdm
 #' @export
 get_occurrences <- function(i) {
-  x=i
+  x <- i
   if (is_input_sdm(x)) {
     y <- x$occurrences
   } else {
@@ -159,7 +157,7 @@ get_occurrences <- function(i) {
 #' @rdname occurrences_sdm
 #' @export
 occurrences_as_df <- function(i) {
-  x=i
+  x <- i
   if (is_input_sdm(x)) {
     y <- x$occurrences
   } else {
@@ -172,7 +170,6 @@ occurrences_as_df <- function(i) {
 
 .occurrences <- function(occ, independent_test = NULL, p = 0.1, occ_crs = NULL,
                          independent_test_crs = NULL, crs = NULL, ...) {
-
   if (!is.null(crs)) {
     if (is.null(occ_crs)) {
       occ_crs <- crs
@@ -186,7 +183,7 @@ occurrences_as_df <- function(i) {
     )
   }
 
-  if(is.numeric(occ_crs)) {
+  if (is.numeric(occ_crs)) {
     assert_int_cli(occ_crs, lower = 1024, upper = 32766)
   } else {
     assert_class_cli(occ_crs, "crs", null.ok = TRUE)
@@ -195,25 +192,25 @@ occurrences_as_df <- function(i) {
   if (is.null(crs)) {
     crs <- 4326
   }
-  if(is.numeric(independent_test_crs)) {
+  if (is.numeric(independent_test_crs)) {
     assert_int_cli(independent_test_crs, lower = 1024, upper = 32766, null.ok = TRUE)
   } else {
     assert_class_cli(independent_test_crs, "crs", null.ok = TRUE)
   }
 
-  if(isTRUE(independent_test)){
-    assert_numeric_cli(p, lower = 0.0001, upper = 0.9999, len=1)
+  if (isTRUE(independent_test)) {
+    assert_numeric_cli(p, lower = 0.0001, upper = 0.9999, len = 1)
   }
   col_names <- .find_columns(occ, ...)
   x <- occ[, col_names] |> stats::na.omit()
   if (length(col_names) == 2) {
     cli::cli_alert_warning("Species column not found. Addressing all records to a unknown species.")
     colnames(x) <- c("decimalLongitude", "decimalLatitude")
-    x <- cbind(species=rep("Sp_unknown", nrow(x)), x)
+    x <- cbind(species = rep("Sp_unknown", nrow(x)), x)
   } else if (length(col_names) == 3) {
     colnames(x) <- c("species", "decimalLongitude", "decimalLatitude")
   }
-  spp_names <- unique(x[,1])
+  spp_names <- unique(x[, 1])
 
   x <- sf::st_as_sf(x, coords = colnames(x)[c(2, 3)])
   sf::st_crs(x) <- crs
@@ -229,10 +226,10 @@ occurrences_as_df <- function(i) {
         independent_test = indep_test_data,
         crs = crs
       ), class = "occurrences")
-    } else if(any(class(independent_test) %in% c("data.frame"))) {
-      if(any(class(independent_test) %in% c("sf"))) {
-        if(is.na(sf::st_crs(independent_test))) {
-          if(is.null(independent_test_crs)) {
+    } else if (any(class(independent_test) %in% c("data.frame"))) {
+      if (any(class(independent_test) %in% c("sf"))) {
+        if (is.na(sf::st_crs(independent_test))) {
+          if (is.null(independent_test_crs)) {
             cli::cli_abort(c(
               "x" = "{.var independent_test_crs} is {.cls {class(independent_test_crs)}}, must be
               numeric",
@@ -246,8 +243,8 @@ occurrences_as_df <- function(i) {
         } else {
           independent_test_crs <- sf::st_crs(independent_test)
         }
-        if("species" %in% colnames(independent_test)) {
-          if(!all(spp_names %in% unique(independent_test$species))) {
+        if ("species" %in% colnames(independent_test)) {
+          if (!all(spp_names %in% unique(independent_test$species))) {
             cli::cli_abort(c(
               "x" = "Species from {.var x} are missing in {.var independent_test data}.",
               "i" = "Make sure that the species column in {.var independent_test} have all species
@@ -255,9 +252,11 @@ occurrences_as_df <- function(i) {
             ))
           }
         } else {
-          if(length(spp_names) == 1) {
-            independent_test <- cbind(species=rep(spp_names, nrow(independent_test)),
-                                      independent_test)
+          if (length(spp_names) == 1) {
+            independent_test <- cbind(
+              species = rep(spp_names, nrow(independent_test)),
+              independent_test
+            )
           } else {
             cli::cli_abort(c(
               "x" = "Not able to infer to which species {.var independent_test} is refering to.",
@@ -268,7 +267,7 @@ occurrences_as_df <- function(i) {
             ))
           }
         }
-        if(sf::st_crs(independent_test) != sf::st_crs(x)){
+        if (sf::st_crs(independent_test) != sf::st_crs(x)) {
           independent_test <- sf::st_transform(independent_test, sf::st_crs(x))
         }
         occ <- structure(list(
@@ -279,7 +278,7 @@ occurrences_as_df <- function(i) {
           crs = crs
         ), class = "occurrences")
       } else {
-        if(is.null(independent_test_crs)){
+        if (is.null(independent_test_crs)) {
           cli::cli_abort(c(
             "x" = "{.var independent_test_crs} is {.cls {class(independent_test_crs)}}, must be
             numeric",
@@ -292,10 +291,12 @@ occurrences_as_df <- function(i) {
         col_names <- .find_columns(independent_test, ...)
         independent_test <- independent_test[, col_names]
         if (length(col_names) == 2) {
-          if(length(spp_names) == 1){
+          if (length(spp_names) == 1) {
             colnames(independent_test) <- c("decimalLongitude", "decimalLatitude")
-            independent_test <- cbind(species=rep(spp_names, nrow(independent_test)),
-                                      independent_test)
+            independent_test <- cbind(
+              species = rep(spp_names, nrow(independent_test)),
+              independent_test
+            )
           } else {
             cli::cli_abort(c(
               "x" = "Not able to infer to which species {.var independent_test} is refering to.",
@@ -309,9 +310,10 @@ occurrences_as_df <- function(i) {
           colnames(independent_test) <- c("species", "decimalLongitude", "decimalLatitude")
         }
         independent_test <- sf::st_as_sf(independent_test,
-                                         coords = colnames(independent_test)[c(2, 3)])
+          coords = colnames(independent_test)[c(2, 3)]
+        )
         sf::st_crs(independent_test) <- independent_test_crs
-        if(independent_test_crs != crs){
+        if (independent_test_crs != crs) {
           independent_test <- sf::st_transform(independent_test, crs)
         }
         occ <- structure(list(
@@ -346,8 +348,12 @@ occurrences_as_df <- function(i) {
 add_occurrences <- function(oc1, oc2) {
   assert_class_cli(oc1, "occurrences", null.ok = TRUE)
   assert_class_cli(oc2, "occurrences", null.ok = TRUE)
-  if(is.null(oc1)) {return(oc2)}
-  if(is.null(oc2)) {return(oc1)}
+  if (is.null(oc1)) {
+    return(oc2)
+  }
+  if (is.null(oc2)) {
+    return(oc1)
+  }
   assert_true_cli(oc1$crs == oc2$crs)
   x <- rbind(oc1$occurrences, oc2$occurrences)
   oc <- structure(list(
@@ -356,20 +362,24 @@ add_occurrences <- function(oc1, oc2) {
     n_presences = table(x$species),
     crs = oc1$crs
   ), class = "occurrences")
-  if("pseudoabsences" %in% names(oc1) | "pseudoabsences" %in% names(oc2)){
-    oc$pseudoabsences <- list(data = c(oc1$pseudoabsences$data, oc2$pseudoabsences$data),
-                              method = oc1$pseudoabsences$method,
-                              n_set = c(oc1$pseudoabsences$n_set, oc2$pseudoabsences$n_set),
-                              n_pa = c(oc1$pseudoabsences$n_pa, oc2$pseudoabsences$n_pa))
+  if ("pseudoabsences" %in% names(oc1) | "pseudoabsences" %in% names(oc2)) {
+    oc$pseudoabsences <- list(
+      data = c(oc1$pseudoabsences$data, oc2$pseudoabsences$data),
+      method = oc1$pseudoabsences$method,
+      n_set = c(oc1$pseudoabsences$n_set, oc2$pseudoabsences$n_set),
+      n_pa = c(oc1$pseudoabsences$n_pa, oc2$pseudoabsences$n_pa)
+    )
   }
 
-  if("esm" %in% names(oc1) | "esm" %in% names(oc2)){
+  if ("esm" %in% names(oc1) | "esm" %in% names(oc2)) {
     spp_oc1 <- names(oc1$n_presences[oc1$n_presences > oc1$esm$n_records])
     spp_oc2 <- names(oc2$n_presences[oc2$n_presences > oc2$esm$n_records])
     spp1 <- as.character(na.omit(c(spp_oc1, spp_oc2)))
     spp2 <- c(oc1$esm$spp, oc2$esm$spp)
-    oc$esm <- list(spp = unique(c(spp1, spp2)),
-                   n_records = max(oc1$esm$n_records, oc2$esm$n_records))
+    oc$esm <- list(
+      spp = unique(c(spp1, spp2)),
+      n_records = max(oc1$esm$n_records, oc2$esm$n_records)
+    )
   }
   return(oc)
 }

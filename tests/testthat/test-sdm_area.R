@@ -1,4 +1,4 @@
-if (!identical(Sys.getenv("NOT_CRAN"), "false")){
+if (!identical(Sys.getenv("NOT_CRAN"), "false")) {
   if (fs::dir_exists(here::here("tests", "testthat", "testdata"))) {
     pr_tif <- here::here("tests", "testthat", "testdata", "parana.tiff") |>
       stars::read_stars(quiet = TRUE)
@@ -7,7 +7,7 @@ if (!identical(Sys.getenv("NOT_CRAN"), "false")){
   } else {
     pr_tif <- test_path("testdata", "parana.tiff") |>
       stars::read_stars(quiet = TRUE)
-    pr_gpkg <- test_path("testdata","parana.gpkg") |>
+    pr_gpkg <- test_path("testdata", "parana.gpkg") |>
       sf::st_read(quiet = TRUE)
   }
 
@@ -64,7 +64,8 @@ if (!identical(Sys.getenv("NOT_CRAN"), "false")){
     sa <- sdm_area(rivs, cell_size = 100000, output_crs = 6933)
     checkmate::expect_names(
       get_predictor_names(sa),
-      permutation.of = c("LENGTH_KM", "DIST_DN_KM"))
+      permutation.of = c("LENGTH_KM", "DIST_DN_KM")
+    )
     expect_true("cell_id" %in% colnames(sa$grid))
     expect_true("geometry" %in% colnames(sa$grid))
     expect_equal(as.character(unique(sf::st_geometry_type(sa$grid))), "POLYGON")
@@ -226,12 +227,12 @@ if (!identical(Sys.getenv("NOT_CRAN"), "false")){
     skip_on_cran()
     pr_tif2 <- pr_tif
     sf::st_crs(pr_tif2) <- NA
-    expect_error(sdm_area(pr_tif2, cell_size = 50000, output_crs=6933, gdal=F))
+    expect_error(sdm_area(pr_tif2, cell_size = 50000, output_crs = 6933, gdal = F))
   })
 
   test_that("sdm_area - output_crs=NA", {
     skip_on_cran()
-    expect_error(sdm_area(pr_tif, cell_size = 50000, output_crs=NA, gdal=F))
+    expect_error(sdm_area(pr_tif, cell_size = 50000, output_crs = NA, gdal = F))
   })
 
   ## Test outputs
@@ -255,7 +256,8 @@ if (!identical(Sys.getenv("NOT_CRAN"), "false")){
     if (fs::dir_exists(here::here("tests", "testthat", "testdata"))) {
       sa <- sdm_area(
         here::here("tests", "testthat", "testdata", "parana.tiff"),
-        cell_size = 2)
+        cell_size = 2
+      )
     } else {
       sa <- sdm_area(test_path("testdata", "parana.tiff"), cell_size = 2)
     }
@@ -302,11 +304,12 @@ if (!identical(Sys.getenv("NOT_CRAN"), "false")){
 
   test_that("sdm_area - sf/predictors try detect lines instead of polygons", {
     expect_equal(
-      caretSDM:::.detect_sdm_area(rivs |> dplyr::mutate(cell_id=rep(1:nrow(rivs))),
-                       cell_size = 100000,
-                       crs = 6933,
-                       gdal = TRUE,
-                       lines_as_sdm_area = FALSE),
+      caretSDM:::.detect_sdm_area(rivs |> dplyr::mutate(cell_id = rep(1:nrow(rivs))),
+        cell_size = 100000,
+        crs = 6933,
+        gdal = TRUE,
+        lines_as_sdm_area = FALSE
+      ),
       "x has other features than of polygons."
     )
   })
@@ -356,7 +359,7 @@ if (!identical(Sys.getenv("NOT_CRAN"), "false")){
   # test gdal=F
   test_that("sdm_area - sf+gdal=F", {
     skip_on_cran()
-    sa <- sdm_area(pr_gpkg, cell_size = 100000, output_crs=6933, gdal=F)
+    sa <- sdm_area(pr_gpkg, cell_size = 100000, output_crs = 6933, gdal = F)
     expect_snapshot(sa)
   })
 
@@ -364,20 +367,20 @@ if (!identical(Sys.getenv("NOT_CRAN"), "false")){
     skip_on_cran()
     box <- sf::st_bbox(c(xmin = 16.1, xmax = 16.6, ymax = 48.6, ymin = 47.9), crs = sf::st_crs(4326))
     box <- sf::st_transform(box, crs = 6933)
-    expect_warning(sdm_area(parana, cell_size = 100000, output_crs = 6933, crop_by = box, gdal=F))
+    expect_warning(sdm_area(parana, cell_size = 100000, output_crs = 6933, crop_by = box, gdal = F))
   })
 
   test_that("sdm_area - sf+gdal=F numeric col", {
     skip_on_cran()
     pr_gpkg2 <- pr_gpkg
     class(pr_gpkg2$CODIGOIB1) <- "numeric"
-    sa <- sdm_area(pr_gpkg2, cell_size = 100000, output_crs=6933, gdal=F)
+    sa <- sdm_area(pr_gpkg2, cell_size = 100000, output_crs = 6933, gdal = F)
     expect_true(is.numeric(sa$grid$CODIGOIB1))
   })
 
   test_that("sdm_area - stars+gdal=F", {
     skip_on_cran()
-    sa <- sdm_area(pr_tif, cell_size = 100000, output_crs=6933, gdal=F)
+    sa <- sdm_area(pr_tif, cell_size = 100000, output_crs = 6933, gdal = F)
     expect_snapshot(sa)
     expect_no_error(grd <- get_sdm_area(sa))
     expect_true(all(c("cell_id", "geometry") %in% colnames(grd)))
@@ -388,8 +391,8 @@ if (!identical(Sys.getenv("NOT_CRAN"), "false")){
   test_that("sdm_area - stars+gdal=F areas do not intersect", {
     skip_on_cran()
     box <- sf::st_bbox(c(xmin = 16.1, xmax = 16.6, ymax = 48.6, ymin = 47.9), crs = sf::st_crs(4326))
-    box <- sf::st_transform(box, crs=6933)
-    expect_warning(sdm_area(pr_tif, cell_size = 100000, output_crs=6933, crop_by = box, gdal=F))
+    box <- sf::st_transform(box, crs = 6933)
+    expect_warning(sdm_area(pr_tif, cell_size = 100000, output_crs = 6933, crop_by = box, gdal = F))
   })
 
   # test lines
@@ -410,7 +413,7 @@ if (!identical(Sys.getenv("NOT_CRAN"), "false")){
     expect_true("geometry" %in% colnames(sa$grid))
     expect_equal(class(sa$cell_size), "numeric")
     expect_equal(round(sa$cell_size, 3), round(as.numeric(stars::st_res(bioc)[1]), 3))
-    #expect_equal(sf::st_crs(sa$grid), sf::st_crs(bioc))
+    # expect_equal(sf::st_crs(sa$grid), sf::st_crs(bioc))
     expect_equal(class(sa$grid)[1], "sf")
     expect_equal(as.character(unique(sf::st_geometry_type(sa$grid))), "POLYGON")
   })
@@ -429,5 +432,4 @@ if (!identical(Sys.getenv("NOT_CRAN"), "false")){
     expect_no_error(add_sdm_area(sa1 = NULL, sa2))
     expect_true(all(c(sf::st_bbox(sa2$grid)[1:2], sf::st_bbox(sa1$grid)[3:4]) == sf::st_bbox(sa$grid)))
   })
-
 }

@@ -40,19 +40,22 @@ test_that("gcms_ensembles/names", {
   expect_true(all(inames$scenarios$data$current$a == i$scenarios$data$current$bio1))
   expect_true(all(inames$scenarios$data$ca_ssp245_2090$a == i$scenarios$data$ca_ssp245_2090$bio1))
   #
-  i <- pseudoabsences(i, method="random", n_set = 2)
-  ctrl_sdm <- caret::trainControl(method = "boot",
-                                  number = 1,
-                                  classProbs = TRUE,
-                                  returnResamp = "all",
-                                  summaryFunction = summary_sdm,
-                                  savePredictions = "all")
+  i <- pseudoabsences(i, method = "random", n_set = 2)
+  ctrl_sdm <- caret::trainControl(
+    method = "boot",
+    number = 1,
+    classProbs = TRUE,
+    returnResamp = "all",
+    summaryFunction = summary_sdm,
+    savePredictions = "all"
+  )
   i <- train_sdm(i,
-                 algo = c("naive_bayes"),
-                 ctrl=ctrl_sdm,
-                 variables_selected = c("bio1", "bio12")) |>
+    algo = c("naive_bayes"),
+    ctrl = ctrl_sdm,
+    variables_selected = c("bio1", "bio12")
+  ) |>
     suppressWarnings()
-  i  <- predict_sdm(i, th=0.8)
+  i <- predict_sdm(i, th = 0.8)
   i <- ensemble_sdm(i)
   # name changes
   inames <- set_scenarios_names(i, as.character(c(1:5)))
@@ -64,18 +67,18 @@ test_that("gcms_ensembles/names", {
   # ensemble
   i <- gcms_ensembles(i, gcms = c("ca", "mi")) ######
   expect_true(all(c("matrix", "array") == class(i$ensembles$data)))
-  expect_true(ncol(i$ensembles$data) == length(scenarios_names(i))+2)
+  expect_true(ncol(i$ensembles$data) == length(scenarios_names(i)) + 2)
   expect_true(nrow(i$ensembles$data) == length(species_names(i)))
   expect_true(all(scenarios_names(i) %in% colnames(i$ensembles$data)))
   expect_true(all(species_names(i) %in% rownames(i$ensembles$data)))
   expect_true(all(c("cell_id", "average") %in%
-                    colnames(i$ensembles$data[,"_ssp585_2090"][[1]])))
-  expect_true(all(c("list") == class(i$ensembles$data[,"_ssp585_2090"])))
-  expect_true(all(c("data.frame") == class(i$ensembles$data[,"_ssp585_2090"][[1]])))
+    colnames(i$ensembles$data[, "_ssp585_2090"][[1]])))
+  expect_true(all(c("list") == class(i$ensembles$data[, "_ssp585_2090"])))
+  expect_true(all(c("data.frame") == class(i$ensembles$data[, "_ssp585_2090"][[1]])))
   expect_snapshot(i)
-  e <- i$ensembles$data[,"_ssp585_2090"][[1]]
-  p1 <- i$ensembles$data[,"mi_ssp585_2090"][[1]]
-  p2 <- i$ensembles$data[,"ca_ssp585_2090"][[1]]
+  e <- i$ensembles$data[, "_ssp585_2090"][[1]]
+  p1 <- i$ensembles$data[, "mi_ssp585_2090"][[1]]
+  p2 <- i$ensembles$data[, "ca_ssp585_2090"][[1]]
   expect_true(all(e$cell_id == p1$cell_id))
   expect_true(all(e$mean_occ_prob == (p1$mean_occ_prob + p2$mean_occ_prob) / 2))
 })

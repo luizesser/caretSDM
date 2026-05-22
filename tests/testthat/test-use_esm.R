@@ -3,7 +3,7 @@ test_that("use esm", {
   sa <- sdm_area(parana, 1)
   sa <- add_predictors(sa, bioc)
   sa <- dplyr::select(sa, c("bio1", "bio12"))
-  oc <- occurrences_sdm(occ, occ_crs=6933)
+  oc <- occurrences_sdm(occ, occ_crs = 6933)
   oc <- join_area(oc, sa)
   i <- input_sdm(oc, sa)
   expect_error(use_esm(i))

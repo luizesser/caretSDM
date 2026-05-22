@@ -1,4 +1,4 @@
-if(!identical(Sys.getenv("NOT_CRAN"), "false")){
+if (!identical(Sys.getenv("NOT_CRAN"), "false")) {
   if (fs::dir_exists(here::here("tests", "testthat", "testdata"))) {
     pr_tif <- here::here("tests", "testthat", "testdata", "parana.tiff") |>
       stars::read_stars(quiet = TRUE)
@@ -7,7 +7,7 @@ if(!identical(Sys.getenv("NOT_CRAN"), "false")){
   } else {
     pr_tif <- test_path("testdata", "parana.tiff") |>
       stars::read_stars(quiet = TRUE)
-    pr_gpkg <- test_path("testdata","parana.gpkg") |>
+    pr_gpkg <- test_path("testdata", "parana.gpkg") |>
       sf::st_read(quiet = TRUE)
   }
 

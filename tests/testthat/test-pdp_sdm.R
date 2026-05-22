@@ -3,8 +3,8 @@ test_that("pdp_sdm", {
   sa <- sdm_area(parana, cell_size = 50000, output_crs = 6933)
   sa <- add_predictors(sa, bioc)
   sa <- select_predictors(sa, c("bio1", "bio12"))
-  i <- input_sdm(occurrences_sdm(occ, occ_crs=6933), sa)
-  i <- pseudoabsences(i, method="random", n_set = 3)
+  i <- input_sdm(occurrences_sdm(occ, occ_crs = 6933), sa)
+  i <- pseudoabsences(i, method = "random", n_set = 3)
   suppressWarnings(i <- train_sdm(i, algo = c("naive_bayes", "kknn")))
   expect_error(pdp_sdm("i"))
   x <- pdp_sdm(i)
@@ -22,8 +22,10 @@ test_that("pdp_sdm", {
   x <- pdp_sdm(i, algo = "kknn")
   expect_true(ggplot2::is_ggplot(x))
   expect_true(all(c("id", "yhat", "variable", "value") %in% colnames(x$data)))
-  expect_equal(c( "kknn_pa1", "kknn_pa2", "kknn_pa3"),
-               unique(x$data$id))
+  expect_equal(
+    c("kknn_pa1", "kknn_pa2", "kknn_pa3"),
+    unique(x$data$id)
+  )
 
   x <- get_pdp_sdm(i)
   expect_equal(class(x), "list")
@@ -42,8 +44,10 @@ test_that("pdp_sdm", {
   x <- get_pdp_sdm(i, algo = "kknn")
   expect_equal(class(x), c("list"))
   expect_true(all(c("id", "yhat", "variable", "value") %in% colnames(x$kknn)))
-  expect_equal(c( "kknn_pa1", "kknn_pa2", "kknn_pa3"),
-               unique(x$kknn$id))
+  expect_equal(
+    c("kknn_pa1", "kknn_pa2", "kknn_pa3"),
+    unique(x$kknn$id)
+  )
 })
 
 test_that("pdp_sdm", {
@@ -51,12 +55,11 @@ test_that("pdp_sdm", {
   sa <- sdm_area(parana, cell_size = 50000, output_crs = 6933)
   sa <- add_predictors(sa, bioc)
   sa <- select_predictors(sa, c("bio1", "bio4", "bio12"))
-  i <- input_sdm(occurrences_sdm(occ, occ_crs=6933), sa)
-  i <- pseudoabsences(i, method="random", n_set = 3)
+  i <- input_sdm(occurrences_sdm(occ, occ_crs = 6933), sa)
+  i <- pseudoabsences(i, method = "random", n_set = 3)
   i <- use_esm(i, n_records = 999)
   suppressWarnings(i <- train_sdm(i, algo = c("naive_bayes", "kknn")))
   x <- get_pdp_sdm(i)
   expect_true(length(x) == 2)
   expect_true(all(c("id", "yhat", "variable", "value") %in% colnames(x[[1]])))
 })
-

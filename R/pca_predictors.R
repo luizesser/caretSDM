@@ -52,24 +52,24 @@ pca_predictors <- function(i, cumulative_proportion = 0.99) {
 
   pred_df <- get_predictors(i) |>
     as.data.frame() |>
-    dplyr::select(-c('cell_id', 'geometry'))
+    dplyr::select(-c("cell_id", "geometry"))
 
   pca_model <- stats::prcomp(pred_df)
 
   pred_pca <- get_predictors(i) |>
     cbind(pca_model$x)
 
-  if(!"scenarios" %in% names(i)){
+  if (!"scenarios" %in% names(i)) {
     i <- add_scenarios(i)
   }
   scen_df <- i$scenarios$data |>
-    lapply(function(x){
+    lapply(function(x) {
       as.data.frame(x) |>
-        dplyr::select(-c('cell_id', 'geometry'))
+        dplyr::select(-c("cell_id", "geometry"))
     })
 
   scen_pca <- names(scen_df) |>
-    sapply(function(x){
+    sapply(function(x) {
       i$scenarios$data[[x]] |>
         cbind(predict(pca_model, newdata = scen_df[[x]]))
     }, simplify = FALSE, USE.NAMES = TRUE)
@@ -77,7 +77,7 @@ pca_predictors <- function(i, cumulative_proportion = 0.99) {
   i$predictors$variable_selection$pca$data <- pred_pca |> select(!get_predictor_names(i))
   i$predictors$variable_selection$pca$summary <- summary(pca_model)
   i$predictors$variable_selection$pca$model <- pca_model
-  i$predictors$variable_selection$pca$selected_variables <- colnames(pca_summary(i)$importance)[1:(sum(pca_summary(i)$importance["Cumulative Proportion",]<cumulative_proportion)+1)]
+  i$predictors$variable_selection$pca$selected_variables <- colnames(pca_summary(i)$importance)[1:(sum(pca_summary(i)$importance["Cumulative Proportion", ] < cumulative_proportion) + 1)]
   i$predictors$variable_selection$pca$cumulative_proportion_th <- cumulative_proportion
 
   i$predictors$grid <- pred_pca
@@ -88,7 +88,7 @@ pca_predictors <- function(i, cumulative_proportion = 0.99) {
 
 #' @rdname pca_predictors
 #' @export
-pca_summary <- function(i){
+pca_summary <- function(i) {
   assert_class_cli(i, "input_sdm")
   assert_subset_cli("predictors", names(i), empty.ok = FALSE)
   assert_subset_cli("variable_selection", names(i$predictors), empty.ok = FALSE)
@@ -101,7 +101,7 @@ pca_summary <- function(i){
 
 #' @rdname pca_predictors
 #' @export
-get_pca_model <- function(i){
+get_pca_model <- function(i) {
   assert_class_cli(i, "input_sdm")
   assert_subset_cli("predictors", names(i), empty.ok = FALSE)
   assert_subset_cli("variable_selection", names(i$predictors), empty.ok = FALSE)

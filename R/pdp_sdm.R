@@ -38,18 +38,20 @@
 #' i <- input_sdm(oc, sa)
 #'
 #' # Pseudoabsence generation:
-#' i <- pseudoabsences(i, method="random", n_set=3)
+#' i <- pseudoabsences(i, method = "random", n_set = 3)
 #'
 #' # Custom trainControl:
-#' ctrl_sdm <- caret::trainControl(method = "repeatedcv",
-#'                                 number = 2,
-#'                                 repeats = 1,
-#'                                 classProbs = TRUE,
-#'                                 returnResamp = "all",
-#'                                 summaryFunction = summary_sdm,
-#'                                 savePredictions = "all")
+#' ctrl_sdm <- caret::trainControl(
+#'   method = "repeatedcv",
+#'   number = 2,
+#'   repeats = 1,
+#'   classProbs = TRUE,
+#'   returnResamp = "all",
+#'   summaryFunction = summary_sdm,
+#'   savePredictions = "all"
+#' )
 #' # Train models:
-#' i <- train_sdm(i, algo = c("naive_bayes"), ctrl=ctrl_sdm)
+#' i <- train_sdm(i, algo = c("naive_bayes"), ctrl = ctrl_sdm)
 #'
 #' # PDP plots:
 #' pdp_sdm(i)
@@ -71,24 +73,34 @@ pdp_sdm <- function(i, spp = NULL, algo = NULL, variables_selected = NULL, mean.
   assert_subset_cli(spp, species_names(i))
   assert_subset_cli(variables_selected, i$models$predictors)
 
-  if(is.null(spp)){ spp <- species_names(i)[1] }
-  if(is.null(algo)){ algo <- algorithms_used(i) }
-  if(is.null(variables_selected)){ variables_selected <- i$models$predictors }
+  if (is.null(spp)) {
+    spp <- species_names(i)[1]
+  }
+  if (is.null(algo)) {
+    algo <- algorithms_used(i)
+  }
+  if (is.null(variables_selected)) {
+    variables_selected <- i$models$predictors
+  }
 
   l <- get_pdp_sdm(i, spp, algo, variables_selected)
   l2 <- dplyr::bind_rows(l)
 
-  x <- ggplot2::ggplot(data = dplyr::group_by(l2,variable), ggplot2::aes(x = value, y = yhat, group = id)) +
-    ggplot2::facet_wrap(~ variable, scales = "free_x")+
-    ggplot2::geom_smooth(ggplot2::aes(x = value, y = yhat, group=variable), color = "blue",
-                         linewidth = 1.2) +
-    ggplot2::labs(title = "Partial Dependence Plot",
-                  x = "",
-                  y = "Probability of Occurrence") +
+  x <- ggplot2::ggplot(data = dplyr::group_by(l2, variable), ggplot2::aes(x = value, y = yhat, group = id)) +
+    ggplot2::facet_wrap(~variable, scales = "free_x") +
+    ggplot2::geom_smooth(ggplot2::aes(x = value, y = yhat, group = variable),
+      color = "blue",
+      linewidth = 1.2
+    ) +
+    ggplot2::labs(
+      title = "Partial Dependence Plot",
+      x = "",
+      y = "Probability of Occurrence"
+    ) +
     ggplot2::theme_minimal()
 
-  if(!mean.only) {
-    x <- x + ggplot2::geom_line(alpha=0.2)
+  if (!mean.only) {
+    x <- x + ggplot2::geom_line(alpha = 0.2)
   }
 
   return(x)
@@ -96,7 +108,7 @@ pdp_sdm <- function(i, spp = NULL, algo = NULL, variables_selected = NULL, mean.
 
 #' @rdname pdp_sdm
 #' @export
-get_pdp_sdm <- function(i, spp = NULL, algo = NULL, variables_selected = NULL){
+get_pdp_sdm <- function(i, spp = NULL, algo = NULL, variables_selected = NULL) {
   .check_suggested("pdp", "get_pdp_sdm")
   assert_class_cli(i, "input_sdm")
   assert_subset_cli(algo, algorithms_used(i))
@@ -104,70 +116,42 @@ get_pdp_sdm <- function(i, spp = NULL, algo = NULL, variables_selected = NULL){
   assert_subset_cli(variables_selected, i$models$predictors)
 
   m <- get_models(i)
-  if(is.null(spp)){ spp <- species_names(i)[1] }
-  if(is.null(algo)){ algo <- algorithms_used(i) }
-  if(is.null(variables_selected)){ variables_selected <- i$models$predictors }
+  if (is.null(spp)) {
+    spp <- species_names(i)[1]
+  }
+  if (is.null(algo)) {
+    algo <- algorithms_used(i)
+  }
+  if (is.null(variables_selected)) {
+    variables_selected <- i$models$predictors
+  }
 
-  #if("esm" %in% names(i$occurrences)) {
-  #  n_algo <- length(match(algo, algorithms_used(i)))
-  #  n_vars <- ncol(utils::combn(get_predictor_names(i), 2))
-  #  n_algo <- 1:(n_algo*n_vars)
-  #} else {
-  #  n_algo <- match(algo, algorithms_used(i))
-  #}
-
-
-  l <- lapply(algo, function(y){
+  l <- lapply(algo, function(y) {
     n <- grep(y, names(m[[spp]]))
     l <- list()
-    for(v in variables_selected){
-      l1 <- lapply(m[[spp]][n], function(x){
+    for (v in variables_selected) {
+      l1 <- lapply(m[[spp]][n], function(x) {
         res <- try(pdp::partial(x, pred.var = v, plot = FALSE, prob = TRUE), silent = TRUE)
-        if(is(res, "try-error")) {
+        if (is(res, "try-error")) {
           return(NULL)
         } else {
           return(res)
         }
       })
-      l[[v]] <- dplyr::bind_rows(l1, .id="id")
+      l[[v]] <- dplyr::bind_rows(l1, .id = "id")
     }
     df <- dplyr::bind_rows(l)
     df_long <- df |>
       tidyr::pivot_longer(
-        cols = dplyr::all_of(variables_selected[variables_selected %in% colnames(df)]), # Select columns that start with "var"
-        names_to = "variable",     # New column for variable names
-        values_to = "value"        # New column for variable values
+        cols = dplyr::all_of(variables_selected[variables_selected %in% colnames(df)]),
+        names_to = "variable",
+        values_to = "value"
       ) |>
       dplyr::filter(!is.na(value))
     return(df_long)
   })
 
-  #l <- lapply(n_algo, function(y){
-  #  n <- names(m[[spp]])[grep(paste0("\\.",y,"$"), names(m[[spp]]))]
-  #  l <- list()
-  #  for(v in variables_selected){
-  #    l1 <- try(lapply(m[[spp]][n], function(x){pdp::partial(x,
-  #                                                           pred.var = v,
-  #                                                           plot = FALSE,
-  #                                                           prob = TRUE)}),
-  #              silent = TRUE)
-  #    if(is(l1, "try-error")) {
-  #      next
-  #    }
-  #    l[[v]] <- dplyr::bind_rows(l1, .id="id")
-  #  }
-  #  df <- dplyr::bind_rows(l)
-  #  df_long <- df |>
-  #    tidyr::pivot_longer(
-  #      cols = dplyr::all_of(variables_selected[variables_selected %in% colnames(df)]), # Select columns that start with "var"
-  #      names_to = "variable",     # New column for variable names
-  #      values_to = "value"        # New column for variable values
-  #    ) |>
-  #    dplyr::filter(!is.na(value))
-  #  return(df_long)
-  #})
-
-  names(l) <- rep(algo, length.out=length(l))
+  names(l) <- rep(algo, length.out = length(l))
 
   return(l)
 }

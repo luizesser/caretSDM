@@ -47,7 +47,7 @@ join_area <- function(occ, pred) {
   oc <- occ$occurrences
   pd <- pred$grid
 
-  if("cell_id" %in% names(oc)){
+  if ("cell_id" %in% names(oc)) {
     cli::cli_warn(c(
       "occurrence data already has a 'cell_id' column.",
       "i" = "Deleting current cell_id and applying a new cell_id."
@@ -55,20 +55,19 @@ join_area <- function(occ, pred) {
     oc <- oc |> select(-cell_id)
   }
 
-  if(sf::st_crs(oc) != sf::st_crs(pd)){
+  if (sf::st_crs(oc) != sf::st_crs(pd)) {
     oc <- sf::st_transform(oc, sf::st_crs(pd))
   }
 
   v1 <- nrow(oc)
 
-  if(unique(sf::st_geometry_type(pd)) == "LINESTRING") {
+  if (unique(sf::st_geometry_type(pd)) == "LINESTRING") {
     # Find nearest features
     nearest <- sf::st_nearest_feature(oc, dplyr::select(pd, "cell_id"))
     cell_id <- pd[nearest, "cell_id"]
-    oc <- cbind(oc, cell_id)|>
+    oc <- cbind(oc, cell_id) |>
       dplyr::relocate("cell_id") |>
       dplyr::select(-"geometry.1")
-
   } else {
     oc <- oc |>
       sf::st_join(dplyr::select(pd, "cell_id")) |>
@@ -76,17 +75,17 @@ join_area <- function(occ, pred) {
       stats::na.omit()
   }
 
-  v2 <- v1-nrow(oc)
+  v2 <- v1 - nrow(oc)
 
-  if(v2 > 0){
+  if (v2 > 0) {
     cli::cli_warn(c("Some records from {.var occ} do not fall in {.var pred}.",
-               "i" = "{v2} elements from {.var occ} were excluded.",
-               "i" = "If this seems too much, check how {.var occ} and {.var pred} intersect."
-               ))
+      "i" = "{v2} elements from {.var occ} were excluded.",
+      "i" = "If this seems too much, check how {.var occ} and {.var pred} intersect."
+    ))
   }
 
   len <- length(unique(oc$cell_id))
-  if(len <= 1) {
+  if (len <= 1) {
     cli::cli_abort(c(
       "occurrence data has {len} cell_id value{?s}.",
       "x" = "{.var occ} and {.var pred} probably do not overlap."

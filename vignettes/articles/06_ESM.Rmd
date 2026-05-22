@@ -48,11 +48,12 @@ start_time <- Sys.time()
 set.seed(1)
 
 # Build sdm_area object
-sa <- sdm_area(parana, 
-               cell_size = 25000, 
-               output_crs = 6933, 
-               gdal = T) |> 
-  add_predictors(bioc) |> 
+sa <- sdm_area(parana,
+  cell_size = 25000,
+  output_crs = 6933,
+  gdal = T
+) |>
+  add_predictors(bioc) |>
   add_scenarios() |>
   select_predictors(c("bio1", "bio4", "bio12"))
 
@@ -60,19 +61,23 @@ sa <- sdm_area(parana,
 oc <- occurrences_sdm(occ, occ_crs = 6933)
 
 # Merge sdm_area and occurrences_sdm and perform pre-processing, processing and projecting.
-i_esm <- input_sdm(oc, sa) |> 
-  data_clean() |> 
-  pseudoabsences(method = "bioclim") |> 
+i_esm <- input_sdm(oc, sa) |>
+  data_clean() |>
+  pseudoabsences(method = "bioclim") |>
   use_esm(n_records = 999) |>
-  train_sdm(algo = c("naive_bayes", "kknn"), 
-            crtl = caret::trainControl(method = "repeatedcv", 
-                                       number = 4, 
-                                       repeats = 1, 
-                                       classProbs = TRUE, 
-                                       returnResamp = "all", 
-                                       summaryFunction = summary_sdm, 
-                                       savePredictions = "all")) |> 
-  predict_sdm(th = 0.9) |> 
+  train_sdm(
+    algo = c("naive_bayes", "kknn"),
+    crtl = caret::trainControl(
+      method = "repeatedcv",
+      number = 4,
+      repeats = 1,
+      classProbs = TRUE,
+      returnResamp = "all",
+      summaryFunction = summary_sdm,
+      savePredictions = "all"
+    )
+  ) |>
+  predict_sdm(th = 0.9) |>
   ensemble_sdm() |>
   suppressWarnings()
 ```
@@ -88,18 +93,22 @@ Now let's compare the outputs of ESM and standard SDMs. First, we need to create
 We will do that by just removing the `use_esm` function from previous chunk.
 
 ```{r standard_sdm}
-i_sdm <- input_sdm(oc, sa) |> 
-  data_clean() |> 
-  pseudoabsences(method = "bioclim") |> 
-  train_sdm(algo = c("naive_bayes", "kknn"), 
-            crtl = caret::trainControl(method = "repeatedcv", 
-                                       number = 4, 
-                                       repeats = 1, 
-                                       classProbs = TRUE, 
-                                       returnResamp = "all", 
-                                       summaryFunction = summary_sdm, 
-                                       savePredictions = "all")) |> 
-  predict_sdm(th = 0.9) |> 
+i_sdm <- input_sdm(oc, sa) |>
+  data_clean() |>
+  pseudoabsences(method = "bioclim") |>
+  train_sdm(
+    algo = c("naive_bayes", "kknn"),
+    crtl = caret::trainControl(
+      method = "repeatedcv",
+      number = 4,
+      repeats = 1,
+      classProbs = TRUE,
+      returnResamp = "all",
+      summaryFunction = summary_sdm,
+      savePredictions = "all"
+    )
+  ) |>
+  predict_sdm(th = 0.9) |>
   ensemble_sdm() |>
   suppressWarnings()
 ```
@@ -109,15 +118,17 @@ Now let's compare both results:
 ```{r plot_esm}
 # Plotting ESM result for current scenario
 plot_ensembles(i_esm,
-               scenario = "current",
-               ensemble_type = "average")
+  scenario = "current",
+  ensemble_type = "average"
+)
 ```
 
 ```{r plot_standard_sdm}
 # Plotting standard result for current scenario
 plot_ensembles(i_sdm,
-               scenario = "current",
-               ensemble_type = "average")
+  scenario = "current",
+  ensemble_type = "average"
+)
 ```
 
 ## Comparing response curves

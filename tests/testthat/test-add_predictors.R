@@ -24,7 +24,6 @@ if (!identical(Sys.getenv("NOT_CRAN"), "false")) {
 
   sa <- sdm_area(pr_gpkg, cell_size = 100000, output_crs = 6933)
 
-  # Parana
   test_that("add_predictors - rasterStack", {
     sa_pred <- add_predictors(sa, pr_raster)
     expect_equal(
@@ -35,7 +34,7 @@ if (!identical(Sys.getenv("NOT_CRAN"), "false")) {
       )
     )
     expect_true(
-      sa_pred$grid |> nrow() <=  sa$grid |> nrow()
+      sa_pred$grid |> nrow() <= sa$grid |> nrow()
     )
     expect_true(sf::st_geometry_type(sa_pred$grid) |> unique() == "POLYGON")
     expect_true("cell_id" %in% colnames(sa_pred$grid))
@@ -54,7 +53,7 @@ if (!identical(Sys.getenv("NOT_CRAN"), "false")) {
     pr_raster2 <- pr_raster
     pr_gpkg2 <- pr_gpkg
     names(pr_raster2) <- 1:2
-    colnames(pr_gpkg2) <- c(3:5, "SIGLAUF3",  "geom")
+    colnames(pr_gpkg2) <- c(3:5, "SIGLAUF3", "geom")
     sa2 <- sdm_area(pr_gpkg2, cell_size = 100000, output_crs = 6933)
     sa_pred <- add_predictors(sa2, pr_raster2)
     expect_equal(
@@ -164,7 +163,7 @@ if (!identical(Sys.getenv("NOT_CRAN"), "false")) {
 
   test_that("add_predictors, but there is no overlap", {
     box <- sf::st_bbox(c(xmin = 16.1, xmax = 16.6, ymax = 48.6, ymin = 47.9), crs = sf::st_crs(4326))
-    box <- sf::st_transform(box, crs=6933)
+    box <- sf::st_transform(box, crs = 6933)
     expect_error(add_predictors(sa, box))
   })
 
@@ -287,25 +286,6 @@ if (!identical(Sys.getenv("NOT_CRAN"), "false")) {
     )
   })
 
-  #test_that("add_predictors - sf", {
-  #  sa_pred <- add_predictors(sa_rivs, pr_gpkg)
-  #  expect_true(sf::st_geometry_type(sa_pred$grid) |> unique() == "LINESTRING")
-  #  expect_true("cell_id" %in% colnames(sa_pred$grid))
-  #  expect_true("geometry" %in% colnames(sa_pred$grid))
-  #  checkmate::expect_integer(
-  #    sa_pred$grid$cell_id,
-  #    any.missing = FALSE,
-  #    all.missing = FALSE,
-  #    unique = TRUE,
-  #    sorted = TRUE,
-  #    null.ok = FALSE
-  #  )
-  #  expect_equal(
-  #    get_predictor_names(sa_pred),
-  #    c("LENGTH_KM", "DIST_DN_KM", "GID0", "CODIGOIB1", "NOMEUF2", "SIGLAUF3")
-  #  )
-  #})
-
   test_that("add_predictors - lista de variáveis invalida", {
     expect_error(
       sa_pred <- add_predictors(sa_rivs, pr_raster, list("foo"))
@@ -338,7 +318,7 @@ if (!identical(Sys.getenv("NOT_CRAN"), "false")) {
 
   test_that("add_predictors, but there is no overlap", {
     box <- st_bbox(c(xmin = 16.1, xmax = 16.6, ymax = 48.6, ymin = 47.9), crs = st_crs(4326))
-    box <- sf::st_transform(box, crs=6933)
+    box <- sf::st_transform(box, crs = 6933)
     expect_error(add_predictors(sa_rivs, box))
   })
 
@@ -402,8 +382,6 @@ if (!identical(Sys.getenv("NOT_CRAN"), "false")) {
     expect_equal(sa_pred$grid, sa_pred2$grid)
   })
 
-  # Others
-
   test_that("add_predictors - rasterStack não usando sdm_area", {
     skip_on_cran()
     expect_snapshot(
@@ -413,57 +391,61 @@ if (!identical(Sys.getenv("NOT_CRAN"), "false")) {
   })
 
   test_that("add_predictors - correção do tidyr::drop_na: drop_na modifica o bbox buff+gdal", {
-   skip_on_cran()
-   buf_sa <- occ |>
-     sf::st_as_sf(coords = c(2,3)) |>
-     sf::st_buffer(dist = 100000) |>
-     sf::st_union() |>
-     sf::st_as_sf(crs=sf::st_crs(6933))
-   sa_buf <- sdm_area(buf_sa, cell_size = 100000, output_crs = 6933)
-   sa_pred <- add_predictors(sa_buf, bioc)
-   suppressWarnings(bbox_intersect <- sf::st_bbox(sf::st_intersection(sa_buf$grid, sa_pred$grid))) #find intersection between sdm_area and add_pred.
-   expect_equal(bbox_intersect, sf::st_bbox(sa_pred$grid))
+    skip_on_cran()
+    buf_sa <- occ |>
+      sf::st_as_sf(coords = c(2, 3)) |>
+      sf::st_buffer(dist = 100000) |>
+      sf::st_union() |>
+      sf::st_as_sf(crs = sf::st_crs(6933))
+    sa_buf <- sdm_area(buf_sa, cell_size = 100000, output_crs = 6933)
+    sa_pred <- add_predictors(sa_buf, bioc)
+    suppressWarnings(bbox_intersect <- sf::st_bbox(sf::st_intersection(sa_buf$grid, sa_pred$grid))) # find intersection between sdm_area and add_pred.
+    expect_equal(bbox_intersect, sf::st_bbox(sa_pred$grid))
   })
 
   test_that("add_predictors - correção do tidyr::drop_na: drop_na modifica o bbox Gpkg+gdal", {
-   sa_buf <- sdm_area(pr_gpkg, cell_size = 100000, output_crs = 6933)
-   sa_pred <- add_predictors(sa_buf, bioc)
-   suppressWarnings(bbox_intersect <- sf::st_bbox(sf::st_intersection(sa_buf$grid, sa_pred$grid))) #find intersection between sdm_area and add_pred.
-   expect_equal(bbox_intersect, sf::st_bbox(sa_pred$grid))
+    sa_buf <- sdm_area(pr_gpkg, cell_size = 100000, output_crs = 6933)
+    sa_pred <- add_predictors(sa_buf, bioc)
+    suppressWarnings(bbox_intersect <- sf::st_bbox(sf::st_intersection(sa_buf$grid, sa_pred$grid))) # find intersection between sdm_area and add_pred.
+    expect_equal(bbox_intersect, sf::st_bbox(sa_pred$grid))
   })
 
   test_that("add_predictors - correção do tidyr::drop_na: drop_na modifica o bbox buff-nogdal", {
-   skip_on_cran()
-   buf_sa <- occ |>
-     sf::st_as_sf(coords = c(2,3)) |>
-     sf::st_buffer(dist = 100000) |>
-     sf::st_union() |>
-     sf::st_as_sf(crs=sf::st_crs(6933))
-   sa_buf <- sdm_area(buf_sa, cell_size = 100000, output_crs = 6933, gdal = FALSE)
-   sa_pred <- add_predictors(sa_buf, bioc, gdal = FALSE)
-   suppressWarnings(bbox_intersect <- sf::st_bbox(sf::st_intersection(sa_buf$grid, sa_pred$grid))) #find intersection between sdm_area and add_pred.
-   expect_equal(bbox_intersect, sf::st_bbox(sa_pred$grid))
+    skip_on_cran()
+    buf_sa <- occ |>
+      sf::st_as_sf(coords = c(2, 3)) |>
+      sf::st_buffer(dist = 100000) |>
+      sf::st_union() |>
+      sf::st_as_sf(crs = sf::st_crs(6933))
+    sa_buf <- sdm_area(buf_sa, cell_size = 100000, output_crs = 6933, gdal = FALSE)
+    sa_pred <- add_predictors(sa_buf, bioc, gdal = FALSE)
+    suppressWarnings(bbox_intersect <- sf::st_bbox(sf::st_intersection(sa_buf$grid, sa_pred$grid))) # find intersection between sdm_area and add_pred.
+    expect_equal(bbox_intersect, sf::st_bbox(sa_pred$grid))
   })
 
   test_that("add_predictors - correção do tidyr::drop_na: drop_na modifica o bbox Gpkg-nogdal", {
-   skip_on_cran()
-   sa_buf <- sdm_area(pr_gpkg, cell_size = 100000, output_crs = 6933, gdal = FALSE)
-   sa_pred <- add_predictors(sa_buf, bioc, gdal = FALSE)
-   suppressWarnings(bbox_intersect <- sf::st_bbox(sf::st_intersection(sa_buf$grid, sa_pred$grid))) #find intersection between sdm_area and add_pred.
-   expect_equal(bbox_intersect, sf::st_bbox(sa_pred$grid))
+    skip_on_cran()
+    sa_buf <- sdm_area(pr_gpkg, cell_size = 100000, output_crs = 6933, gdal = FALSE)
+    sa_pred <- add_predictors(sa_buf, bioc, gdal = FALSE)
+    suppressWarnings(bbox_intersect <- sf::st_bbox(sf::st_intersection(sa_buf$grid, sa_pred$grid))) # find intersection between sdm_area and add_pred.
+    expect_equal(bbox_intersect, sf::st_bbox(sa_pred$grid))
   })
 
-  # test cell_size=NULL
   test_that("add_predictors - cell_size=NULL", {
-    sa <- sdm_area(bioc[,,,1], cell_size = NULL)
-    sa_pred <- add_predictors(sa, bioc[,,,-1])
+    sa <- sdm_area(bioc[, , , 1], cell_size = NULL)
+    sa_pred <- add_predictors(sa, bioc[, , , -1])
     expect_equal(
       get_predictor_names(sa_pred),
-      c("bio1",  "bio4",  "bio12")
+      c("bio1", "bio4", "bio12")
     )
     expect_true(
-      sa_pred$grid |> nrow() <=  sa$grid |> nrow()
+      sa_pred$grid |> nrow() <= sa$grid |> nrow()
     )
+  })
+
+  test_that("add_predictors - variables_selected", {
+    teste <- add_predictors(sa, pr_raster, variables_selected = c("wc2.1_10m_bio_12"))
+    expect_equal(get_predictor_names(teste), c("GID0", "CODIGOIB1", "NOMEUF2", "SIGLAUF3", "wc2.1_10m_bio_12"))
   })
 
 }

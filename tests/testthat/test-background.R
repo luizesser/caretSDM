@@ -2,9 +2,10 @@ test_that("background_tests", {
   skip_on_cran()
   set.seed(2)
   sa <- sdm_area(parana,
-                 cell_size = 25000,
-                 output_crs = 6933,
-                 gdal = T) |>
+    cell_size = 25000,
+    output_crs = 6933,
+    gdal = T
+  ) |>
     add_predictors(bioc) |>
     add_scenarios() |>
     select_predictors(c("bio1", "bio4", "bio12"))
@@ -25,7 +26,7 @@ test_that("background_tests", {
   expect_equal(as.numeric(i$occurrences$background$proportion), 1)
   expect_equal(as.numeric(i$occurrences$background$n_set), 1)
 
-  env_distance_bg <- function(env_sf, occ_sf, n_pa=n_pa) {
+  env_distance_bg <- function(env_sf, occ_sf, n_pa = n_pa) {
     df <- as.data.frame(env_sf)[, -which(names(env_sf) %in% c("cell_id", "geometry"))]
     center <- colMeans(df)
     d <- sqrt(rowSums((df - center)^2))
@@ -53,15 +54,19 @@ test_that("background_tests", {
     background()
 
   ## background_tests - n_background
-  expect_equal(as.numeric(n_background(i)), rep(nrow(i$occurrences$background$data[[1]][[1]]),
-                                    length(species_names(i))))
+  expect_equal(as.numeric(n_background(i)), rep(
+    nrow(i$occurrences$background$data[[1]][[1]]),
+    length(species_names(i))
+  ))
 
   ## background_tests - background_data
   expect_equal(background_data(i), i$occurrences$background$data)
 
 
-  expect_equal(as.numeric(i$occurrences$background$proportion), rep(1,
-                                                                    length(species_names(i))))
+  expect_equal(as.numeric(i$occurrences$background$proportion), rep(
+    1,
+    length(species_names(i))
+  ))
   expect_equal(as.numeric(i$occurrences$background$n_set), 1)
 
   ## modeling
@@ -77,7 +82,4 @@ test_that("background_tests", {
   i <- input_sdm(oc, sa) |>
     pseudoabsences()
   expect_error(train_sdm(i, algo = c("maxent")))
-
-
-
 })

@@ -26,7 +26,7 @@ Create buffer around records in \code{occ_data} to be used as study area
 }
 \examples{
 # Create sdm_area object:
-study_area <- buffer_sdm(occ, size=50000, occ_crs=6933)
+study_area <- buffer_sdm(occ, size = 50000, occ_crs = 6933)
 plot(study_area)
 
 }

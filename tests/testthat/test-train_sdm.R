@@ -1,17 +1,17 @@
 if (!identical(Sys.getenv("NOT_CRAN"), "false")) {
   set.seed(2)
-  sa <- sdm_area(parana, 100000, output_crs=6933)
+  sa <- sdm_area(parana, 100000, output_crs = 6933)
   sa <- add_predictors(sa, bioc)
   sa <- select_predictors(sa, c("bio1", "bio12"))
   sa <- add_scenarios(sa)
-  oc <- occurrences_sdm(occ, occ_crs=6933)
+  oc <- occurrences_sdm(occ, occ_crs = 6933)
   suppressWarnings(oc <- join_area(oc, sa))
   i <- input_sdm(oc, sa)
   i_pca <- pca_predictors(i)
   i_pca <- pseudoabsences(i_pca, method = "random", n_p, variables_selected = "pca", n_set = 3)
   suppressWarnings(i_vif <- vif_predictors(i))
   i_vif <- pseudoabsences(i_vif, method = "random", variables_selected = "vif", n_set = 3)
-  i <- pseudoabsences(i, method = "random", variables_selected=c("bio1", "bio12"), n_set = 3)
+  i <- pseudoabsences(i, method = "random", variables_selected = c("bio1", "bio12"), n_set = 3)
   ctrl <- caret::trainControl(
     method = "cv", number = 2, classProbs = TRUE, returnResamp = "all",
     summaryFunction = caret::twoClassSummary, savePredictions = "all"
@@ -72,8 +72,9 @@ if (!identical(Sys.getenv("NOT_CRAN"), "false")) {
         # A common choice is alpha = 0.05. If p-value >= 0.05, the point is
         # considered within the "presence" environment.
         pred <- ifelse(probs[, modelFit$levels[1]] >= 0.05,
-                       modelFit$levels[1], # presence
-                       modelFit$levels[2]) # pseudoabsence
+          modelFit$levels[1], # presence
+          modelFit$levels[2]
+        ) # pseudoabsence
       } else {
         # Standard method: assign the class with the highest probability.
         pred <- colnames(probs)[apply(probs, 1, which.max)]
@@ -83,7 +84,6 @@ if (!identical(Sys.getenv("NOT_CRAN"), "false")) {
       pred <- factor(pred, levels = modelFit$levels)
       return(pred)
     },
-
     predictors = function(x, ...) {
       # This correctly extracts predictor names from the fitted model.
       names(x$center)
@@ -93,10 +93,12 @@ if (!identical(Sys.getenv("NOT_CRAN"), "false")) {
     prob = function(modelFit, newdata, preProc = NULL, submodels = NULL) {
       # 'prob' calculates class probabilities using the fitted model.
       # 1. Calculate the squared Mahalanobis distance (D^2) for newdata.
-      d2 <- stats::mahalanobis(x = newdata,
-                               center = modelFit$center,
-                               cov = modelFit$inv_cov,
-                               inverted = TRUE) # Use inverted = TRUE for efficiency ######################
+      d2 <- stats::mahalanobis(
+        x = newdata,
+        center = modelFit$center,
+        cov = modelFit$inv_cov,
+        inverted = TRUE
+      ) # Use inverted = TRUE for efficiency ######################
 
       # 2. Convert distance to a p-value using the chi-squared distribution.
       # This p-value can be interpreted as the probability of "presence".
@@ -117,61 +119,82 @@ if (!identical(Sys.getenv("NOT_CRAN"), "false")) {
 test_that("train_sdm", {
   skip_on_cran()
   suppressWarnings(i2 <- train_sdm(i,
-                                   algo=c("kknn", "naive_bayes"),
-                                   variables_selected = c("bio1", "bio12"),
-                                   ctrl=ctrl))
+    algo = c("kknn", "naive_bayes"),
+    variables_selected = c("bio1", "bio12"),
+    ctrl = ctrl
+  ))
   expect_true("models" %in% names(i2))
   expect_equal(10, get_tune_length(i2))
   expect_equal(c("kknn", "naive_bayes"), algorithms_used(i2))
-  expect_equal(c("kknn", "naive_bayes"),
-               unique(get_validation_metrics(i2)[[1]][,"algo"]))
+  expect_equal(
+    c("kknn", "naive_bayes"),
+    unique(get_validation_metrics(i2)[[1]][, "algo"])
+  )
   expect_true(all(c("algo", "ROC") %in% colnames(get_validation_metrics(i2)[[1]])))
   expect_true(all(c("bio1", "bio12") %in%
-                    colnames(i2$models$models$`Araucaria angustifolia`[[1]]$trainingData)))
-  expect_equal(names(get_models(i2)[[1]]),
-               c("kknn_pa1", "naive_bayes_pa1",
-                 "kknn_pa2", "naive_bayes_pa2",
-                 "kknn_pa3", "naive_bayes_pa3"))
+    colnames(i2$models$models$`Araucaria angustifolia`[[1]]$trainingData)))
+  expect_equal(
+    names(get_models(i2)[[1]]),
+    c(
+      "kknn_pa1", "naive_bayes_pa1",
+      "kknn_pa2", "naive_bayes_pa2",
+      "kknn_pa3", "naive_bayes_pa3"
+    )
+  )
 })
 
 test_that("train_sdm - pca", {
   skip_on_cran()
   suppressWarnings(i2 <- train_sdm(i_pca,
-                                   algo=c("kknn", "naive_bayes"),
-                                   variables_selected = "pca",
-                                   ctrl=ctrl))
+    algo = c("kknn", "naive_bayes"),
+    variables_selected = "pca",
+    ctrl = ctrl
+  ))
   expect_true("models" %in% names(i2))
   expect_equal(10, get_tune_length(i2))
   expect_equal(c("kknn", "naive_bayes"), algorithms_used(i2))
-  expect_equal(c("kknn", "naive_bayes"),
-               unique(get_validation_metrics(i2)[[1]][,"algo"]))
+  expect_equal(
+    c("kknn", "naive_bayes"),
+    unique(get_validation_metrics(i2)[[1]][, "algo"])
+  )
   expect_true(all(c("algo", "ROC") %in% colnames(get_validation_metrics(i2)[[1]])))
   expect_true(all(i2$predictors$variable_selection$pca$selected_variables %in%
-                    colnames(i2$models$models$`Araucaria angustifolia`[[1]]$trainingData)))
-  expect_equal(names(get_models(i2)[[1]]),
-               c("kknn_pa1", "naive_bayes_pa1",
-                 "kknn_pa2", "naive_bayes_pa2",
-                 "kknn_pa3", "naive_bayes_pa3"))
+    colnames(i2$models$models$`Araucaria angustifolia`[[1]]$trainingData)))
+  expect_equal(
+    names(get_models(i2)[[1]]),
+    c(
+      "kknn_pa1", "naive_bayes_pa1",
+      "kknn_pa2", "naive_bayes_pa2",
+      "kknn_pa3", "naive_bayes_pa3"
+    )
+  )
 })
 
 test_that("train_sdm - vif", {
   skip_on_cran()
   suppressWarnings(i2 <- train_sdm(i_vif,
-                                   algo=c("kknn", "naive_bayes"),
-                                   variables_selected = "vif",
-                                   ctrl = ctrl))
+    algo = c("kknn", "naive_bayes"),
+    variables_selected = "vif",
+    ctrl = ctrl
+  ))
   expect_true("models" %in% names(i2))
   expect_equal(10, get_tune_length(i2))
   expect_equal(c("kknn", "naive_bayes"), algorithms_used(i2))
-  expect_equal(c("kknn", "naive_bayes"),
-               unique(get_validation_metrics(i2)[[1]][,"algo"]))
+  expect_equal(
+    c("kknn", "naive_bayes"),
+    unique(get_validation_metrics(i2)[[1]][, "algo"])
+  )
   expect_true(all(c("algo", "ROC") %in% colnames(get_validation_metrics(i2)[[1]])))
   expect_true(all(i2$predictors$variable_selection$vif$selected_variables %in%
-                    colnames(i2$models$models$`Araucaria angustifolia`[[1]]$trainingData)))
-  expect_equal(names(get_models(i2)[[1]]),
-               c("kknn_pa1", "naive_bayes_pa1",
-                 "kknn_pa2", "naive_bayes_pa2",
-                 "kknn_pa3", "naive_bayes_pa3"))
+    colnames(i2$models$models$`Araucaria angustifolia`[[1]]$trainingData)))
+  expect_equal(
+    names(get_models(i2)[[1]]),
+    c(
+      "kknn_pa1", "naive_bayes_pa1",
+      "kknn_pa2", "naive_bayes_pa2",
+      "kknn_pa3", "naive_bayes_pa3"
+    )
+  )
 })
 
 test_that("train_sdm - change ctrl", {
@@ -181,44 +204,57 @@ test_that("train_sdm - change ctrl", {
     summaryFunction = caret::twoClassSummary, savePredictions = "all"
   )
   suppressWarnings(i2 <- train_sdm(i_pca,
-                                   algo=c("kknn", "naive_bayes"),
-                                   variables_selected = "pca",
-                                   ctrl=ctrl2))
+    algo = c("kknn", "naive_bayes"),
+    variables_selected = "pca",
+    ctrl = ctrl2
+  ))
   expect_equal(10, length(unique(i2$models$models$`Araucaria angustifolia`[[1]]$resample$Resample)))
   expect_equal("boot", i2$models$validation$method)
-  expect_equal(names(get_models(i2)[[1]]),
-               c("kknn_pa1", "naive_bayes_pa1",
-                 "kknn_pa2", "naive_bayes_pa2",
-                 "kknn_pa3", "naive_bayes_pa3"))
+  expect_equal(
+    names(get_models(i2)[[1]]),
+    c(
+      "kknn_pa1", "naive_bayes_pa1",
+      "kknn_pa2", "naive_bayes_pa2",
+      "kknn_pa3", "naive_bayes_pa3"
+    )
+  )
 })
 
 test_that("train_sdm - selecting vars", {
   skip_on_cran()
-  suppressWarnings(i2 <- train_sdm(i, algo=c("kknn", "naive_bayes"),
-                                   variables_selected=c("bio1", "bio12"),
-                                   ctrl=ctrl))
+  suppressWarnings(i2 <- train_sdm(i,
+    algo = c("kknn", "naive_bayes"),
+    variables_selected = c("bio1", "bio12"),
+    ctrl = ctrl
+  ))
   expect_true("models" %in% names(i2))
   expect_equal(10, get_tune_length(i2))
   expect_equal(c("kknn", "naive_bayes"), algorithms_used(i2))
-  expect_equal(c("kknn", "naive_bayes"),
-               unique(get_validation_metrics(i2)[[1]][,"algo"]))
+  expect_equal(
+    c("kknn", "naive_bayes"),
+    unique(get_validation_metrics(i2)[[1]][, "algo"])
+  )
   expect_true(all(c("algo", "ROC") %in% colnames(get_validation_metrics(i2)[[1]])))
   expect_true(all(c("bio1", "bio12") %in%
-                    colnames(i2$models$models$`Araucaria angustifolia`[[1]]$trainingData)))
-  expect_equal(names(get_models(i2)[[1]]),
-               c("kknn_pa1", "naive_bayes_pa1",
-                 "kknn_pa2", "naive_bayes_pa2",
-                 "kknn_pa3", "naive_bayes_pa3"))
+    colnames(i2$models$models$`Araucaria angustifolia`[[1]]$trainingData)))
+  expect_equal(
+    names(get_models(i2)[[1]]),
+    c(
+      "kknn_pa1", "naive_bayes_pa1",
+      "kknn_pa2", "naive_bayes_pa2",
+      "kknn_pa3", "naive_bayes_pa3"
+    )
+  )
 })
 
 test_that("train_sdm - ESM", {
   skip_on_cran()
   set.seed(2)
-  sa <- sdm_area(parana, 100000, output_crs=6933)
+  sa <- sdm_area(parana, 100000, output_crs = 6933)
   sa <- add_predictors(sa, bioc)
   sa <- select_predictors(sa, c("bio1", "bio4", "bio12"))
   sa <- add_scenarios(sa)
-  oc <- occurrences_sdm(occ, occ_crs=6933)
+  oc <- occurrences_sdm(occ, occ_crs = 6933)
   suppressWarnings(oc <- join_area(oc, sa))
   i <- input_sdm(oc, sa)
   i <- pseudoabsences(i, method = "random", n_set = 3)
@@ -227,71 +263,91 @@ test_that("train_sdm - ESM", {
     method = "cv", number = 2, classProbs = TRUE, returnResamp = "all",
     summaryFunction = caret::twoClassSummary, savePredictions = "all"
   )
-  suppressWarnings(i2 <- train_sdm(i2, algo=c("kknn", "naive_bayes"),
-                                   ctrl=ctrl))
+  suppressWarnings(i2 <- train_sdm(i2,
+    algo = c("kknn", "naive_bayes"),
+    ctrl = ctrl
+  ))
   expect_true("models" %in% names(i2))
   expect_equal(10, get_tune_length(i2))
   expect_equal(c("kknn", "naive_bayes"), algorithms_used(i2))
-  expect_equal(c("kknn", "naive_bayes"),
-               unique(get_validation_metrics(i2)[[1]][,"algo"]))
+  expect_equal(
+    c("kknn", "naive_bayes"),
+    unique(get_validation_metrics(i2)[[1]][, "algo"])
+  )
   expect_true(all(c("algo", "ROC") %in% colnames(get_validation_metrics(i2)[[1]])))
   expect_true(all(c("bio1", "bio4") %in%
-                    colnames(i2$models$models$`Araucaria angustifolia`[[1]]$trainingData)))
-  expect_equal(names(get_models(i2)[[1]]),
-               c("kknn_pa1_esm1", "naive_bayes_pa1_esm1", "kknn_pa1_esm2", "naive_bayes_pa1_esm2",
-                 "kknn_pa1_esm3", "naive_bayes_pa1_esm3", "kknn_pa2_esm1", "naive_bayes_pa2_esm1",
-                 "kknn_pa2_esm2", "naive_bayes_pa2_esm2", "kknn_pa2_esm3", "naive_bayes_pa2_esm3",
-                 "kknn_pa3_esm1", "naive_bayes_pa3_esm1", "kknn_pa3_esm2", "naive_bayes_pa3_esm2",
-                 "kknn_pa3_esm3", "naive_bayes_pa3_esm3"))
-  expect_true(all.equal(i2$models$models$`Araucaria angustifolia`$naive_bayes_pa1_esm1$trainingData,
-                        i2$models$models$`Araucaria angustifolia`$kknn_pa1_esm1$trainingData))
+    colnames(i2$models$models$`Araucaria angustifolia`[[1]]$trainingData)))
+  expect_equal(
+    names(get_models(i2)[[1]]),
+    c(
+      "kknn_pa1_esm1", "naive_bayes_pa1_esm1", "kknn_pa1_esm2", "naive_bayes_pa1_esm2",
+      "kknn_pa1_esm3", "naive_bayes_pa1_esm3", "kknn_pa2_esm1", "naive_bayes_pa2_esm1",
+      "kknn_pa2_esm2", "naive_bayes_pa2_esm2", "kknn_pa2_esm3", "naive_bayes_pa2_esm3",
+      "kknn_pa3_esm1", "naive_bayes_pa3_esm1", "kknn_pa3_esm2", "naive_bayes_pa3_esm2",
+      "kknn_pa3_esm3", "naive_bayes_pa3_esm3"
+    )
+  )
+  expect_true(all.equal(
+    i2$models$models$`Araucaria angustifolia`$naive_bayes_pa1_esm1$trainingData,
+    i2$models$models$`Araucaria angustifolia`$kknn_pa1_esm1$trainingData
+  ))
 })
 
 test_that("mahal.custom train", {
   skip_on_cran()
   sa <- sdm_area(parana,
-                 cell_size = 50000, # Using a coarse resolution for speed
-                 output_crs = 6933)
+    cell_size = 50000, # Using a coarse resolution for speed
+    output_crs = 6933
+  )
   sa <- add_predictors(sa, bioc)
   oc <- occurrences_sdm(occ, occ_crs = 6933)
   suppressWarnings(oc <- join_area(oc, sa))
   i <- input_sdm(oc, sa)
   i <- pseudoabsences(i,
-                      method = "bioclim",
-                      n_set = 3)
-  ctrl_sdm <- caret::trainControl(method = "cv",
-                                  number = 3,
-                                  classProbs = TRUE,
-                                  summaryFunction = summary_sdm,
-                                  savePredictions = "final")
+    method = "bioclim",
+    n_set = 3
+  )
+  ctrl_sdm <- caret::trainControl(
+    method = "cv",
+    number = 3,
+    classProbs = TRUE,
+    summaryFunction = summary_sdm,
+    savePredictions = "final"
+  )
   i2 <- train_sdm(i,
-                 algo = mahal.custom,
-                 variables_selected = c("bio1", "bio4", "bio12"), # Using only two variables for simplicity
-                 ctrl = ctrl_sdm) |>
+    algo = mahal.custom,
+    variables_selected = c("bio1", "bio4", "bio12"), # Using only two variables for simplicity
+    ctrl = ctrl_sdm
+  ) |>
     suppressWarnings()
   expect_true("models" %in% names(i2))
   expect_equal(10, get_tune_length(i2))
   expect_equal(c("mahal.custom"), algorithms_used(i2))
-  expect_equal(c("mahal.custom"),
-               unique(get_validation_metrics(i2)[[1]][,"algo"]))
+  expect_equal(
+    c("mahal.custom"),
+    unique(get_validation_metrics(i2)[[1]][, "algo"])
+  )
   expect_true(all(c("algo", "ROC") %in% colnames(get_validation_metrics(i2)[[1]])))
   expect_true(all(c("bio1", "bio4", "bio12") %in%
-                    colnames(i2$models$models$`Araucaria angustifolia`[[1]]$trainingData)))
-  expect_equal(names(get_models(i2)[[1]]),
-               c("mahal.custom_pa1", "mahal.custom_pa2", "mahal.custom_pa3"))
+    colnames(i2$models$models$`Araucaria angustifolia`[[1]]$trainingData)))
+  expect_equal(
+    names(get_models(i2)[[1]]),
+    c("mahal.custom_pa1", "mahal.custom_pa2", "mahal.custom_pa3")
+  )
 })
 
 test_that("train_sdm - two species ESM", {
   skip_on_cran()
   set.seed(2)
   sa <- sdm_area(parana,
-                 cell_size = 25000,
-                 output_crs = 6933,
-                 gdal = T) |>
+    cell_size = 25000,
+    output_crs = 6933,
+    gdal = T
+  ) |>
     add_predictors(bioc) |>
     add_scenarios() |>
     select_predictors(c("bio1", "bio4", "bio12"))
-  oc <- occurrences_sdm(rbind(salm,occ), occ_crs = 6933) |>
+  oc <- occurrences_sdm(rbind(salm, occ), occ_crs = 6933) |>
     join_area(sa) |>
     suppressWarnings()
   i <- input_sdm(oc, sa) |>
@@ -300,15 +356,19 @@ test_that("train_sdm - two species ESM", {
     use_esm(n_records = 30)
 
   expect_no_error(i1 <- i |>
-                    train_sdm(algo = mahal.custom,
-                              variables_selected = c("bio1", "bio4", "bio12"), # Using only two variables for simplicity
-                              ctrl = NULL) |>
-                    suppressWarnings())
+    train_sdm(
+      algo = mahal.custom,
+      variables_selected = c("bio1", "bio4", "bio12"), # Using only two variables for simplicity
+      ctrl = NULL
+    ) |>
+    suppressWarnings())
   expect_no_error(i2 <- i |>
-                    train_sdm(algo = c("kknn"),
-                              variables_selected = c("bio1", "bio4", "bio12"), # Using only two variables for simplicity
-                              ctrl = NULL) |>
-                    suppressWarnings())
+    train_sdm(
+      algo = c("kknn"),
+      variables_selected = c("bio1", "bio4", "bio12"), # Using only two variables for simplicity
+      ctrl = NULL
+    ) |>
+    suppressWarnings())
   expect_true(algorithms_used(i1) == "mahal.custom")
   expect_true(algorithms_used(i2) == "kknn")
 
@@ -324,49 +384,66 @@ test_that("train_sdm - two species ESM", {
   expect_true(length(m1$`Salminus brasiliensis`) == 30)
   expect_true(m1$`Salminus brasiliensis`[[11]]$resampledCM$Resample[8] == "Fold4.Rep1")
   expect_true(m2$`Salminus brasiliensis`[[11]]$resampledCM$Resample[12] == "Fold4.Rep1")
-  expect_equal(names(m1[[1]]),
-               c("mahal.custom_pa1_esm1"  ,"mahal.custom_pa1_esm2" , "mahal.custom_pa1_esm3" ,
-                 "mahal.custom_pa2_esm1"  ,"mahal.custom_pa2_esm2" , "mahal.custom_pa2_esm3" ,
-                 "mahal.custom_pa3_esm1"  ,"mahal.custom_pa3_esm2" , "mahal.custom_pa3_esm3" ,
-                 "mahal.custom_pa4_esm1"  ,"mahal.custom_pa4_esm2" , "mahal.custom_pa4_esm3" ,
-                 "mahal.custom_pa5_esm1"  ,"mahal.custom_pa5_esm2" , "mahal.custom_pa5_esm3" ,
-                 "mahal.custom_pa6_esm1"  ,"mahal.custom_pa6_esm2" , "mahal.custom_pa6_esm3" ,
-                 "mahal.custom_pa7_esm1"  ,"mahal.custom_pa7_esm2" , "mahal.custom_pa7_esm3" ,
-                 "mahal.custom_pa8_esm1"  ,"mahal.custom_pa8_esm2" , "mahal.custom_pa8_esm3" ,
-                 "mahal.custom_pa9_esm1"  ,"mahal.custom_pa9_esm2" , "mahal.custom_pa9_esm3" ,
-                 "mahal.custom_pa10_esm1" ,"mahal.custom_pa10_esm2", "mahal.custom_pa10_esm3"))
-  expect_equal(names(m1[[2]]),
-               c("mahal.custom_pa1",  "mahal.custom_pa2",
-                 "mahal.custom_pa3",  "mahal.custom_pa4",
-                 "mahal.custom_pa5",  "mahal.custom_pa6",
-                 "mahal.custom_pa7",  "mahal.custom_pa8",
-                 "mahal.custom_pa9",  "mahal.custom_pa10"))
-  expect_equal(names(m2[[1]]),
-               c("kknn_pa1_esm1"  ,"kknn_pa1_esm2" , "kknn_pa1_esm3" ,
-                 "kknn_pa2_esm1"  ,"kknn_pa2_esm2" , "kknn_pa2_esm3" ,
-                 "kknn_pa3_esm1"  ,"kknn_pa3_esm2" , "kknn_pa3_esm3" ,
-                 "kknn_pa4_esm1"  ,"kknn_pa4_esm2" , "kknn_pa4_esm3" ,
-                 "kknn_pa5_esm1"  ,"kknn_pa5_esm2" , "kknn_pa5_esm3" ,
-                 "kknn_pa6_esm1"  ,"kknn_pa6_esm2" , "kknn_pa6_esm3" ,
-                 "kknn_pa7_esm1"  ,"kknn_pa7_esm2" , "kknn_pa7_esm3" ,
-                 "kknn_pa8_esm1"  ,"kknn_pa8_esm2" , "kknn_pa8_esm3" ,
-                 "kknn_pa9_esm1"  ,"kknn_pa9_esm2" , "kknn_pa9_esm3" ,
-                 "kknn_pa10_esm1" ,"kknn_pa10_esm2", "kknn_pa10_esm3"))
-  expect_equal(names(m2[[2]]),
-               c("kknn_pa1",  "kknn_pa2",
-                 "kknn_pa3",  "kknn_pa4",
-                 "kknn_pa5",  "kknn_pa6",
-                 "kknn_pa7",  "kknn_pa8",
-                 "kknn_pa9",  "kknn_pa10"))
+  expect_equal(
+    names(m1[[1]]),
+    c(
+      "mahal.custom_pa1_esm1", "mahal.custom_pa1_esm2", "mahal.custom_pa1_esm3",
+      "mahal.custom_pa2_esm1", "mahal.custom_pa2_esm2", "mahal.custom_pa2_esm3",
+      "mahal.custom_pa3_esm1", "mahal.custom_pa3_esm2", "mahal.custom_pa3_esm3",
+      "mahal.custom_pa4_esm1", "mahal.custom_pa4_esm2", "mahal.custom_pa4_esm3",
+      "mahal.custom_pa5_esm1", "mahal.custom_pa5_esm2", "mahal.custom_pa5_esm3",
+      "mahal.custom_pa6_esm1", "mahal.custom_pa6_esm2", "mahal.custom_pa6_esm3",
+      "mahal.custom_pa7_esm1", "mahal.custom_pa7_esm2", "mahal.custom_pa7_esm3",
+      "mahal.custom_pa8_esm1", "mahal.custom_pa8_esm2", "mahal.custom_pa8_esm3",
+      "mahal.custom_pa9_esm1", "mahal.custom_pa9_esm2", "mahal.custom_pa9_esm3",
+      "mahal.custom_pa10_esm1", "mahal.custom_pa10_esm2", "mahal.custom_pa10_esm3"
+    )
+  )
+  expect_equal(
+    names(m1[[2]]),
+    c(
+      "mahal.custom_pa1", "mahal.custom_pa2",
+      "mahal.custom_pa3", "mahal.custom_pa4",
+      "mahal.custom_pa5", "mahal.custom_pa6",
+      "mahal.custom_pa7", "mahal.custom_pa8",
+      "mahal.custom_pa9", "mahal.custom_pa10"
+    )
+  )
+  expect_equal(
+    names(m2[[1]]),
+    c(
+      "kknn_pa1_esm1", "kknn_pa1_esm2", "kknn_pa1_esm3",
+      "kknn_pa2_esm1", "kknn_pa2_esm2", "kknn_pa2_esm3",
+      "kknn_pa3_esm1", "kknn_pa3_esm2", "kknn_pa3_esm3",
+      "kknn_pa4_esm1", "kknn_pa4_esm2", "kknn_pa4_esm3",
+      "kknn_pa5_esm1", "kknn_pa5_esm2", "kknn_pa5_esm3",
+      "kknn_pa6_esm1", "kknn_pa6_esm2", "kknn_pa6_esm3",
+      "kknn_pa7_esm1", "kknn_pa7_esm2", "kknn_pa7_esm3",
+      "kknn_pa8_esm1", "kknn_pa8_esm2", "kknn_pa8_esm3",
+      "kknn_pa9_esm1", "kknn_pa9_esm2", "kknn_pa9_esm3",
+      "kknn_pa10_esm1", "kknn_pa10_esm2", "kknn_pa10_esm3"
+    )
+  )
+  expect_equal(
+    names(m2[[2]]),
+    c(
+      "kknn_pa1", "kknn_pa2",
+      "kknn_pa3", "kknn_pa4",
+      "kknn_pa5", "kknn_pa6",
+      "kknn_pa7", "kknn_pa8",
+      "kknn_pa9", "kknn_pa10"
+    )
+  )
 })
 
 test_that("train_sdm - independent data", {
   skip_on_cran()
   set.seed(2)
   sa <- sdm_area(parana,
-                 cell_size = 25000,
-                 output_crs = 6933,
-                 gdal = T) |>
+    cell_size = 25000,
+    output_crs = 6933,
+    gdal = T
+  ) |>
     add_predictors(bioc) |>
     add_scenarios() |>
     select_predictors(c("bio1", "bio4", "bio12"))
@@ -377,10 +454,12 @@ test_that("train_sdm - independent data", {
     data_clean() |>
     pseudoabsences(method = "bioclim")
   expect_no_error(i1 <- i |>
-                    train_sdm(algo = c("kknn"),
-                              variables_selected = c("bio1", "bio4", "bio12"), # Using only two variables for simplicity
-                              ctrl = NULL) |>
-                    suppressWarnings())
+    train_sdm(
+      algo = c("kknn"),
+      variables_selected = c("bio1", "bio4", "bio12"), # Using only two variables for simplicity
+      ctrl = NULL
+    ) |>
+    suppressWarnings())
   expect_true(algorithms_used(i1) == "kknn")
 
   expect_true(all(species_names(i1) == c("Salminus brasiliensis", "Araucaria angustifolia")))
@@ -398,9 +477,10 @@ test_that("train_sdm - maxent test", {
   skip_on_cran()
   set.seed(2)
   sa <- sdm_area(parana,
-                 cell_size = 25000,
-                 output_crs = 6933,
-                 gdal = T) |>
+    cell_size = 25000,
+    output_crs = 6933,
+    gdal = T
+  ) |>
     add_predictors(bioc) |>
     add_scenarios() |>
     select_predictors(c("bio1", "bio4", "bio12"))
@@ -410,18 +490,21 @@ test_that("train_sdm - maxent test", {
   i <- input_sdm(oc, sa) |>
     pseudoabsences(method = "bioclim")
   expect_error(i1 <- i |>
-                    train_sdm(algo = c("maxent"),
-                              variables_selected = c("bio1", "bio4", "bio12"),
-                              ctrl = NULL))
+    train_sdm(
+      algo = c("maxent"),
+      variables_selected = c("bio1", "bio4", "bio12"),
+      ctrl = NULL
+    ))
   i <- input_sdm(oc, sa) |>
     background() |>
-    train_sdm(algo = c("maxent"),
-              variables_selected = c("bio1", "bio4", "bio12"),
-              ctrl = NULL) |>
+    train_sdm(
+      algo = c("maxent"),
+      variables_selected = c("bio1", "bio4", "bio12"),
+      ctrl = NULL
+    ) |>
     suppressWarnings()
   expect_true(algorithms_used(i) == "maxent")
-  expect_true(all(species_names(i
-                                ) == c("Salminus brasiliensis")))
+  expect_true(all(species_names(i) == c("Salminus brasiliensis")))
   m1 <- get_models(i)
   expect_true(all(names(m1) == c("Salminus brasiliensis")))
   expect_true(length(m1$`Salminus brasiliensis`) == 1)
@@ -432,9 +515,10 @@ test_that("train_sdm - background and pseudoabsence algorithms", {
   skip_on_cran()
   set.seed(2)
   sa <- sdm_area(parana,
-                 cell_size = 25000,
-                 output_crs = 6933,
-                 gdal = T) |>
+    cell_size = 25000,
+    output_crs = 6933,
+    gdal = T
+  ) |>
     add_predictors(bioc) |>
     add_scenarios() |>
     select_predictors(c("bio1", "bio4", "bio12"))
@@ -452,43 +536,216 @@ test_that("train_sdm - background and pseudoabsence algorithms", {
   expect_true(all(names(m1) == c("Salminus brasiliensis", "Araucaria angustifolia")))
   expect_true(length(m1$`Araucaria angustifolia`) == 11)
   expect_true(length(m1$`Salminus brasiliensis`) == 11)
-  expect_equal(names(m1$`Salminus brasiliensis`),
-               c(paste0("kknn_pa", 1:10), "maxent_bg1"))
-  expect_equal(names(m1$`Araucaria angustifolia`),
-               c(paste0("kknn_pa", 1:10), "maxent_bg1"))
+  expect_equal(
+    names(m1$`Salminus brasiliensis`),
+    c(paste0("kknn_pa", 1:10), "maxent_bg1")
+  )
+  expect_equal(
+    names(m1$`Araucaria angustifolia`),
+    c(paste0("kknn_pa", 1:10), "maxent_bg1")
+  )
 })
 
 
 test_that("mahal.custom train", {
   skip_on_cran()
   sa <- sdm_area(parana,
-                 cell_size = 50000, # Using a coarse resolution for speed
-                 output_crs = 6933)
+    cell_size = 50000, # Using a coarse resolution for speed
+    output_crs = 6933
+  )
   sa <- add_predictors(sa, bioc)
   oc <- occurrences_sdm(occ, occ_crs = 6933)
   suppressWarnings(oc <- join_area(oc, sa))
   i <- input_sdm(oc, sa)
   i <- pseudoabsences(i,
-                      method = "bioclim",
-                      n_set = 3)
-  ctrl_sdm <- caret::trainControl(method = "cv",
-                                  number = 3,
-                                  classProbs = TRUE,
-                                  summaryFunction = summary_sdm,
-                                  savePredictions = "final")
+    method = "bioclim",
+    n_set = 3
+  )
+  ctrl_sdm <- caret::trainControl(
+    method = "cv",
+    number = 3,
+    classProbs = TRUE,
+    summaryFunction = summary_sdm,
+    savePredictions = "final"
+  )
   i2 <- train_sdm(i,
-                  algo = "mahal.dist",
-                  variables_selected = c("bio1", "bio4", "bio12"), # Using only two variables for simplicity
-                  ctrl = ctrl_sdm) |>
+    algo = "mahal.dist",
+    variables_selected = c("bio1", "bio4", "bio12"), # Using only two variables for simplicity
+    ctrl = ctrl_sdm
+  ) |>
     suppressWarnings()
   expect_true("models" %in% names(i2))
   expect_equal(10, get_tune_length(i2))
   expect_equal(c("mahal.dist"), algorithms_used(i2))
-  expect_equal(c("mahal.dist"),
-               unique(get_validation_metrics(i2)[[1]][,"algo"]))
+  expect_equal(
+    c("mahal.dist"),
+    unique(get_validation_metrics(i2)[[1]][, "algo"])
+  )
   expect_true(all(c("algo", "ROC") %in% colnames(get_validation_metrics(i2)[[1]])))
   expect_true(all(c("bio1", "bio4", "bio12") %in%
+    colnames(i2$models$models$`Araucaria angustifolia`[[1]]$trainingData)))
+  expect_equal(
+    names(get_models(i2)[[1]]),
+    c("mahal.dist_pa1", "mahal.dist_pa2", "mahal.dist_pa3")
+  )
+})
+
+
+test_that("train_sdm - cv_spatial PA", {
+  skip_on_cran()
+  suppressWarnings(i2 <- train_sdm(i,
+                                   algo = c("kknn", "naive_bayes"),
+                                   variables_selected = c("bio1", "bio12"),
+                                   ctrl = caret::trainControl(
+                                     method = "cv_spatial", classProbs = TRUE, returnResamp = "all",
+                                     summaryFunction = caret::twoClassSummary, savePredictions = "all"
+                                   )
+  ))
+  expect_true("models" %in% names(i2))
+  expect_equal(10, get_tune_length(i2))
+  expect_equal(c("kknn", "naive_bayes"), algorithms_used(i2))
+  expect_equal(
+    c("kknn", "naive_bayes"),
+    unique(get_validation_metrics(i2)[[1]][, "algo"])
+  )
+  expect_true(all(c("algo", "ROC") %in% colnames(get_validation_metrics(i2)[[1]])))
+  expect_true(all(c("bio1", "bio12") %in%
                     colnames(i2$models$models$`Araucaria angustifolia`[[1]]$trainingData)))
-  expect_equal(names(get_models(i2)[[1]]),
-               c("mahal.dist_pa1", "mahal.dist_pa2", "mahal.dist_pa3"))
+  expect_equal(
+    names(get_models(i2)[[1]]),
+    c(
+      "kknn_pa1", "naive_bayes_pa1",
+      "kknn_pa2", "naive_bayes_pa2",
+      "kknn_pa3", "naive_bayes_pa3"
+    )
+  )
+  expect_equal(i2$models$validation$method, "cv_spatial")
+})
+
+
+test_that("train_sdm - cv_cluster PA", {
+  skip_on_cran()
+  suppressWarnings(i2 <- train_sdm(i,
+                                   algo = c("kknn", "naive_bayes"),
+                                   variables_selected = c("bio1", "bio12"),
+                                   ctrl = caret::trainControl(
+                                     method = "cv_cluster", classProbs = TRUE, returnResamp = "all",
+                                     summaryFunction = caret::twoClassSummary, savePredictions = "all"
+                                   )
+  ))
+  expect_true("models" %in% names(i2))
+  expect_equal(10, get_tune_length(i2))
+  expect_equal(c("kknn", "naive_bayes"), algorithms_used(i2))
+  expect_equal(
+    c("kknn", "naive_bayes"),
+    unique(get_validation_metrics(i2)[[1]][, "algo"])
+  )
+  expect_true(all(c("algo", "ROC") %in% colnames(get_validation_metrics(i2)[[1]])))
+  expect_true(all(c("bio1", "bio12") %in%
+                    colnames(i2$models$models$`Araucaria angustifolia`[[1]]$trainingData)))
+  expect_equal(
+    names(get_models(i2)[[1]]),
+    c(
+      "kknn_pa1", "naive_bayes_pa1",
+      "kknn_pa2", "naive_bayes_pa2",
+      "kknn_pa3", "naive_bayes_pa3"
+    )
+  )
+  expect_equal(i2$models$validation$method, "cv_cluster")
+})
+
+
+test_that("train_sdm - cv_spatial BG", {
+  skip_on_cran()
+  i2 <- input_sdm(oc, sa) |>
+    background() |>
+    train_sdm(
+      algo = c("maxent"),
+      variables_selected = c("bio1", "bio12"),
+      ctrl = caret::trainControl(
+        method = "cv_spatial", classProbs = TRUE, returnResamp = "all",
+        summaryFunction = caret::twoClassSummary, savePredictions = "all"
+      )
+    ) |>
+    suppressWarnings()
+  expect_true("models" %in% names(i2))
+  expect_equal(10, get_tune_length(i2))
+  expect_equal(c("maxent"), algorithms_used(i2))
+  expect_equal(
+    c("maxent"),
+    unique(get_validation_metrics(i2)[[1]][, "algo"])
+  )
+  expect_true(all(c("algo", "ROC") %in% colnames(get_validation_metrics(i2)[[1]])))
+  expect_true(all(c("bio1", "bio12") %in%
+                    colnames(i2$models$models$`Araucaria angustifolia`[[1]]$trainingData)))
+  expect_equal(names(get_models(i2)[[1]]), c("maxent_bg1"))
+  expect_equal(i2$models$validation$method, "cv_spatial")
+})
+
+
+test_that("train_sdm - cv_cluster BG", {
+  skip_on_cran()
+  i2 <- input_sdm(oc, sa) |>
+    background() |>
+    train_sdm(
+      algo = c("maxent"),
+      variables_selected = c("bio1", "bio12"),
+      ctrl = caret::trainControl(
+        method = "cv_cluster", classProbs = TRUE, returnResamp = "all",
+        summaryFunction = caret::twoClassSummary, savePredictions = "all"
+      )
+    ) |>
+    suppressWarnings()
+  expect_true("models" %in% names(i2))
+  expect_equal(10, get_tune_length(i2))
+  expect_equal(c("maxent"), algorithms_used(i2))
+  expect_equal(
+    c("maxent"),
+    unique(get_validation_metrics(i2)[[1]][, "algo"])
+  )
+  expect_true(all(c("algo", "ROC") %in% colnames(get_validation_metrics(i2)[[1]])))
+  expect_true(all(c("bio1", "bio12") %in%
+                    colnames(i2$models$models$`Araucaria angustifolia`[[1]]$trainingData)))
+  expect_equal(names(get_models(i2)[[1]]), c("maxent_bg1"))
+  expect_equal(i2$models$validation$method, "cv_cluster")
+})
+
+test_that("train_sdm - ESM BG", {
+  skip_on_cran()
+  set.seed(2)
+  sa <- sdm_area(parana, 100000, output_crs = 6933)
+  sa <- add_predictors(sa, bioc)
+  sa <- select_predictors(sa, c("bio1", "bio4", "bio12"))
+  sa <- add_scenarios(sa)
+  oc <- occurrences_sdm(occ, occ_crs = 6933)
+  suppressWarnings(oc <- join_area(oc, sa))
+  i <- input_sdm(oc, sa)
+  i <- background(i, method = "random", n_set = 3)
+  i2 <- use_esm(i, spp = "Araucaria angustifolia")
+  ctrl <- caret::trainControl(
+    method = "cv", number = 2, classProbs = TRUE, returnResamp = "all",
+    summaryFunction = caret::twoClassSummary, savePredictions = "all"
+  )
+  suppressWarnings(i2 <- train_sdm(i2,
+                                   algo = c("maxent"),
+                                   ctrl = ctrl
+  ))
+  expect_true("models" %in% names(i2))
+  expect_equal(10, get_tune_length(i2))
+  expect_equal(c("maxent"), algorithms_used(i2))
+  expect_equal(
+    c("maxent"),
+    unique(get_validation_metrics(i2)[[1]][, "algo"])
+  )
+  expect_true(all(c("algo", "ROC") %in% colnames(get_validation_metrics(i2)[[1]])))
+  expect_true(all(c("bio1", "bio4") %in%
+                    colnames(i2$models$models$`Araucaria angustifolia`[[1]]$trainingData)))
+  expect_equal(
+    names(get_models(i2)[[1]]),
+    c(
+      "maxent_bg1_esm1", "maxent_bg1_esm2", "maxent_bg1_esm3", "maxent_bg2_esm1",
+      "maxent_bg2_esm2", "maxent_bg2_esm3", "maxent_bg3_esm1", "maxent_bg3_esm2",
+      "maxent_bg3_esm3"
+    )
+  )
 })

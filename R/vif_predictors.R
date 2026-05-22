@@ -100,7 +100,7 @@ vif_predictors <- function(pred, area = "all", th = 0.5, maxobservations = 5000,
 
 #' @rdname vif_predictors
 #' @export
-vif_summary <- function(i){
+vif_summary <- function(i) {
   assert_class_cli(i, "input_sdm")
   assert_subset_cli("predictors", names(i), empty.ok = FALSE)
   assert_subset_cli("variable_selection", names(i$predictors), empty.ok = FALSE)

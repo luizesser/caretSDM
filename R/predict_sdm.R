@@ -68,23 +68,25 @@
 #'   i <- input_sdm(oc, sa)
 #'
 #'   # Pseudoabsence generation:
-#'   i <- pseudoabsences(i, method="random", n_set=2)
+#'   i <- pseudoabsences(i, method = "random", n_set = 2)
 #'
 #'   # Custom trainControl:
-#'   ctrl_sdm <- caret::trainControl(method = "boot",
-#'                                   number = 1,
-#'                                   repeats = 1,
-#'                                   classProbs = TRUE,
-#'                                   returnResamp = "all",
-#'                                   summaryFunction = summary_sdm,
-#'                                   savePredictions = "all")
+#'   ctrl_sdm <- caret::trainControl(
+#'     method = "boot",
+#'     number = 1,
+#'     repeats = 1,
+#'     classProbs = TRUE,
+#'     returnResamp = "all",
+#'     summaryFunction = summary_sdm,
+#'     savePredictions = "all"
+#'   )
 #'
 #'   # Train models:
-#'   i <- train_sdm(i, algo = c("naive_bayes"), ctrl=ctrl_sdm) |>
+#'   i <- train_sdm(i, algo = c("naive_bayes"), ctrl = ctrl_sdm) |>
 #'     suppressWarnings()
 #'
 #'   # Predict models:
-#'   i  <- predict_sdm(i, th = 0.8)
+#'   i <- predict_sdm(i, th = 0.8)
 #'   i
 #' }
 #' @importFrom dplyr bind_cols select mutate all_of filter contains bind_rows across row_number distinct left_join group_split
@@ -119,23 +121,23 @@ predict_sdm.sdm_area <- function(m, scen, metric = "ROC", th = 0.9, tp = "prob",
   if (is.function(th)) {
     tm <- deparse(substitute(th))
     th1 <- sapply(names(y$models), function(sp) {
-      th2 <- th(y$validation$metrics[[sp]][,metric])
+      th2 <- th(y$validation$metrics[[sp]][, metric])
       res1 <- dplyr::filter(mean_validation_metrics(m)[[sp]], .data[[metric]] > th2)
-      if (nrow(res1)==0){
+      if (nrow(res1) == 0) {
         cli::cli_abort("Threshold is too high. No models passing the threshold.")
       }
       res <- dplyr::filter(get_validation_metrics(m)[[sp]], algo %in% res1$algo)
       return(res)
     }, simplify = FALSE, USE.NAMES = TRUE)
     th <- sapply(names(y$models), function(sp) {
-      th(y$validation$metrics[[sp]][,metric])
-      }, simplify = TRUE, USE.NAMES = TRUE)
+      th(y$validation$metrics[[sp]][, metric])
+    }, simplify = TRUE, USE.NAMES = TRUE)
   } else {
     if (is.numeric(th)) {
       tm <- paste0("threshold")
       th1 <- sapply(names(y$models), function(sp) {
         res1 <- dplyr::filter(mean_validation_metrics(m)[[sp]], .data[[metric]] > th)
-        if (nrow(res1)==0){
+        if (nrow(res1) == 0) {
           cli::cli_abort("Threshold is too high. No models passing the threshold.")
         }
         res <- dplyr::filter(get_validation_metrics(m)[[sp]], algo %in% res1$algo)
@@ -154,12 +156,11 @@ predict_sdm.sdm_area <- function(m, scen, metric = "ROC", th = 0.9, tp = "prob",
 
   env_long <- lapply(names(env_list), function(sc) {
     df <- env_list[[sc]] |>
-      dplyr::select(c("cell_id",y$predictors, "geometry"))
-    df$scenario  <- sc
+      dplyr::select(c("cell_id", y$predictors, "geometry"))
+    df$scenario <- sc
     df
   })
-  #dplyr::bind_rows(.id = "scenarios") |>
-  #  na.omit()
+
   env_long <- do.call(rbind, env_long) |>
     na.omit()
 
@@ -169,11 +170,9 @@ predict_sdm.sdm_area <- function(m, scen, metric = "ROC", th = 0.9, tp = "prob",
     dplyr::distinct(dplyr::across(dplyr::all_of(pred_cols))) |>
     dplyr::mutate(unique_id = dplyr::row_number())
 
-  # Join unique_id back to the long table
   env_long <- env_long |>
     dplyr::left_join(env_unique, by = pred_cols)
 
-  # Prepare data for prediction
   prepare_predictors <- function(df, vars) {
     df <- sf::st_drop_geometry(df)
     df <- df[, vars, drop = FALSE]
@@ -184,16 +183,16 @@ predict_sdm.sdm_area <- function(m, scen, metric = "ROC", th = 0.9, tp = "prob",
 
   p <- lapply(m1, function(m2) {
     p1 <- predict(m2,
-                  newdata = newdata_for_pred,
-                  type = tp)
+      newdata = newdata_for_pred,
+      type = tp
+    )
     p0 <- lapply(p1, function(p2) {
       negative <- ifelse("maxent" %in% m2[[1]]$modelInfo$tags, "background", "pseudoabsence")
-      p2 <- cbind(p2, env_unique$unique_id)[,c("env_unique$unique_id", "presence", negative)]
+      p2 <- cbind(p2, env_unique$unique_id)[, c("env_unique$unique_id", "presence", negative)]
       names(p2) <- c("unique_id", "presence", negative)
       env_long2 <- env_long |>
         dplyr::left_join(p2, by = "unique_id")
       pred_by_scenario <- env_long2 |>
-        #dplyr::arrange(scenario, cell_id) |>
         dplyr::group_split(scenario)
       names(pred_by_scenario) <- sapply(pred_by_scenario, function(df) unique(df$scenario))
       pred_by_scenario <- sapply(pred_by_scenario, function(pbs) dplyr::select(pbs, -c("scenario", "unique_id")), simplify = FALSE)
@@ -205,10 +204,8 @@ predict_sdm.sdm_area <- function(m, scen, metric = "ROC", th = 0.9, tp = "prob",
     return(p0)
   })
 
-  # get scenario names from the first element
   scenarios <- names(p[[1]][[1]])
 
-  # rebuild the list
   p <- setNames(
     lapply(scenarios, function(scn) {
       lapply(p, function(sp) {
@@ -247,16 +244,23 @@ get_predictions <- function(i) {
 add_predictions <- function(p1, p2) {
   assert_class_cli(p1, "predictions", null.ok = TRUE)
   assert_class_cli(p2, "predictions", null.ok = TRUE)
-  if(is.null(p1)) {return(p2)}
-  if(is.null(p2)) {return(p1)}
+  if (is.null(p1)) {
+    return(p2)
+  }
+  if (is.null(p2)) {
+    return(p1)
+  }
   grd <- rbind(p1$grid, p2$grid)
-  grd$cell_id <- c(p1$grid$cell_id, max(p1$grid$cell_id)+p2$grid$cell_id)
-  p <- list(thresholds = list(values = c(p1$thresholds$values, p2$thresholds$values),
-                              method = unique(c(p1$thresholds$method, p2$thresholds$method)),
-                              criteria = unique(c(p1$thresholds$criteria, p2$thresholds$criteria))),
-            predictions = c(p1$predictions, p2$predictions),
-            file = c(p1$file, p2$file),
-            grid = grd
+  grd$cell_id <- c(p1$grid$cell_id, max(p1$grid$cell_id) + p2$grid$cell_id)
+  p <- list(
+    thresholds = list(
+      values = c(p1$thresholds$values, p2$thresholds$values),
+      method = unique(c(p1$thresholds$method, p2$thresholds$method)),
+      criteria = unique(c(p1$thresholds$criteria, p2$thresholds$criteria))
+    ),
+    predictions = c(p1$predictions, p2$predictions),
+    file = c(p1$file, p2$file),
+    grid = grd
   )
   pred <- .predictions(p)
   return(pred)

@@ -94,13 +94,13 @@ sa <- add_predictors(sa, bioc) |> select_predictors(c("bio1", "bio4", "bio12"))
 sa <- add_scenarios(sa)
 
 # Create occurrences:
-oc <- occurrences_sdm(occ[1:50,], occ_crs = 6933)
+oc <- occurrences_sdm(occ[1:50, ], occ_crs = 6933)
 
 # Create input_sdm:
 i <- input_sdm(oc, sa)
 
 # Pseudoabsence generation:
-i0 <- pseudoabsences(i, method="random")
+i0 <- pseudoabsences(i, method = "random")
 
 # Custom method example:
 buffer_pa_custom <- function(env_sf, occ_sf, buffer_dist = 3) {
@@ -111,7 +111,7 @@ buffer_pa_custom <- function(env_sf, occ_sf, buffer_dist = 3) {
   buffer_union <- sf::st_union(buffer)
 
   # Identify cells outside the buffer
-  outside_buffer <- sf::st_difference(env_sf, buffer_union)[,1]
+  outside_buffer <- sf::st_difference(env_sf, buffer_union)[, 1]
 
   # Randomly extract cell_ids outside the buffer
   pa_ids_sample <- sample(outside_buffer$cell_id, nrow(occ_sf))
@@ -119,7 +119,7 @@ buffer_pa_custom <- function(env_sf, occ_sf, buffer_dist = 3) {
   return(pa_ids_sample)
 }
 
-i1 <- pseudoabsences(i, method=buffer_pa_custom)
+i1 <- pseudoabsences(i, method = buffer_pa_custom)
 
 }
 \seealso{

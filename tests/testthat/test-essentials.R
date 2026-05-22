@@ -16,65 +16,81 @@ test_that("full structure check", {
 
   # multispecies multiscenario
   i_mm <- input_sdm(oc_m, sa_m) |>
-    pseudoabsences(method="random", n_set = 2) |>
-    background(method="random", n_set = 2) |>
-    train_sdm(algo = c("naive_bayes"),
-              ctrl=caret::trainControl(method = "boot",
-                                       number = 1,
-                                       classProbs = TRUE,
-                                       returnResamp = "all",
-                                       summaryFunction = summary_sdm,
-                                       savePredictions = "all"),
-              variables_selected = c("bio1", "bio12")) |>
+    pseudoabsences(method = "random", n_set = 2) |>
+    background(method = "random", n_set = 2) |>
+    train_sdm(
+      algo = c("naive_bayes"),
+      ctrl = caret::trainControl(
+        method = "boot",
+        number = 1,
+        classProbs = TRUE,
+        returnResamp = "all",
+        summaryFunction = summary_sdm,
+        savePredictions = "all"
+      ),
+      variables_selected = c("bio1", "bio12")
+    ) |>
     suppressWarnings() |>
-    predict_sdm(th=0.5) |>
+    predict_sdm(th = 0.5) |>
     ensemble_sdm() |>
     gcms_ensembles(gcms = c("ca", "mi"))
   # multispecies single scenario
   i_ms <- input_sdm(oc_m, sa_s) |>
-    pseudoabsences(method="random", n_set = 2) |>
-    background(method="random", n_set = 2) |>
-    train_sdm(algo = c("naive_bayes"),
-              ctrl=caret::trainControl(method = "boot",
-                                       number = 1,
-                                       classProbs = TRUE,
-                                       returnResamp = "all",
-                                       summaryFunction = summary_sdm,
-                                       savePredictions = "all"),
-              variables_selected = c("bio1", "bio12")) |>
+    pseudoabsences(method = "random", n_set = 2) |>
+    background(method = "random", n_set = 2) |>
+    train_sdm(
+      algo = c("naive_bayes"),
+      ctrl = caret::trainControl(
+        method = "boot",
+        number = 1,
+        classProbs = TRUE,
+        returnResamp = "all",
+        summaryFunction = summary_sdm,
+        savePredictions = "all"
+      ),
+      variables_selected = c("bio1", "bio12")
+    ) |>
     suppressWarnings() |>
-    predict_sdm(th=0.5) |>
+    predict_sdm(th = 0.5) |>
     ensemble_sdm()
   # single species multiscenario
   i_sm <- input_sdm(oc_s, sa_m) |>
-    pseudoabsences(method="random", n_set = 2) |>
-    background(method="random", n_set = 2) |>
-    train_sdm(algo = c("naive_bayes"),
-              ctrl=caret::trainControl(method = "boot",
-                                       number = 1,
-                                       classProbs = TRUE,
-                                       returnResamp = "all",
-                                       summaryFunction = summary_sdm,
-                                       savePredictions = "all"),
-              variables_selected = c("bio1", "bio12")) |>
+    pseudoabsences(method = "random", n_set = 2) |>
+    background(method = "random", n_set = 2) |>
+    train_sdm(
+      algo = c("naive_bayes"),
+      ctrl = caret::trainControl(
+        method = "boot",
+        number = 1,
+        classProbs = TRUE,
+        returnResamp = "all",
+        summaryFunction = summary_sdm,
+        savePredictions = "all"
+      ),
+      variables_selected = c("bio1", "bio12")
+    ) |>
     suppressWarnings() |>
-    predict_sdm(th=0.5) |>
+    predict_sdm(th = 0.5) |>
     ensemble_sdm() |>
     gcms_ensembles(gcms = c("ca", "mi"))
   # single species single scenario
   i_ss <- input_sdm(oc_s, sa_s) |>
-    pseudoabsences(method="random", n_set = 2) |>
-    background(method="random", n_set = 2) |>
-    train_sdm(algo = c("naive_bayes"),
-              ctrl=caret::trainControl(method = "boot",
-                                       number = 1,
-                                       classProbs = TRUE,
-                                       returnResamp = "all",
-                                       summaryFunction = summary_sdm,
-                                       savePredictions = "all"),
-              variables_selected = c("bio1", "bio12")) |>
+    pseudoabsences(method = "random", n_set = 2) |>
+    background(method = "random", n_set = 2) |>
+    train_sdm(
+      algo = c("naive_bayes"),
+      ctrl = caret::trainControl(
+        method = "boot",
+        number = 1,
+        classProbs = TRUE,
+        returnResamp = "all",
+        summaryFunction = summary_sdm,
+        savePredictions = "all"
+      ),
+      variables_selected = c("bio1", "bio12")
+    ) |>
     suppressWarnings() |>
-    predict_sdm(th=0.5) |>
+    predict_sdm(th = 0.5) |>
     ensemble_sdm()
 
   ## Testing structure
@@ -570,29 +586,35 @@ test_that("full structure check", {
   expect_equal(rownames(i_ms$ensembles$data), species_names(i_ms))
   expect_equal(rownames(i_mm$ensembles$data), species_names(i_mm))
 
-  expect_equal(class(i_ss$ensembles$data[1,1]), "list")
-  expect_equal(class(i_sm$ensembles$data[1,1]), "list")
-  expect_equal(class(i_ms$ensembles$data[1,1]), "list")
-  expect_equal(class(i_mm$ensembles$data[1,1]), "list")
+  expect_equal(class(i_ss$ensembles$data[1, 1]), "list")
+  expect_equal(class(i_sm$ensembles$data[1, 1]), "list")
+  expect_equal(class(i_ms$ensembles$data[1, 1]), "list")
+  expect_equal(class(i_mm$ensembles$data[1, 1]), "list")
 
-  expect_equal(class(i_ss$ensembles$data[1,1][[1]]), "data.frame")
-  expect_equal(class(i_sm$ensembles$data[1,1][[1]]), "data.frame")
-  expect_equal(class(i_ms$ensembles$data[1,1][[1]]), "data.frame")
-  expect_equal(class(i_mm$ensembles$data[1,1][[1]]), "data.frame")
+  expect_equal(class(i_ss$ensembles$data[1, 1][[1]]), "data.frame")
+  expect_equal(class(i_sm$ensembles$data[1, 1][[1]]), "data.frame")
+  expect_equal(class(i_ms$ensembles$data[1, 1][[1]]), "data.frame")
+  expect_equal(class(i_mm$ensembles$data[1, 1][[1]]), "data.frame")
 
-  expect_equal(names(i_ss$ensembles$data[1,1][[1]]), c("cell_id", "average"))
-  expect_equal(names(i_sm$ensembles$data[1,1][[1]]), c("cell_id", "average"))
-  expect_equal(names(i_ms$ensembles$data[1,1][[1]]), c("cell_id", "average"))
-  expect_equal(names(i_mm$ensembles$data[1,1][[1]]), c("cell_id", "average"))
+  expect_equal(names(i_ss$ensembles$data[1, 1][[1]]), c("cell_id", "average"))
+  expect_equal(names(i_sm$ensembles$data[1, 1][[1]]), c("cell_id", "average"))
+  expect_equal(names(i_ms$ensembles$data[1, 1][[1]]), c("cell_id", "average"))
+  expect_equal(names(i_mm$ensembles$data[1, 1][[1]]), c("cell_id", "average"))
 
-  expect_equal(class(i_ss$ensembles$data[1,1][[1]][,"cell_id"]), c("integer"))
-  expect_equal(class(i_sm$ensembles$data[1,1][[1]][,"cell_id"]), c("integer"))
-  expect_equal(class(i_ms$ensembles$data[1,1][[1]][,"cell_id"]), c("integer"))
-  expect_equal(class(i_mm$ensembles$data[1,1][[1]][,"cell_id"]), c("integer"))
+  expect_equal(class(i_ss$ensembles$data[1, 1][[1]][, "cell_id"]), c("integer"))
+  expect_equal(class(i_sm$ensembles$data[1, 1][[1]][, "cell_id"]), c("integer"))
+  expect_equal(class(i_ms$ensembles$data[1, 1][[1]][, "cell_id"]), c("integer"))
+  expect_equal(class(i_mm$ensembles$data[1, 1][[1]][, "cell_id"]), c("integer"))
 
-  expect_equal(class(i_ss$ensembles$data[1,1][[1]][,"average"]), c("numeric"))
-  expect_equal(class(i_sm$ensembles$data[1,1][[1]][,"average"]), c("numeric"))
-  expect_equal(class(i_ms$ensembles$data[1,1][[1]][,"average"]), c("numeric"))
-  expect_equal(class(i_mm$ensembles$data[1,1][[1]][,"average"]), c("numeric"))
+  expect_equal(class(i_ss$ensembles$data[1, 1][[1]][, "average"]), c("numeric"))
+  expect_equal(class(i_sm$ensembles$data[1, 1][[1]][, "average"]), c("numeric"))
+  expect_equal(class(i_ms$ensembles$data[1, 1][[1]][, "average"]), c("numeric"))
+  expect_equal(class(i_mm$ensembles$data[1, 1][[1]][, "average"]), c("numeric"))
+
+  # prints
+  skip_on_cran()
+  expect_snapshot(i_ss)
+  expect_snapshot(i_sm)
+  expect_snapshot(i_ms)
+  expect_snapshot(i_mm)
 })
-

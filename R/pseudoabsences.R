@@ -76,13 +76,13 @@
 #' sa <- add_scenarios(sa)
 #'
 #' # Create occurrences:
-#' oc <- occurrences_sdm(occ[1:50,], occ_crs = 6933)
+#' oc <- occurrences_sdm(occ[1:50, ], occ_crs = 6933)
 #'
 #' # Create input_sdm:
 #' i <- input_sdm(oc, sa)
 #'
 #' # Pseudoabsence generation:
-#' i0 <- pseudoabsences(i, method="random")
+#' i0 <- pseudoabsences(i, method = "random")
 #'
 #' # Custom method example:
 #' buffer_pa_custom <- function(env_sf, occ_sf, buffer_dist = 3) {
@@ -93,7 +93,7 @@
 #'   buffer_union <- sf::st_union(buffer)
 #'
 #'   # Identify cells outside the buffer
-#'   outside_buffer <- sf::st_difference(env_sf, buffer_union)[,1]
+#'   outside_buffer <- sf::st_difference(env_sf, buffer_union)[, 1]
 #'
 #'   # Randomly extract cell_ids outside the buffer
 #'   pa_ids_sample <- sample(outside_buffer$cell_id, nrow(occ_sf))
@@ -101,7 +101,7 @@
 #'   return(pa_ids_sample)
 #' }
 #'
-#' i1 <- pseudoabsences(i, method=buffer_pa_custom)
+#' i1 <- pseudoabsences(i, method = buffer_pa_custom)
 #'
 #' @importFrom sf st_as_sf st_crs st_transform st_intersection st_geometry_type st_difference
 #' @importFrom dplyr select all_of filter
@@ -129,8 +129,10 @@ pseudoabsences <- function(occ, pred = NULL, method = "random", n_set = 10, n_pa
   }
   assert_int_cli(n_set)
   assert_int_cli(n_pa, null.ok = TRUE)
-  if(length(n_pa)!=1){assert_numeric_cli(n_pa, len = length(species_names(y)), null.ok=T)}
-  assert_numeric_cli(th, len=1, null.ok=FALSE, upper=1, lower=0, any.missing=FALSE)
+  if (length(n_pa) != 1) {
+    assert_numeric_cli(n_pa, len = length(species_names(y)), null.ok = T)
+  }
+  assert_numeric_cli(th, len = 1, null.ok = FALSE, upper = 1, lower = 0, any.missing = FALSE)
   assert_subset_cli(variables_selected, c(get_predictor_names(pred), "vif", "pca"), empty.ok = TRUE)
 
   if (!is.null(y$pseudoabsences)) {
@@ -138,21 +140,24 @@ pseudoabsences <- function(occ, pred = NULL, method = "random", n_set = 10, n_pa
   }
   if (is.null(n_pa)) {
     n_pa <- y$n_presences
-  } else if(is.null(names(n_pa))){
-      cli::cli_warn(c("{.var n_pa} has no names.",
-                    "i" = "Trying to set n_pa names to: {species_names(y)}"))
-    if(length(n_pa) == length(species_names(y))) {
+  } else if (is.null(names(n_pa))) {
+    cli::cli_warn(c("{.var n_pa} has no names.",
+      "i" = "Trying to set n_pa names to: {species_names(y)}"
+    ))
+    if (length(n_pa) == length(species_names(y))) {
       names(n_pa) <- species_names(y)
       n_pa <- as.table(n_pa)
     } else {
-      if(length(n_pa)==1) {
+      if (length(n_pa) == 1) {
         cli::cli_warn(c("Length of {.var n_pa} is 1.",
-                        "i" = "Setting all species to have {n_pa} pseudoabsences."))
+          "i" = "Setting all species to have {n_pa} pseudoabsences."
+        ))
         n_pa <- rep(n_pa, length(species_names(y)))
         names(n_pa) <- species_names(y)
       } else {
         cli::cli_abort(c("{.var n_pa} could not be addressed to species.",
-                         "i" = "Provide a named numeric vector with species names and number of pseudoabsences"))
+          "i" = "Provide a named numeric vector with species names and number of pseudoabsences"
+        ))
       }
     }
   }
@@ -163,9 +168,9 @@ pseudoabsences <- function(occ, pred = NULL, method = "random", n_set = 10, n_pa
     } else if (any(variables_selected %in% get_predictor_names(pred))) {
       p_names <- get_predictor_names(pred)
       selected_vars <- p_names[p_names %in% variables_selected]
-    } else if (variables_selected == "vif"){
+    } else if (variables_selected == "vif") {
       selected_vars <- pred$variable_selection$vif$selected_variables
-    } else if (variables_selected == "pca"){
+    } else if (variables_selected == "pca") {
       selected_vars <- pred$variable_selection$pca$selected_variables
     }
   }
@@ -197,7 +202,6 @@ pseudoabsences <- function(occ, pred = NULL, method = "random", n_set = 10, n_pa
     }, simplify = FALSE, USE.NAMES = TRUE)
 
     pa <- .pseudoabsences(y, l, method = method_name, n_set, n_pa)
-
   } else {
     if (method == "random") {
       l <- sapply(y$spp_names, function(sp) {
@@ -217,13 +221,13 @@ pseudoabsences <- function(occ, pred = NULL, method = "random", n_set = 10, n_pa
     if (method == "bioclim") {
       if (is_input_sdm(occ)) {
         l <- sapply(y$spp_names, function(sp) {
-          if(sf::st_crs(y$occurrences) != sf::st_crs(df)){
-             sf_occ <- sf::st_transform(y$occurrences, crs = sf::st_crs(df))
+          if (sf::st_crs(y$occurrences) != sf::st_crs(df)) {
+            sf_occ <- sf::st_transform(y$occurrences, crs = sf::st_crs(df))
           } else {
             sf_occ <- y$occurrences
           }
-          if(unique(sf::st_geometry_type(df)) == "LINESTRING") {
-            occ2 <- df[df$cell_id %in% sf_occ$cell_id,]
+          if (unique(sf::st_geometry_type(df)) == "LINESTRING") {
+            occ2 <- df[df$cell_id %in% sf_occ$cell_id, ]
           } else {
             suppressWarnings(occ2 <- sf::st_intersection(sf_occ, df))
           }
@@ -256,13 +260,14 @@ pseudoabsences <- function(occ, pred = NULL, method = "random", n_set = 10, n_pa
         l <- sapply(y$spp_names, function(sp) {
           occ2 <- df[df$cell_id %in% y$occurrences[y$occurrences$species == sp, ]$cell_id, ]
           model <- caret::train(dplyr::select(as.data.frame(occ2), dplyr::all_of(selected_vars)),
-                       rep("presence", nrow(occ2)),
-                       method = .mahal.dist) |>
+            rep("presence", nrow(occ2)),
+            method = .mahal.dist
+          ) |>
             suppressWarnings()
 
-          p1 <- predict(model, as.data.frame(df)) # classification in Presence and NA
+          p1 <- predict(model, as.data.frame(df))
           p <- data.frame(cell_id = df$cell_id, pred = p1)
-          p <- p[is.na(p1), ] # Maintain only areas with NA, removing areas with presence.
+          p <- p[is.na(p1), ]
           l <- list()
           if (nrow(p) == 0) {
             cli::cli_abort(c("Mahalanobis envelope for ", sp, " covered all the study area."))
@@ -284,7 +289,7 @@ pseudoabsences <- function(occ, pred = NULL, method = "random", n_set = 10, n_pa
     if (method == "buffer_sdm") {
       l <- sapply(y$spp_names, function(sp) {
         buf <- buffer_sdm(y, size, size_crs, mcp)
-        if(!sf::st_crs(buf) == sf::st_crs(df)) {
+        if (!sf::st_crs(buf) == sf::st_crs(df)) {
           buf <- sf::st_transform(buf, sf::st_crs(df))
         }
         p <- sf::st_difference(df, buf) |>
@@ -318,7 +323,7 @@ pseudoabsences <- function(occ, pred = NULL, method = "random", n_set = 10, n_pa
 #' @rdname pseudoabsences
 #' @export
 n_pseudoabsences <- function(i) {
-  x=i
+  x <- i
   if (is_input_sdm(x)) {
     y <- x$occurrences
   } else {
@@ -330,7 +335,7 @@ n_pseudoabsences <- function(i) {
 #' @rdname pseudoabsences
 #' @export
 pseudoabsence_method <- function(i) {
-  x=i
+  x <- i
   if (is_input_sdm(x)) {
     y <- x$occurrences
   } else {
@@ -342,7 +347,7 @@ pseudoabsence_method <- function(i) {
 #' @rdname pseudoabsences
 #' @export
 pseudoabsence_data <- function(i) {
-  x=i
+  x <- i
   if (is_input_sdm(x)) {
     y <- x$occurrences
   } else {

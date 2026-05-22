@@ -81,23 +81,25 @@
 #'   i <- input_sdm(oc, sa)
 #'
 #'   # Pseudoabsence generation:
-#'   i <- pseudoabsences(i, method="random", n_set=2)
+#'   i <- pseudoabsences(i, method = "random", n_set = 2)
 #'
 #'   # Custom trainControl:
-#'   ctrl_sdm <- caret::trainControl(method = "boot",
-#'                                   number = 1,
-#'                                   repeats = 1,
-#'                                   classProbs = TRUE,
-#'                                   returnResamp = "all",
-#'                                   summaryFunction = summary_sdm,
-#'                                   savePredictions = "all")
+#'   ctrl_sdm <- caret::trainControl(
+#'     method = "boot",
+#'     number = 1,
+#'     repeats = 1,
+#'     classProbs = TRUE,
+#'     returnResamp = "all",
+#'     summaryFunction = summary_sdm,
+#'     savePredictions = "all"
+#'   )
 #'
 #'   # Train models:
-#'   i <- train_sdm(i, algo = c("naive_bayes"), ctrl=ctrl_sdm) |>
+#'   i <- train_sdm(i, algo = c("naive_bayes"), ctrl = ctrl_sdm) |>
 #'     suppressWarnings()
 #'
 #'   # Predict models:
-#'   i  <- predict_sdm(i, th = 0.8)
+#'   i <- predict_sdm(i, th = 0.8)
 #'
 #'   # Ensemble:
 #'   i <- ensemble_sdm(i, method = "average")
@@ -107,18 +109,18 @@
 #' # Example from a custom function to obtain the threshold that maximizes
 #' # the sensitivity plus specificity:
 #' MaxSeSp <- function(mod) {
-#'    th <- caret::thresholder(mod,
-#'                             threshold = seq(0, 1, by = 0.001),
-#'                             final = TRUE,
-#'                             statistics = c("Sensitivity", "Specificity")
-#'                             )
-#'    th <- th$prob_threshold[which.max(th$Sensitivity + th$Specificity)]
-#'    if (length(th) > 1) mean(th) else th
+#'   th <- caret::thresholder(mod,
+#'     threshold = seq(0, 1, by = 0.001),
+#'     final = TRUE,
+#'     statistics = c("Sensitivity", "Specificity")
+#'   )
+#'   th <- th$prob_threshold[which.max(th$Sensitivity + th$Specificity)]
+#'   if (length(th) > 1) mean(th) else th
 #' }
 #'
 #' # Example from a custom function to obtain ensembles using the median instead of the mean:
 #' median_ensemble <- function(pred_mat) {
-#'  apply(pred_mat, 1, median, na.rm = TRUE)
+#'   apply(pred_mat, 1, median, na.rm = TRUE)
 #' }
 #'
 #' @importFrom caret thresholder
@@ -130,20 +132,22 @@ ensemble_sdm <- function(m, scen = NULL, method = "average", metric = NULL, fun 
     y <- m$models
     scen <- m$scenarios
   }
-  assert_cli(assert_class_cli(method, "character"),
-             assert_class_cli(method, "function"))
-  if(is.character(method)) {
+  assert_cli(
+    assert_class_cli(method, "character"),
+    assert_class_cli(method, "function")
+  )
+  if (is.character(method)) {
     assert_subset_cli(method, c("average", "weighted_average", "committee_average"))
   }
-  assert_class_cli(fun, "function", null.ok=T)
+  assert_class_cli(fun, "function", null.ok = T)
   valid_metrics <- colnames(get_validation_metrics(m)[[1]])[-1]
-  assert_choice_cli(metric, valid_metrics, null.ok=T)
-  if(is.null(metric)){
+  assert_choice_cli(metric, valid_metrics, null.ok = T)
+  if (is.null(metric)) {
     metric <- "ROC"
   }
   p <- get_predictions(m)
 
-  if(is.character(method)) {
+  if (is.character(method)) {
     method_name <- method
   } else {
     method_name <- deparse(substitute(method))
@@ -151,7 +155,7 @@ ensemble_sdm <- function(m, scen = NULL, method = "average", metric = NULL, fun 
 
   message("Ensemble function: ", method_name)
 
-  if("committee_average" %in% method) {
+  if ("committee_average" %in% method) {
     if (is.null(fun)) {
       MaxSeSp <- function(mod) {
         th <- caret::thresholder(
@@ -160,21 +164,22 @@ ensemble_sdm <- function(m, scen = NULL, method = "average", metric = NULL, fun 
           final = TRUE,
           statistics = c("Sensitivity", "Specificity")
         )
-        th <- th$prob_threshold[which.max(th$Sensitivity + th$Specificity)] # max(sens+spec)
+        th <- th$prob_threshold[which.max(th$Sensitivity + th$Specificity)]
         if (length(th) > 1) mean(th) else th
       }
       fun <- MaxSeSp
-      message ("Binarization Function: Maximum Sensitivity plus Specificity (.MaxSeSp)")
+      message("Binarization Function: Maximum Sensitivity plus Specificity (.MaxSeSp)")
     } else {
-      #perform checks on the custom function
       fun_name <- deparse(substitute(fun))
       assert_function_cli(fun, args = "mod")
-      message (paste0("Binarization Function: ", fun_name))
+      message(paste0("Binarization Function: ", fun_name))
     }
-    bin_thresholds <- lapply(names(y$models),
-                             function(sp) {
-                               vapply(y$models[[sp]], fun, numeric(1))
-                             })
+    bin_thresholds <- lapply(
+      names(y$models),
+      function(sp) {
+        vapply(y$models[[sp]], fun, numeric(1))
+      }
+    )
     names(bin_thresholds) <- names(y$models)
   }
 
@@ -183,9 +188,10 @@ ensemble_sdm <- function(m, scen = NULL, method = "average", metric = NULL, fun 
     p_scn <- p[[scn]]
 
     e1 <- lapply(names(p_scn), function(sp) {
-
       x <- p_scn[[sp]]
-      if (length(x) == 0) return(NULL)
+      if (length(x) == 0) {
+        return(NULL)
+      }
 
       pred_mat <- do.call(
         cbind,
@@ -193,27 +199,27 @@ ensemble_sdm <- function(m, scen = NULL, method = "average", metric = NULL, fun 
       )
 
       pred_mat <- as.matrix(pred_mat)
-      storage.mode(pred_mat) <- "double" # this accelerates calculations, since makes functions like
+      storage.mode(pred_mat) <- "double"
 
       l <- list()
 
-      if(is.function(method)){
+      if (is.function(method)) {
         assert_function_cli(method, args = "pred_mat")
         ens <- method(pred_mat)
         assert_numeric_cli(ens, len = nrow(pred_mat))
         assert_vector_cli(ens, len = nrow(pred_mat))
         l[[method_name]] <- ens
       } else {
-        if("average" %in% method){
+        if ("average" %in% method) {
           ens <- rowMeans(pred_mat, na.rm = TRUE)
           l[["average"]] <- ens
         }
-        if("weighted_average" %in% method){
-          w <- get_validation_metrics(m)[[sp]][,metric]
+        if ("weighted_average" %in% method) {
+          w <- get_validation_metrics(m)[[sp]][, metric]
           ens <- rowSums(pred_mat * w[col(pred_mat)], na.rm = TRUE) / sum(w, na.rm = TRUE)
           l[["weighted_average"]] <- ens
         }
-        if("committee_average" %in% method){
+        if ("committee_average" %in% method) {
           th_bin <- bin_thresholds[[sp]]
           ens <- rowMeans(pred_mat > th_bin[col(pred_mat)])
           l[["committee_average"]] <- ens
@@ -233,7 +239,7 @@ ensemble_sdm <- function(m, scen = NULL, method = "average", metric = NULL, fun 
   })
   names(e) <- names(p)
   scenarios <- names(e)
-  species   <- names(e[[1]])
+  species <- names(e[[1]])
 
   e0 <- matrix(
     vector("list", length(species) * length(scenarios)),
@@ -247,8 +253,6 @@ ensemble_sdm <- function(m, scen = NULL, method = "average", metric = NULL, fun 
       e0[sp, scn][[1]] <- e[[scn]][[sp]]
     }
   }
-
-  #####################################################################
 
   e2 <- list(
     method = method_name,
@@ -275,12 +279,18 @@ get_ensembles <- function(i) {
 #' @rdname ensemble_sdm
 #' @export
 add_ensembles <- function(e1, e2) {
-  assert_cli(check_class_cli(e1, "ensembles", null.ok = TRUE),
-             check_class_cli(e1, "input_sdm", null.ok = TRUE))
+  assert_cli(
+    check_class_cli(e1, "ensembles", null.ok = TRUE),
+    check_class_cli(e1, "input_sdm", null.ok = TRUE)
+  )
   assert_class_cli(e2, "ensembles", null.ok = TRUE)
-  if(is.null(e1)) {return(e2)}
-  if(is.null(e2)) {return(e1)}
-  if(is_input_sdm(e1)){
+  if (is.null(e1)) {
+    return(e2)
+  }
+  if (is.null(e2)) {
+    return(e1)
+  }
+  if (is_input_sdm(e1)) {
     res <- e1
     e1 <- e1$ensembles
   } else {
@@ -289,11 +299,9 @@ add_ensembles <- function(e1, e2) {
 
   m1 <- e1$data
   m2 <- e2$data
-  # union of species and scenarios
-  species  <- union(rownames(m1), rownames(m2))
+  species <- union(rownames(m1), rownames(m2))
   scenarios <- union(colnames(m1), colnames(m2))
 
-  # initialize output
   out <- matrix(
     vector("list", length(species) * length(scenarios)),
     nrow = length(species),
@@ -301,7 +309,6 @@ add_ensembles <- function(e1, e2) {
     dimnames = list(species, scenarios)
   )
 
-  # helper to safely extract cells
   get_cell <- function(m, sp, sc) {
     if (!is.null(m) && sp %in% rownames(m) && sc %in% colnames(m)) {
       return(m[sp, sc][[1]])
@@ -309,36 +316,29 @@ add_ensembles <- function(e1, e2) {
     return(NULL)
   }
 
-  # loop over all cells
   for (sp in species) {
     for (sc in scenarios) {
-
       df1 <- get_cell(m1, sp, sc)
       df2 <- get_cell(m2, sp, sc)
 
-      # cases
       if (is.null(df1) && is.null(df2)) {
         out[sp, sc][[1]] <- NULL
-
       } else if (is.null(df1)) {
         out[sp, sc][[1]] <- df2
-
       } else if (is.null(df2)) {
         out[sp, sc][[1]] <- df1
-
       } else {
-        # merge by cell_id
         out[sp, sc][[1]] <- merge(df1, df2, by = "cell_id", all = TRUE)
       }
     }
   }
 
   e <- list(
-    method=c(e1$method, e2$method),
-    data=out
+    method = c(e1$method, e2$method),
+    data = out
   )
   ens <- .ensembles(e)
-  if(!is.null(res)){
+  if (!is.null(res)) {
     res$ensembles <- ens
     ens <- res
   }
@@ -347,14 +347,14 @@ add_ensembles <- function(e1, e2) {
 
 
 .MaxSeSp <- function(mod) {
-    th <- caret::thresholder(
-      mod,
-      threshold = seq(0, 1, by = 0.001),
-      final = TRUE,
-      statistics = c("Sensitivity", "Specificity")
-    )
-    th <- th$prob_threshold[which.max(th$Sensitivity + th$Specificity)] # max(sens+spec)
-    if (length(th) > 1) mean(th) else th
+  th <- caret::thresholder(
+    mod,
+    threshold = seq(0, 1, by = 0.001),
+    final = TRUE,
+    statistics = c("Sensitivity", "Specificity")
+  )
+  th <- th$prob_threshold[which.max(th$Sensitivity + th$Specificity)]
+  if (length(th) > 1) mean(th) else th
 }
 
 .ensembles <- function(x) {

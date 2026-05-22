@@ -69,3 +69,5 @@ caretSDM is vastly documented and has included some objects that can guide your 
 -   `8. Benchmarking SDM Package Performance in R` Want to know how this package performs in comparison with other popular packages? Here we address this question through benchmarking.
 
 -   `9. Comparing Pseudoabsence Methods in Species Distribution Modelling` To build a script to compare different approaches in SDMs you can use this vignette as a starting-point.
+
+-   `10. Ablation Analysis of Hyperparameter Tuning Length in caretSDM` Unveils the impact of searching for optimized hyperparameters in the final models.

@@ -95,16 +95,16 @@ background <- function(occ, pred = NULL, method = "random", n_set = 1, n_bg = 10
   assert_int_cli(n_bg, null.ok = TRUE)
   assert_int_cli(n_set)
   assert_numeric_cli(proportion, null.ok = TRUE, lower = 0, upper = 1)
-  if(!is.null(proportion)){
-    n1 <- round(nrow(pred$grid)*proportion, 0)
+  if (!is.null(proportion)) {
+    n1 <- round(nrow(pred$grid) * proportion, 0)
     cli::cli_alert(c("Proportion is {proportion} Setting all species to have {n1} background records."))
     n <- n_records(y)
     n[] <- n1
     n <- as.table(n)
   }
 
-  if(is.null(names(n))){
-    if(length(n) == length(species_names(y))) {
+  if (is.null(names(n))) {
+    if (length(n) == length(species_names(y))) {
       names(n) <- species_names(y)
       n <- as.table(n)
     } else {
@@ -132,7 +132,6 @@ background <- function(occ, pred = NULL, method = "random", n_set = 1, n_bg = 10
           env_sf = df,
           occ_sf = y$occurrences[y$occurrences$species == sp, ]
         )
-        # Keep valid cell_ids
         samp <- intersect(unique(samp), df$cell_id)
         l[[j]] <- df[df$cell_id %in% samp, ]
       }
@@ -157,12 +156,11 @@ background <- function(occ, pred = NULL, method = "random", n_set = 1, n_bg = 10
         return(l)
       }, simplify = FALSE, USE.NAMES = TRUE)
       if (is.null(proportion)) {
-        proportion <- round(n/nrow(df), 3)
+        proportion <- round(n / nrow(df), 3)
       }
     }
 
     bg <- .background(y, l, method, n_set, n, proportion)
-
   }
 
   if (is_input_sdm(occ)) {
@@ -175,7 +173,7 @@ background <- function(occ, pred = NULL, method = "random", n_set = 1, n_bg = 10
 #' @rdname background
 #' @export
 n_background <- function(i) {
-  x=i
+  x <- i
   if (is_input_sdm(x)) {
     y <- x$occurrences
   } else {
@@ -187,7 +185,7 @@ n_background <- function(i) {
 #' @rdname background
 #' @export
 background_method <- function(i) {
-  x=i
+  x <- i
   if (is_input_sdm(x)) {
     y <- x$occurrences
   } else {
@@ -199,7 +197,7 @@ background_method <- function(i) {
 #' @rdname background
 #' @export
 background_data <- function(i) {
-  x=i
+  x <- i
   if (is_input_sdm(x)) {
     y <- x$occurrences
   } else {

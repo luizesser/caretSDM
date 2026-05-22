@@ -33,7 +33,7 @@ select_predictors <- function(x, ...) {
 
 #' @rdname tidyverse-methods
 #' @export
-select.sdm_area <- function(.data, ...){
+select.sdm_area <- function(.data, ...) {
   x <- .data
   .check_sdm_area(x)
   grd <- dplyr::select(x$grid, dplyr::all_of(...))
@@ -44,7 +44,7 @@ select.sdm_area <- function(.data, ...){
   grd <- grd |> dplyr::relocate(cell_id, ...)
   x$grid <- grd
 
-  if("scenarios" %in% names(x)){
+  if ("scenarios" %in% names(x)) {
     .check_sdm_area(x$scenarios)
     x$scenarios$data <- sapply(x$scenarios$data, function(y) {
       grd <- dplyr::select(y, ...)
@@ -63,7 +63,7 @@ select.sdm_area <- function(.data, ...){
 
 #' @rdname tidyverse-methods
 #' @export
-select.input_sdm <- function(.data, ...){
+select.input_sdm <- function(.data, ...) {
   x <- .data
   i <- x
   x <- x$predictors
@@ -77,7 +77,7 @@ select.input_sdm <- function(.data, ...){
   x$grid <- grd
   i$predictors <- x
 
-  if("scenarios" %in% names(i)){
+  if ("scenarios" %in% names(i)) {
     .check_sdm_area(i$scenarios)
     i$scenarios$data <- sapply(i$scenarios$data, function(y) {
       grd <- dplyr::select(y, dplyr::all_of(...))
@@ -96,7 +96,7 @@ select.input_sdm <- function(.data, ...){
 
 #' @rdname tidyverse-methods
 #' @export
-mutate.sdm_area <- function(.data, ...){
+mutate.sdm_area <- function(.data, ...) {
   x <- .data
   .check_sdm_area(x)
   grd <- dplyr::mutate(x$grid, ...)
@@ -104,7 +104,7 @@ mutate.sdm_area <- function(.data, ...){
   if (!("cell_id" %in% grd_col_names)) {
     grd[["cell_id"]] <- x$grid[["cell_id"]]
   }
-  grd_col_names2 <- setdiff(grd_col_names, c('cell_id','geometry'))
+  grd_col_names2 <- setdiff(grd_col_names, c("cell_id", "geometry"))
   grd <- grd |> dplyr::relocate(cell_id, all_of(grd_col_names2), geometry)
   x$grid <- grd
   return(x)
@@ -112,7 +112,7 @@ mutate.sdm_area <- function(.data, ...){
 
 #' @rdname tidyverse-methods
 #' @export
-mutate.input_sdm <- function(.data, ...){
+mutate.input_sdm <- function(.data, ...) {
   x <- .data
   i <- x
   x <- x$predictors
@@ -122,7 +122,7 @@ mutate.input_sdm <- function(.data, ...){
   if (!("cell_id" %in% grd_col_names)) {
     grd[["cell_id"]] <- x$grid[["cell_id"]]
   }
-  grd_col_names2 <- setdiff(grd_col_names, c('cell_id','geometry'))
+  grd_col_names2 <- setdiff(grd_col_names, c("cell_id", "geometry"))
   grd <- grd |> dplyr::relocate(cell_id, all_of(grd_col_names2), geometry)
   x$grid <- grd
   i$predictors <- x
@@ -131,7 +131,7 @@ mutate.input_sdm <- function(.data, ...){
 
 #' @rdname tidyverse-methods
 #' @export
-filter.sdm_area <- function(.data, ..., .by, .preserve){
+filter.sdm_area <- function(.data, ..., .by, .preserve) {
   x <- .data
   .check_sdm_area(x)
   grd <- dplyr::filter(x$grid, ...)
@@ -139,7 +139,7 @@ filter.sdm_area <- function(.data, ..., .by, .preserve){
   if (!("cell_id" %in% grd_col_names)) {
     grd[["cell_id"]] <- x$grid[["cell_id"]]
   }
-  grd_col_names2 <- setdiff(grd_col_names, c('cell_id','geometry'))
+  grd_col_names2 <- setdiff(grd_col_names, c("cell_id", "geometry"))
   grd <- grd |> dplyr::relocate(cell_id, all_of(grd_col_names2), geometry)
   x$grid <- grd
   return(x)
@@ -147,7 +147,7 @@ filter.sdm_area <- function(.data, ..., .by, .preserve){
 
 #' @rdname tidyverse-methods
 #' @export
-filter.input_sdm <- function(.data, ..., .by, .preserve){
+filter.input_sdm <- function(.data, ..., .by, .preserve) {
   x <- .data
   oc <- filter(x$occurrences, ...)
   x$occurrences <- oc
@@ -156,26 +156,25 @@ filter.input_sdm <- function(.data, ..., .by, .preserve){
 
 #' @rdname tidyverse-methods
 #' @export
-filter.occurrences <- function(.data, ..., .by, .preserve){
+filter.occurrences <- function(.data, ..., .by, .preserve) {
   x <- .data
 
   oc <- x
   x <- x$occurrences
   cd <- FALSE
-  if("cell_id" %in% names(x)){
+  if ("cell_id" %in% names(x)) {
     cd <- TRUE
   }
   grd <- dplyr::filter(x, ...)
   grd_col_names <- colnames(grd)
-  if(cd){
+  if (cd) {
     if (!("cell_id" %in% grd_col_names)) {
       grd[["cell_id"]] <- oc$grid[["cell_id"]]
     }
-    grd_col_names2 <- setdiff(grd_col_names, c('cell_id','geometry'))
+    grd_col_names2 <- setdiff(grd_col_names, c("cell_id", "geometry"))
     grd <- grd |> dplyr::relocate(cell_id, all_of(grd_col_names2), geometry)
-
   } else {
-    grd_col_names2 <- setdiff(grd_col_names, c('geometry'))
+    grd_col_names2 <- setdiff(grd_col_names, c("geometry"))
     grd <- grd |> dplyr::relocate(all_of(grd_col_names2), geometry)
   }
 
@@ -193,7 +192,7 @@ filter_species <- function(x, spp = NULL, ...) {
     cli::cli_abort(c("No species selected."))
   }
 
-  if(is_input_sdm(x)){
+  if (is_input_sdm(x)) {
     if ("occurrences" %in% names(x)) {
       x$occurrences$occurrences <- dplyr::filter(x$occurrences$occurrences, species %in% spp, ...)
       x$occurrences$spp_names <- spp
@@ -214,18 +213,18 @@ filter_species <- function(x, spp = NULL, ...) {
       x$predictions$ensembles <- subset(x$predictions$ensembles, rownames(x$predictions$ensembles) %in% spp)
       x$predictions$models$validation$metrics <- x$predictions$models$validation$metrics[spp]
       x$predictions$models$models <- x$predictions$models$models[spp]
-      for (j in 1:length(x$predictions$predictions)){
+      for (j in 1:length(x$predictions$predictions)) {
         x$predictions$predictions[[j]] <- x$predictions$predictions[[j]][spp]
       }
-      if("ensembles" %in% names(x$predictions)) {
-        ens <- as.matrix(x$predictions$ensembles[spp,])
+      if ("ensembles" %in% names(x$predictions)) {
+        ens <- as.matrix(x$predictions$ensembles[spp, ])
         colnames(ens) <- scenarios_names(x)
         rownames(ens) <- spp
         x$predictions$ensembles <- ens
       }
     }
   }
-  if(is_occurrences(x)){
+  if (is_occurrences(x)) {
     if ("occurrences" %in% names(x)) {
       x$occurrences <- dplyr::filter(x$occurrences, species %in% spp)
       x$spp_names <- spp

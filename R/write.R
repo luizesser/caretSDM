@@ -50,12 +50,14 @@ write_ensembles <- function(x, path = NULL, ext = ".tif", centroid = FALSE) {
     ))
   }
   assert_character_cli(path, null.ok = FALSE)
-  ext_sf <- c(".bna", ".csv", ".e00", ".gdb", ".geojson", ".gml", ".gmt", ".gpkg", ".gps", ".gtm", ".gxt", ".jml",
-              ".map", ".mdb", ".nc", ".ods", ".osm", ".pbf", ".shp", ".sqlite", ".vdv", ".xls", ".xlsx")
+  ext_sf <- c(
+    ".bna", ".csv", ".e00", ".gdb", ".geojson", ".gml", ".gmt", ".gpkg", ".gps", ".gtm", ".gxt", ".jml",
+    ".map", ".mdb", ".nc", ".ods", ".osm", ".pbf", ".shp", ".sqlite", ".vdv", ".xls", ".xlsx"
+  )
   scen <- colnames(y$data)
   spp <- rownames(y$data)
   grd <- x$predictions$grid
-  if(centroid){
+  if (centroid) {
     suppressWarnings(cent <- sf::st_coordinates(sf::st_centroid(grd)))
     colnames(cent) <- c("x_centroid", "y_centroid")
     grd <- cbind(grd, cent)
@@ -87,9 +89,11 @@ write_predictions <- function(x, path = NULL, ext = ".tif", centroid = FALSE) {
   } else {
     y <- x
   }
-  #assert_character_cli(path, null.ok = FALSE)
-  ext_sf <- c(".bna", ".csv", ".e00", ".gdb", ".geojson", ".gml", ".gmt", ".gpkg", ".gps", ".gtm", ".gxt", ".jml",
-              ".map", ".mdb", ".nc", ".ods", ".osm", ".pbf", ".shp", ".sqlite", ".vdv", ".xls", ".xlsx")
+  # assert_character_cli(path, null.ok = FALSE)
+  ext_sf <- c(
+    ".bna", ".csv", ".e00", ".gdb", ".geojson", ".gml", ".gmt", ".gpkg", ".gps", ".gtm", ".gxt", ".jml",
+    ".map", ".mdb", ".nc", ".ods", ".osm", ".pbf", ".shp", ".sqlite", ".vdv", ".xls", ".xlsx"
+  )
   scen <- names(y$predictions)
   spp <- names(y$predictions[[1]])
 
@@ -97,7 +101,7 @@ write_predictions <- function(x, path = NULL, ext = ".tif", centroid = FALSE) {
     for (sc in scen) {
       for (id in names(y$predictions[[sc]][[sp]])) {
         result <- dplyr::select(y$predictions[[sc]][[sp]][[id]], -"pseudoabsence")
-        if(centroid){
+        if (centroid) {
           cent <- sf::st_coordinates(sf::st_centroid(result))
           colnames(cent) <- c("x_centroid", "y_centroid")
           result <- cbind(result, cent)
@@ -126,10 +130,12 @@ write_predictors <- function(x, path = NULL, ext = ".tif", centroid = FALSE) {
   }
   assert_character_cli(path, null.ok = FALSE)
 
-  ext_sf <- c(".bna", ".csv", ".e00", ".gdb", ".geojson", ".gml", ".gmt", ".gpkg", ".gps", ".gtm", ".gxt", ".jml",
-              ".map", ".mdb", ".nc", ".ods", ".osm", ".pbf", ".shp", ".sqlite", ".vdv", ".xls", ".xlsx")
-  grd <- y$grid[,get_predictor_names(y)]
-  if(centroid){
+  ext_sf <- c(
+    ".bna", ".csv", ".e00", ".gdb", ".geojson", ".gml", ".gmt", ".gpkg", ".gps", ".gtm", ".gxt", ".jml",
+    ".map", ".mdb", ".nc", ".ods", ".osm", ".pbf", ".shp", ".sqlite", ".vdv", ".xls", ".xlsx"
+  )
+  grd <- y$grid[, get_predictor_names(y)]
+  if (centroid) {
     cent <- sf::st_coordinates(sf::st_centroid(grd))
     colnames(cent) <- c("x_centroid", "y_centroid")
     grd <- cbind(grd, cent)
@@ -195,7 +201,7 @@ write_gpkg.sdm_area <- function(x, file_path, file_name) {
     sf::st_write(
       dsn = saving_local,
       delete_dsn = TRUE,
-      quiet =TRUE
+      quiet = TRUE
     )
 }
 
@@ -205,19 +211,20 @@ write_occurrences <- function(x, path = NULL, grid = FALSE, ...) {
   assert_character_cli(path, null.ok = FALSE)
   assert_logical_cli(grid, len = 1)
 
-  if(is_input_sdm(x) & grid){
+  if (is_input_sdm(x) & grid) {
     suppressWarnings(dir.create(dirname(path), recursive = TRUE))
     assert_directory_cli(dirname(path))
 
     grd <- sf::st_join(x$predictors$grid, x$occurrences$occurrences) |>
       dplyr::select(c(cell_id.x, species))
     colnames(grd) <- c("cell_id", "species", "geometry")
-        sf::st_write(grd,
-                 dsn = path,
-                 delete_dsn = TRUE,
-                 quiet =TRUE, ...)
+    sf::st_write(grd,
+      dsn = path,
+      delete_dsn = TRUE,
+      quiet = TRUE, ...
+    )
   } else {
-    if(is_input_sdm(x) & !grid) { #### Quando grid==T fazer grid com 0 e 1
+    if (is_input_sdm(x) & !grid) { #### Quando grid==T fazer grid com 0 e 1
       x <- x$occurrences
     }
     assert_class_cli(x, "occurrences")
@@ -237,11 +244,13 @@ write_pseudoabsences <- function(x, path = NULL, ext = ".csv", centroid = FALSE)
   assert_logical_cli(centroid, len = 1)
 
   y <- pseudoabsence_data(x)
-  ext_sf <- c(".bna", ".csv", ".e00", ".gdb", ".geojson", ".gml", ".gmt", ".gpkg", ".gps", ".gtm", ".gxt", ".jml",
-              ".map", ".mdb", ".nc", ".ods", ".osm", ".pbf", ".shp", ".sqlite", ".vdv", ".xls", ".xlsx")
+  ext_sf <- c(
+    ".bna", ".csv", ".e00", ".gdb", ".geojson", ".gml", ".gmt", ".gpkg", ".gps", ".gtm", ".gxt", ".jml",
+    ".map", ".mdb", ".nc", ".ods", ".osm", ".pbf", ".shp", ".sqlite", ".vdv", ".xls", ".xlsx"
+  )
   spp <- species_names(x)
   grd <- get_sdm_area(x)
-  if(centroid){
+  if (centroid) {
     suppressWarnings(cent <- sf::st_coordinates(sf::st_centroid(grd)))
     colnames(cent) <- c("x_centroid", "y_centroid")
     grd <- cbind(grd, cent)
@@ -249,7 +258,9 @@ write_pseudoabsences <- function(x, path = NULL, ext = ".csv", centroid = FALSE)
   for (sp in spp) {
     v <- y[[sp]]
     for (n in 1:length(v)) {
-      v2 <- v[[n]] |> as.data.frame() |> dplyr::select(-geometry)
+      v2 <- v[[n]] |>
+        as.data.frame() |>
+        dplyr::select(-geometry)
       result <- merge(grd, as.data.frame(v2), by = "cell_id")
       if (!dir.exists(paste0(path, "/", sp))) {
         dir.create(paste0(path, "/", sp), recursive = TRUE)
@@ -272,11 +283,13 @@ write_background <- function(x, path = NULL, ext = ".csv", centroid = FALSE) {
   assert_logical_cli(centroid, len = 1)
 
   y <- background_data(x)
-  ext_sf <- c(".bna", ".csv", ".e00", ".gdb", ".geojson", ".gml", ".gmt", ".gpkg", ".gps", ".gtm", ".gxt", ".jml",
-              ".map", ".mdb", ".nc", ".ods", ".osm", ".pbf", ".shp", ".sqlite", ".vdv", ".xls", ".xlsx")
+  ext_sf <- c(
+    ".bna", ".csv", ".e00", ".gdb", ".geojson", ".gml", ".gmt", ".gpkg", ".gps", ".gtm", ".gxt", ".jml",
+    ".map", ".mdb", ".nc", ".ods", ".osm", ".pbf", ".shp", ".sqlite", ".vdv", ".xls", ".xlsx"
+  )
   spp <- species_names(x)
   grd <- get_sdm_area(x)
-  if(centroid){
+  if (centroid) {
     suppressWarnings(cent <- sf::st_coordinates(sf::st_centroid(grd)))
     colnames(cent) <- c("x_centroid", "y_centroid")
     grd <- cbind(grd, cent)
@@ -284,7 +297,9 @@ write_background <- function(x, path = NULL, ext = ".csv", centroid = FALSE) {
   for (sp in spp) {
     v <- y[[sp]]
     for (n in 1:length(v)) {
-      v2 <- v[[n]] |> as.data.frame() |> dplyr::select(-geometry)
+      v2 <- v[[n]] |>
+        as.data.frame() |>
+        dplyr::select(-geometry)
       result <- merge(grd, as.data.frame(v2), by = "cell_id")
       if (!dir.exists(paste0(path, "/", sp))) {
         dir.create(paste0(path, "/", sp), recursive = TRUE)
@@ -302,7 +317,7 @@ write_background <- function(x, path = NULL, ext = ".csv", centroid = FALSE) {
 #' @rdname write_ensembles
 #' @export
 write_grid <- function(x, path = NULL, centroid = FALSE) {
-  if(is_input_sdm(x)){
+  if (is_input_sdm(x)) {
     x <- x$predictors
   }
   assert_character_cli(path, null.ok = FALSE)
@@ -313,7 +328,7 @@ write_grid <- function(x, path = NULL, centroid = FALSE) {
   assert_directory_cli(dirname(path))
 
   grd <- x$grid
-  if(centroid){
+  if (centroid) {
     cent <- sf::st_coordinates(sf::st_centroid(grd))
     colnames(cent) <- c("x_centroid", "y_centroid")
     grd <- cbind(grd, cent)
@@ -322,7 +337,7 @@ write_grid <- function(x, path = NULL, centroid = FALSE) {
     sf::st_write(
       dsn = path,
       delete_dsn = TRUE,
-      quiet =TRUE
+      quiet = TRUE
     )
 }
 

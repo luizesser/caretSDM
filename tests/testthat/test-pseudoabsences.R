@@ -1,11 +1,11 @@
 test_that("pseudoabsences - normal", {
   skip_on_cran()
 
-  sa <- sdm_area(parana, 100000, output_crs=6933) |>
+  sa <- sdm_area(parana, 100000, output_crs = 6933) |>
     add_predictors(bioc) |>
     select_predictors(c("bio1", "bio12")) |>
     add_scenarios()
-  oc <- occurrences_sdm(occ, occ_crs=6933)
+  oc <- occurrences_sdm(occ, occ_crs = 6933)
   suppressWarnings(oc <- join_area(oc, sa))
   i <- input_sdm(oc, sa)
 
@@ -28,30 +28,30 @@ test_that("pseudoabsences - normal", {
   expect_equal("random", pseudoabsence_method(i4))
   expect_equal("random", pseudoabsence_method(i4$occurrences))
 
-  n_set=3
-  i5 <- pseudoabsences(i, method = "random", n_set=n_set)
+  n_set <- 3
+  i5 <- pseudoabsences(i, method = "random", n_set = n_set)
   expect_equal(n_set, pseudoabsence_data(i5)[[1]] |> length())
   expect_equal(n_set, pseudoabsence_data(i5$occurrences)[[1]] |> length())
   n_pa <- 100
-  expect_warning(i6 <- pseudoabsences(i, method = "random", n_pa=n_pa, n_set=1))
+  expect_warning(i6 <- pseudoabsences(i, method = "random", n_pa = n_pa, n_set = 1))
   expect_true(n_pa == n_pseudoabsences(i6))
   expect_true(n_pa == n_pseudoabsences(i6$occurrences))
-  suppressWarnings(oc <- occurrences_sdm(rbind(occ, salm), occ_crs=6933) |> join_area(sa))
+  suppressWarnings(oc <- occurrences_sdm(rbind(occ, salm), occ_crs = 6933) |> join_area(sa))
   i6 <- input_sdm(oc, sa)
-  test <- capture_warnings(i6 <- pseudoabsences(i6, method = "random", n_pa=n_pa))
+  test <- capture_warnings(i6 <- pseudoabsences(i6, method = "random", n_pa = n_pa))
   expect_equal(length(test), 2)
-  test <-  n_pseudoabsences(i6)
+  test <- n_pseudoabsences(i6)
   expect_equal(names(test), species_names(i6))
   expect_equal(length(as.numeric(test)), length(species_names(i6)))
   expect_equal(as.numeric(test), rep(n_pa, length(species_names(i6))))
-  expect_error(pseudoabsences(i, method = "random", n_pa=c(1,2,3)))
+  expect_error(pseudoabsences(i, method = "random", n_pa = c(1, 2, 3)))
 
   i7 <- pseudoabsences(i, method = "mahal.dist", n_set = 1)
   expect_equal(n_pseudoabsences(i7), n_records(i7))
   expect_equal("mahal.dist", pseudoabsence_method(i7))
   expect_equal("mahal.dist", pseudoabsence_method(i7$occurrences))
 
-  env_distance_pa <- function(env_sf, occ_sf, n_pa=n_pa) {
+  env_distance_pa <- function(env_sf, occ_sf, n_pa = n_pa) {
     df <- as.data.frame(env_sf)[, -which(names(env_sf) %in% c("cell_id", "geometry"))]
     center <- colMeans(df)
     d <- sqrt(rowSums((df - center)^2))
@@ -59,7 +59,7 @@ test_that("pseudoabsences - normal", {
     sample(env_sf$cell_id, size = n_pa, prob = p)
   }
 
-  expect_warning(i8 <- pseudoabsences(i, method = env_distance_pa, n_set = 2, n_pa=n_pa))
+  expect_warning(i8 <- pseudoabsences(i, method = env_distance_pa, n_set = 2, n_pa = n_pa))
   expect_equal(as.numeric(n_pseudoabsences(i8)), n_pa)
   expect_equal("env_distance_pa", pseudoabsence_method(i8))
   expect_equal("env_distance_pa", pseudoabsence_method(i8$occurrences))
@@ -78,5 +78,4 @@ test_that("pseudoabsences - normal", {
   # erros
   i <- background(i)
   expect_error(train_sdm(i, algo = c("kknn")))
-
 })

@@ -37,8 +37,8 @@
 #'
 #' @examples
 #' ## download data from multiple periods:
-#' #year <- c("2050", "2090")
-#' #WorldClim_data(path = "",
+#' # year <- c("2050", "2090")
+#' # WorldClim_data(path = "",
 #' #               period = "future",
 #' #               variable = "bioc",
 #' #               year = year,
@@ -47,14 +47,13 @@
 #' #               resolution = 10)
 #'
 #' ## download data from one specific period
-#' #WorldClim_data(path = "",
+#' # WorldClim_data(path = "",
 #' #               period = "future",
 #' #               variable = "bioc",
 #' #               year = "2070",
 #' #               gcm = "mi",
 #' #               ssp = "585",
 #' #               resolution = 10)
-#'
 #'
 #' @importFrom cli cli_alert_warning cli_abort cli_inform
 #' @importFrom utils unzip
@@ -125,32 +124,6 @@ WorldClim_data <- function(path = NULL,
 
   .warn <- function(...) cli::cli_alert_warning(paste0(...))
 
-  ## helper: GET file with httr2, but never throw on HTTP status
-  .download_file_httr2 <- function(url, destfile) {
-    req <- httr2::request(url) |>
-      httr2::req_error(is_error = \(resp) FALSE)  # keep 4xx/5xx as responses, not errors [web:33][web:38]
-
-    resp <- try(httr2::req_perform(req), silent = TRUE)
-
-    if (inherits(resp, "try-error")) {
-      .warn("Failed to perform request to ", url, ".")
-      return(FALSE)
-    }
-
-    if (httr2::resp_is_error(resp)) {
-      .warn("HTTP error ", httr2::resp_status(resp), " when requesting ", url, ".")
-      return(FALSE)
-    }
-
-    # write raw body to disk; works for .zip and .tif [web:27][web:28]
-    body <- httr2::resp_body_raw(resp)
-    ok <- try(writeBin(body, destfile), silent = TRUE)
-    if (inherits(ok, "try-error")) {
-      .warn("Failed to write response body to file ", destfile, ".")
-      return(FALSE)
-    }
-    TRUE
-  }
 
   ## CURRENT PERIOD
   if (period == "current") {
@@ -243,7 +216,7 @@ WorldClim_data <- function(path = NULL,
             }
           } else {
             cli::cli_inform(paste0(
-              "The file for future scenario (", destfile,") is already downloaded."
+              "The file for future scenario (", destfile, ") is already downloaded."
             ))
           }
         }
@@ -251,4 +224,30 @@ WorldClim_data <- function(path = NULL,
     }
   }
   return(invisible(l))
+}
+
+.download_file_httr2 <- function(url, destfile) {
+  req <- httr2::request(url) |>
+    httr2::req_error(is_error = \(resp) FALSE) # keep 4xx/5xx as responses, not errors [web:33][web:38]
+
+  resp <- try(httr2::req_perform(req), silent = TRUE)
+
+  if (inherits(resp, "try-error")) {
+    .warn("Failed to perform request to ", url, ".")
+    return(FALSE)
+  }
+
+  if (httr2::resp_is_error(resp)) {
+    .warn("HTTP error ", httr2::resp_status(resp), " when requesting ", url, ".")
+    return(FALSE)
+  }
+
+  # write raw body to disk; works for .zip and .tif [web:27][web:28]
+  body <- httr2::resp_body_raw(resp)
+  ok <- try(writeBin(body, destfile), silent = TRUE)
+  if (inherits(ok, "try-error")) {
+    .warn("Failed to write response body to file ", destfile, ".")
+    return(FALSE)
+  }
+  TRUE
 }

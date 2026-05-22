@@ -58,7 +58,7 @@ tsne_sdm <- function(occ, pred = NULL, variables_selected = NULL) {
 
       ts2 <- dplyr::select(as.data.frame(df_tsne), dplyr::all_of(variables_selected))
       ts2 <- as.matrix(ts2[, variables_selected])
-      tsne_bg <- Rtsne::Rtsne(ts2[!duplicated(ts2),], perplexity = perp)
+      tsne_bg <- Rtsne::Rtsne(ts2[!duplicated(ts2), ], perplexity = perp)
       df <- as.data.frame(tsne_bg$Y)
       tsne_result <- ggplot2::ggplot(df, ggplot2::aes(x = V1, y = V2)) +
         ggplot2::xlab("tSNE Dim 1") +

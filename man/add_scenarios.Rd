@@ -71,8 +71,10 @@ sa <- add_predictors(sa, bioc)
 sa <- add_scenarios(sa, scen[1:2]) |> select_predictors(c("bio1", "bio12"))
 
 # Set scenarios names:
-sa <- set_scenarios_names(sa, scenarios_names = c("future_1", "future_2",
-                                                  "current"))
+sa <- set_scenarios_names(sa, scenarios_names = c(
+  "future_1", "future_2",
+  "current"
+))
 scenarios_names(sa)
 
 # Get scenarios data:
@@ -83,10 +85,9 @@ scenarios_grid
 sa <- select_scenarios(sa, scenarios_names = c("future_1"))
 
 # Setting stationary variables in scenarios:
-sa <- sdm_area(rivs[c(1:200),], cell_size = 100000, output_crs = 6933, lines_as_sdm_area = TRUE) |>
+sa <- sdm_area(rivs[c(1:200), ], cell_size = 100000, output_crs = 6933, lines_as_sdm_area = TRUE) |>
   add_predictors(bioc) |>
   add_scenarios(scen, stationary = c("LENGTH_KM", "DIST_DN_KM"))
-
 
 }
 \seealso{

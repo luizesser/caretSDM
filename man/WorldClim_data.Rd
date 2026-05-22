@@ -45,8 +45,8 @@ recommended to do so, since the data is very heavy.
 }
 \examples{
 ## download data from multiple periods:
-#year <- c("2050", "2090")
-#WorldClim_data(path = "",
+# year <- c("2050", "2090")
+# WorldClim_data(path = "",
 #               period = "future",
 #               variable = "bioc",
 #               year = year,
@@ -55,14 +55,13 @@ recommended to do so, since the data is very heavy.
 #               resolution = 10)
 
 ## download data from one specific period
-#WorldClim_data(path = "",
+# WorldClim_data(path = "",
 #               period = "future",
 #               variable = "bioc",
 #               year = "2070",
 #               gcm = "mi",
 #               ssp = "585",
 #               resolution = 10)
-
 
 }
 \references{

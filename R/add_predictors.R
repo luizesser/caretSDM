@@ -85,35 +85,35 @@ add_predictors <- function(sa, pred, variables_selected = NULL, gdal = TRUE, lin
 
 #' @export
 add_predictors.RasterStack <- function(sa, pred, variables_selected = NULL, gdal = TRUE, lines_as_sdm_area = FALSE) {
-  pred <- sa  |>
+  pred <- sa |>
     .add_predictors(pred, variables_selected, gdal, lines_as_sdm_area)
   return(invisible(pred))
 }
 
 #' @export
 add_predictors.SpatRaster <- function(sa, pred, variables_selected = NULL, gdal = TRUE, lines_as_sdm_area = FALSE) {
-  pred <- sa  |>
+  pred <- sa |>
     .add_predictors(pred, variables_selected, gdal, lines_as_sdm_area)
   return(invisible(pred))
 }
 
 #' @export
 add_predictors.character <- function(sa, pred, variables_selected = NULL, gdal = TRUE, lines_as_sdm_area = FALSE) {
-  pred <- sa  |>
+  pred <- sa |>
     .add_predictors(pred, variables_selected, gdal, lines_as_sdm_area)
   return(invisible(pred))
 }
 
 #' @export
 add_predictors.stars <- function(sa, pred, variables_selected = NULL, gdal = TRUE, lines_as_sdm_area = FALSE) {
-  pred <- sa  |>
+  pred <- sa |>
     .add_predictors(pred, variables_selected, gdal, lines_as_sdm_area)
   return(invisible(pred))
 }
 
 #' @export
 add_predictors.sf <- function(sa, pred, variables_selected = NULL, gdal = TRUE, lines_as_sdm_area = FALSE) {
-  pred <- sa  |>
+  pred <- sa |>
     .add_predictors(pred, variables_selected, gdal, lines_as_sdm_area)
   return(invisible(pred))
 }
@@ -129,41 +129,34 @@ add_predictors.sf <- function(sa, pred, variables_selected = NULL, gdal = TRUE, 
       crop_by = sa$grid,
       lines_as_sdm_area = sa$parameters$lines_as_sdm_area
     )
-  if (is.null(pred_sa)){
+  if (is.null(pred_sa)) {
     return(sa)
   }
 
-  if(unique(sf::st_geometry_type(sa$grid)) == "LINESTRING") {
+  if (unique(sf::st_geometry_type(sa$grid)) == "LINESTRING") {
     grd <- sa$grid |>
-      sf::st_intersection(dplyr::select(pred_sa$grid, -cell_id))|>
+      sf::st_intersection(dplyr::select(pred_sa$grid, -cell_id)) |>
       suppressWarnings()
-    if("POINT" %in% sf::st_geometry_type(grd)) {
-      grd <- grd[sf::st_geometry_type(grd) %in% c("LINESTRING","MULTILINESTRING"),]
+    if ("POINT" %in% sf::st_geometry_type(grd)) {
+      grd <- grd[sf::st_geometry_type(grd) %in% c("LINESTRING", "MULTILINESTRING"), ]
     }
     grd <- grd |>
       sf::st_cast("LINESTRING") |>
       suppressWarnings()
     grd$cell_id <- 1:nrow(grd)
   } else {
-    #grd <- sa$grid |>
-    #  dplyr::inner_join(
-    #    pred_sa$grid |>
-    #      as.data.frame() |>
-    #      dplyr::select(-geometry),
-    #    dplyr::join_by(cell_id)
-    #  )
-    grd <- pred_sa$grid[sf::st_nearest_feature(sf::st_centroid(sa$grid), sf::st_centroid(pred_sa$grid)),] |>
+    grd <- pred_sa$grid[sf::st_nearest_feature(sf::st_centroid(sa$grid), sf::st_centroid(pred_sa$grid)), ] |>
       suppressWarnings()
     grd <- sf::st_join(sa$grid, grd) |>
       na.omit()
-    grd <- grd[!duplicated(grd$cell_id.x),]
+    grd <- grd[!duplicated(grd$cell_id.x), ]
     grd <- dplyr::select(grd, -"cell_id.y")
     colnames(grd)[1] <- "cell_id"
   }
 
   var_names <- colnames(grd)
   num_vars <- grepl("^[[:digit:]]+", names(grd))
-  if(any(num_vars)){
+  if (any(num_vars)) {
     var_names2 <- gsub("^([0-9])", "X\\1", var_names)
     colnames(grd) <- var_names2
   }
@@ -176,8 +169,8 @@ add_predictors.sf <- function(sa, pred, variables_selected = NULL, gdal = TRUE, 
 #' @export
 get_predictors <- function(i) {
   assert_cli(
-    check_class_cli(i, c('input_sdm')),
-    check_class_cli(i, c('sdm_area'))
+    check_class_cli(i, c("input_sdm")),
+    check_class_cli(i, c("sdm_area"))
   )
   if (is_input_sdm(i)) {
     i <- i$predictors

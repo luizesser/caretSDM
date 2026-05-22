@@ -5,13 +5,11 @@
   label = "Maximum Entropy Modeling",
   library = "maxnet",
   type = "Classification",
-
   parameters = data.frame(
     parameter = c("regmult", "linear", "quadratic", "product", "threshold", "hinge"),
     class = rep(c("numeric", "logical"), c(1, 5)),
     label = c("Regularization Multiplier", "Linear", "Quadratic", "Product", "Threshold", "Hinge")
   ),
-
   grid = function(x, y, len = NULL, search = "grid") {
     if (search == "grid") {
       # Define sensible default feature combinations
@@ -41,7 +39,6 @@
       } else {
         out <- final_grid
       }
-
     } else { # Random search
       out <- data.frame(
         regmult = runif(len, 0.1, 5),
@@ -55,7 +52,6 @@
     # Ensure no duplicate rows are returned
     return(unique(out))
   },
-
   fit = function(x, y, wts, param, lev, last, classProbs, ...) {
     # Handle the response variable correctly
     # y is the response vector, x is the predictor data.frame
@@ -84,42 +80,44 @@
     if (length(classes) > 0) {
       classes_str <- paste(substr(classes, 1, 1), collapse = "")
     } else {
-      classes_str <- "l"  # Default to linear if no classes selected
+      classes_str <- "l" # Default to linear if no classes selected
     }
 
     # Handle potential errors in maxnet fitting
-    tryCatch({
-      model <- maxnet::maxnet(
-        p = p,
-        data = data,
-        f = maxnet::maxnet.formula(p, data = data, classes = classes_str),
-        regmult = param$regmult,
-        ...
-      )
+    tryCatch(
+      {
+        model <- maxnet::maxnet(
+          p = p,
+          data = data,
+          f = maxnet::maxnet.formula(p, data = data, classes = classes_str),
+          regmult = param$regmult,
+          ...
+        )
 
-      # Store the response levels for later use
-      model$obsLevels <- lev
-      return(model)
-
-    }, error = function(e) {
-      # If maxnet fails, return a simple model structure that won't break caret
-      warning(paste("MaxNet fitting failed:", e$message))
-      dummy_model <- list(
-        obsLevels = lev,
-        failed = TRUE,
-        error_message = e$message
-      )
-      class(dummy_model) <- "maxnet"
-      return(dummy_model)
-    })
+        # Store the response levels for later use
+        model$obsLevels <- lev
+        return(model)
+      },
+      error = function(e) {
+        # If maxnet fails, return a simple model structure that won't break caret
+        warning(paste("MaxNet fitting failed:", e$message))
+        dummy_model <- list(
+          obsLevels = lev,
+          failed = TRUE,
+          error_message = e$message
+        )
+        class(dummy_model) <- "maxnet"
+        return(dummy_model)
+      }
+    )
   },
-
   predict = function(modelFit, newdata, preProc = NULL, submodels = NULL) {
     # Handle failed models
     if (!is.null(modelFit$failed) && modelFit$failed) {
       # Return predictions of the most common class
       return(factor(rep(modelFit$obsLevels[1], nrow(newdata)),
-                    levels = modelFit$obsLevels))
+        levels = modelFit$obsLevels
+      ))
     }
 
     # Ensure newdata is a data.frame
@@ -133,21 +131,22 @@
     # Handle case where prob function might fail
     if (is.null(probs) || ncol(probs) < 2) {
       return(factor(rep(modelFit$obsLevels[1], nrow(newdata)),
-                    levels = modelFit$obsLevels))
+        levels = modelFit$obsLevels
+      ))
     }
 
     # Return the name of the column with the highest probability for each row
     factor(modelFit$obsLevels[apply(probs, 1, which.max)],
-           levels = modelFit$obsLevels)
+      levels = modelFit$obsLevels
+    )
   },
-
   prob = function(modelFit, newdata, preProc = NULL, submodels = NULL) {
     # Handle failed models
     if (!is.null(modelFit$failed) && modelFit$failed) {
       # Return equal probabilities for all classes
       n_obs <- nrow(newdata)
       n_classes <- length(modelFit$obsLevels)
-      prob_df <- as.data.frame(matrix(1/n_classes, nrow = n_obs, ncol = n_classes))
+      prob_df <- as.data.frame(matrix(1 / n_classes, nrow = n_obs, ncol = n_classes))
       colnames(prob_df) <- modelFit$obsLevels
       return(prob_df)
     }
@@ -158,32 +157,32 @@
     }
 
     # Add error handling for prediction
-    tryCatch({
-      # Use type = "logistic" to get probabilities in the [0, 1] range
-      pred_probs <- as.numeric(predict(modelFit, newdata, type = "logistic"))
+    tryCatch(
+      {
+        # Use type = "logistic" to get probabilities in the [0, 1] range
+        pred_probs <- as.numeric(predict(modelFit, newdata, type = "logistic"))
 
-      # Structure the output as a data.frame with columns named after the outcome levels
-      prob_df <- data.frame(
-        class1 = pred_probs,
-        class2 = 1 - pred_probs
-      )
-      # Name columns dynamically based on the levels seen during training
-      colnames(prob_df) <- modelFit$obsLevels
-      return(prob_df)
-
-    }, error = function(e) {
-      # If prediction fails, return equal probabilities
-      warning(paste("MaxNet prediction failed:", e$message))
-      n_obs <- nrow(newdata)
-      n_classes <- length(modelFit$obsLevels)
-      prob_df <- as.data.frame(matrix(0.5, nrow = n_obs, ncol = n_classes))
-      colnames(prob_df) <- modelFit$obsLevels
-      return(prob_df)
-    })
+        # Structure the output as a data.frame with columns named after the outcome levels
+        prob_df <- data.frame(
+          class1 = pred_probs,
+          class2 = 1 - pred_probs
+        )
+        # Name columns dynamically based on the levels seen during training
+        colnames(prob_df) <- modelFit$obsLevels
+        return(prob_df)
+      },
+      error = function(e) {
+        # If prediction fails, return equal probabilities
+        warning(paste("MaxNet prediction failed:", e$message))
+        n_obs <- nrow(newdata)
+        n_classes <- length(modelFit$obsLevels)
+        prob_df <- as.data.frame(matrix(0.5, nrow = n_obs, ncol = n_classes))
+        colnames(prob_df) <- modelFit$obsLevels
+        return(prob_df)
+      }
+    )
   },
-
   varImp = function(object, lambda = NULL, normalize = TRUE, ...) {
-
     # Handle failed models
     if (!is.null(object$failed) && object$failed) {
       return(NULL)
@@ -200,7 +199,9 @@
     # Remove zero coefficients (important for LASSO sparsity)
     coefs <- coefs[coefs != 0]
 
-    if (length(coefs) == 0) return(NULL)
+    if (length(coefs) == 0) {
+      return(NULL)
+    }
 
     # --------------------------------------------
     # STEP 1 — Map features → original variables
@@ -230,7 +231,7 @@
 
     base_vars <- vapply(feat_names, extract_var, character(1))
 
-    #base_vars <- sub("([:]._.*$)|(:.*$)", "", feat_names)
+    # base_vars <- sub("([:]._.*$)|(:.*$)", "", feat_names)
 
     # --------------------------------------------
     # STEP 2 — Aggregate importance
@@ -272,7 +273,6 @@
 
     return(imp_df)
   },
-
   levels = function(x) x$obsLevels,
   tags = c("maxent", "Presence-Background")
 )

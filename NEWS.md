@@ -106,3 +106,4 @@
 # caretSDM 1.9.2
 
 -   'crs' argument in occurrences_sdm and sdm_area is now changed to 'occ_crs' and 'output_crs', respectively.
+

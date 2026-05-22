@@ -23,7 +23,7 @@ editor_options:
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(
-  echo    = TRUE,
+  echo = TRUE,
   message = FALSE,
   warning = FALSE,
   fig.align = "center",
@@ -86,13 +86,14 @@ oc <- occurrences_sdm(occ, occ_crs = 6933)
 WorldClim_data("current", variable = "bioc", resolution = 10)
 
 # Import bioclimatic data
-bioc <- raster::stack(list.files("current", pattern = ".tif", full.names=T)[c(1,14,4)])
+bioc <- raster::stack(list.files("current", pattern = ".tif", full.names = T)[c(1, 14, 4)])
 names(bioc) <- c("bio1", "bio4", "bio12")
 
 # Build sdm_area object
-sa <- sdm_area(bioc, 
-               output_crs = 4326, 
-               crop_by = buffer_sdm(occ, size = 500000, occ_crs = 6933)) |> 
+sa <- sdm_area(bioc,
+  output_crs = 4326,
+  crop_by = buffer_sdm(occ, size = 500000, occ_crs = 6933)
+) |>
   add_scenarios()
 ```
 
@@ -108,23 +109,29 @@ controls how pseudoabsences are generated.
 ```{r workflow-function}
 # Build workflow function
 run_sdm <- function(pseudoabsence_method, ...) {
-    set.seed(1)
+  set.seed(1)
   # Merge sdm_area and occurrences_sdm and perform pre-processing, processing and projecting.
-  i <- input_sdm(oc, sa) |> 
-    data_clean() |> 
-    multicollinearity_sdm(method = "vifcor", th = 0.5) |> 
-    pseudoabsences(method = pseudoabsence_method, 
-                   variables_selected = "vif", ...) |> 
-    train_sdm(algo = c("naive_bayes", "kknn", "svmRadial", "nnet", "rf", "fda", "glm"), 
-              ctrl = caret::trainControl(method = "repeatedcv", 
-                                         number = 4, 
-                                         repeats = 10, 
-                                         classProbs = TRUE, 
-                                         returnResamp = "all", 
-                                         summaryFunction = summary_sdm, 
-                                         savePredictions = "all"), 
-              variables_selected = "vif") |> 
-    predict_sdm(th = 0.9) |> 
+  i <- input_sdm(oc, sa) |>
+    data_clean() |>
+    multicollinearity_sdm(method = "vifcor", th = 0.5) |>
+    pseudoabsences(
+      method = pseudoabsence_method,
+      variables_selected = "vif", ...
+    ) |>
+    train_sdm(
+      algo = c("naive_bayes", "kknn", "svmRadial", "nnet", "rf", "fda", "glm"),
+      ctrl = caret::trainControl(
+        method = "repeatedcv",
+        number = 4,
+        repeats = 10,
+        classProbs = TRUE,
+        returnResamp = "all",
+        summaryFunction = summary_sdm,
+        savePredictions = "all"
+      ),
+      variables_selected = "vif"
+    ) |>
+    predict_sdm(th = 0.9) |>
     ensemble_sdm()
   return(i)
 }
@@ -140,29 +147,29 @@ The random and Bioclim (SRE) methods are built into `caretSDM` and can be invoke
 
 ```{r run-models, echo=TRUE, results='hide', warning=FALSE, message=FALSE}
 # Run workflow with random pseudoabsences
-sdm_random   <- run_sdm(pseudoabsence_method = "random")
+sdm_random <- run_sdm(pseudoabsence_method = "random")
 
 # Run workflow with pseudoabsences obtained outside a bioclim (SRE) envelope
-sdm_bioclim  <- run_sdm(pseudoabsence_method = "bioclim")
+sdm_bioclim <- run_sdm(pseudoabsence_method = "bioclim")
 
 # Run workflow with a custom pseudoabsences method, creating a 2-degree-wide buffer.
 buffer_pa_custom <- function(env_sf, occ_sf, buffer_dist = 2) {
   sf::sf_use_s2(FALSE) # Disable s2 geometry for buffering
   # Create buffer around occurrence points
   buffer <- sf::st_buffer(occ_sf, dist = buffer_dist)
-  
+
   # Union buffers into a single geometry
   buffer_union <- sf::st_union(buffer)
-  
+
   # Identify cells outside the buffer
-  outside_buffer <- sf::st_difference(env_sf, buffer_union)[,1]
+  outside_buffer <- sf::st_difference(env_sf, buffer_union)[, 1]
 
   # Randomly extract cell_ids outside the buffer
   pa_ids_sample <- sample(outside_buffer$cell_id, nrow(occ_sf))
-  
+
   return(pa_ids_sample)
 }
-sdm_buffer    <- run_sdm(pseudoabsence_method = buffer_pa_custom)
+sdm_buffer <- run_sdm(pseudoabsence_method = buffer_pa_custom)
 ```
 
 ------------------------------------------------------------------------
@@ -175,19 +182,19 @@ reflect the influence of pseudoabsence placement on model calibration.
 
 ```{r performance}
 # Extract cross-validated metrics stored inside each sdm object
-perf_random  <- get_validation_metrics(sdm_random)[[1]] |> 
+perf_random <- get_validation_metrics(sdm_random)[[1]] |>
   as.data.frame() |>
-  dplyr::mutate(method = "Random") |> 
+  dplyr::mutate(method = "Random") |>
   dplyr::select(c("method", "algo", "ROC", "ROCSD"))
 
-perf_bioclim <- get_validation_metrics(sdm_bioclim)[[1]]|> 
-  as.data.frame() |> 
+perf_bioclim <- get_validation_metrics(sdm_bioclim)[[1]] |>
+  as.data.frame() |>
   dplyr::mutate(method = "Environmental Constrain") |>
   dplyr::select(c("method", "algo", "ROC", "ROCSD"))
-  
 
-perf_buffer   <- get_validation_metrics(sdm_buffer)[[1]]  |> 
-  as.data.frame() |> 
+
+perf_buffer <- get_validation_metrics(sdm_buffer)[[1]] |>
+  as.data.frame() |>
   dplyr::mutate(method = "Geographical Constrain") |>
   dplyr::select(c("method", "algo", "ROC", "ROCSD"))
 
@@ -195,19 +202,19 @@ perf_all <- dplyr::bind_rows(perf_random, perf_bioclim, perf_buffer)
 
 # Show mean values:
 # Extract cross-validated metrics stored inside each sdm object
-mean_perf_random  <- mean_validation_metrics(sdm_random)[[1]] |> 
+mean_perf_random <- mean_validation_metrics(sdm_random)[[1]] |>
   as.data.frame() |>
-  dplyr::mutate(method = "Random") |> 
+  dplyr::mutate(method = "Random") |>
   dplyr::select(c("method", "algo", "ROC", "ROCSD"))
 
-mean_perf_bioclim <- mean_validation_metrics(sdm_bioclim)[[1]]|> 
-  as.data.frame() |> 
+mean_perf_bioclim <- mean_validation_metrics(sdm_bioclim)[[1]] |>
+  as.data.frame() |>
   dplyr::mutate(method = "Environmental Constrain") |>
   dplyr::select(c("method", "algo", "ROC", "ROCSD"))
-  
 
-mean_perf_buffer   <- mean_validation_metrics(sdm_buffer)[[1]]  |> 
-  as.data.frame() |> 
+
+mean_perf_buffer <- mean_validation_metrics(sdm_buffer)[[1]] |>
+  as.data.frame() |>
   dplyr::mutate(method = "Geographical Constrain") |>
   dplyr::select(c("method", "algo", "ROC", "ROCSD"))
 
@@ -220,9 +227,11 @@ mean_perf_all
 ggplot(perf_all, aes(x = algo, y = ROC, fill = method)) +
   geom_boxplot(alpha = 0.75, outlier.size = 1.2) +
   geom_hline(yintercept = 0.9, linetype = "dashed", colour = "grey40") +
-  scale_fill_manual(values = c("Random"                   = "#4DA6C8",
-                               "Environmental Constrain"    = "#E07B54",
-                               "Geographical Constrain" = "#6DBF67")) +
+  scale_fill_manual(values = c(
+    "Random" = "#4DA6C8",
+    "Environmental Constrain" = "#E07B54",
+    "Geographical Constrain" = "#6DBF67"
+  )) +
   labs(
     title    = expression(italic("Araucaria angustifolia") ~ "— ROC/AUC by pseudoabsence method"),
     subtitle = "Dashed line: ROC/AUC = 0.9 (commonly used good-model threshold)",
@@ -279,10 +288,12 @@ structure of the final map; low correlations flag meaningful sensitivity
 to this decision.
 
 ```{r correlation-matrix}
-pred_vals <- data.frame(random = get_ensembles(sdm_random)[1,1][[1]][,"average"],
-                        bioclim = get_ensembles(sdm_bioclim)[1,1][[1]][,"average"],
-                        buffer   = get_ensembles(sdm_buffer)[1,1][[1]][,"average"]) 
-cor_mat <- cor(pred_vals, method = "pearson") |> 
+pred_vals <- data.frame(
+  random = get_ensembles(sdm_random)[1, 1][[1]][, "average"],
+  bioclim = get_ensembles(sdm_bioclim)[1, 1][[1]][, "average"],
+  buffer = get_ensembles(sdm_buffer)[1, 1][[1]][, "average"]
+)
+cor_mat <- cor(pred_vals, method = "pearson") |>
   as.table() |>
   as.data.frame()
 ```
@@ -312,10 +323,12 @@ ggplot(pred_vals, aes(x = random, y = bioclim)) +
   geom_hex(bins = 60) +
   geom_abline(slope = 1, intercept = 0, colour = "red", linetype = "dashed") +
   scale_fill_viridis_c(option = "plasma", name = "Count") +
-  annotate("text", x = 0.7, y = 0.1,
-           label = paste0("r = ", round(cor_mat[2,3], 3)),
-           hjust = 0, size = 4, colour = "black",
-           fontface = "bold") +
+  annotate("text",
+    x = 0.7, y = 0.1,
+    label = paste0("r = ", round(cor_mat[2, 3], 3)),
+    hjust = 0, size = 4, colour = "black",
+    fontface = "bold"
+  ) +
   labs(title = "Random vs. Environmental Constrain", x = "Random", y = "Environmental Constrain") +
   theme_minimal(base_size = 11)
 ```
@@ -325,10 +338,12 @@ ggplot(pred_vals, aes(x = random, y = buffer)) +
   geom_hex(bins = 60) +
   geom_abline(slope = 1, intercept = 0, colour = "red", linetype = "dashed") +
   scale_fill_viridis_c(option = "plasma", name = "Count") +
-  annotate("text", x = 0.7, y = 0.1,
-           label = paste0("r = ", round(cor_mat[3,3], 3)),
-           hjust = 0, size = 4, colour = "black",
-           fontface = "bold") +
+  annotate("text",
+    x = 0.7, y = 0.1,
+    label = paste0("r = ", round(cor_mat[3, 3], 3)),
+    hjust = 0, size = 4, colour = "black",
+    fontface = "bold"
+  ) +
   labs(title = "Random vs. Geographical Constrain", x = "Random", y = "Geographical Constrain") +
   theme_minimal(base_size = 11)
 ```
@@ -338,12 +353,16 @@ ggplot(pred_vals, aes(x = bioclim, y = buffer)) +
   geom_hex(bins = 60) +
   geom_abline(slope = 1, intercept = 0, colour = "red", linetype = "dashed") +
   scale_fill_viridis_c(option = "plasma", name = "Count") +
-  annotate("text", x = 0.7, y = 0.1,
-           label = paste0("r = ", round(cor_mat[4,3], 3)),
-           hjust = 0, size = 4, colour = "black",
-           fontface = "bold") +
-  labs(title = "Environmental Constrain vs. Geographical Constrain",
-       x = "Environmental Constrain", y = "Geographical Constrain") +
+  annotate("text",
+    x = 0.7, y = 0.1,
+    label = paste0("r = ", round(cor_mat[4, 3], 3)),
+    hjust = 0, size = 4, colour = "black",
+    fontface = "bold"
+  ) +
+  labs(
+    title = "Environmental Constrain vs. Geographical Constrain",
+    x = "Environmental Constrain", y = "Geographical Constrain"
+  ) +
   theme_minimal(base_size = 11)
 ```
 

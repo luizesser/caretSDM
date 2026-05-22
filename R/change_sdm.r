@@ -38,25 +38,28 @@
 #'   i <- input_sdm(oc, sa)
 #'
 #'   # Pseudoabsence generation:
-#'   i <- pseudoabsences(i, method="random", n_set = 2)
+#'   i <- pseudoabsences(i, method = "random", n_set = 2)
 #'
 #'   # Custom trainControl:
-#'   ctrl_sdm <- caret::trainControl(method = "boot",
-#'                                   number = 1,
-#'                                   classProbs = TRUE,
-#'                                   returnResamp = "all",
-#'                                   summaryFunction = summary_sdm,
-#'                                   savePredictions = "all")
+#'   ctrl_sdm <- caret::trainControl(
+#'     method = "boot",
+#'     number = 1,
+#'     classProbs = TRUE,
+#'     returnResamp = "all",
+#'     summaryFunction = summary_sdm,
+#'     savePredictions = "all"
+#'   )
 #'
 #'   # Train models:
 #'   i <- train_sdm(i,
-#'                  algo = c("naive_bayes"),
-#'                  ctrl=ctrl_sdm,
-#'                  variables_selected = c("bio1", "bio12")) |>
+#'     algo = c("naive_bayes"),
+#'     ctrl = ctrl_sdm,
+#'     variables_selected = c("bio1", "bio12")
+#'   ) |>
 #'     suppressWarnings()
 #'
 #'   # Predict models:
-#'   i  <- predict_sdm(i, th=0.8)
+#'   i <- predict_sdm(i, th = 0.8)
 #'
 #'   # Ensemble:
 #'   i <- ensemble_sdm(i, method = "average")
@@ -82,15 +85,15 @@
 prediction_change_sdm <- function(i, scenario = NULL, ensemble_type = NULL, species = NULL, th = 0.5) {
   assert_class_cli(i, "input_sdm")
   assert_choice_cli(scenario, colnames(get_ensembles(i)), null.ok = TRUE)
-  if(is.null(scenario)){
-    scenario <- sample(colnames(get_ensembles(i))[!colnames(get_ensembles(i)) %in%"current"], 1)
+  if (is.null(scenario)) {
+    scenario <- sample(colnames(get_ensembles(i))[!colnames(get_ensembles(i)) %in% "current"], 1)
   }
-  assert_choice_cli(ensemble_type, colnames(get_ensembles(i)[1,1][[1]])[-1], null.ok = TRUE)
-  if(is.null(ensemble_type)){
+  assert_choice_cli(ensemble_type, colnames(get_ensembles(i)[1, 1][[1]])[-1], null.ok = TRUE)
+  if (is.null(ensemble_type)) {
     ensemble_type <- "average"
   }
-  assert_choice_cli(species, colnames(get_ensembles(i)[1,1][[1]]), null.ok = TRUE)
-  if(is.null(species)){
+  assert_choice_cli(species, colnames(get_ensembles(i)[1, 1][[1]]), null.ok = TRUE)
+  if (is.null(species)) {
     species <- species_names(i)[1]
   }
   assert_numeric_cli(th, len = 1)
@@ -115,14 +118,17 @@ prediction_change_sdm <- function(i, scenario = NULL, ensemble_type = NULL, spec
     ) |>
     dplyr::select(value) |>
     dplyr::mutate(value = factor(value,
-                                 levels = c(0, 1, 2, 3),
-                                 labels = c("Both absent",
-                                            "Current only",
-                                            "Projection only",
-                                            "Both present")))
+      levels = c(0, 1, 2, 3),
+      labels = c(
+        "Both absent",
+        "Current only",
+        "Projection only",
+        "Both present"
+      )
+    ))
 
   p <- ggplot2::ggplot()
-  if(!unique(sf::st_geometry_type(grd)) == "LINESTRING"){
+  if (!unique(sf::st_geometry_type(grd)) == "LINESTRING") {
     p <- p + ggplot2::geom_sf(data = grd, ggplot2::aes(fill = value), linewidth = 0.001) +
       ggplot2::scale_fill_viridis_d(name = paste0("Scenarios\n Changes"))
   } else {
@@ -144,4 +150,3 @@ prediction_change_sdm <- function(i, scenario = NULL, ensemble_type = NULL, spec
 
   return(p)
 }
-

@@ -21,7 +21,7 @@
 #'
 #' @examples
 #' # Create sdm_area object:
-#' study_area <- buffer_sdm(occ, size=50000, occ_crs=6933)
+#' study_area <- buffer_sdm(occ, size = 50000, occ_crs = 6933)
 #' plot(study_area)
 #'
 #' @importFrom sf st_as_sf st_buffer st_union st_crs st_set_geometry st_convex_hull st_combine
@@ -33,27 +33,27 @@ buffer_sdm <- function(occ_data, size = NULL, occ_crs = NULL, mcp = FALSE) {
   assert_class_cli(occ_crs, "numeric")
   assert_class_cli(mcp, "logical")
 
-  if(is_occurrences(occ_data)){
+  if (is_occurrences(occ_data)) {
     occ_data <- occ_data$occurrences |> .sf_to_df_sdm()
   }
 
   assert_class_cli(occ_data, "data.frame")
 
   cnames <- .find_columns(occ_data)
-  if ( length(cnames) > 2 ) {
-    cnames <- cnames[c(2,3)]
+  if (length(cnames) > 2) {
+    cnames <- cnames[c(2, 3)]
   }
-  if ( mcp ) {
+  if (mcp) {
     x <- occ_data |>
-      sf::st_as_sf(coords=cnames[c(1,2)], crs=sf::st_crs(occ_crs)) |>
+      sf::st_as_sf(coords = cnames[c(1, 2)], crs = sf::st_crs(occ_crs)) |>
       sf::st_combine() |>
       sf::st_convex_hull() |>
-      sf::st_buffer(dist=size) |>
+      sf::st_buffer(dist = size) |>
       sf::st_union()
   } else {
     x <- occ_data |>
-      sf::st_as_sf(coords=cnames[c(1,2)], crs=sf::st_crs(occ_crs)) |>
-      sf::st_buffer(dist=size) |>
+      sf::st_as_sf(coords = cnames[c(1, 2)], crs = sf::st_crs(occ_crs)) |>
+      sf::st_buffer(dist = size) |>
       sf::st_union()
   }
   return(x)

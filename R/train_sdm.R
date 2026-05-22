@@ -77,17 +77,19 @@
 #' i <- pseudoabsences(i, method = "random")
 #'
 #' # Custom trainControl:
-#' ctrl_sdm <- caret::trainControl(method = "repeatedcv",
-#'                                 number = 2,
-#'                                 repeats = 1,
-#'                                 classProbs = TRUE,
-#'                                 returnResamp = "all",
-#'                                 summaryFunction = summary_sdm,
-#'                                 savePredictions = "all")
+#' ctrl_sdm <- caret::trainControl(
+#'   method = "repeatedcv",
+#'   number = 2,
+#'   repeats = 1,
+#'   classProbs = TRUE,
+#'   returnResamp = "all",
+#'   summaryFunction = summary_sdm,
+#'   savePredictions = "all"
+#' )
 #'
 #' # Train models:
 #' i <- train_sdm(i, algo = c("naive_bayes"), ctrl = ctrl_sdm) |>
-#' suppressWarnings()
+#'   suppressWarnings()
 #'
 #' @importFrom sf st_centroid st_as_sf st_join st_intersection st_geometry_type
 #' @importFrom dplyr arrange select filter all_of bind_cols summarise group_by across everything mutate
@@ -110,18 +112,22 @@ train_sdm <- function(occ, pred = NULL, algo, ctrl = NULL, variables_selected = 
   assert_subset_cli(class(algo), c("list", "character"), empty.ok = FALSE)
 
   if (!is.null(ctrl)) {
-    assert_list_cli(ctrl, len=27)
+    assert_list_cli(ctrl, len = 27)
     assert_names_cli(names(ctrl),
-                     must.include = c("method", "number", "repeats", "search", "p", "initialWindow",
-                                      "horizon", "fixedWindow", "skip", "verboseIter", "returnData",
-                                      "returnResamp", "savePredictions", "classProbs",
-                                      "summaryFunction", "selectionFunction", "preProcOptions",
-                                      "sampling", "index", "indexOut", "indexFinal", "timingSamps",
-                                      "predictionBounds", "seeds", "adaptive", "trim", "allowParallel"))
+      must.include = c(
+        "method", "number", "repeats", "search", "p", "initialWindow",
+        "horizon", "fixedWindow", "skip", "verboseIter", "returnData",
+        "returnResamp", "savePredictions", "classProbs",
+        "summaryFunction", "selectionFunction", "preProcOptions",
+        "sampling", "index", "indexOut", "indexFinal", "timingSamps",
+        "predictionBounds", "seeds", "adaptive", "trim", "allowParallel"
+      )
+    )
   } else {
     ctrl <- caret::trainControl(
       method = "repeatedcv", number = 4, repeats = 1, classProbs = TRUE, returnResamp = "all",
-      summaryFunction = summary_sdm, savePredictions = "all", allowParallel = FALSE)
+      summaryFunction = summary_sdm, savePredictions = "all", allowParallel = FALSE
+    )
   }
   if (ctrl$method %in% c("cv_spatial", "cv_cluster")) {
     .check_suggested("blockCV", "train_sdm with ctrl$method = 'cv_spatial' or 'cv_cluster'")
@@ -133,321 +139,93 @@ train_sdm <- function(occ, pred = NULL, algo, ctrl = NULL, variables_selected = 
       selected_vars <- get_predictor_names(pred)
     } else if (any(variables_selected %in% get_predictor_names(pred))) {
       selected_vars <- get_predictor_names(pred)[get_predictor_names(pred) %in% variables_selected]
-    } else if (variables_selected == "vif"){
+    } else if (variables_selected == "vif") {
       selected_vars <- pred$variable_selection$vif$selected_variables
-    } else if (variables_selected == "pca"){
+    } else if (variables_selected == "pca") {
       selected_vars <- pred$variable_selection$pca$selected_variables
     }
   }
 
   algo2 <- algo
-  custom_algo <- c("library", "type", "parameters", "grid",
-                   "fit", "predict", "prob")
-  if(is.list(algo) && all(custom_algo %in% names(algo))) {
+  custom_algo <- c(
+    "library", "type", "parameters", "grid",
+    "fit", "predict", "prob"
+  )
+  if (is.list(algo) && all(custom_algo %in% names(algo))) {
     algo2 <- deparse(substitute(algo))
   }
 
-  if("maxent" %in% algo && !"background" %in% names(z)) {
+  if ("maxent" %in% algo && !"background" %in% names(z)) {
     cli::cli_abort(c(
       "{.var algo} contains maxent, but no background data is provided.",
       "i" = "Perhaps you have confused the concepts of pseudoabsence and background data."
     ))
   }
 
-#  l <- sapply(z$spp_names, function(sp) {
-#    l1 <- list()
-#    l2 <- list()
-#
-#    if (is_sdm_area(pred)) {
-#      if(unique(sf::st_geometry_type(pred$grid)) == "LINESTRING") {
-#        df <- pred$grid |>
-#          dplyr::select(dplyr::all_of(c("cell_id", selected_vars)))
-#        sp_ids <- z$occurrences[z$occurrences$species == sp,]
-#        occ2 <- df[df$cell_id %in% sp_ids$cell_id,]
-#      } else {
-#        if(sf::st_crs(z$occurrences) != sf::st_crs(pred$grid)){
-#          occ2 <- sf::st_transform(z$occurrences, crs = sf::st_crs(pred$grid)) |>
-#            sf::st_join(pred$grid) |>
-#            dplyr::filter(species == sp) |>
-#            dplyr::select(dplyr::all_of(selected_vars))
-#        } else {
-#          occ2 <- z$occurrences |>
-#            sf::st_join(pred$grid) |>
-#            dplyr::filter(species == sp) |>
-#            dplyr::select(dplyr::all_of(selected_vars))
-#        }
-#        suppressWarnings(occ2 <- sf::st_intersection(occ2, pred$grid))
-#      }
-#    }
-#
-#    if ("pseudoabsences" %in% names(z)) {
-#      for (j in 1:length(z$pseudoabsences$data[[sp]])) {
-#        pa <- z$pseudoabsences$data[[sp]][[j]]
-#        pa <- sf::st_centroid(pa[, names(occ2)[match(names(pa), names(occ2))]]) |>
-#          suppressWarnings()
-#        occ2 <- occ2[, names(occ2)[match(names(pa), names(occ2))]]
-#        x <- rbind(occ2, pa)
-#        ctrl2 <- ctrl
-#        if ("cv_spatial" %in% ctrl$method) {
-#          test <- x |> dplyr::mutate(presence = c(rep(1, nrow(occ2)), rep(0, nrow(pa))))
-#          spatial_blocks <- blockCV::cv_spatial(
-#            x = test,
-#            column = "presence",
-#            r = sdm_as_terra(occ, what = "predictors")[[-1]], # removes cell_id
-#            k = ctrl$number,
-#            biomod2 = FALSE,
-#            progress = FALSE
-#          )
-#          ctrl2$method <- "cv"
-#          ctrl2$number <- NA
-#          ctrl2$index <- lapply(spatial_blocks$folds_list, function(x) x[[1]])
-#          ctrl2$indexOut <- lapply(spatial_blocks$folds_list, function(x) x[[2]])
-#        }
-#        if ("cv_cluster" %in% ctrl$method) {
-#          test <- x |> dplyr::mutate(presence = c(rep(1, nrow(occ2)), rep(0, nrow(pa))))
-#          env_blocks <- blockCV::cv_cluster(
-#            test,
-#            column = "presence",
-#            r = sdm_as_terra(occ, what = "predictors")[[-1]], # removes cell_id
-#            k = ctrl$number,
-#            biomod2 = FALSE,
-#            report = FALSE
-#          )
-#          ctrl2$method <- "cv"
-#          ctrl2$number <- NA
-#          ctrl2$index <- lapply(env_blocks$folds_list, function(x) x[[1]])
-#          ctrl2$indexOut <- lapply(env_blocks$folds_list, function(x) x[[2]])
-#        }
-#
-#        x <- dplyr::select(as.data.frame(x), dplyr::all_of(selected_vars))
-#        df <- as.factor(c(rep("presence", nrow(occ2)), rep("pseudoabsence", nrow(pa))))
-#
-#        # TRAIN MODELS ##################
-#        if (sp %in% z$esm$spp) {
-#          cli::cli_progress_message("ESM species")
-#          m1 <- list()
-#          vars_comb <- colnames(x) |> utils::combn(2)
-#          if(is.character(algo)) {
-#            algo_pa <- algo[!algo %in% c("maxent")]
-#            for (vars in 1:ncol(vars_comb)) {
-#              m1[[vars]] <- lapply(algo_pa, function(a) {
-#                if (a == "mahal.dist") { a <- .mahal.dist }
-#                .safe_train(
-#                  df~.,
-#                  data = cbind(df,x[,vars_comb[,vars]]),
-#                  method = a,
-#                  trControl = ctrl2,
-#                  ...
-#                )
-#              })
-#            }
-#            m <- unlist(m1, recursive = FALSE)
-#          } else if (is.list(algo)) {
-#            for (vars in 1:ncol(vars_comb)) {
-#              m1[[vars]] <- .safe_train(
-#                df~.,
-#                data = cbind(df,x),
-#                method = algo,
-#                trControl = ctrl2,
-#                ...
-#              ) |> list()
-#            }
-#            m <- unlist(m1, recursive = FALSE)
-#          }
-#        } else if(is.character(algo)) {
-#          algo_pa <- algo[!algo %in% c("maxent")]
-#          m <- lapply(algo_pa, function(a) {
-#            if (a == "mahal.dist") { a <- .mahal.dist }
-#            .safe_train(
-#              df~.,
-#              data = cbind(df,x),
-#              method = a,
-#              trControl = ctrl2 ########### add ...
-#            ) # lapply retorna diferentes valores de tuning (padronizar com seed?)
-#          })
-#        } else if (is.list(algo)) {
-#          m <- .safe_train(
-#            df~.,
-#            data = cbind(df,x),
-#            method = algo,
-#            trControl = ctrl2,
-#            ...
-#          ) |> list()
-#        }
-#        l1[[paste0("m", j, ".")]] <- m
-#        #l1[[paste0(algo_pa,"_pa", j)]] <- m #### TESTE
-#      }
-#    }
-#
-#    if ("background" %in% names(z)) {
-#      for (j in 1:length(z$background$data[[sp]])) {
-#        pa <- z$background$data[[sp]][[j]]
-#        pa <- sf::st_centroid(pa[, names(occ2)[match(names(pa), names(occ2))]]) |>
-#          suppressWarnings()
-#        occ2 <- occ2[, names(occ2)[match(names(pa), names(occ2))]]
-#        x <- rbind(occ2, pa)
-#        ctrl2 <- ctrl
-#        if ("cv_spatial" %in% ctrl$method) {
-#          test <- x |> dplyr::mutate(presence = c(rep(1, nrow(occ2)), rep(0, nrow(pa))))
-#          spatial_blocks <- blockCV::cv_spatial(
-#            x = test,
-#            column = "presence",
-#            r = sdm_as_terra(occ, what = "predictors")[[-1]], # removes cell_id
-#            k = ctrl$number,
-#            biomod2 = FALSE,
-#            progress = FALSE
-#          )
-#          ctrl2$method <- "cv"
-#          ctrl2$number <- NA
-#          ctrl2$index <- lapply(spatial_blocks$folds_list, function(x) x[[1]])
-#          ctrl2$indexOut <- lapply(spatial_blocks$folds_list, function(x) x[[2]])
-#        }
-#        if ("cv_cluster" %in% ctrl$method) {
-#          test <- x |> dplyr::mutate(presence = c(rep(1, nrow(occ2)), rep(0, nrow(pa))))
-#          env_blocks <- blockCV::cv_cluster(
-#            test,
-#            column = "presence",
-#            r = sdm_as_terra(occ, what = "predictors")[[-1]], # removes cell_id
-#            k = ctrl$number,
-#            biomod2 = FALSE,
-#            report = FALSE
-#          )
-#          ctrl2$method <- "cv"
-#          ctrl2$number <- NA
-#          ctrl2$index <- lapply(env_blocks$folds_list, function(x) x[[1]])
-#          ctrl2$indexOut <- lapply(env_blocks$folds_list, function(x) x[[2]])
-#        }
-#
-#        x <- dplyr::select(as.data.frame(x), dplyr::all_of(selected_vars))
-#        df <- as.factor(c(rep("presence", nrow(occ2)), rep("background", nrow(pa))))
-#
-#        # TRAIN MODELS ##################
-#        if (sp %in% z$esm$spp) {
-#          cli::cli_progress_message("ESM species")
-#          m1 <- list()
-#          vars_comb <- colnames(x) |> utils::combn(2)
-#          if(is.character(algo)) {
-#            for (vars in 1:ncol(vars_comb)) {
-#              algo_bg <- algo[algo %in% c("maxent", "mahal.dist")]
-#              m1[[vars]] <- lapply(algo_bg, function(a) {
-#                if (a == "mahal.dist") { a <- .mahal.dist } else
-#                  if (a == "maxent") { a <- .maxent }
-#                .safe_train(
-#                  df~.,
-#                  data = cbind(df,x[,vars_comb[,vars]]),
-#                  method = a,
-#                  trControl = ctrl2,
-#                  ...
-#                )
-#              })
-#            }
-#            m <- unlist(m1, recursive = FALSE)
-#          } else if (is.list(algo)) {
-#            for (vars in 1:ncol(vars_comb)) {
-#              m1[[vars]] <- .safe_train(
-#                df~.,
-#                data = cbind(df,x),
-#                method = algo,
-#                trControl = ctrl2,
-#                ...
-#              ) |> list()
-#            }
-#            m <- unlist(m1, recursive = FALSE)
-#          }
-#        } else if(is.character(algo)) {
-#          algo_bg <- algo[algo %in% c("maxent", "mahal.dist")]
-#          m <- lapply(algo_bg, function(a) {
-#            if (a == "mahal.dist") { a <- .mahal.dist } else
-#              if (a == "maxent") { a <- .maxent } ###########################################
-#            .safe_train(
-#              df~.,
-#              data = cbind(df,x),
-#              method = a,
-#              trControl = ctrl2 ######### include ...
-#            ) # lapply retorna diferentes valores de tuning (padronizar com seed?)
-#          })
-#        } else if (is.list(algo)) {
-#          m <- .safe_train(
-#            df~.,
-#            data = cbind(df,x),
-#            method = algo,
-#            trControl = ctrl2,
-#            ...
-#          ) |> list()
-#        }
-#        l2[[paste0("m", j, ".")]] <- m
-#        #l2[[paste0(algo_bg,"_bg", j)]] <- m #### TESTE
-#      }
-#    }
-#
-#    l <- append(l1, l2)
-#    names(l) <- paste0("m", 1:length(l), ".")
-#    return(l)
-#  }, simplify = TRUE, USE.NAMES = TRUE)
+  .build_model_name <- function(algo, type, dataset_id, esm_id = NULL) {
+    name <- paste0(algo, "_", type, dataset_id)
+    if (!is.null(esm_id)) name <- paste0(name, "_esm", esm_id)
+    name
+  }
 
-    .build_model_name <- function(algo, type, dataset_id, esm_id = NULL) {
-      name <- paste0(algo, "_", type, dataset_id)
-      if (!is.null(esm_id)) name <- paste0(name, "_esm", esm_id)
-      name
+  .get_algo_name <- function(a, algo2) {
+    # Case 1: standard caret algorithms (character vector)
+    if (is.character(a)) {
+      return(a)
     }
 
-    .get_algo_name <- function(a, algo2) {
-
-      # Case 1: standard caret algorithms (character vector)
-      if (is.character(a)) {
-        return(a)
+    # Case 2: custom model passed as list
+    if (is.list(a)) {
+      # If user passed a named object (best case)
+      if (!is.null(algo2) && nzchar(algo2)) {
+        return(algo2)
       }
 
-      # Case 2: custom model passed as list
-      if (is.list(a)) {
-
-        # If user passed a named object (best case)
-        if (!is.null(algo2) && nzchar(algo2)) {
-          return(algo2)
-        }
-
-        # Fallbacks (rare but safe)
-        if (!is.null(a$type)) return(a$type)
-        if (!is.null(a$method)) return(a$method)
-
-        return("custom")
+      # Fallbacks (rare but safe)
+      if (!is.null(a$type)) {
+        return(a$type)
+      }
+      if (!is.null(a$method)) {
+        return(a$method)
       }
 
-      # Final fallback
-      return("unknown")
+      return("custom")
     }
 
-    l <- sapply(z$spp_names, function(sp) {
+    # Final fallback
+    return("unknown")
+  }
 
-      l_all <- list()
+  l <- sapply(z$spp_names, function(sp) {
+    l_all <- list()
 
-      if (is_sdm_area(pred)) {
-        if(unique(sf::st_geometry_type(pred$grid)) == "LINESTRING") {
-          df <- pred$grid |>
-            dplyr::select(dplyr::all_of(c("cell_id", selected_vars)))
-          sp_ids <- z$occurrences[z$occurrences$species == sp,]
-          occ2 <- df[df$cell_id %in% sp_ids$cell_id,]
+    if (is_sdm_area(pred)) {
+      if (unique(sf::st_geometry_type(pred$grid)) == "LINESTRING") {
+        df <- pred$grid |>
+          dplyr::select(dplyr::all_of(c("cell_id", selected_vars)))
+        sp_ids <- z$occurrences[z$occurrences$species == sp, ]
+        occ2 <- df[df$cell_id %in% sp_ids$cell_id, ]
+      } else {
+        if (sf::st_crs(z$occurrences) != sf::st_crs(pred$grid)) {
+          occ2 <- sf::st_transform(z$occurrences, crs = sf::st_crs(pred$grid)) |>
+            sf::st_join(pred$grid) |>
+            dplyr::filter(species == sp) |>
+            dplyr::select(dplyr::all_of(selected_vars))
         } else {
-          if(sf::st_crs(z$occurrences) != sf::st_crs(pred$grid)){
-            occ2 <- sf::st_transform(z$occurrences, crs = sf::st_crs(pred$grid)) |>
-              sf::st_join(pred$grid) |>
-              dplyr::filter(species == sp) |>
-              dplyr::select(dplyr::all_of(selected_vars))
-          } else {
-            occ2 <- z$occurrences |>
-              sf::st_join(pred$grid) |>
-              dplyr::filter(species == sp) |>
-              dplyr::select(dplyr::all_of(selected_vars))
-          }
-          suppressWarnings(occ2 <- sf::st_intersection(occ2, pred$grid))
+          occ2 <- z$occurrences |>
+            sf::st_join(pred$grid) |>
+            dplyr::filter(species == sp) |>
+            dplyr::select(dplyr::all_of(selected_vars))
         }
+        suppressWarnings(occ2 <- sf::st_intersection(occ2, pred$grid))
       }
+    }
 
-      # =========================
-      # PSEUDOABSENCE MODELS
-      # =========================
-      if ("pseudoabsences" %in% names(z)) {
-        for (j in seq_along(z$pseudoabsences$data[[sp]])) {
+    # =========================
+    # PSEUDOABSENCE MODELS
+    # =========================
+    if ("pseudoabsences" %in% names(z)) {
+      for (j in seq_along(z$pseudoabsences$data[[sp]])) {
         pa <- z$pseudoabsences$data[[sp]][[j]]
         pa <- sf::st_centroid(pa[, names(occ2)[match(names(pa), names(occ2))]]) |>
           suppressWarnings()
@@ -488,53 +266,28 @@ train_sdm <- function(occ, pred = NULL, algo, ctrl = NULL, variables_selected = 
         x <- dplyr::select(as.data.frame(x), dplyr::all_of(selected_vars))
         df <- as.factor(c(rep("presence", nrow(occ2)), rep("pseudoabsence", nrow(pa))))
 
-          # TRAIN MODELS ##################
-          if (sp %in% z$esm$spp) {
+        # TRAIN MODELS ##################
+        if (sp %in% z$esm$spp) {
+          vars_comb <- colnames(x) |> utils::combn(2)
+          m_all <- list()
 
-            vars_comb <- colnames(x) |> utils::combn(2)
-            m_all <- list()
+          for (v in seq_len(ncol(vars_comb))) {
+            if (is.character(algo)) {
+              algo_pa <- algo[!algo %in% c("maxent")]
 
-            for (v in seq_len(ncol(vars_comb))) {
-
-              if (is.character(algo)) {
-                algo_pa <- algo[!algo %in% c("maxent")]
-
-                models <- lapply(seq_along(algo_pa), function(i) {
-                  a <- algo_pa[i]
-                  method <- if (a == "mahal.dist") .mahal.dist else a
-
-                  model <- .safe_train(
-                    df ~ .,
-                    data = cbind(df, x[, vars_comb[, v]]),
-                    method = method,
-                    trControl = ctrl2,
-                    ...
-                  )
-
-                  algo_name <- .get_algo_name(a, algo2)
-                  name <- .build_model_name(algo_name, "pa", j, esm_id = v)
-
-                  attr(model, "sdm_info") <- list(
-                    species = sp, type = "pa", dataset = j,
-                    esm = v, algorithm = algo_name
-                  )
-
-                  setNames(list(model), name)
-                })
-
-                m_all <- c(m_all, unlist(models, recursive = FALSE))
-
-              } else if (is.list(algo)) {
+              models <- lapply(seq_along(algo_pa), function(i) {
+                a <- algo_pa[i]
+                method <- if (a == "mahal.dist") .mahal.dist else a
 
                 model <- .safe_train(
                   df ~ .,
-                  data = cbind(df, x),
-                  method = algo,
+                  data = cbind(df, x[, vars_comb[, v]]),
+                  method = method,
                   trControl = ctrl2,
                   ...
                 )
 
-                algo_name <- .get_algo_name(algo, algo2)
+                algo_name <- .get_algo_name(a, algo2)
                 name <- .build_model_name(algo_name, "pa", j, esm_id = v)
 
                 attr(model, "sdm_info") <- list(
@@ -542,44 +295,11 @@ train_sdm <- function(occ, pred = NULL, algo, ctrl = NULL, variables_selected = 
                   esm = v, algorithm = algo_name
                 )
 
-                m_all[[name]] <- model
-              }
-            }
+                setNames(list(model), name)
+              })
 
-            l_all <- c(l_all, m_all)
-
-          } else {
-
-            if (is.character(algo)) {
-              algo_pa <- algo[!algo %in% c("maxent")]
-
-              for (i in seq_along(algo_pa)) {
-                a <- algo_pa[i]
-                method <- if (a == "mahal.dist") .mahal.dist else a
-
-                model <- .safe_train(
-                  df ~ .,
-                  data = cbind(df, x),
-                  method = method,
-                  trControl = ctrl2,
-                  ...
-                )
-
-                algo_name <- .get_algo_name(a, algo2)
-                name <- .build_model_name(algo_name, "pa", j)
-
-                if(!is.null(model)) {
-                  attr(model, "sdm_info") <- list(
-                    species = sp, type = "pa", dataset = j,
-                    algorithm = algo_name
-                  )
-                }
-
-                l_all[[name]] <- model
-              }
-
+              m_all <- c(m_all, unlist(models, recursive = FALSE))
             } else if (is.list(algo)) {
-
               model <- .safe_train(
                 df ~ .,
                 data = cbind(df, x),
@@ -589,102 +309,118 @@ train_sdm <- function(occ, pred = NULL, algo, ctrl = NULL, variables_selected = 
               )
 
               algo_name <- .get_algo_name(algo, algo2)
-              name <- .build_model_name(algo_name, "pa", j)
+              name <- .build_model_name(algo_name, "pa", j, esm_id = v)
 
               attr(model, "sdm_info") <- list(
                 species = sp, type = "pa", dataset = j,
-                algorithm = algo_name
+                esm = v, algorithm = algo_name
               )
+
+              m_all[[name]] <- model
+            }
+          }
+
+          l_all <- c(l_all, m_all)
+        } else {
+          if (is.character(algo)) {
+            algo_pa <- algo[!algo %in% c("maxent")]
+
+            for (i in seq_along(algo_pa)) {
+              a <- algo_pa[i]
+              method <- if (a == "mahal.dist") .mahal.dist else a
+
+              model <- .safe_train(
+                df ~ .,
+                data = cbind(df, x),
+                method = method,
+                trControl = ctrl2,
+                ...
+              )
+
+              algo_name <- .get_algo_name(a, algo2)
+              name <- .build_model_name(algo_name, "pa", j)
+
+              if (!is.null(model)) {
+                attr(model, "sdm_info") <- list(
+                  species = sp, type = "pa", dataset = j,
+                  algorithm = algo_name
+                )
+              }
 
               l_all[[name]] <- model
             }
+          } else if (is.list(algo)) {
+            model <- .safe_train(
+              df ~ .,
+              data = cbind(df, x),
+              method = algo,
+              trControl = ctrl2,
+              ...
+            )
+
+            algo_name <- .get_algo_name(algo, algo2)
+            name <- .build_model_name(algo_name, "pa", j)
+
+            attr(model, "sdm_info") <- list(
+              species = sp, type = "pa", dataset = j,
+              algorithm = algo_name
+            )
+
+            l_all[[name]] <- model
           }
         }
       }
+    }
 
-      # =========================
-      # BACKGROUND MODELS
-      # =========================
-      if ("background" %in% names(z)) {
-        for (j in seq_along(z$background$data[[sp]])) {
+    # =========================
+    # BACKGROUND MODELS
+    # =========================
+    if ("background" %in% names(z)) {
+      for (j in seq_along(z$background$data[[sp]])) {
+        pa <- z$background$data[[sp]][[j]]
+        pa <- sf::st_centroid(pa[, names(occ2)[match(names(pa), names(occ2))]]) |>
+          suppressWarnings()
+        occ2 <- occ2[, names(occ2)[match(names(pa), names(occ2))]]
+        x <- rbind(occ2, pa)
+        ctrl2 <- ctrl
+        if ("cv_spatial" %in% ctrl$method) {
+          test <- x |> dplyr::mutate(presence = c(rep(1, nrow(occ2)), rep(0, nrow(pa))))
+          spatial_blocks <- blockCV::cv_spatial(
+            x = test,
+            column = "presence",
+            r = sdm_as_terra(occ, what = "predictors")[[-1]], # removes cell_id
+            k = ctrl$number,
+            biomod2 = FALSE,
+            progress = FALSE
+          )
+          ctrl2$method <- "cv"
+          ctrl2$number <- NA
+          ctrl2$index <- lapply(spatial_blocks$folds_list, function(x) x[[1]])
+          ctrl2$indexOut <- lapply(spatial_blocks$folds_list, function(x) x[[2]])
+        }
+        if ("cv_cluster" %in% ctrl$method) {
+          test <- x |> dplyr::mutate(presence = c(rep(1, nrow(occ2)), rep(0, nrow(pa))))
+          env_blocks <- blockCV::cv_cluster(
+            test,
+            column = "presence",
+            r = sdm_as_terra(occ, what = "predictors")[[-1]], # removes cell_id
+            k = ctrl$number,
+            biomod2 = FALSE,
+            report = FALSE
+          )
+          ctrl2$method <- "cv"
+          ctrl2$number <- NA
+          ctrl2$index <- lapply(env_blocks$folds_list, function(x) x[[1]])
+          ctrl2$indexOut <- lapply(env_blocks$folds_list, function(x) x[[2]])
+        }
 
-          pa <- z$background$data[[sp]][[j]]
-          pa <- sf::st_centroid(pa[, names(occ2)[match(names(pa), names(occ2))]]) |>
-            suppressWarnings()
-          occ2 <- occ2[, names(occ2)[match(names(pa), names(occ2))]]
-          x <- rbind(occ2, pa)
-          ctrl2 <- ctrl
-          if ("cv_spatial" %in% ctrl$method) {
-            test <- x |> dplyr::mutate(presence = c(rep(1, nrow(occ2)), rep(0, nrow(pa))))
-            spatial_blocks <- blockCV::cv_spatial(
-              x = test,
-              column = "presence",
-              r = sdm_as_terra(occ, what = "predictors")[[-1]], # removes cell_id
-              k = ctrl$number,
-              biomod2 = FALSE,
-              progress = FALSE
-            )
-            ctrl2$method <- "cv"
-            ctrl2$number <- NA
-            ctrl2$index <- lapply(spatial_blocks$folds_list, function(x) x[[1]])
-            ctrl2$indexOut <- lapply(spatial_blocks$folds_list, function(x) x[[2]])
-          }
-          if ("cv_cluster" %in% ctrl$method) {
-            test <- x |> dplyr::mutate(presence = c(rep(1, nrow(occ2)), rep(0, nrow(pa))))
-            env_blocks <- blockCV::cv_cluster(
-              test,
-              column = "presence",
-              r = sdm_as_terra(occ, what = "predictors")[[-1]], # removes cell_id
-              k = ctrl$number,
-              biomod2 = FALSE,
-              report = FALSE
-            )
-            ctrl2$method <- "cv"
-            ctrl2$number <- NA
-            ctrl2$index <- lapply(env_blocks$folds_list, function(x) x[[1]])
-            ctrl2$indexOut <- lapply(env_blocks$folds_list, function(x) x[[2]])
-          }
+        x <- dplyr::select(as.data.frame(x), dplyr::all_of(selected_vars))
+        df <- as.factor(c(rep("presence", nrow(occ2)), rep("background", nrow(pa))))
 
-          x <- dplyr::select(as.data.frame(x), dplyr::all_of(selected_vars))
-          df <- as.factor(c(rep("presence", nrow(occ2)), rep("background", nrow(pa))))
+        if (sp %in% z$esm$spp) {
+          vars_comb <- colnames(x) |> utils::combn(2)
 
-          if (sp %in% z$esm$spp) {
-
-            vars_comb <- colnames(x) |> utils::combn(2)
-
-            for (v in seq_len(ncol(vars_comb))) {
-
-              if (is.character(algo)) {
-                algo_bg <- algo[algo %in% c("maxent", "mahal.dist")]
-
-                for (i in seq_along(algo_bg)) {
-                  a <- algo_bg[i]
-
-                  method <- if (a == "mahal.dist") .mahal.dist else .maxent
-
-                  model <- .safe_train(
-                    df ~ .,
-                    data = cbind(df, x[, vars_comb[, v]]),
-                    method = method,
-                    trControl = ctrl2,
-                    ...
-                  )
-
-                  algo_name <- .get_algo_name(a, algo2)
-                  name <- .build_model_name(algo_name, "bg", j, esm_id = v)
-
-                  attr(model, "sdm_info") <- list(
-                    species = sp, type = "bg", dataset = j,
-                    esm = v, algorithm = algo_name
-                  )
-
-                  l_all[[name]] <- model
-                }
-              }
-            }
-
-          } else {
-
+          for (v in seq_len(ncol(vars_comb))) {
             if (is.character(algo)) {
               algo_bg <- algo[algo %in% c("maxent", "mahal.dist")]
 
@@ -695,62 +431,89 @@ train_sdm <- function(occ, pred = NULL, algo, ctrl = NULL, variables_selected = 
 
                 model <- .safe_train(
                   df ~ .,
-                  data = cbind(df, x),
+                  data = cbind(df, x[, vars_comb[, v]]),
                   method = method,
                   trControl = ctrl2,
                   ...
                 )
 
                 algo_name <- .get_algo_name(a, algo2)
-                name <- .build_model_name(algo_name, "bg", j)
+                name <- .build_model_name(algo_name, "bg", j, esm_id = v)
 
                 attr(model, "sdm_info") <- list(
                   species = sp, type = "bg", dataset = j,
-                  algorithm = algo_name
+                  esm = v, algorithm = algo_name
                 )
 
                 l_all[[name]] <- model
               }
             }
           }
+        } else {
+          if (is.character(algo)) {
+            algo_bg <- algo[algo %in% c("maxent", "mahal.dist")]
+
+            for (i in seq_along(algo_bg)) {
+              a <- algo_bg[i]
+
+              method <- if (a == "mahal.dist") .mahal.dist else .maxent
+
+              model <- .safe_train(
+                df ~ .,
+                data = cbind(df, x),
+                method = method,
+                trControl = ctrl2,
+                ...
+              )
+
+              algo_name <- .get_algo_name(a, algo2)
+              name <- .build_model_name(algo_name, "bg", j)
+
+              attr(model, "sdm_info") <- list(
+                species = sp, type = "bg", dataset = j,
+                algorithm = algo_name
+              )
+
+              l_all[[name]] <- model
+            }
+          }
         }
       }
+    }
 
-      # Remove NULL models safely
-      l_all <- l_all[!sapply(l_all, is.null)]
+    # Remove NULL models safely
+    l_all <- l_all[!sapply(l_all, is.null)]
 
-      return(l_all)
-
-    }, simplify = FALSE, USE.NAMES = TRUE)
+    return(l_all)
+  }, simplify = FALSE, USE.NAMES = TRUE)
 
   #################################################################################################
   # Security if for what?
-  #if (!is.matrix(l)) {
+  # if (!is.matrix(l)) {
   #  l0 <- t(as.matrix(l))
   #  colnames(l0) <- species_names(z)
   #  rownames(l0) <- "m1."
   #  l <- l0
-  #}
+  # }
   #
-  #m <- apply(l, 2, function(x) {
+  # m <- apply(l, 2, function(x) {
   #  res <-  unlist(x, recursive = FALSE)
   #  res <- res[!sapply(res, is.null)] # Remove NULL models (models that caret returned an error)
-  #})
-  #if(length(algo2) == 1) {
+  # })
+  # if(length(algo2) == 1) {
   #  for (j in 1:length(m)) {
   #    names(m[[j]]) <- paste0(names(m[[j]]), 1)
   #  }
-  #}
+  # }
   m <- l
 
   metrics <- sapply(z$spp_names, function(sp) {
     metrics <- lapply(m[[sp]], function(x) {
-      if(x$method == "custom") {
-        if("tags" %in% names(x$modelInfo)){
-          if(x$modelInfo$tags[1] == "maxent") {
+      if (x$method == "custom") {
+        if ("tags" %in% names(x$modelInfo)) {
+          if (x$modelInfo$tags[1] == "maxent") {
             x$method <- "maxent"
-          } else
-          if(x$modelInfo$tags[1] == "mahalanobis") {
+          } else if (x$modelInfo$tags[1] == "mahalanobis") {
             x$method <- "mahal.dist"
           }
         } else {
@@ -778,14 +541,15 @@ train_sdm <- function(occ, pred = NULL, algo, ctrl = NULL, variables_selected = 
   if ("independent_test" %in% names(z)) {
     it <- sf::st_join(z$independent_test, dplyr::select(pred$grid, -"cell_id"))
     indep_val <- sapply(z$spp_names, function(sp) {
-      it_sp <- as.data.frame(it[it$species==sp,])
+      it_sp <- as.data.frame(it[it$species == sp, ])
       it_sp$presence <- factor(rep("presence", nrow(it_sp)))
       levels(it_sp$presence) <- c("presence", "pseudoabsence")
       independent_metrics <- sapply(m[[sp]], function(x) {
-          res <- validate_on_independent_data(x,
-                                              data_independent = it_sp,
-                                              obs_col_name = "presence")
-          return(res)
+        res <- validate_on_independent_data(x,
+          data_independent = it_sp,
+          obs_col_name = "presence"
+        )
+        return(res)
       }, simplify = FALSE, USE.NAMES = TRUE)
       res_mean <- do.call(rbind, independent_metrics) |>
         colMeans()
@@ -809,7 +573,7 @@ train_sdm <- function(occ, pred = NULL, algo, ctrl = NULL, variables_selected = 
 #' @rdname train_sdm
 #' @export
 get_tune_length <- function(i) {
-  x=i
+  x <- i
   if (is_input_sdm(x)) {
     y <- x$models
   } else {
@@ -821,7 +585,7 @@ get_tune_length <- function(i) {
 #' @rdname train_sdm
 #' @export
 algorithms_used <- function(i) {
-  x=i
+  x <- i
   if (is_input_sdm(x)) {
     y <- x$models
   } else {
@@ -833,7 +597,7 @@ algorithms_used <- function(i) {
 #' @rdname train_sdm
 #' @export
 get_models <- function(i) {
-  x=i
+  x <- i
   if (is_input_sdm(x)) {
     y <- x$models
   } else {
@@ -845,7 +609,7 @@ get_models <- function(i) {
 #' @rdname train_sdm
 #' @export
 get_validation_metrics <- function(i) {
-  x=i
+  x <- i
   if (is_input_sdm(x)) {
     y <- x$models
   } else {
@@ -857,7 +621,7 @@ get_validation_metrics <- function(i) {
 #' @rdname train_sdm
 #' @export
 mean_validation_metrics <- function(i) {
-  x=i
+  x <- i
   if (is_input_sdm(x)) {
     y <- x$models
   } else {
@@ -876,16 +640,22 @@ mean_validation_metrics <- function(i) {
 add_models <- function(m1, m2) {
   assert_class_cli(m1, "models", null.ok = TRUE)
   assert_class_cli(m2, "models", null.ok = TRUE)
-  if(is.null(m1)) {return(m2)}
-  if(is.null(m2)) {return(m1)}
-  m <- list(validation = list(method = unique(c(m1$validation$method, m2$validation$method)),
-                              number = unique(c(m1$validation$number, m2$validation$number)),
-                              metrics = c(m1$validation$metrics, m2$validation$metrics)
-  ),
-  predictors = unique(c(m1$predictors, m2$predictors)),
-  algorithms = unique(c(m1$algorithms, m2$algorithms)),
-  models = c(m1$models, m2$models),
-  tuning = unique(c(m1$tuning, m2$tuning))
+  if (is.null(m1)) {
+    return(m2)
+  }
+  if (is.null(m2)) {
+    return(m1)
+  }
+  m <- list(
+    validation = list(
+      method = unique(c(m1$validation$method, m2$validation$method)),
+      number = unique(c(m1$validation$number, m2$validation$number)),
+      metrics = c(m1$validation$metrics, m2$validation$metrics)
+    ),
+    predictors = unique(c(m1$predictors, m2$predictors)),
+    algorithms = unique(c(m1$algorithms, m2$algorithms)),
+    models = c(m1$models, m2$models),
+    tuning = unique(c(m1$tuning, m2$tuning))
   )
   msum <- .models(m)
   return(msum)
@@ -944,8 +714,10 @@ add_models <- function(m1, m2) {
     }
   )
 
-  if (is.null(fit)) return(NULL)
-  #if (any(is.na(fit$resample))) return(NULL)
+  if (is.null(fit)) {
+    return(NULL)
+  }
+  # if (any(is.na(fit$resample))) return(NULL)
   return(fit)
 }
 

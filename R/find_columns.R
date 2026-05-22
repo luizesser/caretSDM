@@ -21,7 +21,7 @@
     lon_col <- colnames(df)[grep(paste(lon_keywords, collapse = "|"), tolower(colnames(df)))]
     lat_col <- colnames(df)[grep(paste(lat_keywords, collapse = "|"), tolower(colnames(df)))]
 
-    if(length(c(lat_col,lon_col))<2){
+    if (length(c(lat_col, lon_col)) < 2) {
       cli::cli_abort(c(
         "x" = "A latitude or longitude column is missing on {.var data.frame}.",
         "i" = "Check if colnames are correct. They should resemble latitude and longitude like

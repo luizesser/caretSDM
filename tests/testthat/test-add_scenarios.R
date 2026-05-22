@@ -19,12 +19,12 @@ if (!identical(Sys.getenv("NOT_CRAN"), "false")) {
   }
   sa <- sdm_area(pr_gpkg, cell_size = 100000, output_crs = 6933)
   sa <- add_predictors(sa, pr_raster)
-  sa <- select_predictors(sa, c("wc2.1_10m_bio_1","wc2.1_10m_bio_12"))
+  sa <- select_predictors(sa, c("wc2.1_10m_bio_1", "wc2.1_10m_bio_12"))
   sa <- set_predictor_names(sa, c("bio1", "bio12"))
-  scen <- scen[,,,c("bio1", "bio12")]
+  scen <- scen[, , , c("bio1", "bio12")]
 
   test_that("add_scenarios - invasiveness", {
-    sa_pred <- add_scenarios(sa, scen_rs[,,,c("bio1", "bio12")], pred_as_scen = FALSE)
+    sa_pred <- add_scenarios(sa, scen_rs[, , , c("bio1", "bio12")], pred_as_scen = FALSE)
     expect_equal(
       get_predictor_names(sa_pred),
       c("bio1", "bio12")
@@ -37,12 +37,16 @@ if (!identical(Sys.getenv("NOT_CRAN"), "false")) {
       names(sa_pred$scenarios$data$mi_ssp585_2090),
       c("cell_id", "bio1", "bio12", "geometry")
     )
-    expect_equal(round(as.numeric(sf::st_bbox(sa_pred$scenarios$data$mi_ssp585_2090))),
-                 c(-5564042, -4121459, -4764042, -3321459))
-    expect_equal(round(as.numeric(sf::st_bbox(sa_pred$grid))),
-                 c(-5301744, -3295037, -4601744.0, -2795037))
+    expect_equal(
+      round(as.numeric(sf::st_bbox(sa_pred$scenarios$data$mi_ssp585_2090))),
+      c(-5564042, -4121459, -4764042, -3321459)
+    )
+    expect_equal(
+      round(as.numeric(sf::st_bbox(sa_pred$grid))),
+      c(-5301744, -3295037, -4601744.0, -2795037)
+    )
     expect_false(all(round(as.numeric(sf::st_bbox(sa_pred$scenarios$data$mi_ssp585_2090))) ==
-                   round(as.numeric(sf::st_bbox(sa_pred$grid)))))
+      round(as.numeric(sf::st_bbox(sa_pred$grid)))))
   })
 
   test_that("add_scenarios - stars", {
@@ -62,7 +66,7 @@ if (!identical(Sys.getenv("NOT_CRAN"), "false")) {
   })
 
   test_that("add_scenarios - stars selecionando uma variável", {
-    sa_pred <- add_scenarios(sa, scen, variables_selected=c("bio1"))
+    sa_pred <- add_scenarios(sa, scen, variables_selected = c("bio1"))
     expect_equal(
       get_predictor_names(sa_pred),
       c("bio1")
@@ -98,7 +102,7 @@ if (!identical(Sys.getenv("NOT_CRAN"), "false")) {
   })
 
   test_that("add_scenarios - RasterStack", {
-    #suppressWarnings(test <- as(na.omit(scen), "Raster"))
+    # suppressWarnings(test <- as(na.omit(scen), "Raster"))
     suppressWarnings(test <- stars:::st_as_raster(scen, "SpatRaster") |> raster::stack())
     test <- raster::stack(test)
     sa_pred <- add_scenarios(sa, test)
@@ -117,13 +121,13 @@ if (!identical(Sys.getenv("NOT_CRAN"), "false")) {
   })
 
   test_that("add_scenarios - stars mas a variável é inválida", {
-    expect_error(add_scenarios(sa, scen, variables_selected=c("bio1", "bio12", "bio13")))
+    expect_error(add_scenarios(sa, scen, variables_selected = c("bio1", "bio12", "bio13")))
   })
 
   test_that("add_scenarios - stars mas nem todas variaveis estão presente", {
-    expect_error(add_scenarios(sa, scen, variables_selected=c("bio7")))
-    expect_error(add_scenarios(sa, scen, variables_selected=c("NA")))
-    expect_error(add_scenarios(sa, scen, variables_selected=c(1,2,3)))
+    expect_error(add_scenarios(sa, scen, variables_selected = c("bio7")))
+    expect_error(add_scenarios(sa, scen, variables_selected = c("NA")))
+    expect_error(add_scenarios(sa, scen, variables_selected = c(1, 2, 3)))
   })
 
   test_that("add_scenarios - input_sdm", {
@@ -139,21 +143,23 @@ if (!identical(Sys.getenv("NOT_CRAN"), "false")) {
   test_that("add_scenarios - stars e vars tem nomes diferentes", {
     sa <- sdm_area(pr_gpkg, cell_size = 20000, output_crs = 6933)
     sa <- add_predictors(sa, pr_raster)
-    sa <- select_predictors(sa, c("wc2.1_10m_bio_1","wc2.1_10m_bio_12"))
+    sa <- select_predictors(sa, c("wc2.1_10m_bio_1", "wc2.1_10m_bio_12"))
     expect_no_error(sa_scen <- add_scenarios(sa, scen))
-    expect_equal(get_predictor_names(sa),get_predictor_names(sa_scen))
+    expect_equal(get_predictor_names(sa), get_predictor_names(sa_scen))
     expect_true(all(get_predictor_names(sa) %in% names(sa_scen$scenarios$data$ca_ssp245_2090)))
   })
 
   test_that("add_scenarios - stationary data", {
     sa <- sdm_area(pr_gpkg, cell_size = 20000, output_crs = 6933)
-    names(pr_raster) <- c("bio1","bio12")
+    names(pr_raster) <- c("bio1", "bio12")
     sa <- add_predictors(sa, pr_raster)
-    sa_pred <- add_scenarios(sa, pr_raster, stationary = c("GID0", "CODIGOIB1",
-                                                                "NOMEUF2", "SIGLAUF3"))
+    sa_pred <- add_scenarios(sa, pr_raster, stationary = c(
+      "GID0", "CODIGOIB1",
+      "NOMEUF2", "SIGLAUF3"
+    ))
     expect_equal(
       get_predictor_names(sa_pred),
-      c("GID0", "CODIGOIB1", "NOMEUF2", "SIGLAUF3", "bio1","bio12")
+      c("GID0", "CODIGOIB1", "NOMEUF2", "SIGLAUF3", "bio1", "bio12")
     )
     expect_equal(
       get_predictor_names(sa_pred),
@@ -161,28 +167,33 @@ if (!identical(Sys.getenv("NOT_CRAN"), "false")) {
     )
     expect_equal(
       names(sa_pred$scenarios$data$bio1),
-      c("cell_id", "GID0", "CODIGOIB1", "NOMEUF2", "SIGLAUF3",
-        "bio1","bio12", "geometry")
+      c(
+        "cell_id", "GID0", "CODIGOIB1", "NOMEUF2", "SIGLAUF3",
+        "bio1", "bio12", "geometry"
+      )
     )
     expect_equal(length(sa_pred$scenarios$data), 2)
 
-    sa_pred <- add_scenarios(sa_pred, scen, stationary = c("GID0", "CODIGOIB1",
-                                                                "NOMEUF2", "SIGLAUF3"))
+    sa_pred <- add_scenarios(sa_pred, scen, stationary = c(
+      "GID0", "CODIGOIB1",
+      "NOMEUF2", "SIGLAUF3"
+    ))
     expect_equal(length(sa_pred$scenarios$data), 6)
-
   })
 
   test_that("add_scenarios - stationary data/input_sdm", {
     sa <- sdm_area(pr_gpkg, cell_size = 20000, output_crs = 6933)
-    names(pr_raster) <- c("bio1","bio12")
+    names(pr_raster) <- c("bio1", "bio12")
     sa <- add_predictors(sa, pr_raster)
     sa <- add_scenarios(sa)
     i <- input_sdm(sa)
-    i_pred <- add_scenarios(i, pr_raster, stationary = c("GID0", "CODIGOIB1",
-                                                           "NOMEUF2", "SIGLAUF3"))
+    i_pred <- add_scenarios(i, pr_raster, stationary = c(
+      "GID0", "CODIGOIB1",
+      "NOMEUF2", "SIGLAUF3"
+    ))
     expect_equal(
       get_predictor_names(i_pred),
-      c("GID0", "CODIGOIB1", "NOMEUF2", "SIGLAUF3", "bio1","bio12")
+      c("GID0", "CODIGOIB1", "NOMEUF2", "SIGLAUF3", "bio1", "bio12")
     )
     expect_equal(
       get_predictor_names(i_pred),
@@ -190,14 +201,20 @@ if (!identical(Sys.getenv("NOT_CRAN"), "false")) {
     )
     expect_equal(
       names(i_pred$scenarios$data$bio1),
-      c("cell_id", "GID0", "CODIGOIB1", "NOMEUF2", "SIGLAUF3",
-        "bio1","bio12", "geometry")
+      c(
+        "cell_id", "GID0", "CODIGOIB1", "NOMEUF2", "SIGLAUF3",
+        "bio1", "bio12", "geometry"
+      )
     )
     expect_equal(length(i_pred$scenarios$data), 2)
-    expect_error(add_scenarios(i_pred, scen, stationary = c("GID0", "CODIGOIB1",
-                                                            "NOMEUF2")))
-    i_pred <- add_scenarios(i_pred, scen, stationary = c("GID0", "CODIGOIB1",
-                                                           "NOMEUF2", "SIGLAUF3"))
+    expect_error(add_scenarios(i_pred, scen, stationary = c(
+      "GID0", "CODIGOIB1",
+      "NOMEUF2"
+    )))
+    i_pred <- add_scenarios(i_pred, scen, stationary = c(
+      "GID0", "CODIGOIB1",
+      "NOMEUF2", "SIGLAUF3"
+    ))
     expect_equal(length(i_pred$scenarios$data), 6)
   })
 
@@ -230,7 +247,7 @@ if (!identical(Sys.getenv("NOT_CRAN"), "false")) {
 
   test_that("set_scenarios_names", {
     sa_pred <- add_scenarios(sa, scen)
-    expect_error(set_scenarios_names(sa_pred, c(1,2,3,4,5)))
+    expect_error(set_scenarios_names(sa_pred, c(1, 2, 3, 4, 5)))
     expect_no_error(set_scenarios_names(sa_pred, as.character(1:5)))
     expect_error(set_scenarios_names(sa_pred, as.character(1:4)))
     expect_equal(
@@ -239,7 +256,7 @@ if (!identical(Sys.getenv("NOT_CRAN"), "false")) {
     )
 
     i_pred <- input_sdm(sa_pred)
-    expect_error(set_scenarios_names(i_pred, c(1,2,3,4,5)))
+    expect_error(set_scenarios_names(i_pred, c(1, 2, 3, 4, 5)))
     expect_no_error(set_scenarios_names(i_pred, as.character(1:5)))
     expect_error(set_scenarios_names(i_pred, as.character(1:4)))
     expect_equal(
@@ -250,7 +267,7 @@ if (!identical(Sys.getenv("NOT_CRAN"), "false")) {
 
   # test cell_size=NULL
   test_that("add_scenarios - cell_size=NULL", {
-    sa <- sdm_area(bioc[,,,c(1,3)], cell_size = NULL)
+    sa <- sdm_area(bioc[, , , c(1, 3)], cell_size = NULL)
     i <- input_sdm(sa)
     sa_pred <- add_scenarios(i, scen)
     expect_equal(
@@ -258,13 +275,15 @@ if (!identical(Sys.getenv("NOT_CRAN"), "false")) {
       c("current", "ca_ssp245_2090", "ca_ssp585_2090", "mi_ssp245_2090", "mi_ssp585_2090")
     )
     expect_equal(sum(na.omit(as.data.frame(bioc))$band == "bio1"), sa_pred$scenarios$data$current |> nrow())
-    expect_equal(sum(na.omit(as.data.frame(scen["ca_ssp245_2090"]))$band == "bio1"),
-                 sa_pred$scenarios$data$ca_ssp245_2090 |> nrow())
+    expect_equal(
+      sum(na.omit(as.data.frame(scen["ca_ssp245_2090"]))$band == "bio1"),
+      sa_pred$scenarios$data$ca_ssp245_2090 |> nrow()
+    )
   })
 
   test_that("add_scenarios", {
     skip_on_cran()
-    bioc <- bioc[,,,c(1,3)]
+    bioc <- bioc[, , , c(1, 3)]
     expect_error(
       sdm_area(parana, cell_size = 100000, output_crs = 6933) |>
         add_predictors(bioc) |>
@@ -284,11 +303,11 @@ if (!identical(Sys.getenv("NOT_CRAN"), "false")) {
     )
     expect_true(sum(na.omit(as.data.frame(bioc))$band == "bio1") > sa_pred$scenarios$data$current |> nrow())
     expect_true(sum(na.omit(as.data.frame(scen["ca_ssp245_2090"]))$band == "bio1") >
-                 sa_pred$scenarios$data$ca_ssp245_2090 |> nrow())
+      sa_pred$scenarios$data$ca_ssp245_2090 |> nrow())
     expect_warning(sa <- sdm_area(parana, cell_size = 100000, output_crs = 6933) |>
       add_predictors(bioc) |>
-      add_scenarios(scen_rs[,,,c(1,3)], pred_as_scen = FALSE))
-    #expect_true(!"current" %in% scenarios_names(sa))
+      add_scenarios(scen_rs[, , , c(1, 3)], pred_as_scen = FALSE))
+    # expect_true(!"current" %in% scenarios_names(sa))
 
     sa <- sdm_area(rivs, cell_size = 100000, output_crs = 6933, lines_as_sdm_area = TRUE) |>
       add_predictors(bioc) |>
@@ -320,12 +339,12 @@ if (!identical(Sys.getenv("NOT_CRAN"), "false")) {
   })
 
   test_that("add_scenarios - crop_area with different crs", {
-    bioc <- bioc[,,,c(1,3)]
+    bioc <- bioc[, , , c(1, 3)]
     parana2 <- sf::st_transform(parana, 6933)
     expect_true(sf::st_crs(parana2) != sf::st_crs(scen))
     sa_pred <- add_scenarios(sa, scen, crop_area = parana2)
-    #sa_pred$scenarios$data$current |> select("cell_id") |> plot()
-    #sa_pred$scenarios$data$ca_ssp245_2090 |> select("cell_id") |> plot()
+    # sa_pred$scenarios$data$current |> select("cell_id") |> plot()
+    # sa_pred$scenarios$data$ca_ssp245_2090 |> select("cell_id") |> plot()
 
 
     # Testar bbox dos cenários futuros e presente.
@@ -335,6 +354,6 @@ if (!identical(Sys.getenv("NOT_CRAN"), "false")) {
     )
     expect_true(sum(na.omit(as.data.frame(bioc))$band == "bio1") > sa_pred$scenarios$data$current |> nrow())
     expect_true(sum(na.omit(as.data.frame(scen["ca_ssp245_2090"]))$band == "bio1") >
-                  sa_pred$scenarios$data$ca_ssp245_2090 |> nrow())
+      sa_pred$scenarios$data$ca_ssp245_2090 |> nrow())
   })
 }

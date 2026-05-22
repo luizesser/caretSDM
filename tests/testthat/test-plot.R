@@ -5,7 +5,7 @@ test_that("plot works with i", {
     add_predictors(bioc) |>
     select_predictors(c("bio1", "bio12")) |>
     add_scenarios()
-  oc <- occurrences_sdm(occ, occ_crs=6933) |>
+  oc <- occurrences_sdm(occ, occ_crs = 6933) |>
     join_area(sa)
 
   expect_no_error(plot(input_sdm(oc)))
@@ -17,11 +17,13 @@ test_that("plot works with i", {
   expect_no_error(plot_occurrences(i, spp_name = "Araucaria angustifolia"))
 
   suppressWarnings(i <- pseudoabsences(i, method = "random", n_set = 3))
-  ctrl_sdm <- caret::trainControl(method = "repeatedcv", number = 4, repeats = 2, classProbs = TRUE,
-                                  returnResamp = "all", summaryFunction = summary_sdm,
-                                  savePredictions = "all")
-  suppressWarnings(i <- train_sdm(i, algo=c("naive_bayes", "kknn"), crtl=ctrl_sdm))
-  i <- predict_sdm(i, th=0.5) |>
+  ctrl_sdm <- caret::trainControl(
+    method = "repeatedcv", number = 4, repeats = 2, classProbs = TRUE,
+    returnResamp = "all", summaryFunction = summary_sdm,
+    savePredictions = "all"
+  )
+  suppressWarnings(i <- train_sdm(i, algo = c("naive_bayes", "kknn"), crtl = ctrl_sdm))
+  i <- predict_sdm(i, th = 0.5) |>
     ensemble_sdm()
 
   expect_no_error(plot(i))

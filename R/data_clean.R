@@ -85,8 +85,7 @@ data_clean <- function(occ, pred = NULL,
                        terrestrial = TRUE,
                        independent_test = TRUE,
                        fun = NULL) {
-
-  assert_logical_cli(capitals, any.missing = FALSE,   all.missing = FALSE, len = 1, null.ok = FALSE)
+  assert_logical_cli(capitals, any.missing = FALSE, all.missing = FALSE, len = 1, null.ok = FALSE)
   assert_logical_cli(centroids, any.missing = FALSE, all.missing = FALSE, len = 1, null.ok = FALSE)
   assert_logical_cli(duplicated, any.missing = FALSE, all.missing = FALSE, len = 1, null.ok = FALSE)
   assert_logical_cli(identical, any.missing = FALSE, all.missing = FALSE, len = 1, null.ok = FALSE)
@@ -94,7 +93,9 @@ data_clean <- function(occ, pred = NULL,
   assert_logical_cli(invalid, any.missing = FALSE, all.missing = FALSE, len = 1, null.ok = FALSE)
   assert_logical_cli(terrestrial, any.missing = FALSE, all.missing = FALSE, len = 1, null.ok = FALSE)
   assert_logical_cli(independent_test, any.missing = FALSE, all.missing = FALSE, len = 1, null.ok = FALSE)
-  if(!is.null(pred)){assert_class_cli(pred, c("sdm_area"), null.ok = TRUE)}
+  if (!is.null(pred)) {
+    assert_class_cli(pred, c("sdm_area"), null.ok = TRUE)
+  }
   if (is_input_sdm(occ)) {
     y <- occ$occurrences
     if (is.null(pred)) {
@@ -103,11 +104,11 @@ data_clean <- function(occ, pred = NULL,
   } else {
     y <- occ
   }
-  if("cell_id" %in% names(y$occurrences)) {
+  if ("cell_id" %in% names(y$occurrences)) {
     message("Cell_ids identified, removing duplicated cell_id.")
-    y$occurrences <- y$occurrences[!duplicated(y$occurrences$cell_id),]
+    y$occurrences <- y$occurrences[!duplicated(y$occurrences$cell_id), ]
   }
-  if(y$crs !=4326){
+  if (y$crs != 4326) {
     sf_t <- sf::st_transform(y$occurrences, 4326)
     x <- .sf_to_df_sdm(sf_t)
   } else {
@@ -126,18 +127,32 @@ data_clean <- function(occ, pred = NULL,
     lat <- cn[which.min(stringdist::stringdist(cn, "latitude"))]
   }
   x <- subset(x, !is.na(lon) | !is.na(lat))
-  if (capitals) { x <- CoordinateCleaner::cc_cap(x, lon = lon, lat = lat, species = species) }
-  if (centroids) { x <- CoordinateCleaner::cc_cen(x, lon = lon, lat = lat, species = species) }
-  if (duplicated) { x <- CoordinateCleaner::cc_dupl(x, lon = lon, lat = lat, species = species) }
-  if (identical) { x <- CoordinateCleaner::cc_equ(x, lon = lon, lat = lat) }
-  if (institutions) { x <- CoordinateCleaner::cc_inst(x, lon = lon, lat = lat, species = species) }
-  if (invalid) { x <- CoordinateCleaner::cc_val(x, lon = lon, lat = lat) }
-  if (terrestrial) { x <- CoordinateCleaner::cc_sea(x, lon = lon, lat = lat) }
-  if(is.function(fun)) {
+  if (capitals) {
+    x <- CoordinateCleaner::cc_cap(x, lon = lon, lat = lat, species = species)
+  }
+  if (centroids) {
+    x <- CoordinateCleaner::cc_cen(x, lon = lon, lat = lat, species = species)
+  }
+  if (duplicated) {
+    x <- CoordinateCleaner::cc_dupl(x, lon = lon, lat = lat, species = species)
+  }
+  if (identical) {
+    x <- CoordinateCleaner::cc_equ(x, lon = lon, lat = lat)
+  }
+  if (institutions) {
+    x <- CoordinateCleaner::cc_inst(x, lon = lon, lat = lat, species = species)
+  }
+  if (invalid) {
+    x <- CoordinateCleaner::cc_val(x, lon = lon, lat = lat)
+  }
+  if (terrestrial) {
+    x <- CoordinateCleaner::cc_sea(x, lon = lon, lat = lat)
+  }
+  if (is.function(fun)) {
     x <- fun(x)
   }
 
-  if(!is.null(pred)){
+  if (!is.null(pred)) {
     not_line <- unique(sf::st_geometry_type(pred$grid)) != "LINESTRING"
   } else {
     not_line <- FALSE
@@ -146,8 +161,9 @@ data_clean <- function(occ, pred = NULL,
   if (not_line) {
     message("Predictors identified, procceding with grid filter (removing NA and duplicated data).")
     x2 <- sf::st_as_sf(x,
-                       coords = c(lon, lat),
-                       crs = 4326)
+      coords = c(lon, lat),
+      crs = 4326
+    )
     if (sf::st_crs(x2) != sf::st_crs(pred$grid)) {
       x2 <- sf::st_transform(x2, crs = sf::st_crs(pred$grid))
     }
@@ -155,54 +171,72 @@ data_clean <- function(occ, pred = NULL,
       teste <- pred$grid |>
         stars::st_rasterize() |>
         stars::st_extract(x2) |>
-        dplyr::mutate(species = x2$species) # |> na.omit()
+        dplyr::mutate(species = x2$species)
       dup_rows <- teste |>
         as.data.frame() |>
         dplyr::select(-"geometry") |>
         duplicated()
-      x <- teste[!dup_rows, c("cell_id","species", "geometry")]
+      x <- teste[!dup_rows, c("cell_id", "species", "geometry")]
     }
-
   }
-  if(is.data.frame(x)){
+  if (is.data.frame(x)) {
     x <- sf::st_as_sf(x,
-                      coords = c(lon, lat),
-                      crs = 4326)
+      coords = c(lon, lat),
+      crs = 4326
+    )
   }
-  if(sf::st_crs(x) != sf::st_crs(y$crs)){
+  if (sf::st_crs(x) != sf::st_crs(y$crs)) {
     x <- sf::st_transform(x, y$crs)
   }
-  if(!"cell_id" %in% names(x) & !is.null(pred)) {
+  if (!"cell_id" %in% names(x) & !is.null(pred)) {
     nearest <- st_nearest_feature(x, select(pred$grid, "cell_id"))
     cell_id <- pred$grid[nearest, "cell_id"]
-    x <- cbind(x, cell_id)|> # or cbind(cell_id, x)?
+    x <- cbind(x, cell_id) |>
       dplyr::relocate("cell_id") |>
       dplyr::select(-"geometry.1")
   }
-  if(!"cell_id" %in% names(x) & is.null(pred) & "cell_id" %in% colnames(y$occurrences)) {
+  if (!"cell_id" %in% names(x) & is.null(pred) & "cell_id" %in% colnames(y$occurrences)) {
     nearest <- st_nearest_feature(x, select(y$occurrences, "cell_id"))
     cell_id <- y$occurrences[nearest, "cell_id"]
-    x <- cbind(x, cell_id) |> # or cbind(cell_id, x)?
+    x <- cbind(x, cell_id) |>
       dplyr::relocate("cell_id") |>
       dplyr::select(-"geometry.1")
   }
 
   y$occurrences <- x
   clean_methods <- c("NAs")
-  if (capitals) { clean_methods <- c(clean_methods, "Capitals") }
-  if (centroids) { clean_methods <- c(clean_methods, "Centroids") }
-  if (duplicated) { clean_methods <- c(clean_methods, "Geographically Duplicated") }
-  if (identical) { clean_methods <- c(clean_methods, "Identical Lat/Long") }
-  if (institutions) { clean_methods <- c(clean_methods, "Institutions") }
-  if (invalid) { clean_methods <- c(clean_methods, "Invalid") }
-  if (terrestrial) { clean_methods <- c(clean_methods, "Non-terrestrial") }
-  if (!is.null(pred)) { clean_methods <- c(clean_methods, "Duplicated Cell (grid)") }
-  if (!is.null(fun)) { clean_methods <- c(clean_methods, paste0("Custom Function (", deparse(substitute(method)),")")) }
+  if (capitals) {
+    clean_methods <- c(clean_methods, "Capitals")
+  }
+  if (centroids) {
+    clean_methods <- c(clean_methods, "Centroids")
+  }
+  if (duplicated) {
+    clean_methods <- c(clean_methods, "Geographically Duplicated")
+  }
+  if (identical) {
+    clean_methods <- c(clean_methods, "Identical Lat/Long")
+  }
+  if (institutions) {
+    clean_methods <- c(clean_methods, "Institutions")
+  }
+  if (invalid) {
+    clean_methods <- c(clean_methods, "Invalid")
+  }
+  if (terrestrial) {
+    clean_methods <- c(clean_methods, "Non-terrestrial")
+  }
+  if (!is.null(pred)) {
+    clean_methods <- c(clean_methods, "Duplicated Cell (grid)")
+  }
+  if (!is.null(fun)) {
+    clean_methods <- c(clean_methods, paste0("Custom Function (", deparse(substitute(method)), ")"))
+  }
   y$n_presences <- table(y$occurrences$species)
 
   if ("independent_test" %in% names(y) & independent_test) {
     x <- y$independent_test
-    if(as.character(st_crs(x))[1] != "EPSG:4326"){
+    if (as.character(st_crs(x))[1] != "EPSG:4326") {
       sf_t <- sf::st_transform(x, 4326)
       x <- .sf_to_df_sdm(sf_t)
     } else {
@@ -213,18 +247,33 @@ data_clean <- function(occ, pred = NULL,
     lon <- cn[which.min(stringdist::stringdist(cn, "longitude"))]
     lat <- cn[which.min(stringdist::stringdist(cn, "latitude"))]
     x <- subset(x, !is.na(lon) | !is.na(lat))
-    if (capitals) { x <- CoordinateCleaner::cc_cap(x, lon = lon, lat = lat, species = species) }
-    if (centroids) { x <- CoordinateCleaner::cc_cen(x, lon = lon, lat = lat, species = species) }
-    if (duplicated) { x <- CoordinateCleaner::cc_dupl(x, lon = lon, lat = lat, species = species) }
-    if (identical) { x <- CoordinateCleaner::cc_equ(x, lon = lon, lat = lat) }
-    if (institutions) { x <- CoordinateCleaner::cc_inst(x, lon = lon, lat = lat, species = species) }
-    if (invalid) { x <- CoordinateCleaner::cc_val(x, lon = lon, lat = lat) }
-    if (terrestrial) { x <- CoordinateCleaner::cc_sea(x, lon = lon, lat = lat) }
+    if (capitals) {
+      x <- CoordinateCleaner::cc_cap(x, lon = lon, lat = lat, species = species)
+    }
+    if (centroids) {
+      x <- CoordinateCleaner::cc_cen(x, lon = lon, lat = lat, species = species)
+    }
+    if (duplicated) {
+      x <- CoordinateCleaner::cc_dupl(x, lon = lon, lat = lat, species = species)
+    }
+    if (identical) {
+      x <- CoordinateCleaner::cc_equ(x, lon = lon, lat = lat)
+    }
+    if (institutions) {
+      x <- CoordinateCleaner::cc_inst(x, lon = lon, lat = lat, species = species)
+    }
+    if (invalid) {
+      x <- CoordinateCleaner::cc_val(x, lon = lon, lat = lat)
+    }
+    if (terrestrial) {
+      x <- CoordinateCleaner::cc_sea(x, lon = lon, lat = lat)
+    }
     if (!is.null(pred)) {
       message("Predictors identified, procceding with grid filter (removing NA and duplicated data).")
       x2 <- sf::st_as_sf(x,
-                         coords = c(lon, lat),
-                         crs = 4326)
+        coords = c(lon, lat),
+        crs = 4326
+      )
       if (sf::st_crs(x2) != sf::st_crs(pred$grid)) {
         x2 <- sf::st_transform(x2, crs = sf::st_crs(pred$grid))
       }
@@ -232,12 +281,12 @@ data_clean <- function(occ, pred = NULL,
         teste <- pred$grid |>
           stars::st_rasterize() |>
           stars::st_extract(x2) |>
-          dplyr::mutate(species = x2$species) # |> na.omit()
+          dplyr::mutate(species = x2$species)
         dup_rows <- teste |>
           as.data.frame() |>
           dplyr::select(-"geometry") |>
           duplicated()
-        x <- teste[!dup_rows, c("cell_id","species", "geometry")]
+        x <- teste[!dup_rows, c("cell_id", "species", "geometry")]
       }
     }
     y$independent_test <- x

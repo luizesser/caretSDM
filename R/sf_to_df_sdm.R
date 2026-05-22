@@ -9,8 +9,8 @@
   df <- occ_sf |>
     sf::st_coordinates() |>
     as.data.frame() |>
-    cbind(species=occ_sf$species)
-  df <- df[,c("species", "X", "Y")]
+    cbind(species = occ_sf$species)
+  df <- df[, c("species", "X", "Y")]
   colnames(df) <- c("species", "decimalLongitude", "decimalLatitude")
   return(df)
 }

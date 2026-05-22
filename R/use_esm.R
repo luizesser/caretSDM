@@ -55,10 +55,10 @@ use_esm <- function(x, spp = NULL, n_records = 20) {
     y <- x
   }
 
-  if(is.null(spp)) {
+  if (is.null(spp)) {
     spp <- names(n_records(y))[n_records(y) <= n_records]
   }
-  if(length(spp) == 0) {
+  if (length(spp) == 0) {
     cli::cli_abort(c("x" = "No species with number of records =< {n_records}."))
   }
   y$esm$spp <- spp

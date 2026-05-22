@@ -81,8 +81,7 @@ multicollinearity_sdm <- function(pred,
                                   variables_selected = NULL,
                                   cumulative_proportion = 0.99,
                                   th = 0.5,
-                                   ...) {
-
+                                  ...) {
   assert_class_cli(pred, "input_sdm")
   assert_subset_cli("predictors", names(pred), empty.ok = FALSE)
   assert_class_cli(pred$predictors, "sdm_area")
@@ -99,7 +98,6 @@ multicollinearity_sdm <- function(pred,
     return(as.numeric(as.factor(x)))
   }
   if (is.character(method)) {
-
     assert_subset_cli(method, c("vifcor", "vifstep", "pca"))
     if (method %in% c("vifcor", "vifstep")) {
       .check_suggested("usdm", "multicollinearity_sdm")
@@ -111,7 +109,7 @@ multicollinearity_sdm <- function(pred,
         dplyr::select(-c("geometry", "cell_id")) |>
         dplyr::select(dplyr::all_of(variables_selected)) |>
         dplyr::mutate_if(is.character, facnum) |>
-        usdm::vifcor(th=th, ...)
+        usdm::vifcor(th = th, ...)
       x$variable_selection$vif$selected_variables <- v@variables[!v@variables %in% v@excluded]
       x$variable_selection$vif$threshold <- th
       x$variable_selection$vif$vifcor <- v
@@ -124,7 +122,7 @@ multicollinearity_sdm <- function(pred,
         dplyr::select(-c("geometry", "cell_id")) |>
         dplyr::select(dplyr::all_of(variables_selected)) |>
         dplyr::mutate_if(is.character, facnum) |>
-        usdm::vifstep(th=th, ...)
+        usdm::vifstep(th = th, ...)
       x$variable_selection$vif$selected_variables <- v@variables[!v@variables %in% v@excluded]
       x$variable_selection$vif$threshold <- th
       x$variable_selection$vif$vifstep <- v
@@ -140,27 +138,27 @@ multicollinearity_sdm <- function(pred,
         stats::prcomp()
 
       pred_pca <- get_predictors(x) |>
-          cbind(pca_model$x)
+        cbind(pca_model$x)
 
-      if(!"scenarios" %in% names(pred)){
+      if (!"scenarios" %in% names(pred)) {
         pred <- add_scenarios(pred)
       }
       scen_df <- pred$scenarios$data |>
-        lapply(function(x){
+        lapply(function(x) {
           as.data.frame(x) |>
-            dplyr::select(-c('cell_id', 'geometry'))
+            dplyr::select(-c("cell_id", "geometry"))
         })
 
       x$variable_selection$pca$data <- pred_pca |> dplyr::select(!get_predictor_names(pred))
       x$variable_selection$pca$summary <- summary(pca_model)
       x$variable_selection$pca$model <- pca_model
-      x$variable_selection$pca$selected_variables <- colnames(summary(pca_model)$importance)[1:(sum(summary(pca_model)$importance["Cumulative Proportion",]<cumulative_proportion)+1)]
+      x$variable_selection$pca$selected_variables <- colnames(summary(pca_model)$importance)[1:(sum(summary(pca_model)$importance["Cumulative Proportion", ] < cumulative_proportion) + 1)]
       x$variable_selection$pca$cumulative_proportion_th <- cumulative_proportion
 
       x$grid <- pred_pca
 
       scen_pca <- names(scen_df) |>
-        sapply(function(x){
+        sapply(function(x) {
           pred$scenarios$data[[x]] |>
             cbind(predict(pca_model, newdata = scen_df[[x]]))
         }, simplify = FALSE, USE.NAMES = TRUE)
@@ -187,7 +185,7 @@ multicollinearity_sdm <- function(pred,
 
 #' @rdname multicollinearity_sdm
 #' @export
-selected_variables <- function(i){
+selected_variables <- function(i) {
   assert_class_cli(i, "input_sdm")
   assert_subset_cli("predictors", names(i), empty.ok = FALSE)
   assert_subset_cli("variable_selection", names(i$predictors), empty.ok = FALSE)

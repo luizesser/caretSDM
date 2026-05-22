@@ -57,19 +57,23 @@ input_sdm <- function(...) {
 
 .input_sdm <- function(x) {
   classes <- lapply(x, class)
-  if (!length(unique(classes)) == length(classes)){
-    cli::cli_abort(c("x" = "There are two objects or more with the same class.",
-                     "i" = "Provide only unique object classes."))
+  if (!length(unique(classes)) == length(classes)) {
+    cli::cli_abort(c(
+      "x" = "There are two objects or more with the same class.",
+      "i" = "Provide only unique object classes."
+    ))
   }
   l <- list()
   if ("occurrences" %in% classes) {
-    if("sdm_area" %in% classes &
-       "cell_id" %in% colnames(x[classes %in% "occurrences"][[1]]$occurrences)) {
+    if ("sdm_area" %in% classes &
+      "cell_id" %in% colnames(x[classes %in% "occurrences"][[1]]$occurrences)) {
       l$occurrences <- x[classes %in% "occurrences"][[1]]
     } else {
-      if("sdm_area" %in% classes) {
-        l$occurrences <- join_area(x[classes %in% "occurrences"][[1]],
-                                   x[classes %in% "sdm_area"][[1]])
+      if ("sdm_area" %in% classes) {
+        l$occurrences <- join_area(
+          x[classes %in% "occurrences"][[1]],
+          x[classes %in% "sdm_area"][[1]]
+        )
       } else {
         l$occurrences <- x[classes %in% "occurrences"][[1]]
       }
@@ -157,7 +161,7 @@ print.input_sdm <- function(x, ...) {
   if ("predictors" %in% names(x)) {
     if (is_sdm_area(x$predictors)) {
       cat("--------  Predictors  ---------\n")
-      cat("Number of Predictors          :", ncol(x$predictors$grid)-2, "\n")
+      cat("Number of Predictors          :", ncol(x$predictors$grid) - 2, "\n")
       cat(cat("Predictors Names              : "), cat(get_predictor_names(x$predictors), sep = ", "), "\n")
       if (!is.null(x$predictors$bbox)) {
         cat("Extent                        :", sf::st_bbox(x$predictors$grid), "(xmin, xmax, ymin, ymax)\n")
@@ -168,13 +172,12 @@ print.input_sdm <- function(x, ...) {
       if (!is.null(x$predictors$resolution)) {
         cat("Resolution                    :", paste0("(", x$predictors$cell_size, ", ", x$cell_size, ")"), "(x, y)\n")
       }
-      if("variable_selection" %in% names(x$predictors)) {
+      if ("variable_selection" %in% names(x$predictors)) {
         cat("Variable Selection            :", names(x$predictors$variable_selection), "\n")
         if (!names(x$predictors$variable_selection) %in% c("vifstep", "vifcor", "pca")) {
           cat(
             cat("Selected Variables            : "), cat(x$predictors$variable_selection[[1]]$selected_variables, sep = ", "), "\n"
           )
-
         }
         if (names(x$predictors$variable_selection) %in% c("vifstep", "vifcor")) {
           cat(
@@ -185,10 +188,9 @@ print.input_sdm <- function(x, ...) {
         if (!is.null(x$predictors$variable_selection$pca)) {
           cat(
             cat("PCA-transformed variables     : DONE \n"),
-            cat("Cummulative proportion (",x$predictors$variable_selection$pca$cumulative_proportion_th,") : "), cat(x$predictors$variable_selection$pca$selected_variables, sep = ", "), "\n"
+            cat("Cummulative proportion (", x$predictors$variable_selection$pca$cumulative_proportion_th, ") : "), cat(x$predictors$variable_selection$pca$selected_variables, sep = ", "), "\n"
           )
         }
-
       }
     }
   }
@@ -217,7 +219,9 @@ print.input_sdm <- function(x, ...) {
       "   Number                    :", x$models$validation$number, "\n",
       "   Metrics                   :\n"
     )
-    print(lapply(mean_validation_metrics(x), function(y){ as.data.frame(y[,1:5])}))
+    print(lapply(mean_validation_metrics(x), function(y) {
+      as.data.frame(y[, 1:5])
+    }))
     if ("independent_validation" %in% names(x$models)) {
       cat(
         "Independent Validation        :\n",

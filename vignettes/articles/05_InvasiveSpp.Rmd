@@ -1,5 +1,5 @@
 ---
-title: "3. caretSDM Workflow for Species Distribution Modeling"
+title: "5. Projecting Non-native Distribution using SDMs"
 author: '[author name]'
 date: "`r Sys.Date()`"
 output:
@@ -14,7 +14,7 @@ output:
     highlight: tango
     code_folding: show
     df_print: paged
-vignette: "%\\VignetteIndexEntry{3. caretSDM Workflow for Species Distribution Modeling}
+vignette: "%\\VignetteIndexEntry{5. Projecting Non-native Distribution using SDMs}
   %\\VignetteEncoding{UTF-8} %\\VignetteEngine{knitr::knitr}\n"
 editor_options:
   markdown:
@@ -30,13 +30,15 @@ knitr::opts_chunk$set(
 
 ## Introduction
 
-`caretSDM` is a R package that uses the powerful `caret` package as the main engine to obtain
-Species Distribution Models. One of its main attributes is the strong geoprocessing underlying its
-functions provided by `stars` package. Here we show how to model species distributions using
-`caretSDM` through the function `sdm_area` with a polygon. We will also show how to apply a PCA in
-predictors and scenarios to avoid multicolinearity. The aim of this modeling will be to obtain the
-current and future distribution of *Araucaria angustifolia*, a keystone tree species from South
-Brazil.
+One of the main uses for Species Distribution Models is to project the impact of invasive species.
+To facilitate the use of `caretSDM` in invasiveness assessments, we put this document together.
+Here, we will build the Ecological Niche Model, i.e. the mathematical model that describes the
+hypervolume that encompasses the limiting values permitting a species to persist through time, for
+*Araucaria angustifolia* using records on Paraná. We then project the models into the Rio Grande do
+Sul state, further to the South, to assess the invasiveness potential of the species.
+
+This article may read repetitive, when comparing with others, but our aim here is to have a complete
+tutorial, thus some steps will be exactly as from other articles.
 
 First, we need to open our library.
 
@@ -89,20 +91,79 @@ of 10 arc-minutes, which is very coarse, but quicker to download and run.
 
 ```{r WorldClim_data_current, eval = FALSE}
 # Download current bioclimatic variables
-WorldClim_data(path = NULL, 
-               period = "current", 
-               variable = "bioc", 
-               resolution = 10)
+WorldClim_data(
+  path = NULL,
+  period = "current",
+  variable = "bioc",
+  resolution = 10
+)
 
 # Import current bioclimatic variables to R
 bioc <- read_stars(list.files("input_data/WorldClim_data_current/", full.names = T), along = "band", normalize_path = F)
 ```
 
-As in the previous section, we already have a `bioc` object included in the package, which is the
-same output, but masked to match our study area and with fewer variables.
+As we are aiming for a climate change assessment, we will also download future data.
 
-```{r bioc}
-bioc
+```{r WorldClim_data_future, eval = FALSE}
+WorldClim_data(
+  path = NULL,
+  period = "future",
+  variable = "bioc",
+  year = "2090",
+  gcm = c("ca", "mi"),
+  ssp = c("245", "585"),
+  resolution = 10
+)
+```
+
+#### KEY CHANGE FOR INVASIVENESS ASSESSMENT:
+
+In caretSDM, we will set the study area to match the region where the model will be trained. The
+region where models will be projected can be adapted from scenarios data. One can work around with
+this environmental data to adapt it using any package. We already have included in the package an
+object with current and future data for the Rio Grande do Sul state. To build it, we used an
+adaptation of the following code:
+
+```{r example_code, eval = FALSE}
+# THIS IS AN EXAMPLE CODE, IT MUST BE ADAPTED TO RUN CORRECTLY!!!
+# Import aim area shape
+rs <- st_read("Rio_Grande_do_Sul.shp")
+
+# Import current data
+current <- read_stars(list.files("WorldClim_data_current_folder", full.names = T), along = "band")
+
+# Change name of current scenario
+names(current) <- "current"
+
+# Select variables and crop using the shape of the aim area
+current <- sf::st_crop(current[, , , c("1.tif", "4.tif", "12.tif")], rs)
+
+# Set names of variables to match future scenario
+current <- stars::st_set_dimensions(current, "band", values = c("bio1", "bio4", "bio12"))
+
+# Import future data
+future <- read_stars(list.files("WorldClim_data_future_folder", full.names = T))
+
+# Change names of future scenarios
+names(future) <- c(
+  "ca_ssp245_2090", "ca_ssp585_2090",
+  "mi_ssp245_2090", "mi_ssp585_2090"
+)
+
+# Select variables and crop using the shape of the aim area
+future <- sf::st_crop(future[, , , c("bio01", "bio04", "bio12")], rs)
+
+# Set names of variables to match current scenario
+future <- stars::st_set_dimensions(future, "band", values = c("bio1", "bio4", "bio12"))
+
+# Sum scenarios
+scen_rs <- c(current, future)
+```
+
+The result should resemble the included object (see `?scen_rs` for more information on the data).:
+
+```{r scen_rs}
+scen_rs
 ```
 
 ### Defining the study area
@@ -111,16 +172,19 @@ A important step on model building in Species Distribution Models, is the defini
 area (the M in BAM diagram). This area can be, in Geographical Information Systems terms, as an
 example, the delimitation of a habitat (polygon) or a river basin network (lines). Another broadly
 used approach is the use of buffers around presences. The buffer size translates the potential
-distribution capabilities of a species. To educational purposes, we will use a simple polygon of
-Parana state boundaries that is available in caretSDM as the `parana` object (see `?parana` for more
-information on the data)..
+distribution capabilities of a species. As our invasiveness assessment aims to build models in the
+Parana state and project in the Rio Grande do Sul state, we will use a simple polygon of Parana
+state boundaries as study area. This shape is available in caretSDM as the `parana` object (see
+`?parana` for more information on the data).
 
 ```{r parana_sf}
 parana
 ```
 
 ```{r parana_view}
-parana |> select_predictors(NOMEUF2) |> plot()
+parana |>
+  select_predictors(NOMEUF2) |>
+  plot()
 ```
 
 The `sdm_area` function is responsible to create a grid to build models, a key aspect of caretSDM
@@ -141,13 +205,14 @@ or the median (for categorical variables) of the values falling within the cell.
 arguments meaning see `?sdm_area`.
 
 ```{r sdm_area}
-sa <- sdm_area(parana, 
-               cell_size = 25000, 
-               output_crs = 6933, 
-               variables_selected = NULL,
-               gdal = TRUE, 
-               crop_by = NULL, 
-               lines_as_sdm_area = FALSE)
+sa <- sdm_area(parana,
+  cell_size = 25000,
+  output_crs = 6933,
+  variables_selected = NULL,
+  gdal = TRUE,
+  crop_by = NULL,
+  lines_as_sdm_area = FALSE
+)
 sa
 ```
 
@@ -168,10 +233,11 @@ predictors data. Note that `add_predictors` also has a `gdal` argument, which wo
 one in `sdm_area` function.
 
 ```{r add_predictors}
-sa <- add_predictors(sa, 
-                     bioc, 
-                     variables_selected = NULL, 
-                     gdal = TRUE)
+sa <- add_predictors(sa,
+  bioc,
+  variables_selected = NULL,
+  gdal = TRUE
+)
 sa
 ```
 
@@ -179,48 +245,17 @@ Predictors variables are used to train the models. After training the models, we
 models into scenarios. Currently, we don't have any scenario in our `sdm_area` object. We can
 address the predictors data as the current scenario by applying the function `add_scenario` without
 considering any other argument. This happens because the argument `pred_as_scen` is standarly set to
-`TRUE`.
-
-```{r add_scenario_current, eval = FALSE}
-add_scenarios(sa)
-```
-
-If we are aiming to project species distributions in other scenarios, we can download data and add
-in the same way we did for current data.
-
-```{r WorldClim_data_future, eval = FALSE}
-WorldClim_data(path = NULL, 
-               period = "future", 
-               variable = "bioc",
-               year = "2090",
-               gcm = c("ca", "mi"),
-               ssp = c("245","585"),
-               resolution = 10)
-
-scen <- read_stars(list.files("input_data/WorldClim_data_future/", full.names = T), along = "band", normalize_path = F)
-```
-
-As with current bioclimatic data, we have already included the `scen` object in the package, which
-is the same output from above, but masked to match our study area and with fewer variables (see
-`?scen` for more information on the data).
-
-```{r scen}
-scen
-```
-
-Now we can add the current and future scenarios at once in our `sdm_area` object. For the meaning on
-other parameters see the help file at `?add_scenarios`. When adding scenarios, the function will
-test if all variables are available in all scenarios, otherwise it will filter predictors (see the
-warning below). See that we also provide a stationary argument, where the modeler can inform
-variables that do not change between scenarios. These variables can be, e.g., soil variables.
+`TRUE`. However, in invasiveness assessments, we want to project models into another region. This
+region was previously set as the `scen_rs` object.
 
 ```{r add_scenarios}
-sa <- add_scenarios(sa, 
-                    scen = scen, 
-                    scenarios_names = NULL,
-                    pred_as_scen = TRUE,
-                    variables_selected = NULL, 
-                    stationary = NULL)
+sa <- add_scenarios(sa,
+  scen = scen_rs,
+  scenarios_names = NULL,
+  pred_as_scen = FALSE,
+  variables_selected = NULL,
+  stationary = NULL
+)
 sa
 ```
 
@@ -257,8 +292,7 @@ objects keep the information of what we did. Ideally, the workflow will have onl
 throughout it. The `input_sdm` class is the key class in the workflow, where every function will
 orbitate. That class puts occurrences, predictors, scenarios, models and predictions together to
 perform analysis that are only possible when two or more of these classes are available. First, we
-create the object by informing the occurrences and the sdm_area. This step assigns occurrences into
-a study area, excluding records outside the study area or with NAs as predictors.
+create the object by informing the occurrences and the sdm_area.
 
 ```{r input_sdm}
 i <- input_sdm(oc, sa)
@@ -279,13 +313,14 @@ we have both the `occurrence` and `predictors` data.
 
 ```{r data_clean}
 i <- data_clean(i,
-                capitals = TRUE,
-                centroids = TRUE,
-                duplicated = TRUE,
-                identical = TRUE,
-                institutions = TRUE,
-                invalid = TRUE,
-                terrestrial = TRUE)
+  capitals = TRUE,
+  centroids = TRUE,
+  duplicated = TRUE,
+  identical = TRUE,
+  institutions = TRUE,
+  invalid = TRUE,
+  terrestrial = TRUE
+)
 ```
 
 ### Removing multicolinearity from predictors' data
@@ -296,29 +331,12 @@ users are able to perform variables selection through `usdm` package. The functi
 `usdm::vifcor`, where variables are kept given a maximum threshold of colinearity. The standard is
 0.5. Here is a example code for demonstration:
 
-```{r vif_predictors, eval = FALSE}
-i <- vif_predictors(i, 
-                    th = 0.5, 
-                    maxobservations = 5000, 
-                    variables_selected = NULL)
-```
-
-For this study, however, we will use the PCA approach to multicolinearity, where we synthesize
-environmental variability into PCA-axis and project these axis to the geographic space to use them
-as predictors. `pca_predictors` does not have arguments other than the `input_sdm` object. PCA-axis
-will be included in predictors together with raw variables.
-
-```{r pca_predictors}
-i <- pca_predictors(i, cumulative_proportion = 1)
-i
-```
-
-To better visualize PCA parameters, users can run `pca_summary` and `get_pca_model` functions, which
-are very self-explanatory.
-
-```{r pca_summaries}
-pca_summary(i)
-get_pca_model(i)
+```{r vif_predictors}
+i <- vif_predictors(i,
+  th = 0.5,
+  maxobservations = 5000,
+  variables_selected = NULL
+)
 ```
 
 ### Obtaining pseudoabsence data
@@ -336,12 +354,13 @@ your pseudoabsences/models. This can either be a vector of variables names or a 
 selection method.
 
 ```{r pseudoabsence}
-i <- pseudoabsences(i, 
-                    method = "bioclim", 
-                    n_set = 10,
-                    n_pa = NULL,
-                    variables_selected = "pca",
-                    th = 0) 
+i <- pseudoabsences(i,
+  method = "bioclim",
+  n_set = 10,
+  n_pa = NULL,
+  variables_selected = "vif",
+  th = 0
+)
 i
 ```
 
@@ -364,18 +383,21 @@ Note that, when you are using an algorithm for the first time, caret will ask yo
 relevant packages to properly run the algorithm.
 
 ```{r train_sdm}
-ctrl_sdm <- caret::trainControl(method = "repeatedcv", 
-                                number = 4, 
-                                repeats = 1, 
-                                classProbs = TRUE,
-                                returnResamp = "all", 
-                                summaryFunction = summary_sdm, 
-                                savePredictions = "all")
+ctrl_sdm <- caret::trainControl(
+  method = "repeatedcv",
+  number = 4,
+  repeats = 1,
+  classProbs = TRUE,
+  returnResamp = "all",
+  summaryFunction = summary_sdm,
+  savePredictions = "all"
+)
 
-i <- train_sdm(i, 
-               algo = c("naive_bayes", "kknn"), 
-               variables_selected = "pca", 
-               ctrl=ctrl_sdm) |> suppressWarnings()
+i <- train_sdm(i,
+  algo = c("naive_bayes", "kknn"),
+  variables_selected = "vif",
+  ctrl = ctrl_sdm
+) |> suppressWarnings()
 i
 ```
 
@@ -384,15 +406,17 @@ i
 ### Predicting species distribution in given scenarios
 
 Now that we have our models, we can make predictions in new scenarios. The function `predict_sdm`
-will only predict models that passes a given validation threshold. This validation metric is set
-using `metric` and `th` arguments. In the following example, metric is set to be "ROC" and `th` is 
-equal 0.9. This means that only models with ROC \> 0.9 will be used in predictions and ensembles.
+incorporates also the prediction of ensembles (`ensembles=TRUE` is standard). The function will only
+predict models that passes a given validation threshold. This validation metric is set using
+`metric` and `th` arguments. In the following example, metric is set to be "ROC" and th is equal
+0.9. This means that only models with ROC \> 0.9 will be used in predictions and ensembles.
 
 ```{r predict_sdm}
 i <- predict_sdm(i,
-                 metric = "ROC",
-                 th = 0.9,
-                 tp = "prob")
+  metric = "ROC",
+  th = 0.9,
+  tp = "prob"
+)
 i
 ```
 
@@ -400,7 +424,8 @@ Finally, we can ensemble the predictions using:
 
 ```{r ensemble_sdm}
 i <- ensemble_sdm(i,
-                  method = "average")
+  method = "average"
+)
 i
 ```
 
@@ -449,7 +474,7 @@ To plot results, we prepared plot and mapview functions. Here we present only th
 to mapview limitations for markdown, but we encourage users to use the mapview alternatives every
 time it is possible. To do that, simply alternate the "plot" portion of functions to "mapview". As
 an example, `plot_occurrences` has its counterpart function `mapview_occurrences` with the same set
-of arguments an functioning. For plot_ensembles, we can set some parameters to control what is
+of arguments an functioning. For plot_predictions, we can set some parameters to control what is
 being plotted. Probably the most important parameter is the `scenario`, which user can change to
 plot every different scenario projected. If you are modeling more than one species you can inform
 the correct species to be plotted using the `spp_name` parameter and if you are wealling to debate
@@ -458,14 +483,16 @@ separate projections you can plot them informing the model `id` (see row names o
 
 ```{r plot_current_results}
 plot_ensembles(i,
-               scenario = "current",
-               ensemble_type = "average")
+  scenario = "current",
+  ensemble_type = "average"
+)
 ```
 
 ```{r ssp245_2090}
 plot_ensembles(i,
-               scenario = "_ssp245_2090",
-               ensemble_type = "average")
+  scenario = "_ssp585_2090",
+  ensemble_type = "average"
+)
 ```
 
 Another plot widely used in SDM studies is the Partial Dependence Plot, which informs the response

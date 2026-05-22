@@ -1,5 +1,5 @@
 ---
-title: "4. Modeling Species Distributions in Continental Water Bodies"
+title: "3. caretSDM Workflow for Species Distribution Modeling"
 author: '[author name]'
 date: "`r Sys.Date()`"
 output:
@@ -14,8 +14,8 @@ output:
     highlight: tango
     code_folding: show
     df_print: paged
-vignette: "%\\VignetteIndexEntry{4. Modeling Species Distributions in Continental
-  Water Bodies} %\\VignetteEncoding{UTF-8} %\\VignetteEngine{knitr::knitr}\n"
+vignette: "%\\VignetteIndexEntry{3. caretSDM Workflow for Species Distribution Modeling}
+  %\\VignetteEncoding{UTF-8} %\\VignetteEngine{knitr::knitr}\n"
 editor_options:
   markdown:
     wrap: 100
@@ -33,10 +33,10 @@ knitr::opts_chunk$set(
 `caretSDM` is a R package that uses the powerful `caret` package as the main engine to obtain
 Species Distribution Models. One of its main attributes is the strong geoprocessing underlying its
 functions provided by `stars` package. Here we show how to model species distributions using
-`caretSDM` through the function `sdm_area` with lines as predictor variables. We will also show how
-to apply a VIF routine in predictors and scenarios to avoid multicolinearity. The aim of this
-modeling will be to obtain the current and future distribution of *Salminus brasiliensis*, a key
-fish species from South Brazil.
+`caretSDM` through the function `sdm_area` with a polygon. We will also show how to apply a PCA in
+predictors and scenarios to avoid multicolinearity. The aim of this modeling will be to obtain the
+current and future distribution of *Araucaria angustifolia*, a keystone tree species from South
+Brazil.
 
 First, we need to open our library.
 
@@ -67,14 +67,14 @@ parameter `as_df = TRUE` to retrieve an example table. As standard, `GBIF_data` 
 below). An example code for this step would be:
 
 ```{r gbif_data, eval = FALSE}
-salm <- GBIF_data(c("Salminus brasiliensis"), as_df = TRUE)
+occ <- GBIF_data(c("Araucaria angustifolia"), as_df = TRUE)
 ```
 
-But we already have a `salm` object included in the package, which is the same output, but with
+But we already have a `occ` object included in the package, which is the same output, but with
 filtered records to match our study area. Note that coordinates are in a metric CRS (EPSG: 6933).
 
 ```{r occ}
-salm |> head()
+occ |> head()
 ```
 
 ### Obtaining climatic data
@@ -89,10 +89,12 @@ of 10 arc-minutes, which is very coarse, but quicker to download and run.
 
 ```{r WorldClim_data_current, eval = FALSE}
 # Download current bioclimatic variables
-WorldClim_data(path = NULL, 
-               period = "current", 
-               variable = "bioc", 
-               resolution = 10)
+WorldClim_data(
+  path = NULL,
+  period = "current",
+  variable = "bioc",
+  resolution = 10
+)
 
 # Import current bioclimatic variables to R
 bioc <- read_stars(list.files("input_data/WorldClim_data_current/", full.names = T), along = "band", normalize_path = F)
@@ -112,15 +114,17 @@ area (the M in BAM diagram). This area can be, in Geographical Information Syste
 example, the delimitation of a habitat (polygon) or a river basin network (lines). Another broadly
 used approach is the use of buffers around presences. The buffer size translates the potential
 distribution capabilities of a species. To educational purposes, we will use a simple polygon of
-Parana state river network that is available in caretSDM as the `rivs` object (see `?rivs` for more
+Parana state boundaries that is available in caretSDM as the `parana` object (see `?parana` for more
 information on the data)..
 
-```{r rivs_sf}
-rivs
+```{r parana_sf}
+parana
 ```
 
-```{r rivs_view}
-rivs |> select_predictors(LENGTH_KM) |> plot()
+```{r parana_view}
+parana |>
+  select_predictors(NOMEUF2) |>
+  plot()
 ```
 
 The `sdm_area` function is responsible to create a grid to build models, a key aspect of caretSDM
@@ -137,32 +141,26 @@ coarser raster that will be used, otherwise rescaling process may return empty c
 can be performed using GDAL (quicker but less precise) or the `stars` package (slower but more
 precise). The first will address values to cells by calculating the mean (for continuous variables)
 or the median (for categorical variables) of the values falling within the cell. The approach using
-`stars` will do the same thing, but weighting for the area of each value within the cell. However,
-as we are using a river network as study area, *i.e.* a simple features object with `LINESTRING` as
-geometry types, we can set the argument `lines_as_sdm_area = TRUE`. This will chop lines within
-`rivs` (hydrological predictors) given the grid cells built. In other words, if a segment of line
-holds a hydrological information, but crosses between two different cells, it will be splitted in
-two different lines both with the same hydrological data, but different bioclimatic data. The use of
-`lines_as_sdm_area = TRUE` takes more time to run, but is very precise for continental water bodies
-modeling. For other arguments meaning see `?sdm_area`.
+`stars` will do the same thing, but weighting for the area of each value within the cell. For other
+arguments meaning see `?sdm_area`.
 
 ```{r sdm_area}
-sa <- sdm_area(rivs, 
-               cell_size = 25000, 
-               output_crs = 6933, 
-               variables_selected = NULL,
-               gdal = TRUE, 
-               crop_by = NULL, 
-               lines_as_sdm_area = TRUE)
+sa <- sdm_area(parana,
+  cell_size = 25000,
+  output_crs = 6933,
+  variables_selected = NULL,
+  gdal = TRUE,
+  crop_by = NULL,
+  lines_as_sdm_area = FALSE
+)
 sa
 ```
 
-Note that the function returned two predictor variables (`Predictor Names` above). These
-"predictors" are actually columns included in the `rivs` shape's data table. One can filter these
-variables using `select_predictors` function, but we will not do that here, because these variables
-represent important predictor variables that will be used to model species distribution. You can
-explore the grid generated and stored in the `sdm_area` object using the functions `mapview_grid()`
-or `plot_grid()`. Note that the function used here is the same to plot grids and lines.
+Note that the function returned four predictor variables (`Predictor Names` above). These
+"predictors" are actually columns included in the `parana` shape's data table. One can filter these
+variables using `select_predictors` function, but we will not do that here, once the package will
+automatically drop them further. You can explore the grid generated and stored in the `sdm_area`
+object using the functions `mapview_grid()` or `plot_grid()`.
 
 ```{r plot_sdm_area}
 plot_grid(sa)
@@ -175,10 +173,11 @@ predictors data. Note that `add_predictors` also has a `gdal` argument, which wo
 one in `sdm_area` function.
 
 ```{r add_predictors}
-sa <- add_predictors(sa, 
-                     bioc, 
-                     variables_selected = NULL, 
-                     gdal = TRUE) |> suppressWarnings()
+sa <- add_predictors(sa,
+  bioc,
+  variables_selected = NULL,
+  gdal = TRUE
+)
 sa
 ```
 
@@ -196,13 +195,15 @@ If we are aiming to project species distributions in other scenarios, we can dow
 in the same way we did for current data.
 
 ```{r WorldClim_data_future, eval = FALSE}
-WorldClim_data(path = NULL, 
-               period = "future", 
-               variable = "bioc",
-               year = "2090",
-               gcm = c("ca", "mi"),
-               ssp = c("245","585"),
-               resolution = 10)
+WorldClim_data(
+  path = NULL,
+  period = "future",
+  variable = "bioc",
+  year = "2090",
+  gcm = c("ca", "mi"),
+  ssp = c("245", "585"),
+  resolution = 10
+)
 
 scen <- read_stars(list.files("input_data/WorldClim_data_future/", full.names = T), along = "band", normalize_path = F)
 ```
@@ -217,18 +218,18 @@ scen
 
 Now we can add the current and future scenarios at once in our `sdm_area` object. For the meaning on
 other parameters see the help file at `?add_scenarios`. When adding scenarios, the function will
-test if all variables are available in all scenarios, otherwise it will filter predictors. Note that
-`scen` does not have the hydrological variables. These variables are what we call "stationary"
-variables, meaning that they don't change despite climate change scenarios. For that, we must inform
-the function which variables will be replicated between scenarios.
+test if all variables are available in all scenarios, otherwise it will filter predictors (see the
+warning below). See that we also provide a stationary argument, where the modeler can inform
+variables that do not change between scenarios. These variables can be, e.g., soil variables.
 
 ```{r add_scenarios}
-sa <- add_scenarios(sa, 
-                    scen = scen, 
-                    scenarios_names = NULL,
-                    pred_as_scen = TRUE,
-                    variables_selected = NULL, 
-                    stationary = c("LENGTH_KM", "DIST_DN_KM"))
+sa <- add_scenarios(sa,
+  scen = scen,
+  scenarios_names = NULL,
+  pred_as_scen = TRUE,
+  variables_selected = NULL,
+  stationary = NULL
+)
 sa
 ```
 
@@ -245,11 +246,11 @@ As `caretSDM` has a strong GIS background, it is necessary to explicitly tell wh
 in. This will assure that every GIS transformation is correct. `occurrences_sdm` function creates a
 occurrences class (*i.e.* "response variable", "target" or "label") that will be used in
 occurrences' transformations and functions, as pseudoabsences generation. For a reference, GBIF data
-is in occ_crs = 4326, but our records stored in `salm` object is transformed to 6933 (see `?salm` for
-more information on the data).
+is in occ_crs = 4326, but our records stored in `occ` object is transformed to 6933 (see `?occ` for more
+information on the data).
 
 ```{r occurrences_sdm}
-oc <- occurrences_sdm(salm, occ_crs = 6933)
+oc <- occurrences_sdm(occ, occ_crs = 6933)
 oc
 ```
 
@@ -282,41 +283,53 @@ also checks for records in the sea if the species is terrestrial, but note that 
 off if the studied species is not terrestrial. The way `caretSDM` works, we can always overwrite the
 main `input_sdm` object to update it. The function will return a new object with all the previous
 information and the new information obtained from the `data_clean` function, note that at the end of
-the Data Cleaning information there is the Duplicated Cell method (here actually a duplicated line).
-This method is only possible when we have both the `occurrence` and `predictors` data.
+the Data Cleaning information there is the Duplicated Cell method. This method is only possible when
+we have both the `occurrence` and `predictors` data.
 
 ```{r data_clean}
 i <- data_clean(i,
-                capitals = TRUE,
-                centroids = TRUE,
-                duplicated = TRUE,
-                identical = TRUE,
-                institutions = TRUE,
-                invalid = TRUE,
-                terrestrial = TRUE)
+  capitals = TRUE,
+  centroids = TRUE,
+  duplicated = TRUE,
+  identical = TRUE,
+  institutions = TRUE,
+  invalid = TRUE,
+  terrestrial = TRUE
+)
 ```
 
 ### Removing multicolinearity from predictors' data
 
 There are two main methods in the SDM literature to consider multicolinearity in predictors data.
-One is the use of PCA-axes, which in `caretSDM` is performed using `pca_predictors`function. The
-other is through the Variance Inflation Factor (VIF), which is performed using `vif_predictors`
-function. There, users are able to perform variables selection through `usdm` package. The function
-is a wrapper for `usdm::vifcor`, where variables are kept given a maximum threshold of colinearity.
-The standard is 0.5.
+One is the use of VIFs, which in `caretSDM` is performed using `vif_predictors`function. There,
+users are able to perform variables selection through `usdm` package. The function is a wrapper for
+`usdm::vifcor`, where variables are kept given a maximum threshold of colinearity. The standard is
+0.5. Here is a example code for demonstration:
 
-```{r vif_predictors}
-i <- vif_predictors(i, 
-                    th = 0.5, 
-                    maxobservations = 5000, 
-                    variables_selected = NULL)
+```{r vif_predictors, eval = FALSE}
+i <- vif_predictors(i,
+  th = 0.5,
+  maxobservations = 5000,
+  variables_selected = NULL
+)
 ```
 
-To better visualize VIF results, users can run `vif_summary` functions, which is very
-self-explanatory.
+For this study, however, we will use the PCA approach to multicolinearity, where we synthesize
+environmental variability into PCA-axis and project these axis to the geographic space to use them
+as predictors. `pca_predictors` does not have arguments other than the `input_sdm` object. PCA-axis
+will be included in predictors together with raw variables.
 
-```{r vif_summaries}
-vif_summary(i)
+```{r pca_predictors}
+i <- pca_predictors(i, cumulative_proportion = 1)
+i
+```
+
+To better visualize PCA parameters, users can run `pca_summary` and `get_pca_model` functions, which
+are very self-explanatory.
+
+```{r pca_summaries}
+pca_summary(i)
+get_pca_model(i)
 ```
 
 ### Obtaining pseudoabsence data
@@ -324,22 +337,23 @@ vif_summary(i)
 Pseudoabsence data will be stored in the `occurrences` object (inside the `input_sdm`). To generate
 them, you must inform some parameters. Probably one of the most important arguments in this function
 is the `method`. Currently, two methods are implemented: a "random", which takes random grid cells
-(or lines) as pseudoabsences; and a "bioclim" method, which creates a Surface Range Envelope (SRE)
-using presence records, binarizes the projection of the SRE using the `th` threshold and then
-retrieves pseudoabsences outside the envelope. The number of pseudoabsences created can be changed
-using the `n_pa` parameter. When set to NULL, `n_pa` will be equal the number of occurrences (to
-avoid imbalance issues). The number of sets of pseudoabsences is adjusted with the `n_set` parameter
-in the function. The argument `variables_selected` will inform which variables you want to use to
-build your pseudoabsences/models. This can either be a vector of variables names or a previously
-performed selection method.
+as pseudoabsences; and a "bioclim" method, which creates a Surface Range Envelope (SRE) using
+presence records, binarizes the projection of the SRE using the `th` threshold and then retrieves
+pseudoabsences outside the envelope. The number of pseudoabsences created can be changed using the
+`n_pa` parameter. When set to NULL, `n_pa` will be equal the number of occurrences (to avoid
+imbalance issues). The number of sets of pseudoabsences is adjusted with the `n_set` parameter in
+the function. The argument `variables_selected` will inform which variables you want to use to build
+your pseudoabsences/models. This can either be a vector of variables names or a previously performed
+selection method.
 
 ```{r pseudoabsence}
-i <- pseudoabsences(i, 
-                    method = "bioclim", 
-                    n_set = 10,
-                    n_pa = NULL,
-                    variables_selected = "vif",
-                    th = 0) 
+i <- pseudoabsences(i,
+  method = "bioclim",
+  n_set = 10,
+  n_pa = NULL,
+  variables_selected = "pca",
+  th = 0
+)
 i
 ```
 
@@ -362,18 +376,21 @@ Note that, when you are using an algorithm for the first time, caret will ask yo
 relevant packages to properly run the algorithm.
 
 ```{r train_sdm}
-ctrl_sdm <- caret::trainControl(method = "repeatedcv", 
-                                number = 4, 
-                                repeats = 1, 
-                                classProbs = TRUE,
-                                returnResamp = "all", 
-                                summaryFunction = summary_sdm, 
-                                savePredictions = "all")
+ctrl_sdm <- caret::trainControl(
+  method = "repeatedcv",
+  number = 4,
+  repeats = 1,
+  classProbs = TRUE,
+  returnResamp = "all",
+  summaryFunction = summary_sdm,
+  savePredictions = "all"
+)
 
-i <- train_sdm(i, 
-               algo = c("naive_bayes", "kknn"), 
-               variables_selected = "vif", 
-               ctrl=ctrl_sdm) |> suppressWarnings()
+i <- train_sdm(i,
+  algo = c("naive_bayes", "kknn"),
+  variables_selected = "pca",
+  ctrl = ctrl_sdm
+) |> suppressWarnings()
 i
 ```
 
@@ -382,16 +399,16 @@ i
 ### Predicting species distribution in given scenarios
 
 Now that we have our models, we can make predictions in new scenarios. The function `predict_sdm`
-incorporates also the prediction of ensembles (`ensembles=TRUE` is standard). The function will only
-predict models that passes a given validation threshold. This validation metric is set using
-`metric` and `th` arguments. In the following example, metric is set to be "ROC" and th is equal
-0.9. This means that only models with ROC \> 0.9 will be used in predictions and ensembles.
+will only predict models that passes a given validation threshold. This validation metric is set
+using `metric` and `th` arguments. In the following example, metric is set to be "ROC" and `th` is 
+equal 0.9. This means that only models with ROC \> 0.9 will be used in predictions and ensembles.
 
 ```{r predict_sdm}
 i <- predict_sdm(i,
-                 metric = "ROC",
-                 th = 0.7,
-                 tp = "prob")
+  metric = "ROC",
+  th = 0.9,
+  tp = "prob"
+)
 i
 ```
 
@@ -399,7 +416,8 @@ Finally, we can ensemble the predictions using:
 
 ```{r ensemble_sdm}
 i <- ensemble_sdm(i,
-                  method = "average")
+  method = "average"
+)
 i
 ```
 
@@ -448,7 +466,7 @@ To plot results, we prepared plot and mapview functions. Here we present only th
 to mapview limitations for markdown, but we encourage users to use the mapview alternatives every
 time it is possible. To do that, simply alternate the "plot" portion of functions to "mapview". As
 an example, `plot_occurrences` has its counterpart function `mapview_occurrences` with the same set
-of arguments an functioning. For plot_predictions, we can set some parameters to control what is
+of arguments an functioning. For plot_ensembles, we can set some parameters to control what is
 being plotted. Probably the most important parameter is the `scenario`, which user can change to
 plot every different scenario projected. If you are modeling more than one species you can inform
 the correct species to be plotted using the `spp_name` parameter and if you are wealling to debate
@@ -457,24 +475,28 @@ separate projections you can plot them informing the model `id` (see row names o
 
 ```{r plot_current_results}
 plot_ensembles(i,
-               scenario = "current",
-               ensemble_type = "average")
+  scenario = "current",
+  ensemble_type = "average"
+)
 ```
 
 ```{r ssp245_2090}
 plot_ensembles(i,
-               scenario = "_ssp245_2090",
-               ensemble_type = "average")
+  scenario = "_ssp245_2090",
+  ensemble_type = "average"
+)
 ```
 
 Another plot widely used in SDM studies is the Partial Dependence Plot, which informs the response
-curves to each variable. In `caretSDM` these plots can be plotted using the `pdp_sdm` function.
+curves to each variable. Here we are using PCA axes as predictors, so there is not much sense in
+plotting these curves, but if someone want to do that, it is possible through the `pdp_sdm`
+function.
 
 ```{r pdp_sdm}
 pdp_sdm(i)
 ```
 
-### Writting results
+### Writing results
 
 To export `caretSDM` objects and outputs from R you can use the write functions. For all
 possibilities see the help file `?write_ensembles`. We encourage users to use standard path
@@ -490,13 +512,12 @@ write_ensembles(i, path = "results/ensembles", ext = ".tif")
 
 ## Conclusion
 
-This vignette demonstrates how to build Species Distribution Models with lines as predictor
-variables using `caretSDM`. This vignette aimed to continental aquatic environments highlights the
-use of the package using a line simplefeature in the `sdm_area`. Alternative to that can be seen in
-vignettes("Araucaria", "caretSDM") where we build SDMs for a tree species using a grid
-simplefeatures instead of lines.
+This vignette demonstrates how to build Species Distribution Models using `caretSDM`. This vignette
+aimed to terrestrial uses highlights the use of the package using a grid in the sdm_area.
+Alternative to that can be seen in vignettes("Salminus", "caretSDM") where we build SDMs for a fish
+species using river lines in a simplefeatures object instead of cells in a grid.
 
-```{r final_time}
+```{r rmd_time}
 end_time <- Sys.time()
 end_time - start_time
 ```

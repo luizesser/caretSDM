@@ -33,16 +33,18 @@ oc <- occurrences_sdm(occ, occ_crs = 6933)
 i <- input_sdm(oc, sa)
 
 # Pseudoabsence generation:
-i <- pseudoabsences(i, method="random", n_set=2)
+i <- pseudoabsences(i, method = "random", n_set = 2)
 
 # Custom trainControl:
-ctrl_sdm <- caret::trainControl(method = "boot",
-                                number = 1,
-                                repeats = 1,
-                                classProbs = TRUE,
-                                returnResamp = "all",
-                                summaryFunction = summary_sdm,
-                                savePredictions = "all")
+ctrl_sdm <- caret::trainControl(
+  method = "boot",
+  number = 1,
+  repeats = 1,
+  classProbs = TRUE,
+  returnResamp = "all",
+  summaryFunction = summary_sdm,
+  savePredictions = "all"
+)
 
 # Train models:
 i <- train_sdm(i, algo = c("naive_bayes"), ctrl = ctrl_sdm) |>

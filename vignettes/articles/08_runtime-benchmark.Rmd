@@ -104,7 +104,6 @@ bioc
 # ---------------------------
 
 prep_biomod2 <- function() {
-  
   occ_biomod <- occ
   occ_biomod$species <- rep(1, nrow(occ))
 
@@ -128,7 +127,6 @@ prep_biomod2 <- function() {
   )
 
   list(data = biomod_data, scen = sc)
-  
 }
 
 # ---------------------------
@@ -136,7 +134,6 @@ prep_biomod2 <- function() {
 # ---------------------------
 
 fit_biomod2 <- function(prep) {
-
   biomod_model <- BIOMOD_Modeling(
     prep$data,
     models = c("ANN", "CTA", "FDA", "GBM", "MARS", "RF"),
@@ -149,17 +146,18 @@ fit_biomod2 <- function(prep) {
 
   biomod_ensmodel <- BIOMOD_EnsembleModeling(
     bm.mod = biomod_model,
-    models.chosen = 'all',
-    em.by = 'all',
-    em.algo = c('EMmean', 'EMwmean', 'EMca'),
-    metric.select = c('AUCroc'),
+    models.chosen = "all",
+    em.by = "all",
+    em.algo = c("EMmean", "EMwmean", "EMca"),
+    metric.select = c("AUCroc"),
     metric.select.thresh = c(0.5)
   )
 
-  list(model = biomod_model,
-       ensemble = biomod_ensmodel,
-       scen = prep$scen)
-  
+  list(
+    model = biomod_model,
+    ensemble = biomod_ensmodel,
+    scen = prep$scen
+  )
 }
 
 # ---------------------------
@@ -167,13 +165,12 @@ fit_biomod2 <- function(prep) {
 # ---------------------------
 
 post_biomod2 <- function(fit) {
-
   biomod_proj <- lapply(names(fit$scen), function(nm) {
     BIOMOD_Projection(
       bm.mod = fit$model,
       proj.name = nm,
       new.env = fit$scen[[nm]],
-      models.chosen = 'all',
+      models.chosen = "all",
       overwrite = TRUE,
       do.stack = FALSE
     )
@@ -184,11 +181,10 @@ post_biomod2 <- function(fit) {
       bm.em = fit$ensemble,
       bm.proj = proj,
       proj.name = nm,
-      models.chosen = 'all',
+      models.chosen = "all",
       overwrite = TRUE
     )
   }, biomod_proj, names(fit$scen))
-  
 }
 
 # ---------------------------
@@ -196,15 +192,16 @@ post_biomod2 <- function(fit) {
 # ---------------------------
 
 run_biomod2 <- function() {
-  
   occ_biomod <- occ
   occ_biomod$species <- rep(1, nrow(occ))
-  env <- terra::rast(stars::st_warp(bioc, crs=6933))
-  sc <- list(scen1 = terra::rast(stars::st_warp(scen[1], crs=6933)), 
-             scen2 = terra::rast(stars::st_warp(scen[2], crs=6933)), 
-             scen3 = terra::rast(stars::st_warp(scen[3], crs=6933)), 
-             scen4 = terra::rast(stars::st_warp(scen[4], crs=6933)))
-  
+  env <- terra::rast(stars::st_warp(bioc, crs = 6933))
+  sc <- list(
+    scen1 = terra::rast(stars::st_warp(scen[1], crs = 6933)),
+    scen2 = terra::rast(stars::st_warp(scen[2], crs = 6933)),
+    scen3 = terra::rast(stars::st_warp(scen[3], crs = 6933)),
+    scen4 = terra::rast(stars::st_warp(scen[4], crs = 6933))
+  )
+
   biomod_data <- BIOMOD_FormatingData(
     resp.var = occ_biomod$species,
     expl.var = env,
@@ -224,22 +221,22 @@ run_biomod2 <- function() {
     metric.eval = c("TSS", "ROC"),
     do.progress = FALSE
   )
-  
+
   biomod_ensmodel <- BIOMOD_EnsembleModeling(
     bm.mod = biomod_model,
-    models.chosen = 'all',
-    em.by = 'all',
-    em.algo = c('EMmean', 'EMwmean', 'EMca'),
-    metric.select = c('AUCroc'),
+    models.chosen = "all",
+    em.by = "all",
+    em.algo = c("EMmean", "EMwmean", "EMca"),
+    metric.select = c("AUCroc"),
     metric.select.thresh = c(0.5)
   )
-  
+
   biomod_proj <- lapply(names(sc), function(nm) {
     BIOMOD_Projection(
       bm.mod = biomod_model,
       proj.name = nm,
       new.env = sc[[nm]],
-      models.chosen = 'all',
+      models.chosen = "all",
       overwrite = TRUE,
       do.stack = FALSE
     )
@@ -250,14 +247,11 @@ run_biomod2 <- function() {
       bm.em = biomod_ensmodel,
       bm.proj = proj,
       proj.name = nm,
-      models.chosen = 'all',
+      models.chosen = "all",
       overwrite = TRUE
     )
   }, biomod_proj, names(scen))
-
 }
-
-
 ```
 
 ---
@@ -270,7 +264,6 @@ run_biomod2 <- function() {
 # ---------------------------
 
 prep_sdm <- function() {
-
   coords <- occ[, c("decimalLongitude", "decimalLatitude")]
   names(coords) <- c("x", "y")
 
@@ -281,7 +274,7 @@ prep_sdm <- function() {
 
   pres_data <- cbind(species = 1, pres_vals)
 
-  bg <- sdm::background(env, n = nrow(pres_data), method = 'gRandom')
+  bg <- sdm::background(env, n = nrow(pres_data), method = "gRandom")
   bg$species <- 0
 
   train <- rbind(dplyr::select(bg, -c("x", "y")), pres_data)
@@ -299,7 +292,6 @@ prep_sdm <- function() {
   )
 
   list(data = d, scen = sc)
-  
 }
 
 # ---------------------------
@@ -307,7 +299,6 @@ prep_sdm <- function() {
 # ---------------------------
 
 fit_sdm <- function(prep) {
-
   m <- sdm(
     formula = species ~ bio1 + bio4 + bio12,
     data = prep$data,
@@ -317,7 +308,6 @@ fit_sdm <- function(prep) {
   )
 
   list(model = m, scen = prep$scen)
-  
 }
 
 # ---------------------------
@@ -325,23 +315,29 @@ fit_sdm <- function(prep) {
 # ---------------------------
 
 post_sdm <- function(fit) {
-  
   lapply(fit$scen, function(r) {
-    ensemble(fit$model, newdata = r,
-             setting = list(method = 'unweighted'))
+    ensemble(fit$model,
+      newdata = r,
+      setting = list(method = "unweighted")
+    )
   })
-  
+
   lapply(fit$scen, function(r) {
-    ensemble(fit$model, newdata = r,
-             setting = list(method = 'weighted', stat = 'AUC',
-                            expr = 'auc > 0.5'))
+    ensemble(fit$model,
+      newdata = r,
+      setting = list(
+        method = "weighted", stat = "AUC",
+        expr = "auc > 0.5"
+      )
+    )
   })
-  
+
   lapply(fit$scen, function(r) {
-    ensemble(fit$model, newdata = r,
-             setting = list(method = 'pa', opt = 2))
+    ensemble(fit$model,
+      newdata = r,
+      setting = list(method = "pa", opt = 2)
+    )
   })
-  
 }
 
 # ---------------------------
@@ -349,23 +345,24 @@ post_sdm <- function(fit) {
 # ---------------------------
 
 run_sdm <- function() {
-  
   occ_sdm <- occ
   coords <- occ_sdm[, c("decimalLongitude", "decimalLatitude")]
   names(coords) <- c("x", "y")
   presence <- occ_sdm[, c("species", "decimalLongitude", "decimalLatitude")]
   names(presence) <- c("species", "x", "y")
-  env <- terra::rast(stars::st_warp(bioc, crs=6933))
-  pres_vals <- terra::extract(env, vect(coords)) 
+  env <- terra::rast(stars::st_warp(bioc, crs = 6933))
+  pres_vals <- terra::extract(env, vect(coords))
   pres_vals <- pres_vals[, -1]
   pres_data <- cbind(presence, pres_vals)
   pres_data$species <- rep(1, nrow(pres_data))
-  sc <- list(scen1 = terra::rast(stars::st_warp(scen[1], crs=6933)), 
-             scen2 = terra::rast(stars::st_warp(scen[2], crs=6933)), 
-             scen3 = terra::rast(stars::st_warp(scen[3], crs=6933)), 
-             scen4 = terra::rast(stars::st_warp(scen[4], crs=6933)))
-  
-  bg <- sdm::background(env, n=nrow(pres_data), method = 'gRandom')
+  sc <- list(
+    scen1 = terra::rast(stars::st_warp(scen[1], crs = 6933)),
+    scen2 = terra::rast(stars::st_warp(scen[2], crs = 6933)),
+    scen3 = terra::rast(stars::st_warp(scen[3], crs = 6933)),
+    scen4 = terra::rast(stars::st_warp(scen[4], crs = 6933))
+  )
+
+  bg <- sdm::background(env, n = nrow(pres_data), method = "gRandom")
   bg$species <- rep(0, nrow(bg))
   pres <- rbind(bg, pres_data)
 
@@ -381,23 +378,30 @@ run_sdm <- function() {
     replication = "cv",
     cv.folds = 5
   )
-  
+
   lapply(sc, function(r) {
-    ensemble(m, newdata = r,
-             setting = list(method = 'unweighted'))
+    ensemble(m,
+      newdata = r,
+      setting = list(method = "unweighted")
+    )
   })
-  
+
   lapply(sc, function(r) {
-    ensemble(m, newdata = r,
-             setting = list(method = 'weighted', stat = 'AUC',
-                            expr = 'auc > 0.5'))
+    ensemble(m,
+      newdata = r,
+      setting = list(
+        method = "weighted", stat = "AUC",
+        expr = "auc > 0.5"
+      )
+    )
   })
-  
+
   lapply(sc, function(r) {
-    ensemble(m, newdata = r,
-             setting = list(method = 'pa', opt = 2))
+    ensemble(m,
+      newdata = r,
+      setting = list(method = "pa", opt = 2)
+    )
   })
-  
 }
 ```
 
@@ -413,13 +417,11 @@ run_sdm <- function() {
 # ---------------------------
 
 prep_caretSDM <- function() {
-  
   sa <- sdm_area(bioc) |>
     add_scenarios(scen)
   oc <- occurrences_sdm(occ, occ_crs = 6933)
-  input_sdm(oc, sa) |> 
+  input_sdm(oc, sa) |>
     pseudoabsences(method = "random", n_set = 1)
-  
 }
 
 # ---------------------------
@@ -427,8 +429,7 @@ prep_caretSDM <- function() {
 # ---------------------------
 
 fit_caretSDM <- function(prep) {
-
-  prep |> 
+  prep |>
     train_sdm(
       algo = c("mlp", "rpart", "fda", "gbm", "gcvEarth", "rf"),
       tuneLength = 1,
@@ -441,7 +442,6 @@ fit_caretSDM <- function(prep) {
         summaryFunction = summary_sdm
       )
     )
-  
 }
 
 # ---------------------------
@@ -449,11 +449,9 @@ fit_caretSDM <- function(prep) {
 # ---------------------------
 
 post_caretSDM <- function(fit) {
-
-  fit |> 
+  fit |>
     predict_sdm(th = 0.5) |>
     ensemble_sdm()
-  
 }
 
 
@@ -461,25 +459,27 @@ post_caretSDM <- function(fit) {
 # caretSDM - Complete
 # ---------------------------
 run_caretSDM <- function() {
-  
   sa <- sdm_area(bioc)
 
   oc <- occurrences_sdm(occ, occ_crs = 6933)
-  
-  i <- input_sdm(oc, sa) |> 
-    pseudoabsences(method = "random", n_set = 1) |> 
-    train_sdm(algo = c("mlp", "rpart", "fda", "gbm", "gcvEarth", "rf"), 
-              tuneLength = 1,
-              ctrl = caret::trainControl(method = "cv", 
-                                         number = 5,
-                                         classProbs = TRUE, 
-                                         returnResamp = "none", 
-                                         savePredictions = "final",
-                                         summaryFunction = summary_sdm)) |> 
+
+  i <- input_sdm(oc, sa) |>
+    pseudoabsences(method = "random", n_set = 1) |>
+    train_sdm(
+      algo = c("mlp", "rpart", "fda", "gbm", "gcvEarth", "rf"),
+      tuneLength = 1,
+      ctrl = caret::trainControl(
+        method = "cv",
+        number = 5,
+        classProbs = TRUE,
+        returnResamp = "none",
+        savePredictions = "final",
+        summaryFunction = summary_sdm
+      )
+    ) |>
     add_scenarios(scen, pred_as_scen = FALSE) |>
     predict_sdm(th = 0.5) |>
     ensemble_sdm(c("average", "weighted_average", "committee_average"))
-  
 }
 ```
 
@@ -497,8 +497,8 @@ prep_caretSDM_res <- prep_caretSDM()
 
 ```{r benchmark_prep, echo=TRUE, results='hide', warning=FALSE, message=FALSE}
 bench_res_prep <- bench::mark(
-  biomod2  = prep_biomod2(),
-  sdm      = prep_sdm(),
+  biomod2 = prep_biomod2(),
+  sdm = prep_sdm(),
   caretSDM = prep_caretSDM(),
   iterations = 5,
   check = FALSE
@@ -513,8 +513,8 @@ fit_caretSDM_res <- fit_caretSDM(prep_caretSDM_res)
 
 ```{r benchmark_fit, echo=TRUE, results='hide', warning=FALSE, message=FALSE}
 bench_res_fit <- bench::mark(
-  biomod2  = fit_biomod2(prep_biomod2_res),
-  sdm      = fit_sdm(prep_sdm_res),
+  biomod2 = fit_biomod2(prep_biomod2_res),
+  sdm = fit_sdm(prep_sdm_res),
   caretSDM = fit_caretSDM(prep_caretSDM_res),
   iterations = 5,
   check = FALSE
@@ -529,8 +529,8 @@ post_caretSDM(fit_caretSDM_res)
 
 ```{r benchmark_post, echo=TRUE, results='hide', warning=FALSE, message=FALSE}
 bench_res_post <- bench::mark(
-  biomod2  = post_biomod2(fit_biomod2_res),
-  sdm      = post_sdm(fit_sdm_res),
+  biomod2 = post_biomod2(fit_biomod2_res),
+  sdm = post_sdm(fit_sdm_res),
   caretSDM = post_caretSDM(fit_caretSDM_res),
   iterations = 5,
   check = FALSE
@@ -539,8 +539,8 @@ bench_res_post <- bench::mark(
 
 ```{r benchmark_complete, echo=TRUE, results='hide', warning=FALSE, message=FALSE}
 bench_res_complete <- bench::mark(
-  biomod2  = run_biomod2(),
-  sdm      = run_sdm(),
+  biomod2 = run_biomod2(),
+  sdm = run_sdm(),
   caretSDM = run_caretSDM(),
   iterations = 5,
   check = FALSE

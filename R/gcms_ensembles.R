@@ -36,25 +36,28 @@
 #'   i <- input_sdm(oc, sa)
 #'
 #'   # Pseudoabsence generation:
-#'   i <- pseudoabsences(i, method="random", n_set = 2)
+#'   i <- pseudoabsences(i, method = "random", n_set = 2)
 #'
 #'   # Custom trainControl:
-#'   ctrl_sdm <- caret::trainControl(method = "boot",
-#'                                   number = 1,
-#'                                   classProbs = TRUE,
-#'                                   returnResamp = "all",
-#'                                   summaryFunction = summary_sdm,
-#'                                   savePredictions = "all")
+#'   ctrl_sdm <- caret::trainControl(
+#'     method = "boot",
+#'     number = 1,
+#'     classProbs = TRUE,
+#'     returnResamp = "all",
+#'     summaryFunction = summary_sdm,
+#'     savePredictions = "all"
+#'   )
 #'
 #'   # Train models:
 #'   i <- train_sdm(i,
-#'                  algo = c("naive_bayes"),
-#'                  ctrl=ctrl_sdm,
-#'                  variables_selected = c("bio1", "bio12")) |>
+#'     algo = c("naive_bayes"),
+#'     ctrl = ctrl_sdm,
+#'     variables_selected = c("bio1", "bio12")
+#'   ) |>
 #'     suppressWarnings()
 #'
 #'   # Predict models:
-#'   i  <- predict_sdm(i, th=0.8)
+#'   i <- predict_sdm(i, th = 0.8)
 #'
 #'   # Ensemble:
 #'   i <- ensemble_sdm(i, method = "average")
@@ -68,33 +71,32 @@
 #' @importFrom dplyr bind_cols
 #'
 #' @export
-gcms_ensembles <- function(i, gcms=NULL) {
+gcms_ensembles <- function(i, gcms = NULL) {
   if (is_input_sdm(i)) {
     y <- i$ensembles$data
   }
   emet <- colnames(y[[1]])[-1]
   cols <- colnames(y)
   for (g in gcms) {
-    cols <- gsub(g,"",cols)
+    cols <- gsub(g, "", cols)
   }
-  scen_names <- names(table(cols)[table(cols)>1])
+  scen_names <- names(table(cols)[table(cols) > 1])
   l <- list()
-  for(sp in rownames(y)){
-    for(sc in scen_names){
+  for (sp in rownames(y)) {
+    for (sc in scen_names) {
       ysc <- y[sp, grep(sc, colnames(y))]
       ysc <- dplyr::bind_cols(ysc)
       l2 <- list()
       for (m in emet) {
-        l2[[m]] <- rowMeans(ysc[,grep(m, colnames(ysc))])
+        l2[[m]] <- rowMeans(ysc[, grep(m, colnames(ysc))])
       }
-      l <- append(l,list(data.frame(cell_id=ysc[,1] , dplyr::bind_cols(l2))))
+      l <- append(l, list(data.frame(cell_id = ysc[, 1], dplyr::bind_cols(l2))))
     }
   }
 
-  m <- matrix(l, nrow=nrow(y), ncol = length(scen_names), dimnames = list(rownames(y), scen_names), byrow = TRUE)
-  y2 <- cbind(y,m)
+  m <- matrix(l, nrow = nrow(y), ncol = length(scen_names), dimnames = list(rownames(y), scen_names), byrow = TRUE)
+  y2 <- cbind(y, m)
 
   i$ensembles$data <- y2
   return(i)
 }
-
