@@ -107,3 +107,9 @@
 
 -   'crs' argument in occurrences_sdm and sdm_area is now changed to 'occ_crs' and 'output_crs', respectively.
 
+# caretSDM 1.9.3
+
+-   New assertions to avoid errors when plotting, using MEM, ESM, PDP, validation metrics, background and scenarios.
+-   Correction for MaxEnt: models were trained using background as presences.
+-   Inclusion of a first draft of a stacking meta-learner modeling (stack_sdm).
+-   I changed the print objects to be more similar with ODMAP protocol.

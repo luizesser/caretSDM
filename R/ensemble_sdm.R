@@ -374,9 +374,11 @@ add_ensembles <- function(e1, e2) {
 #' @returns Concatenate structured characters to showcase what is stored in the object.
 #' @exportS3Method base::print
 print.ensembles <- function(x, ...) {
-  cat("         caretSDM        \n")
-  cat(".........................\n")
-  cat("Class             : Ensembles\n")
-  cat("        Methods   :", x$method, "\n")
+  cat("             caretSDM           \n")
+  cat("................................\n")
+  cat("Class                          : ensembles\n")
+  cat("\n=========== Overview ===========\n")
+  cat("Ensemble method                :", paste(x$method, collapse = ", "), "\n")
+  cat("Ensemble names                 :", paste(colnames(x$data), collapse = ", "), "\n")
   invisible(x)
 }

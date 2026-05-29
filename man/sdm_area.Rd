@@ -66,7 +66,10 @@ different areas.
 sa_area <- sdm_area(parana, cell_size = 50000, output_crs = 6933)
 
 # Create sdm_area using a subset of rivs (lines):
-sa_rivers <- sdm_area(rivs[c(1:100), ], cell_size = 100000, output_crs = 6933, lines_as_sdm_area = TRUE)
+sa_rivers <- sdm_area(rivs[c(1:100), ],
+                      cell_size = 100000,
+                      output_crs = 6933,
+                      lines_as_sdm_area = TRUE)
 
 }
 \seealso{

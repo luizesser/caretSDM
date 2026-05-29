@@ -32,7 +32,7 @@ plot_ensembles(
   spp_name = NULL,
   scenario = NULL,
   id = NULL,
-  ensemble_type = "average",
+  ensemble_type = NULL,
   ...
 )
 
@@ -51,7 +51,7 @@ mapview_ensembles(
   spp_name = NULL,
   scenario = NULL,
   id = NULL,
-  ensemble_type = "average"
+  ensemble_type = NULL
 )
 
 plot_background(i, variables_selected = NULL, ...)
@@ -62,7 +62,7 @@ plot_niche(
   variables_selected = NULL,
   scenario = NULL,
   id = NULL,
-  ensemble_type = "average",
+  ensemble_type = NULL,
   raster = FALSE,
   ...
 )

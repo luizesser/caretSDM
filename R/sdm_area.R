@@ -48,7 +48,10 @@
 #' sa_area <- sdm_area(parana, cell_size = 50000, output_crs = 6933)
 #'
 #' # Create sdm_area using a subset of rivs (lines):
-#' sa_rivers <- sdm_area(rivs[c(1:100), ], cell_size = 100000, output_crs = 6933, lines_as_sdm_area = TRUE)
+#' sa_rivers <- sdm_area(rivs[c(1:100), ],
+#'                       cell_size = 100000,
+#'                       output_crs = 6933,
+#'                       lines_as_sdm_area = TRUE)
 #'
 #' @importFrom stars st_as_stars read_stars write_stars st_dimensions st_warp
 #' @importFrom sf st_crs st_read st_bbox st_as_sf gdal_utils st_crop st_make_valid st_transform
@@ -1372,28 +1375,50 @@ add_sdm_area <- function(sa1, sa2) {
 
 #' @exportS3Method base::print
 print.sdm_area <- function(x, ...) {
-  .check_sdm_area(x)
-  cat("          caretSDM         \n")
-  cat("...........................\n")
-  cat("Class                     : sdm_area\n")
-  cat("Extent                    :", sf::st_bbox(x$grid), "(xmin, xmax, ymin, ymax)\n")
-  cat("CRS                       :", substr(sf::st_crs(x$grid)$input, 1, 20), "\n")
-  cat("Resolution                :", paste0("(", x$cell_size, ", ", x$cell_size, ")"), "(x, y)\n")
-  predictors_sdm <- get_predictor_names(x)
-  if (length(predictors_sdm) > 0) {
-    cat("Number of Predictors      :", length(predictors_sdm), "\n")
-    cat(
-      cat("Predictors Names          : "), cat(predictors_sdm, sep = ", "),
-      "\n"
-    )
+  cat("             caretSDM           \n")
+  cat("................................\n")
+  cat("Class                          : sdm_area\n")
+  cat("\n=========== Overview ===========\n")
+  cat("-- Predictor variables --\n")
+  cat("Number of predictors           :", ncol(x$grid) - 2, "\n")
+  cat("Predictor names                :", paste(get_predictor_names(x), collapse = ", "), "\n")
+  cat("Spatial extent                 :", paste(sf::st_bbox(x$grid), collapse = ", "), " (xmin,xmax,ymin,ymax)\n")
+  if (!is.null(x$cell_size)) {
+    cat("Spatial resolution             :", paste0("(", x$cell_size, ", ", x$cell_size, ")"), "\n")
   }
-  scen_names <- scenarios_names(x)
-  if (length(scen_names) > 0) {
-    cat("Number of Scenarios      :", length(scen_names), "\n")
-    cat(
-      cat("Scenarios Names          : "), cat(scen_names, sep = ", "),
-      "\n"
-    )
+  cat("Coordinate reference system    :", substr(sf::st_crs(x$grid)$input, 1, 20), "( EPSG:",sf::st_crs(x$grid)$epsg,")", "\n")
+  if ("predictors" %in% names(x) && is_sdm_area(x) && "variable_selection" %in% names(x)) {
+    cat("-- Multicollinearity --\n")
+    cat("Variable selection method      :", names(x$variable_selection)[1], "\n")
+    if (!names(x$variable_selection)[1] %in% c("vifstep", "vifcor", "pca")) {
+      cat("Selected variables             :", paste(x$variable_selection[[1]]$selected_variables, collapse = ", "), "\n")
+    }
+    if (names(x$variable_selection)[1] %in% c("vifstep", "vifcor")) {
+      cat("VIF threshold                  :", x$variable_selection$vif$threshold, "\n")
+      cat("Selected variables             :", paste(x$variable_selection$vif$selected_variables, collapse = ", "), "\n")
+    }
+    if (!is.null(x$variable_selection$pca)) {
+      cat("PCA cumulative proportion th.  :", x$variable_selection$pca$cumulative_proportion_th, "\n")
+      cat("PCA-selected components        :", paste(x$variable_selection$pca$selected_variables, collapse = ", "), "\n")
+    }
   }
+
+  # --- Transfer data (Scenarios) ---
+  if ("scenarios" %in% names(x)) {
+    cat("-- Transfer data --\n")
+    cat("Number of scenarios            :", length(x$scenarios$data), "\n")
+    cat("Scenario names                 :", paste(names(x$scenarios$data), collapse = ", "), "\n")
+    if ("stationary" %in% names(x$scenarios)) {
+      cat("Stationary variables           :", paste(x$scenarios$stationary, collapse = ", "), "\n")
+    }
+    sc_names <- names(x$scenarios$data)
+    years <- as.integer(unlist(regmatches(sc_names, gregexpr("\\d{4}", sc_names))))
+    if (length(years) > 0) {
+      cat("Temporal extent (inferred)     :", min(years), "-", max(years), "\n")
+    } else if (any(grepl("current|present", sc_names, ignore.case = TRUE))) {
+      cat("Temporal extent                : Current\n")
+    }
+  }
+
   invisible(x)
 }

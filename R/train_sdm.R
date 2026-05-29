@@ -52,6 +52,9 @@
 #' \code{mean_validation_metrics} return a \code{list} with a \code{tibble} to each species
 #' summarizing values for ROC, Sensitivity, Specificity and TSS to each of the algorithms used.
 #'
+#' \code{models_hyperparameters} returns the hyperparameters that returned the best tuning to each
+#' model to each species.
+#'
 #' @seealso \code{\link{input_sdm} \link{sdm_area} \link{algorithms}}
 #'
 #' @author Luíz Fernando Esser (luizesser@gmail.com)
@@ -573,11 +576,15 @@ train_sdm <- function(occ, pred = NULL, algo, ctrl = NULL, variables_selected = 
 #' @rdname train_sdm
 #' @export
 get_tune_length <- function(i) {
-  x <- i
-  if (is_input_sdm(x)) {
-    y <- x$models
+  assert_cli(
+    check_class_cli(i, c("input_sdm")),
+    check_class_cli(i, c("models"))
+  )
+  if (is_input_sdm(i)) {
+    assert_names_cli(names(i), must.include = "models")
+    y <- i$models
   } else {
-    y <- x
+    y <- i
   }
   return(y$tuning)
 }
@@ -585,11 +592,15 @@ get_tune_length <- function(i) {
 #' @rdname train_sdm
 #' @export
 algorithms_used <- function(i) {
-  x <- i
-  if (is_input_sdm(x)) {
-    y <- x$models
+  assert_cli(
+    check_class_cli(i, c("input_sdm")),
+    check_class_cli(i, c("models"))
+  )
+  if (is_input_sdm(i)) {
+    assert_names_cli(names(i), must.include = "models")
+    y <- i$models
   } else {
-    y <- x
+    y <- i
   }
   return(y$algorithms)
 }
@@ -597,11 +608,15 @@ algorithms_used <- function(i) {
 #' @rdname train_sdm
 #' @export
 get_models <- function(i) {
-  x <- i
-  if (is_input_sdm(x)) {
-    y <- x$models
+  assert_cli(
+    check_class_cli(i, c("input_sdm")),
+    check_class_cli(i, c("models"))
+  )
+  if (is_input_sdm(i)) {
+    assert_names_cli(names(i), must.include = "models")
+    y <- i$models
   } else {
-    y <- x
+    y <- i
   }
   return(y$models)
 }
@@ -609,11 +624,15 @@ get_models <- function(i) {
 #' @rdname train_sdm
 #' @export
 get_validation_metrics <- function(i) {
-  x <- i
-  if (is_input_sdm(x)) {
-    y <- x$models
+  assert_cli(
+    check_class_cli(i, c("input_sdm")),
+    check_class_cli(i, c("models"))
+  )
+  if (is_input_sdm(i)) {
+    assert_names_cli(names(i), must.include = "models")
+    y <- i$models
   } else {
-    y <- x
+    y <- i
   }
   return(y$validation$metrics)
 }
@@ -621,17 +640,74 @@ get_validation_metrics <- function(i) {
 #' @rdname train_sdm
 #' @export
 mean_validation_metrics <- function(i) {
-  x <- i
-  if (is_input_sdm(x)) {
-    y <- x$models
+  assert_cli(
+    check_class_cli(i, c("input_sdm")),
+    check_class_cli(i, c("models"))
+  )
+  if (is_input_sdm(i)) {
+    assert_names_cli(names(i), must.include = "models")
+    y <- i$models
   } else {
-    y <- x
+    y <- i
   }
   algo <- y$algorithms
   res <- sapply(y$validation$metrics, function(met) {
     v <- dplyr::summarise(dplyr::group_by(met, algo), dplyr::across(dplyr::everything(), mean))
-    return(v)
+    return(as.data.frame(v))
   }, simplify = FALSE, USE.NAMES = TRUE)
+  return(res)
+}
+
+#' @rdname train_sdm
+#' @export
+models_hyperparameters <- function(i) {
+  assert_cli(
+    check_class_cli(i, c("input_sdm")),
+    check_class_cli(i, c("models"))
+  )
+  if (is_input_sdm(i)) {
+    assert_names_cli(names(i), must.include = "models")
+    x <- i$models
+  } else {
+    x <- i
+  }
+
+  res <- do.call(
+    rbind,
+    lapply(names(x$models), function(sp) {
+      do.call(
+        rbind,
+        lapply(names(x$models[[sp]]), function(algo) {
+          fit <- x$models[[sp]][[algo]]
+
+          if (inherits(fit, "train")) {
+            best <- fit$bestTune
+
+            if (!is.null(best) && ncol(best) > 0) {
+              param_str <- paste(
+                names(best),
+                best,
+                sep = "=",
+                collapse = ", "
+              )
+
+              return(
+                data.frame(
+                  species = sp,
+                  algorithm = algo,
+                  parameters = param_str,
+                  stringsAsFactors = FALSE
+                )
+              )
+            }
+          }
+
+          return(NULL)
+        })
+      )
+    })
+  )
+
   return(res)
 }
 
@@ -727,24 +803,38 @@ add_models <- function(m1, m2) {
 #' @returns Concatenate structured characters to showcase what is stored in the object.
 #' @exportS3Method base::print
 print.models <- function(x, ...) {
-  cat("         caretSDM        \n")
-  cat(".........................\n")
-  cat("Class                   : Models\n")
-  cat("Algorithms Names        :", x$algorithms, "\n")
-  cat("Variables Names         :", x$predictors, "\n")
-
-  if ("independent_test" %in% names(x)) {
-    cat(
-      "Independent Validation  :\n",
-      "        ROC: ", x$independent_validation
-    )
+  cat("             caretSDM           \n")
+  cat("................................\n")
+  cat("Class                          : models\n")
+  cat("\n=========== Overview ===========\n")
+  cat("Predictors used                :", paste(x$predictors, collapse = ", "), "\n")
+  if (is.list(x$algorithms)) {
+    cat("Modelling techniques           : Stacked Ensemble\n")
+    for (j in seq_along(x$algorithms)) {
+      cat("  Layer", j, ":", x$algorithms[[j]], "\n")
+    }
+  } else {
+    cat("Modelling techniques           :", paste(x$algorithms, collapse = ", "), "\n")
   }
-  cat(
-    "Model Validation        :\n",
-    "        Method          :", x$validation$method, "\n",
-    "        Number          :", x$validation$number, "\n",
-    "        Metrics         :\n"
-  )
-  print(x$validation$metrics)
+  cat("Model complexity (tuneLength)  :", paste(x$algorithms, collapse = ", "), "\n")
+  cat("Training/validation method     :", x$validation$method, "\n")
+  cat("Number of folds/repeats        :", x$validation$number, "\n")
+  cat("Model hyperparameters          :\n")
+  print(models_hyperparameters(x))
+  first_fit <- x$models[[1]][[1]]
+  if (inherits(first_fit, "train") && !is.null(first_fit$preProcess) &&
+      length(first_fit$preProcess$method) > 0) {
+    cat("Variable transformation        :", paste(first_fit$preProcess$method, collapse = ", "), "\n")
+  }
+
+  if (!is.null(x$validation)) {
+    cat("\nValidation metrics           :\n")
+    print(lapply(mean_validation_metrics(x), function(y) as.data.frame(y[, 1:5])))
+  }
+  if ("independent_validation" %in% names(x)) {
+    cat("Independent test ROC           :", round(mean(unlist(x$independent_validation)), 3),
+        "+/-", round(stats::sd(unlist(x$independent_validation)), 3), "\n")
+  }
+
   invisible(x)
 }

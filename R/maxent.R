@@ -42,11 +42,11 @@
     } else { # Random search
       out <- data.frame(
         regmult = runif(len, 0.1, 5),
-        linear = sample(c(TRUE, FALSE), len, replace = TRUE, prob = c(0.9, 0.1)),
-        quadratic = sample(c(TRUE, FALSE), len, replace = TRUE, prob = c(0.6, 0.4)),
-        product = sample(c(TRUE, FALSE), len, replace = TRUE, prob = c(0.4, 0.6)),
-        threshold = sample(c(TRUE, FALSE), len, replace = TRUE, prob = c(0.3, 0.7)),
-        hinge = sample(c(TRUE, FALSE), len, replace = TRUE, prob = c(0.7, 0.3))
+        linear = sample(c(TRUE, FALSE), len, replace = TRUE, prob = NULL),
+        quadratic = sample(c(TRUE, FALSE), len, replace = TRUE, prob = NULL),
+        product = sample(c(TRUE, FALSE), len, replace = TRUE, prob = NULL),
+        threshold = sample(c(TRUE, FALSE), len, replace = TRUE, prob = NULL),
+        hinge = sample(c(TRUE, FALSE), len, replace = TRUE, prob = NULL)
       )
     }
     # Ensure no duplicate rows are returned
@@ -57,7 +57,7 @@
     # y is the response vector, x is the predictor data.frame
     # Convert factor response to binary (1 for presence, 0 for pseudoabsence/background)
     if (is.factor(y)) {
-      p <- as.integer(y == lev[1])
+      p <- as.integer(y == "presence")
     } else {
       p <- as.integer(y)
     }
@@ -159,13 +159,13 @@
     # Add error handling for prediction
     tryCatch(
       {
-        # Use type = "logistic" to get probabilities in the [0, 1] range
-        pred_probs <- as.numeric(predict(modelFit, newdata, type = "logistic"))
+        # Use type = "cloglog" to get probabilities in the [0, 1] range
+        pred_probs <- as.numeric(predict(modelFit, newdata, type = "cloglog"))
 
         # Structure the output as a data.frame with columns named after the outcome levels
         prob_df <- data.frame(
-          class1 = pred_probs,
-          class2 = 1 - pred_probs
+          background = 1 - pred_probs,
+          presence = pred_probs
         )
         # Name columns dynamically based on the levels seen during training
         colnames(prob_df) <- modelFit$obsLevels

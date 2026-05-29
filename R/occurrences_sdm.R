@@ -390,19 +390,52 @@ add_occurrences <- function(oc1, oc2) {
 #' @returns Concatenate structured characters to showcase what is stored in the object.
 #' @exportS3Method base::print
 print.occurrences <- function(x, ...) {
-  cat("        caretSDM       \n")
-  cat(".......................\n")
-  cat("Class                 : occurrences\n")
-  cat("Species Names         :", sort(x$spp_names), "\n")
-  cat("Number of presences   :", x$n_presences[sort(x$spp_names)], "\n")
-  if (!is.null(x$independent_test)) {
-    cat("Independent Test      : TRUE (number of records = ", nrow(x$independent_test), ")\n")
+  cat("             caretSDM           \n")
+  cat("................................\n")
+  cat("Class                          : occurrences\n")
+  cat("\n=========== Overview ===========\n")
+  cat("Focal Taxon                    :", paste(x$spp_names, collapse = ", "), "\n")
+  obs_type <- "Presence-only"
+  if (all(c("pseudoabsences", "background") %in% names(x))) {
+    obs_type <- "Presence-absence (pseudo-absence) and Presence-background"
+  } else if (!is.null(x$pseudoabsences)) {
+    obs_type <- "Presence-absence (pseudo-absence)"
+  } else if (!is.null(x$background)) {
+    obs_type <- "Presence-background"
+  }
+  cat("Observation type               :", obs_type, "\n")
+  cat("Taxon names                    :", paste(x$spp_names, collapse = ", "), "\n")
+  cat("Sample size                    :", paste(x$n_presences, collapse = ", "), "\n")
+
+  if (!is.null(x$pseudoabsences)) {
+    cat("(Pseudo)Absence data method    :", x$pseudoabsences$method, "\n")
+    cat("Number of PA sets              :", paste(x$pseudoabsences$n_set, collapse = ", "), "\n")
+    cat("PAs per set                    :", paste(as.numeric(x$pseudoabsences$n_pa), collapse = ", "), "\n")
+    cat("PA-to-presence ratio           :", paste(round(as.numeric(x$pseudoabsences$n_pa) /
+                                                          x$n_presences, 2), collapse = ", "), "\n")
   }
 
-  n <- max(nchar(colnames(x$occurrences)[1]), nchar(x$occurrences$species)[1])
-  n <- n + sum(nchar(colnames(x$occurrences)[-1])) + ncol(x$occurrences) + 1
-  cat(rep("=", n), sep = "")
-  cat("\nData:\n")
-  print(utils::head(x$occurrences))
+  if (!is.null(x$background)) {
+    cat("Background data method         :", x$background$method, "\n")
+    cat("Number of background sets      :", paste(x$background$n_set, collapse = ", "), "\n")
+    cat("BGs per set                    :", paste(as.numeric(x$background$n_bg), collapse = ", "), "\n")
+    cat("Background proportion          :", paste(as.numeric(x$background$proportion), collapse = ", "), "\n")
+  }
+
+  if (!is.null(x$data_cleaning)) {
+    cat("Data cleaning                  :", paste(x$data_cleaning, collapse = ", "), "\n")
+  }
+
+  if (!is.null(x$esm)) {
+    cat("Ensemble of Small Models (ESM) : TRUE\n")
+    cat("ESM records per species        :", paste(x$esm$n_records, collapse = ", "), "\n")
+  }
+
+  if (!is.null(x$mem)) {
+    cat("MacroEcological Models (ESM)   : TRUE\n")
+  }
+  cat("Data structure                 :\n")
+  print(head(x$occurrences))
+
   invisible(x)
 }

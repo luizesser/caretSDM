@@ -285,15 +285,21 @@ add_predictions <- function(p1, p2) {
 #' @returns Concatenate structured characters to showcase what is stored in the object.
 #' @exportS3Method base::print
 print.predictions <- function(x, ...) {
-  cat("         caretSDM        \n")
-  cat(".........................\n")
-  cat("Class             : Predictions\n")
-  cat(
-    "Thresholds        :\n",
-    "        Method   :", x$thresholds$method, "\n",
-    "        Criteria :", x$thresholds$criteria, "\n",
-    "        Metrics  :\n"
-  )
-  print(x$thresholds$values)
+  cat("             caretSDM           \n")
+  cat("................................\n")
+  cat("Class                          : predictions\n")
+  cat("\n=========== Overview ===========\n")
+  cat("Focal Taxon                    :", paste(names(x$predictions[[1]]), collapse = ", "), "\n")
+  cat("Threshold method               :", x$thresholds$method, "\n")
+  cat("Threshold criteria             :", x$thresholds$criteria, "\n")
+  cat("Prediction layers              :", paste(names(x$predictions), collapse = ", "), "\n")
+  pred_type <- "Occurrence Probability"
+  if (!is.null(x$thresholds) &&
+      any(grepl("binary|pa|presence", names(x$predictions), ignore.case = TRUE))) {
+    pred_type <- "Binary (thresholded)"
+  }
+  cat("Prediction unit                :", pred_type, "\n")
+  cat("Spatial extent                 :", paste(sf::st_bbox(x$grid), collapse = ", "), " (xmin,xmax,ymin,ymax)\n")
+  cat("Coordinate reference system    :", substr(sf::st_crs(x$grid)$input, 1, 20), "( EPSG:",sf::st_crs(x$grid)$epsg,")", "\n")
   invisible(x)
 }

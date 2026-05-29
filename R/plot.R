@@ -296,10 +296,15 @@ plot.predictions <- function(x, spp_name = NULL, scenario = NULL, id = NULL, ...
 
 #' @rdname plot_occurrences
 #' @export
-plot_ensembles <- function(i, spp_name = NULL, scenario = NULL, id = NULL, ensemble_type = "average", ...) {
+plot_ensembles <- function(i, spp_name = NULL, scenario = NULL, id = NULL, ensemble_type = NULL, ...) {
   assert_class_cli(i, "input_sdm")
-  assert_subset_cli(spp_name, species_names(i))
   assert_names_cli(names(i), must.include = "ensembles")
+  if (!is.null(ensemble_type)) {
+    assert_subset_cli(ensemble_type, i$ensembles$method)
+  } else {
+    ensemble_type <- i$ensembles$method[1]
+  }
+
   x <- i
   ens <- "ensembles"
   valid_spp <- rownames(x$ensembles$data)
@@ -475,12 +480,18 @@ mapview_predictions <- function(i, spp_name = NULL, scenario = NULL, id = NULL) 
 
 #' @rdname plot_occurrences
 #' @export
-mapview_ensembles <- function(i, spp_name = NULL, scenario = NULL, id = NULL, ensemble_type = "average") {
+mapview_ensembles <- function(i, spp_name = NULL, scenario = NULL, id = NULL, ensemble_type = NULL) {
   .check_suggested("mapview", "mapview_ensembles")
   assert_class_cli(i, "input_sdm")
-  x <- i$predictions
-  valid_spp <- names(x$predictions[[1]])
-  valid_scen <- names(x$predictions)
+  assert_names_cli(names(i), must.include = "ensembles")
+  if (!is.null(ensemble_type)) {
+    assert_subset_cli(ensemble_type, i$ensembles$method)
+  } else {
+    ensemble_type <- i$ensembles$method[1]
+  }
+  x <- i$ensembles
+  valid_spp <- names(x$ensembles[[1]])
+  valid_scen <- names(x$ensembles)
   ens <- "ensembles"
   grd <- x$grid
   if (!is.null(scenario)) {
@@ -493,7 +504,7 @@ mapview_ensembles <- function(i, spp_name = NULL, scenario = NULL, id = NULL, en
   } else {
     spp_name <- valid_spp[1]
   }
-  cell_id <- x[["predictions"]][[scenario]][[spp_name]][[1]]$cell_id
+  cell_id <- x[["ensembles"]][[scenario]][[spp_name]][[1]]$cell_id
   v <- x[[ens]][[spp_name, scenario]][, ensemble_type]
   grd <- dplyr::filter(grd, grd$cell_id == cell_id)
   grd[grd$cell_id %in% cell_id, "result"] <- v
@@ -555,7 +566,7 @@ plot_background <- function(i, variables_selected = NULL, ...) {
 #' @rdname plot_occurrences
 #' @export
 plot_niche <- function(i, spp_name = NULL, variables_selected = NULL, scenario = NULL, id = NULL,
-                       ensemble_type = "average", raster = FALSE, ...) {
+                       ensemble_type = NULL, raster = FALSE, ...) {
   assert_logical_cli(raster)
   if ("ensembles" %in% names(i)) {
     ens <- "ensembles"
@@ -598,6 +609,11 @@ plot_niche <- function(i, spp_name = NULL, variables_selected = NULL, scenario =
   }
 
   if ("ensembles" %in% names(i)) {
+    if (!is.null(ensemble_type)) {
+      assert_subset_cli(ensemble_type, i$ensembles$method)
+    } else {
+      ensemble_type <- i$ensembles$method[1]
+    }
     cell_id <- i$ensembles$data[[spp_name, scenario]][, "cell_id"]
     v <- i$ensembles$data[[spp_name, scenario]][, ensemble_type]
     grd <- dplyr::filter(grd, grd$cell_id == cell_id)

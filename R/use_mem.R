@@ -3,9 +3,9 @@
 #' This function sums all species records into one.
 #' Should be used before the data cleaning routine.
 #'
-#' @usage use_mem(x, add = TRUE, name = "MEM")
+#' @usage use_mem(i, add = TRUE, name = "MEM")
 #'
-#' @param x A \code{occurrences} or \code{input_sdm} object containing occurrences.
+#' @param i A \code{occurrences} or \code{input_sdm} object containing occurrences.
 #' @param add Logical. Should the new MEM records be added to the pool (\code{TRUE}) of species or
 #' the output should have only the summed records (\code{FALSE})? Standard is \code{TRUE}.
 #' @param name How should the new records be named? Standard is "MEM".
@@ -36,13 +36,16 @@
 #' i <- use_mem(i)
 #'
 #' @export
-use_mem <- function(x, add = TRUE, name = "MEM") {
-  if (is_input_sdm(x)) {
-    y <- x$occurrences
-  } else if (is_occurrences(x)) {
-    y <- x
-  } else {
-    stop("x must be of class input_sdm or occurrences")
+use_mem <- function(i, add = TRUE, name = "MEM") {
+  assert_cli(
+    check_class_cli(i, c("input_sdm")),
+    check_class_cli(i, c("occurrences"))
+  )
+  if (is_input_sdm(i)) {
+    assert_names_cli(names(i), must.include = "occurrences")
+    y <- i$occurrences
+  } else if (is_occurrences(i)) {
+    y <- i
   }
 
   if (!add) {
@@ -58,10 +61,10 @@ use_mem <- function(x, add = TRUE, name = "MEM") {
     y$n_presences <- table(y$occurrences$species)
   }
 
-  if (is_input_sdm(x)) {
-    x$occurrences <- y
-  } else if (is_occurrences(x)) {
-    x <- y
+  if (is_input_sdm(i)) {
+    i$occurrences <- y
+  } else if (is_occurrences(i)) {
+    i <- y
   }
-  return(x)
+  return(i)
 }

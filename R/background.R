@@ -173,11 +173,14 @@ background <- function(occ, pred = NULL, method = "random", n_set = 1, n_bg = 10
 #' @rdname background
 #' @export
 n_background <- function(i) {
-  x <- i
-  if (is_input_sdm(x)) {
-    y <- x$occurrences
+  assert_cli(
+    check_class_cli(i, c("input_sdm")),
+    check_class_cli(i, c("occurrences"))
+  )
+  if (is_input_sdm(i)) {
+    y <- i$occurrences
   } else {
-    y <- x
+    y <- i
   }
   return(y$background$n_bg)
 }
@@ -185,11 +188,14 @@ n_background <- function(i) {
 #' @rdname background
 #' @export
 background_method <- function(i) {
-  x <- i
-  if (is_input_sdm(x)) {
-    y <- x$occurrences
+  assert_cli(
+    check_class_cli(i, c("input_sdm")),
+    check_class_cli(i, c("occurrences"))
+  )
+  if (is_input_sdm(i)) {
+    y <- i$occurrences
   } else {
-    y <- x
+    y <- i
   }
   return(y$background$method)
 }
@@ -197,11 +203,14 @@ background_method <- function(i) {
 #' @rdname background
 #' @export
 background_data <- function(i) {
-  x <- i
-  if (is_input_sdm(x)) {
-    y <- x$occurrences
+  assert_cli(
+    check_class_cli(i, c("input_sdm")),
+    check_class_cli(i, c("occurrences"))
+  )
+  if (is_input_sdm(i)) {
+    y <- i$occurrences
   } else {
-    y <- x
+    y <- i
   }
   return(y$background$data)
 }

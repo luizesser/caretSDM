@@ -69,6 +69,7 @@
 pdp_sdm <- function(i, spp = NULL, algo = NULL, variables_selected = NULL, mean.only = FALSE) {
   .check_suggested("pdp", "pdp_sdm")
   assert_class_cli(i, "input_sdm")
+  assert_names_cli(names(i), must.include = "models")
   assert_subset_cli(algo, algorithms_used(i))
   assert_subset_cli(spp, species_names(i))
   assert_subset_cli(variables_selected, i$models$predictors)
@@ -111,6 +112,7 @@ pdp_sdm <- function(i, spp = NULL, algo = NULL, variables_selected = NULL, mean.
 get_pdp_sdm <- function(i, spp = NULL, algo = NULL, variables_selected = NULL) {
   .check_suggested("pdp", "get_pdp_sdm")
   assert_class_cli(i, "input_sdm")
+  assert_names_cli(names(i), must.include = "models")
   assert_subset_cli(algo, algorithms_used(i))
   assert_subset_cli(spp, species_names(i))
   assert_subset_cli(variables_selected, i$models$predictors)

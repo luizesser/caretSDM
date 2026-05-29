@@ -432,6 +432,10 @@ add_scenarios.stars <- function(sa, scen = NULL, scenarios_names = NULL, pred_as
 #' @rdname add_scenarios
 #' @export
 set_scenarios_names <- function(i, scenarios_names = NULL) {
+  assert_cli(
+    check_class_cli(i, c("input_sdm")),
+    check_class_cli(i, c("sdm_area"))
+  )
   assert_class_cli(scenarios_names, "character")
   if (!length(scenarios_names) == length(scenarios_names(i))) {
     cli::cli_abort(c("Length of {.var scenarios_names} must be equal to the number of scenarios in {.var i}.",
@@ -477,6 +481,10 @@ get_scenarios_data <- function(i) {
 #' @rdname add_scenarios
 #' @export
 select_scenarios <- function(i, scenarios_names = NULL) {
+  assert_cli(
+    check_class_cli(i, c("input_sdm")),
+    check_class_cli(i, c("sdm_area"))
+  )
   assert_subset_cli(scenarios_names, scenarios_names(i), empty.ok = FALSE)
   if (is_input_sdm(i) | is_sdm_area(i)) {
     i$scenarios$data <- i$scenarios$data[scenarios_names]

@@ -3,14 +3,16 @@
     Code
       print(oc)
     Output
-              caretSDM       
-      .......................
-      Class                 : occurrences
-      Species Names         : Aa 
-      Number of presences   : 90 
-      Independent Test      : TRUE (number of records =  10 )
-      ==================
-      Data:
+                   caretSDM           
+      ................................
+      Class                          : occurrences
+      
+      =========== Overview ===========
+      Focal Taxon                    : Aa 
+      Observation type               : Presence-only 
+      Taxon names                    : Aa 
+      Sample size                    : 90 
+      Data structure                 :
       Simple feature collection with 6 features and 1 field
       Geometry type: POINT
       Dimension:     XY

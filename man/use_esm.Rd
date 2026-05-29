@@ -4,10 +4,10 @@
 \alias{use_esm}
 \title{Ensemble of Small Models (ESM) in caretSDM}
 \usage{
-use_esm(x, spp = NULL, n_records = 20)
+use_esm(i, spp = NULL, n_records = 20)
 }
 \arguments{
-\item{x}{A \code{occurrences} or \code{input_sdm} object containing occurrences.}
+\item{i}{A \code{occurrences} or \code{input_sdm} object containing occurrences.}
 
 \item{spp}{A vector of species names containing the species which the ESM must be applied.
 Standard is NULL.}

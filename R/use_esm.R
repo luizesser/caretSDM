@@ -2,9 +2,9 @@
 #'
 #' This functions set parameters to run a ESM when running \code{train_sdm}.
 #'
-#' @usage use_esm(x, spp = NULL, n_records = 20)
+#' @usage use_esm(i, spp = NULL, n_records = 20)
 #'
-#' @param x A \code{occurrences} or \code{input_sdm} object containing occurrences.
+#' @param i A \code{occurrences} or \code{input_sdm} object containing occurrences.
 #' @param spp A vector of species names containing the species which the ESM must be applied.
 #' Standard is NULL.
 #' @param n_records Numeric. Number of species records to apply the ESM. Standard is 20.
@@ -44,15 +44,16 @@
 #' @import checkCLI
 #'
 #' @export
-use_esm <- function(x, spp = NULL, n_records = 20) {
-  assert_subset_cli(class(x), c("input_sdm", "occurrences"))
-  assert_subset_cli(spp, species_names(x))
+use_esm <- function(i, spp = NULL, n_records = 20) {
+  assert_subset_cli(class(i), c("input_sdm", "occurrences"))
+  assert_subset_cli(spp, species_names(i))
   assert_numeric_cli(n_records, lower = 0, len = 1, any.missing = FALSE)
 
-  if (is_input_sdm(x)) {
-    y <- x$occurrences
-  } else if (is_occurrences(x)) {
-    y <- x
+  if (is_input_sdm(i)) {
+    assert_names_cli(names(i), must.include = "occurrences")
+    y <- i$occurrences
+  } else if (is_occurrences(i)) {
+    y <- i
   }
 
   if (is.null(spp)) {
@@ -64,10 +65,10 @@ use_esm <- function(x, spp = NULL, n_records = 20) {
   y$esm$spp <- spp
   y$esm$n_records <- n_records
 
-  if (is_input_sdm(x)) {
-    x$occurrences <- y
-  } else if (is_occurrences(x)) {
-    x <- y
+  if (is_input_sdm(i)) {
+    i$occurrences <- y
+  } else if (is_occurrences(i)) {
+    i <- y
   }
-  return(x)
+  return(i)
 }

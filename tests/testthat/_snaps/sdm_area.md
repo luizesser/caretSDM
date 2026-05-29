@@ -16,28 +16,34 @@
     Code
       print(sa)
     Output
-                caretSDM         
-      ...........................
-      Class                     : sdm_area
-      Extent                    : -55.32071 -27.64062 -47.32071 -21.64062 (xmin, xmax, ymin, ymax)
-      CRS                       : WGS 84 
-      Resolution                : (2, 2) (x, y)
-      Number of Predictors      : 4 
-      Predictors Names          : GID0, CODIGOIB1, NOMEUF2, SIGLAUF3 
+                   caretSDM           
+      ................................
+      Class                          : sdm_area
+      
+      =========== Overview ===========
+      -- Predictor variables --
+      Number of predictors           : 4 
+      Predictor names                : GID0, CODIGOIB1, NOMEUF2, SIGLAUF3 
+      Spatial extent                 : -55.3207104, -27.6406166199261, -47.3207104, -21.6406166199261  (xmin,xmax,ymin,ymax)
+      Spatial resolution             : (2, 2) 
+      Coordinate reference system    : WGS 84 ( EPSG: 4326 ) 
 
 ---
 
     Code
       sa
     Output
-                caretSDM         
-      ...........................
-      Class                     : sdm_area
-      Extent                    : -5371070 -3380515 -4571070 -2680515 (xmin, xmax, ymin, ymax)
-      CRS                       : WGS 84 / NSIDC EASE- 
-      Resolution                : (1e+05, 1e+05) (x, y)
-      Number of Predictors      : 3 
-      Predictors Names          : bio1, bio4, bio12 
+                   caretSDM           
+      ................................
+      Class                          : sdm_area
+      
+      =========== Overview ===========
+      -- Predictor variables --
+      Number of predictors           : 3 
+      Predictor names                : bio1, bio4, bio12 
+      Spatial extent                 : -5371069.60063324, -3380515.33951445, -4571069.60063324, -2680515.33951445  (xmin,xmax,ymin,ymax)
+      Spatial resolution             : (1e+05, 1e+05) 
+      Coordinate reference system    : WGS 84 / NSIDC EASE- ( EPSG: 6933 ) 
 
 # sdm_area - sdm_area para ser detectado
 
@@ -71,26 +77,32 @@
     Code
       sa
     Output
-                caretSDM         
-      ...........................
-      Class                     : sdm_area
-      Extent                    : -5301744 -3295037 -4601744 -2795037 (xmin, xmax, ymin, ymax)
-      CRS                       : EPSG:6933 
-      Resolution                : (1e+05, 1e+05) (x, y)
-      Number of Predictors      : 4 
-      Predictors Names          : GID0, CODIGOIB1, NOMEUF2, SIGLAUF3 
+                   caretSDM           
+      ................................
+      Class                          : sdm_area
+      
+      =========== Overview ===========
+      -- Predictor variables --
+      Number of predictors           : 4 
+      Predictor names                : GID0, CODIGOIB1, NOMEUF2, SIGLAUF3 
+      Spatial extent                 : -5301744.44724281, -3295036.62222337, -4601744.44724281, -2795036.62222337  (xmin,xmax,ymin,ymax)
+      Spatial resolution             : (1e+05, 1e+05) 
+      Coordinate reference system    : EPSG:6933 ( EPSG: 6933 ) 
 
 # sdm_area - stars+gdal=F
 
     Code
       sa
     Output
-                caretSDM         
-      ...........................
-      Class                     : sdm_area
-      Extent                    : -5288678 -3292030 -4588678 -2692030 (xmin, xmax, ymin, ymax)
-      CRS                       : EPSG:6933 
-      Resolution                : (1e+05, 1e+05) (x, y)
-      Number of Predictors      : 2 
-      Predictors Names          : wc2.1_10m_bio_1, wc2.1_10m_bio_12 
+                   caretSDM           
+      ................................
+      Class                          : sdm_area
+      
+      =========== Overview ===========
+      -- Predictor variables --
+      Number of predictors           : 2 
+      Predictor names                : wc2.1_10m_bio_1, wc2.1_10m_bio_12 
+      Spatial extent                 : -5288677.89676539, -3292029.92647635, -4588677.89676539, -2692029.92647635  (xmin,xmax,ymin,ymax)
+      Spatial resolution             : (1e+05, 1e+05) 
+      Coordinate reference system    : EPSG:6933 ( EPSG: 6933 ) 
 

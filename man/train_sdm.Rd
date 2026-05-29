@@ -7,6 +7,7 @@
 \alias{get_models}
 \alias{get_validation_metrics}
 \alias{mean_validation_metrics}
+\alias{models_hyperparameters}
 \alias{add_models}
 \title{Train SDM models}
 \usage{
@@ -27,6 +28,8 @@ get_models(i)
 get_validation_metrics(i)
 
 mean_validation_metrics(i)
+
+models_hyperparameters(i)
 
 add_models(m1, m2)
 }
@@ -83,6 +86,9 @@ Deviations (SD) and TSS to each of the algorithms and pseudoabsence datasets use
 
 \code{mean_validation_metrics} return a \code{list} with a \code{tibble} to each species
 summarizing values for ROC, Sensitivity, Specificity and TSS to each of the algorithms used.
+
+\code{models_hyperparameters} returns the hyperparameters that returned the best tuning to each
+model to each species.
 }
 \examples{
 # Create sdm_area object:

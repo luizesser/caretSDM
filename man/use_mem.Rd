@@ -4,10 +4,10 @@
 \alias{use_mem}
 \title{MacroEcological Models (MEM) in caretSDM}
 \usage{
-use_mem(x, add = TRUE, name = "MEM")
+use_mem(i, add = TRUE, name = "MEM")
 }
 \arguments{
-\item{x}{A \code{occurrences} or \code{input_sdm} object containing occurrences.}
+\item{i}{A \code{occurrences} or \code{input_sdm} object containing occurrences.}
 
 \item{add}{Logical. Should the new MEM records be added to the pool (\code{TRUE}) of species or
 the output should have only the summed records (\code{FALSE})? Standard is \code{TRUE}.}
