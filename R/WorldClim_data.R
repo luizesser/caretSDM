@@ -122,9 +122,6 @@ WorldClim_data <- function(path = NULL,
   res <- ifelse(resolution == 30, "s", "m")
   l <- list()
 
-  .warn <- function(...) cli::cli_alert_warning(paste0(...))
-
-
   ## CURRENT PERIOD
   if (period == "current") {
     if (is.null(path)) {
@@ -147,13 +144,13 @@ WorldClim_data <- function(path = NULL,
 
       ok <- .download_file_httr2(url, zipfile)
       if (!ok) {
-        .warn("Failed to download WorldClim current data. The server may be unavailable or the URL may have changed.")
+        cli::cli_alert_warning(paste0("Failed to download WorldClim current data. The server may be unavailable or the URL may have changed."))
         return(invisible(l))
       }
 
       uz <- try(utils::unzip(zipfile, exdir = path), silent = TRUE)
       if (inherits(uz, "try-error")) {
-        .warn("Download succeeded but unzip failed for file ", zipfile, ".")
+        cli::cli_alert_warning(paste0("Download succeeded but unzip failed for file ", zipfile, "."))
         return(invisible(l))
       }
 
@@ -211,7 +208,7 @@ WorldClim_data <- function(path = NULL,
 
             ok <- .download_file_httr2(url, destfile)
             if (!ok) {
-              .warn("Failed to download ", nome, ". The server may be unavailable or the URL may have changed.")
+              cli::cli_alert_warning(paste0("Failed to download ", nome, ". The server may be unavailable or the URL may have changed."))
               next
             }
           } else {
@@ -233,12 +230,12 @@ WorldClim_data <- function(path = NULL,
   resp <- try(httr2::req_perform(req), silent = TRUE)
 
   if (inherits(resp, "try-error")) {
-    .warn("Failed to perform request to ", url, ".")
+    cli::cli_alert_warning(paste0("Failed to perform request to ", url, "."))
     return(FALSE)
   }
 
   if (httr2::resp_is_error(resp)) {
-    .warn("HTTP error ", httr2::resp_status(resp), " when requesting ", url, ".")
+    cli::cli_alert_warning(paste0("HTTP error ", httr2::resp_status(resp), " when requesting ", url, "."))
     return(FALSE)
   }
 
@@ -246,7 +243,7 @@ WorldClim_data <- function(path = NULL,
   body <- httr2::resp_body_raw(resp)
   ok <- try(writeBin(body, destfile), silent = TRUE)
   if (inherits(ok, "try-error")) {
-    .warn("Failed to write response body to file ", destfile, ".")
+    cli::cli_alert_warning(paste0("Failed to write response body to file ", destfile, "."))
     return(FALSE)
   }
   TRUE
