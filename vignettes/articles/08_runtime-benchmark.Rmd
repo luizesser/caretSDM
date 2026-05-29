@@ -74,6 +74,8 @@ library(mda)
 library(gbm)
 library(earth)
 library(randomForest)
+
+set.seed(1)
 ```
 
 ---
