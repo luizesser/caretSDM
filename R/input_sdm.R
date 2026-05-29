@@ -125,18 +125,10 @@ print.input_sdm <- function(x, ...) {
   cat("             caretSDM           \n")
   cat("................................\n")
   cat("Class                          : input_sdm\n")
-
-  # ============================================================
-  # OVERVIEW
-  # ============================================================
   cat("\n=========== Overview ===========\n")
-
-  # Focal Taxon
   if ("occurrences" %in% names(x)) {
     cat("Focal Taxon                    :", paste(x$occurrences$spp_names, collapse = ", "), "\n")
   }
-
-  # Scale of Analysis
   if ("predictors" %in% names(x) && is_sdm_area(x$predictors)) {
     cat("Spatial extent                 :", paste(sf::st_bbox(x$predictors$grid), collapse = ", "), " (xmin,xmax,ymin,ymax)\n")
   }
@@ -150,8 +142,6 @@ print.input_sdm <- function(x, ...) {
       cat("Temporal extent                : Current\n")
     }
   }
-
-  # Biodiversity data
   if ("occurrences" %in% names(x)) {
     obs_type <- "Presence-only"
     if (all(c("pseudoabsences", "background") %in% names(x$occurrences))) {
@@ -163,13 +153,9 @@ print.input_sdm <- function(x, ...) {
     }
     cat("Observation type               :", obs_type, "\n")
   }
-
-  # Predictors
   if ("predictors" %in% names(x) && is_sdm_area(x$predictors)) {
     cat("Predictor names                :", paste(get_predictor_names(x$predictors), collapse = ", "), "\n")
   }
-
-  # Algorithms
   if ("models" %in% names(x)) {
     if (is.list(x$models$algorithms)) {
       cat("Modelling techniques           : Stacked Ensemble\n")
@@ -184,23 +170,14 @@ print.input_sdm <- function(x, ...) {
   if ("ensembles" %in% names(x)) {
     cat("Model averaging                :", x$ensembles$method, "\n")
   }
-
-  # Software
   cat("Software                       : caretSDM v", as.character(utils::packageVersion("caretSDM")),
       ", ", R.version$version.string, "\n", sep = "")
-
-  # ============================================================
-  # DATA
-  # ============================================================
   cat("\n============= Data =============\n")
-
-  # --- Biodiversity data ---
   if ("occurrences" %in% names(x)) {
     cat("-- Biodiversity data --\n")
     cat("Taxon names                    :", paste(x$occurrences$spp_names, collapse = ", "), "\n")
     cat("Sample size                    :", paste(x$occurrences$n_presences, collapse = ", "), "\n")
 
-    # Absence data
     if (!is.null(x$occurrences$pseudoabsences)) {
       cat("(Pseudo)Absence data method    :", x$occurrences$pseudoabsences$method, "\n")
       cat("Number of PA sets              :", paste(x$occurrences$pseudoabsences$n_set, collapse = ", "), "\n")
@@ -209,7 +186,6 @@ print.input_sdm <- function(x, ...) {
                                                             x$occurrences$n_presences, 2), collapse = ", "), "\n")
     }
 
-    # Background data
     if (!is.null(x$occurrences$background)) {
       cat("Background data method         :", x$occurrences$background$method, "\n")
       cat("Number of background sets      :", paste(x$occurrences$background$n_set, collapse = ", "), "\n")
@@ -231,7 +207,6 @@ print.input_sdm <- function(x, ...) {
     }
   }
 
-  # --- Data partitioning ---
   if ("models" %in% names(x) && !is.null(x$models$validation)) {
     cat("-- Data partitioning --\n")
     cat("Training/validation method     :", x$models$validation$method, "\n")
@@ -241,7 +216,6 @@ print.input_sdm <- function(x, ...) {
     }
   }
 
-  # --- Predictor variables ---
   if ("predictors" %in% names(x) && is_sdm_area(x$predictors)) {
     cat("-- Predictor variables --\n")
     cat("Number of predictors           :", ncol(x$predictors$grid) - 2, "\n")
@@ -253,7 +227,6 @@ print.input_sdm <- function(x, ...) {
     cat("Coordinate reference system    :", substr(sf::st_crs(x$predictors$grid)$input, 1, 20), "( EPSG:",sf::st_crs(x$predictors$grid)$epsg,")", "\n")
   }
 
-  # --- Transfer data (Scenarios) ---
   if ("scenarios" %in% names(x)) {
     cat("-- Transfer data --\n")
     cat("Number of scenarios            :", length(x$scenarios$data), "\n")
@@ -269,13 +242,8 @@ print.input_sdm <- function(x, ...) {
       cat("Temporal extent                : Current\n")
     }
   }
-
-  # ============================================================
-  # MODEL
-  # ============================================================
   cat("\n============= Model ============\n")
 
-  # Multicollinearity
   if ("predictors" %in% names(x) && is_sdm_area(x$predictors) && "variable_selection" %in% names(x$predictors)) {
     cat("-- Multicollinearity --\n")
     cat("Variable selection method      :", names(x$predictors$variable_selection)[1], "\n")
@@ -292,7 +260,6 @@ print.input_sdm <- function(x, ...) {
     }
   }
 
-  # Model settings
   if ("models" %in% names(x)) {
     cat("-- Model settings --\n")
     cat("Predictors used                :", paste(x$models$predictors, collapse = ", "), "\n")
@@ -311,16 +278,12 @@ print.input_sdm <- function(x, ...) {
     }
   }
 
-  # Threshold selection (ODMAP: Model section)
   if ("predictions" %in% names(x) && !is.null(x$predictions$thresholds)) {
     cat("-- Threshold selection --\n")
     cat("Threshold method               :", x$predictions$thresholds$method, "\n")
     cat("Threshold criteria             :", x$predictions$thresholds$criteria, "\n")
   }
 
-  # ============================================================
-  # ASSESSMENT
-  # ============================================================
   cat("\n========== Assessment ==========\n")
 
   if ("models" %in% names(x)) {
@@ -335,9 +298,6 @@ print.input_sdm <- function(x, ...) {
     }
   }
 
-  # ============================================================
-  # PREDICTION
-  # ============================================================
   if ("predictions" %in% names(x) || "ensembles" %in% names(x)) {
     cat("\n========== Prediction ==========\n")
 
