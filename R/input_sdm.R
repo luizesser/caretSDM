@@ -318,6 +318,7 @@ print.input_sdm <- function(x, ...) {
 
     if ("ensembles" %in% names(x)) {
       cat("Ensemble method                :", paste(x$ensembles$method, collapse = ", "), "\n")
+      cat("Ensemble names                 :", paste(colnames(x$ensembles$data)[!colnames(x$ensembles$data) %in% names(x$predictions$predictions)], collapse = ", "), "\n")
     }
   }
 

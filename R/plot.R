@@ -452,12 +452,10 @@ mapview_scenarios <- function(i, variables_selected = NULL, scenario = NULL) {
 mapview_predictions <- function(i, spp_name = NULL, scenario = NULL, id = NULL) {
   .check_suggested("mapview", "mapview_predictions")
   assert_class_cli(i, "input_sdm")
-
+  assert_names_cli(names(i), must.include = "predictions")
   x <- i$predictions
   valid_spp <- names(x$predictions[[1]])
   valid_scen <- names(x$predictions)
-  ens <- "predictions"
-  grd <- x$grid
   if (is.null(id)) {
     id <- 1
   }
@@ -471,11 +469,9 @@ mapview_predictions <- function(i, spp_name = NULL, scenario = NULL, id = NULL) 
   } else {
     spp_name <- valid_spp[1]
   }
-  cell_id <- x[["predictions"]][[scenario]][[spp_name]][[1]]$cell_id
-  v <- x[[ens]][[scenario]][[spp_name]][[id]]$presence
-  grd <- dplyr::filter(grd, grd$cell_id == cell_id)
-  grd[grd$cell_id %in% cell_id, "result"] <- v
-  mapview::mapview(grd, zcol = "result", layer.name = paste0(spp_name))
+  mapview::mapview(x$predictions[[scenario]][[spp_name]][[id]],
+                   zcol = "presence",
+                   layer.name = paste0(spp_name))
 }
 
 #' @rdname plot_occurrences
@@ -490,10 +486,10 @@ mapview_ensembles <- function(i, spp_name = NULL, scenario = NULL, id = NULL, en
     ensemble_type <- i$ensembles$method[1]
   }
   x <- i$ensembles
-  valid_spp <- names(x$ensembles[[1]])
-  valid_scen <- names(x$ensembles)
+  valid_spp <- rownames(x$data)
+  valid_scen <- colnames(x$data)
   ens <- "ensembles"
-  grd <- x$grid
+  grd <- i$predictions$grid
   if (!is.null(scenario)) {
     scenario <- valid_scen[which.min(stringdist::stringdist(scenario, valid_scen))]
   } else {
@@ -504,8 +500,8 @@ mapview_ensembles <- function(i, spp_name = NULL, scenario = NULL, id = NULL, en
   } else {
     spp_name <- valid_spp[1]
   }
-  cell_id <- x[["ensembles"]][[scenario]][[spp_name]][[1]]$cell_id
-  v <- x[[ens]][[spp_name, scenario]][, ensemble_type]
+  cell_id <- x$data[[spp_name, scenario]]$cell_id
+  v <- x$data[[spp_name, scenario]][,ensemble_type]
   grd <- dplyr::filter(grd, grd$cell_id == cell_id)
   grd[grd$cell_id %in% cell_id, "result"] <- v
   mapview::mapview(grd, zcol = "result", layer.name = paste0(spp_name))
