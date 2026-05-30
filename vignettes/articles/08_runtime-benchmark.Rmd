@@ -138,6 +138,7 @@ prep_biomod2 <- function() {
 fit_biomod2 <- function(prep) {
   biomod_model <- BIOMOD_Modeling(
     prep$data,
+    modeling.id = "AllModels",
     models = c("ANN", "CTA", "FDA", "GBM", "MARS", "RF"),
     CV.strategy = "kfold",
     CV.nb.rep = 1,
@@ -216,6 +217,7 @@ run_biomod2 <- function() {
 
   biomod_model <- BIOMOD_Modeling(
     biomod_data,
+    modeling.id = "AllModels",
     models = c("ANN", "CTA", "FDA", "GBM", "MARS", "RF"),
     CV.strategy = "kfold",
     CV.nb.rep = 1,
