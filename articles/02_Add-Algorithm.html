@@ -25,7 +25,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">caretSDM</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.9.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.9.4</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -73,7 +73,7 @@
                         <h4 data-toc-skip class="author">[author
 name]</h4>
             
-            <h4 data-toc-skip class="date">2026-05-22</h4>
+            <h4 data-toc-skip class="date">2026-05-31</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/luizesser/caretSDM/blob/main/vignettes/articles/02_Add-Algorithm.Rmd" class="external-link"><code>vignettes/articles/02_Add-Algorithm.Rmd</code></a></small>
       <div class="d-none name"><code>02_Add-Algorithm.Rmd</code></div>
@@ -486,26 +486,49 @@ need to define our training control parameters using
 Distance” was successfully trained and evaluated.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">i</span></span>
-<span><span class="co">#&gt;             caretSDM           </span></span>
-<span><span class="co">#&gt; ...............................</span></span>
-<span><span class="co">#&gt; Class                         : input_sdm</span></span>
-<span><span class="co">#&gt; --------  Occurrences  --------</span></span>
-<span><span class="co">#&gt; Species Names                 : Araucaria angustifolia </span></span>
-<span><span class="co">#&gt; Number of presences           : 419 </span></span>
-<span><span class="co">#&gt; Pseudoabsence methods         :</span></span>
-<span><span class="co">#&gt;     Method to obtain PAs      : bioclim </span></span>
-<span><span class="co">#&gt;     Number of PA sets         : 3 </span></span>
-<span><span class="co">#&gt;     Number of PAs in each set : 419 </span></span>
-<span><span class="co">#&gt; --------  Predictors  ---------</span></span>
-<span><span class="co">#&gt; Number of Predictors          : 7 </span></span>
-<span><span class="co">#&gt; Predictors Names              : GID0, CODIGOIB1, NOMEUF2, SIGLAUF3, bio1, bio4, bio12 </span></span>
-<span><span class="co">#&gt; -----------  Models  ----------</span></span>
-<span><span class="co">#&gt; Algorithms Names              : mahal.custom </span></span>
-<span><span class="co">#&gt; Variables Names               : bio1 bio4 bio12 </span></span>
-<span><span class="co">#&gt; Model Validation              :</span></span>
-<span><span class="co">#&gt;     Method                    : cv </span></span>
-<span><span class="co">#&gt;     Number                    : 3 </span></span>
-<span><span class="co">#&gt;     Metrics                   :</span></span>
+<span><span class="co">#&gt;              caretSDM           </span></span>
+<span><span class="co">#&gt; ................................</span></span>
+<span><span class="co">#&gt; Class                          : input_sdm</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; =========== Overview ===========</span></span>
+<span><span class="co">#&gt; Focal Taxon                    : Araucaria angustifolia </span></span>
+<span><span class="co">#&gt; Spatial extent                 : -5276744.44724281, -3295036.62222337, -4626744.44724281, -2795036.62222337  (xmin,xmax,ymin,ymax)</span></span>
+<span><span class="co">#&gt; Observation type               : Presence-absence (pseudo-absence) </span></span>
+<span><span class="co">#&gt; Predictor names                : GID0, CODIGOIB1, NOMEUF2, SIGLAUF3, bio1, bio4, bio12 </span></span>
+<span><span class="co">#&gt; Modelling techniques           : mahal.custom </span></span>
+<span><span class="co">#&gt; Model complexity (tuneLength)  : mahal.custom </span></span>
+<span><span class="co">#&gt; Software                       : caretSDM v1.9.4, R version 4.6.0 (2026-04-24)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; ============= Data =============</span></span>
+<span><span class="co">#&gt; -- Biodiversity data --</span></span>
+<span><span class="co">#&gt; Taxon names                    : Araucaria angustifolia </span></span>
+<span><span class="co">#&gt; Sample size                    : 419 </span></span>
+<span><span class="co">#&gt; (Pseudo)Absence data method    : bioclim </span></span>
+<span><span class="co">#&gt; Number of PA sets              : 3 </span></span>
+<span><span class="co">#&gt; PAs per set                    : 419 </span></span>
+<span><span class="co">#&gt; PA-to-presence ratio           : 1 </span></span>
+<span><span class="co">#&gt; -- Data partitioning --</span></span>
+<span><span class="co">#&gt; Training/validation method     : cv </span></span>
+<span><span class="co">#&gt; Number of folds/repeats        : 3 </span></span>
+<span><span class="co">#&gt; -- Predictor variables --</span></span>
+<span><span class="co">#&gt; Number of predictors           : 7 </span></span>
+<span><span class="co">#&gt; Predictor names                : GID0, CODIGOIB1, NOMEUF2, SIGLAUF3, bio1, bio4, bio12 </span></span>
+<span><span class="co">#&gt; Spatial extent                 : -5276744.44724281, -3295036.62222337, -4626744.44724281, -2795036.62222337  (xmin,xmax,ymin,ymax)</span></span>
+<span><span class="co">#&gt; Spatial resolution             : (50000, 50000) </span></span>
+<span><span class="co">#&gt; Coordinate reference system    : WGS 84 / NSIDC EASE- ( EPSG: 6933 ) </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; ============= Model ============</span></span>
+<span><span class="co">#&gt; -- Model settings --</span></span>
+<span><span class="co">#&gt; Predictors used                : bio1, bio4, bio12 </span></span>
+<span><span class="co">#&gt; Model hyperparameters          :</span></span>
+<span><span class="co">#&gt;                  species        algorithm parameters</span></span>
+<span><span class="co">#&gt; 1 Araucaria angustifolia mahal.custom_pa1   abs=TRUE</span></span>
+<span><span class="co">#&gt; 2 Araucaria angustifolia mahal.custom_pa2   abs=TRUE</span></span>
+<span><span class="co">#&gt; 3 Araucaria angustifolia mahal.custom_pa3   abs=TRUE</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; ========== Assessment ==========</span></span>
+<span><span class="co">#&gt; -- Performance statistics --</span></span>
+<span><span class="co">#&gt; Cross-validation metrics       :</span></span>
 <span><span class="co">#&gt; $`Araucaria angustifolia`</span></span>
 <span><span class="co">#&gt;           algo      ROC       TSS Sensitivity Specificity</span></span>
 <span><span class="co">#&gt; 1 mahal.custom 0.978312 0.8139431       0.814           1</span></span></code></pre></div>
@@ -518,17 +541,30 @@ passed to <code>algo</code>:</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/train_sdm.html">mean_validation_metrics</a></span><span class="op">(</span><span class="va">i</span><span class="op">)</span></span>
 <span><span class="co">#&gt; $`Araucaria angustifolia`</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 1 × 59</span></span></span>
-<span><span class="co">#&gt;   algo       ROC   TSS Sensitivity Specificity `Pos Pred Value` `Neg Pred Value`</span></span>
-<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> mahal.c… 0.978 0.814       0.814           1                1            0.289</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 52 more variables: Precision &lt;dbl&gt;, Recall &lt;dbl&gt;, F1 &lt;dbl&gt;,</span></span></span>
-<span><span class="co">#&gt; <span style="color: #949494;">#   Prevalence &lt;dbl&gt;, `Detection Rate` &lt;dbl&gt;, `Detection Prevalence` &lt;dbl&gt;,</span></span></span>
-<span><span class="co">#&gt; <span style="color: #949494;">#   `Balanced Accuracy` &lt;dbl&gt;, Accuracy &lt;dbl&gt;, Kappa &lt;dbl&gt;,</span></span></span>
-<span><span class="co">#&gt; <span style="color: #949494;">#   AccuracyLower &lt;dbl&gt;, AccuracyUpper &lt;dbl&gt;, AccuracyNull &lt;dbl&gt;,</span></span></span>
-<span><span class="co">#&gt; <span style="color: #949494;">#   AccuracyPValue &lt;dbl&gt;, McnemarPValue &lt;dbl&gt;, Positive &lt;dbl&gt;, Negative &lt;dbl&gt;,</span></span></span>
-<span><span class="co">#&gt; <span style="color: #949494;">#   `True Positive` &lt;dbl&gt;, `False Positive` &lt;dbl&gt;, `True Negative` &lt;dbl&gt;,</span></span></span>
-<span><span class="co">#&gt; <span style="color: #949494;">#   `False Negative` &lt;dbl&gt;, CBI &lt;dbl&gt;, pAUC &lt;dbl&gt;, Omission_10pct &lt;dbl&gt;, …</span></span></span></code></pre></div>
+<span><span class="co">#&gt;           algo      ROC       TSS Sensitivity Specificity Pos Pred Value</span></span>
+<span><span class="co">#&gt; 1 mahal.custom 0.978312 0.8139431       0.814           1              1</span></span>
+<span><span class="co">#&gt;   Neg Pred Value Precision Recall    F1 Prevalence Detection Rate</span></span>
+<span><span class="co">#&gt; 1      0.2893333         1  0.814 0.897      0.931          0.758</span></span>
+<span><span class="co">#&gt;   Detection Prevalence Balanced Accuracy  Accuracy     Kappa AccuracyLower</span></span>
+<span><span class="co">#&gt; 1                0.758             0.907 0.8268889 0.3812222     0.7568889</span></span>
+<span><span class="co">#&gt;   AccuracyUpper AccuracyNull AccuracyPValue McnemarPValue Positive Negative</span></span>
+<span><span class="co">#&gt; 1     0.8832222        0.931              1             0 139.6667 10.33333</span></span>
+<span><span class="co">#&gt;   True Positive False Positive True Negative False Negative       CBI pAUC</span></span>
+<span><span class="co">#&gt; 1      113.6667       50.88889      10.33333              0 0.7032222  NaN</span></span>
+<span><span class="co">#&gt;   Omission_10pct      ROCSD      TSSSD SensitivitySD SpecificitySD</span></span>
+<span><span class="co">#&gt; 1     0.09466667 0.01173148 0.05609814    0.05603726             0</span></span>
+<span><span class="co">#&gt;   Pos Pred ValueSD Neg Pred ValueSD PrecisionSD   RecallSD       F1SD</span></span>
+<span><span class="co">#&gt; 1                0       0.04172452           0 0.05603726 0.03993683</span></span>
+<span><span class="co">#&gt;   PrevalenceSD Detection RateSD Detection PrevalenceSD Balanced AccuracySD</span></span>
+<span><span class="co">#&gt; 1  0.003464102       0.05375625             0.05375625          0.02800516</span></span>
+<span><span class="co">#&gt;   AccuracySD    KappaSD AccuracyLowerSD AccuracyUpperSD AccuracyNullSD</span></span>
+<span><span class="co">#&gt; 1 0.05194432 0.06155638      0.05435171      0.04697209    0.003464102</span></span>
+<span><span class="co">#&gt;   AccuracyPValueSD McnemarPValueSD PositiveSD NegativeSD True PositiveSD</span></span>
+<span><span class="co">#&gt; 1      0.002309401               0  0.5773503  0.5773503        7.451882</span></span>
+<span><span class="co">#&gt;   False PositiveSD True NegativeSD False NegativeSD     CBISD pAUCSD</span></span>
+<span><span class="co">#&gt; 1         7.981765       0.5773503                0 0.2846868     NA</span></span>
+<span><span class="co">#&gt;   Omission_10pctSD</span></span>
+<span><span class="co">#&gt; 1      0.009826991</span></span></code></pre></div>
 <p>A final plot that can be useful is the Partial Dependence Plot</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/pdp_sdm.html">pdp_sdm</a></span><span class="op">(</span><span class="va">i</span><span class="op">)</span></span>
@@ -554,26 +590,49 @@ build models using the mahal.dismo method.</p>
 <span>  <span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">i2</span></span>
-<span><span class="co">#&gt;             caretSDM           </span></span>
-<span><span class="co">#&gt; ...............................</span></span>
-<span><span class="co">#&gt; Class                         : input_sdm</span></span>
-<span><span class="co">#&gt; --------  Occurrences  --------</span></span>
-<span><span class="co">#&gt; Species Names                 : Araucaria angustifolia </span></span>
-<span><span class="co">#&gt; Number of presences           : 419 </span></span>
-<span><span class="co">#&gt; Pseudoabsence methods         :</span></span>
-<span><span class="co">#&gt;     Method to obtain PAs      : bioclim </span></span>
-<span><span class="co">#&gt;     Number of PA sets         : 3 </span></span>
-<span><span class="co">#&gt;     Number of PAs in each set : 419 </span></span>
-<span><span class="co">#&gt; --------  Predictors  ---------</span></span>
-<span><span class="co">#&gt; Number of Predictors          : 7 </span></span>
-<span><span class="co">#&gt; Predictors Names              : GID0, CODIGOIB1, NOMEUF2, SIGLAUF3, bio1, bio4, bio12 </span></span>
-<span><span class="co">#&gt; -----------  Models  ----------</span></span>
-<span><span class="co">#&gt; Algorithms Names              : mahal.dismo </span></span>
-<span><span class="co">#&gt; Variables Names               : bio1 bio4 bio12 </span></span>
-<span><span class="co">#&gt; Model Validation              :</span></span>
-<span><span class="co">#&gt;     Method                    : cv </span></span>
-<span><span class="co">#&gt;     Number                    : 3 </span></span>
-<span><span class="co">#&gt;     Metrics                   :</span></span>
+<span><span class="co">#&gt;              caretSDM           </span></span>
+<span><span class="co">#&gt; ................................</span></span>
+<span><span class="co">#&gt; Class                          : input_sdm</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; =========== Overview ===========</span></span>
+<span><span class="co">#&gt; Focal Taxon                    : Araucaria angustifolia </span></span>
+<span><span class="co">#&gt; Spatial extent                 : -5276744.44724281, -3295036.62222337, -4626744.44724281, -2795036.62222337  (xmin,xmax,ymin,ymax)</span></span>
+<span><span class="co">#&gt; Observation type               : Presence-absence (pseudo-absence) </span></span>
+<span><span class="co">#&gt; Predictor names                : GID0, CODIGOIB1, NOMEUF2, SIGLAUF3, bio1, bio4, bio12 </span></span>
+<span><span class="co">#&gt; Modelling techniques           : mahal.dismo </span></span>
+<span><span class="co">#&gt; Model complexity (tuneLength)  : mahal.dismo </span></span>
+<span><span class="co">#&gt; Software                       : caretSDM v1.9.4, R version 4.6.0 (2026-04-24)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; ============= Data =============</span></span>
+<span><span class="co">#&gt; -- Biodiversity data --</span></span>
+<span><span class="co">#&gt; Taxon names                    : Araucaria angustifolia </span></span>
+<span><span class="co">#&gt; Sample size                    : 419 </span></span>
+<span><span class="co">#&gt; (Pseudo)Absence data method    : bioclim </span></span>
+<span><span class="co">#&gt; Number of PA sets              : 3 </span></span>
+<span><span class="co">#&gt; PAs per set                    : 419 </span></span>
+<span><span class="co">#&gt; PA-to-presence ratio           : 1 </span></span>
+<span><span class="co">#&gt; -- Data partitioning --</span></span>
+<span><span class="co">#&gt; Training/validation method     : cv </span></span>
+<span><span class="co">#&gt; Number of folds/repeats        : 3 </span></span>
+<span><span class="co">#&gt; -- Predictor variables --</span></span>
+<span><span class="co">#&gt; Number of predictors           : 7 </span></span>
+<span><span class="co">#&gt; Predictor names                : GID0, CODIGOIB1, NOMEUF2, SIGLAUF3, bio1, bio4, bio12 </span></span>
+<span><span class="co">#&gt; Spatial extent                 : -5276744.44724281, -3295036.62222337, -4626744.44724281, -2795036.62222337  (xmin,xmax,ymin,ymax)</span></span>
+<span><span class="co">#&gt; Spatial resolution             : (50000, 50000) </span></span>
+<span><span class="co">#&gt; Coordinate reference system    : WGS 84 / NSIDC EASE- ( EPSG: 6933 ) </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; ============= Model ============</span></span>
+<span><span class="co">#&gt; -- Model settings --</span></span>
+<span><span class="co">#&gt; Predictors used                : bio1, bio4, bio12 </span></span>
+<span><span class="co">#&gt; Model hyperparameters          :</span></span>
+<span><span class="co">#&gt;                  species       algorithm parameters</span></span>
+<span><span class="co">#&gt; 1 Araucaria angustifolia mahal.dismo_pa1   abs=TRUE</span></span>
+<span><span class="co">#&gt; 2 Araucaria angustifolia mahal.dismo_pa2   abs=TRUE</span></span>
+<span><span class="co">#&gt; 3 Araucaria angustifolia mahal.dismo_pa3   abs=TRUE</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; ========== Assessment ==========</span></span>
+<span><span class="co">#&gt; -- Performance statistics --</span></span>
+<span><span class="co">#&gt; Cross-validation metrics       :</span></span>
 <span><span class="co">#&gt; $`Araucaria angustifolia`</span></span>
 <span><span class="co">#&gt;     algo      ROC       TSS Sensitivity Specificity</span></span>
 <span><span class="co">#&gt; 1 custom 0.996803 0.9315789   0.9952222   0.9363333</span></span></code></pre></div>

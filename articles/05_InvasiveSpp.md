@@ -262,14 +262,17 @@ sa <- sdm_area(parana,
 #> ! Making grid over study area is an expensive task. Please, be patient!
 #> ℹ Using GDAL to make the grid and resample the variables.
 sa
-#>           caretSDM         
-#> ...........................
-#> Class                     : sdm_area
-#> Extent                    : -5276744 -3295037 -4626744 -2795037 (xmin, xmax, ymin, ymax)
-#> CRS                       : WGS 84 / NSIDC EASE- 
-#> Resolution                : (25000, 25000) (x, y)
-#> Number of Predictors      : 4 
-#> Predictors Names          : GID0, CODIGOIB1, NOMEUF2, SIGLAUF3
+#>              caretSDM           
+#> ................................
+#> Class                          : sdm_area
+#> 
+#> =========== Overview ===========
+#> -- Predictor variables --
+#> Number of predictors           : 4 
+#> Predictor names                : GID0, CODIGOIB1, NOMEUF2, SIGLAUF3 
+#> Spatial extent                 : -5276744.44724281, -3295036.62222337, -4626744.44724281, -2795036.62222337  (xmin,xmax,ymin,ymax)
+#> Spatial resolution             : (25000, 25000) 
+#> Coordinate reference system    : WGS 84 / NSIDC EASE- ( EPSG: 6933 )
 ```
 
 Note that the function returned four predictor variables
@@ -307,14 +310,17 @@ sa <- add_predictors(sa,
 #> ! Making grid over the study area is an expensive task. Please, be patient!
 #> ℹ Using GDAL to make the grid and resample the variables.
 sa
-#>           caretSDM         
-#> ...........................
-#> Class                     : sdm_area
-#> Extent                    : -5276744 -3295037 -4626744 -2795037 (xmin, xmax, ymin, ymax)
-#> CRS                       : WGS 84 / NSIDC EASE- 
-#> Resolution                : (25000, 25000) (x, y)
-#> Number of Predictors      : 7 
-#> Predictors Names          : GID0, CODIGOIB1, NOMEUF2, SIGLAUF3, bio1, bio4, bio12
+#>              caretSDM           
+#> ................................
+#> Class                          : sdm_area
+#> 
+#> =========== Overview ===========
+#> -- Predictor variables --
+#> Number of predictors           : 7 
+#> Predictor names                : GID0, CODIGOIB1, NOMEUF2, SIGLAUF3, bio1, bio4, bio12 
+#> Spatial extent                 : -5276744.44724281, -3295036.62222337, -4626744.44724281, -2795036.62222337  (xmin,xmax,ymin,ymax)
+#> Spatial resolution             : (25000, 25000) 
+#> Coordinate reference system    : WGS 84 / NSIDC EASE- ( EPSG: 6933 )
 ```
 
 Predictors variables are used to train the models. After training the
@@ -348,16 +354,21 @@ sa <- add_scenarios(sa,
 #> ! Making grid over the study area is an expensive task. Please, be patient!
 #> ℹ Using GDAL to make the grid and resample the variables.
 sa
-#>           caretSDM         
-#> ...........................
-#> Class                     : sdm_area
-#> Extent                    : -5276744 -3295037 -4626744 -2795037 (xmin, xmax, ymin, ymax)
-#> CRS                       : WGS 84 / NSIDC EASE- 
-#> Resolution                : (25000, 25000) (x, y)
-#> Number of Predictors      : 3 
-#> Predictors Names          : bio1, bio4, bio12 
-#> Number of Scenarios      : 5 
-#> Scenarios Names          : current, ca_ssp245_2090, ca_ssp585_2090, mi_ssp245_2090, mi_ssp585_2090
+#>              caretSDM           
+#> ................................
+#> Class                          : sdm_area
+#> 
+#> =========== Overview ===========
+#> -- Predictor variables --
+#> Number of predictors           : 3 
+#> Predictor names                : bio1, bio4, bio12 
+#> Spatial extent                 : -5276744.44724281, -3295036.62222337, -4626744.44724281, -2795036.62222337  (xmin,xmax,ymin,ymax)
+#> Spatial resolution             : (25000, 25000) 
+#> Coordinate reference system    : WGS 84 / NSIDC EASE- ( EPSG: 6933 ) 
+#> -- Transfer data --
+#> Number of scenarios            : 5 
+#> Scenario names                 : current, ca_ssp245_2090, ca_ssp585_2090, mi_ssp245_2090, mi_ssp585_2090 
+#> Temporal extent (inferred)     : 2090 - 2090
 ```
 
 It is common that modelers need to subset variables that will inform
@@ -389,13 +400,16 @@ information on the data).
 
 oc <- occurrences_sdm(occ, occ_crs = 6933)
 oc
-#>         caretSDM       
-#> .......................
-#> Class                 : occurrences
-#> Species Names         : Araucaria angustifolia 
-#> Number of presences   : 419 
-#> =================================
-#> Data:
+#>              caretSDM           
+#> ................................
+#> Class                          : occurrences
+#> 
+#> =========== Overview ===========
+#> Focal Taxon                    : Araucaria angustifolia 
+#> Observation type               : Presence-only 
+#> Taxon names                    : Araucaria angustifolia 
+#> Sample size                    : 419 
+#> Data structure                 :
 #> Simple feature collection with 6 features and 1 field
 #> Geometry type: POINT
 #> Dimension:     XY
@@ -435,18 +449,36 @@ i <- input_sdm(oc, sa)
 #> ℹ 2 elements from `occ` were excluded.
 #> ℹ If this seems too much, check how `occ` and `pred` intersect.
 i
-#>             caretSDM           
-#> ...............................
-#> Class                         : input_sdm
-#> --------  Occurrences  --------
-#> Species Names                 : Araucaria angustifolia 
-#> Number of presences           : 417 
-#> --------  Predictors  ---------
-#> Number of Predictors          : 3 
-#> Predictors Names              : bio1, bio4, bio12 
-#> ---------  Scenarios  ---------
-#> Number of Scenarios           : 5 
-#> Scenarios Names               : current ca_ssp245_2090 ca_ssp585_2090 mi_ssp245_2090 mi_ssp585_2090
+#>              caretSDM           
+#> ................................
+#> Class                          : input_sdm
+#> 
+#> =========== Overview ===========
+#> Focal Taxon                    : Araucaria angustifolia 
+#> Spatial extent                 : -5276744.44724281, -3295036.62222337, -4626744.44724281, -2795036.62222337  (xmin,xmax,ymin,ymax)
+#> Temporal extent (inferred)     : 2090 - 2090 
+#> Observation type               : Presence-only 
+#> Predictor names                : bio1, bio4, bio12 
+#> Software                       : caretSDM v1.9.4, R version 4.6.0 (2026-04-24)
+#> 
+#> ============= Data =============
+#> -- Biodiversity data --
+#> Taxon names                    : Araucaria angustifolia 
+#> Sample size                    : 417 
+#> -- Predictor variables --
+#> Number of predictors           : 3 
+#> Predictor names                : bio1, bio4, bio12 
+#> Spatial extent                 : -5276744.44724281, -3295036.62222337, -4626744.44724281, -2795036.62222337  (xmin,xmax,ymin,ymax)
+#> Spatial resolution             : (25000, 25000) 
+#> Coordinate reference system    : WGS 84 / NSIDC EASE- ( EPSG: 6933 ) 
+#> -- Transfer data --
+#> Number of scenarios            : 5 
+#> Scenario names                 : current, ca_ssp245_2090, ca_ssp585_2090, mi_ssp245_2090, mi_ssp585_2090 
+#> Temporal extent (inferred)     : 2090 - 2090 
+#> 
+#> ============= Model ============
+#> 
+#> ========== Assessment ==========
 ```
 
 ### Data cleaning routine
@@ -544,25 +576,44 @@ i <- pseudoabsences(i,
   th = 0
 )
 i
-#>             caretSDM           
-#> ...............................
-#> Class                         : input_sdm
-#> --------  Occurrences  --------
-#> Species Names                 : Araucaria angustifolia 
-#> Number of presences           : 82 
-#> Pseudoabsence methods         :
-#>     Method to obtain PAs      : bioclim 
-#>     Number of PA sets         : 10 
-#>     Number of PAs in each set : 82 
-#> Data Cleaning                 : NAs, Capitals, Centroids, Geographically Duplicated, Identical Lat/Long, Institutions, Invalid, Non-terrestrial, Duplicated Cell (grid) 
-#> --------  Predictors  ---------
-#> Number of Predictors          : 3 
-#> Predictors Names              : bio1, bio4, bio12 
-#> Variable Selection            : vif 
-#> Selected Variables            : bio1, bio12 
-#> ---------  Scenarios  ---------
-#> Number of Scenarios           : 5 
-#> Scenarios Names               : current ca_ssp245_2090 ca_ssp585_2090 mi_ssp245_2090 mi_ssp585_2090
+#>              caretSDM           
+#> ................................
+#> Class                          : input_sdm
+#> 
+#> =========== Overview ===========
+#> Focal Taxon                    : Araucaria angustifolia 
+#> Spatial extent                 : -5276744.44724281, -3295036.62222337, -4626744.44724281, -2795036.62222337  (xmin,xmax,ymin,ymax)
+#> Temporal extent (inferred)     : 2090 - 2090 
+#> Observation type               : Presence-absence (pseudo-absence) 
+#> Predictor names                : bio1, bio4, bio12 
+#> Software                       : caretSDM v1.9.4, R version 4.6.0 (2026-04-24)
+#> 
+#> ============= Data =============
+#> -- Biodiversity data --
+#> Taxon names                    : Araucaria angustifolia 
+#> Sample size                    : 82 
+#> (Pseudo)Absence data method    : bioclim 
+#> Number of PA sets              : 10 
+#> PAs per set                    : 82 
+#> PA-to-presence ratio           : 1 
+#> Data cleaning                  : NAs, Capitals, Centroids, Geographically Duplicated, Identical Lat/Long, Institutions, Invalid, Non-terrestrial, Duplicated Cell (grid) 
+#> -- Predictor variables --
+#> Number of predictors           : 3 
+#> Predictor names                : bio1, bio4, bio12 
+#> Spatial extent                 : -5276744.44724281, -3295036.62222337, -4626744.44724281, -2795036.62222337  (xmin,xmax,ymin,ymax)
+#> Spatial resolution             : (25000, 25000) 
+#> Coordinate reference system    : WGS 84 / NSIDC EASE- ( EPSG: 6933 ) 
+#> -- Transfer data --
+#> Number of scenarios            : 5 
+#> Scenario names                 : current, ca_ssp245_2090, ca_ssp585_2090, mi_ssp245_2090, mi_ssp585_2090 
+#> Temporal extent (inferred)     : 2090 - 2090 
+#> 
+#> ============= Model ============
+#> -- Multicollinearity --
+#> Variable selection method      : vif 
+#> Selected variables             : bio1, bio12 
+#> 
+#> ========== Assessment ==========
 ```
 
 ## Processing
@@ -609,32 +660,75 @@ i <- train_sdm(i,
 #> Loading required package: ggplot2
 #> Loading required package: lattice
 i
-#>             caretSDM           
-#> ...............................
-#> Class                         : input_sdm
-#> --------  Occurrences  --------
-#> Species Names                 : Araucaria angustifolia 
-#> Number of presences           : 82 
-#> Pseudoabsence methods         :
-#>     Method to obtain PAs      : bioclim 
-#>     Number of PA sets         : 10 
-#>     Number of PAs in each set : 82 
-#> Data Cleaning                 : NAs, Capitals, Centroids, Geographically Duplicated, Identical Lat/Long, Institutions, Invalid, Non-terrestrial, Duplicated Cell (grid) 
-#> --------  Predictors  ---------
-#> Number of Predictors          : 3 
-#> Predictors Names              : bio1, bio4, bio12 
-#> Variable Selection            : vif 
-#> Selected Variables            : bio1, bio12 
-#> ---------  Scenarios  ---------
-#> Number of Scenarios           : 5 
-#> Scenarios Names               : current ca_ssp245_2090 ca_ssp585_2090 mi_ssp245_2090 mi_ssp585_2090 
-#> -----------  Models  ----------
-#> Algorithms Names              : naive_bayes kknn 
-#> Variables Names               : bio1 bio12 
-#> Model Validation              :
-#>     Method                    : repeatedcv 
-#>     Number                    : 4 
-#>     Metrics                   :
+#>              caretSDM           
+#> ................................
+#> Class                          : input_sdm
+#> 
+#> =========== Overview ===========
+#> Focal Taxon                    : Araucaria angustifolia 
+#> Spatial extent                 : -5276744.44724281, -3295036.62222337, -4626744.44724281, -2795036.62222337  (xmin,xmax,ymin,ymax)
+#> Temporal extent (inferred)     : 2090 - 2090 
+#> Observation type               : Presence-absence (pseudo-absence) 
+#> Predictor names                : bio1, bio4, bio12 
+#> Modelling techniques           : naive_bayes, kknn 
+#> Model complexity (tuneLength)  : naive_bayes, kknn 
+#> Software                       : caretSDM v1.9.4, R version 4.6.0 (2026-04-24)
+#> 
+#> ============= Data =============
+#> -- Biodiversity data --
+#> Taxon names                    : Araucaria angustifolia 
+#> Sample size                    : 82 
+#> (Pseudo)Absence data method    : bioclim 
+#> Number of PA sets              : 10 
+#> PAs per set                    : 82 
+#> PA-to-presence ratio           : 1 
+#> Data cleaning                  : NAs, Capitals, Centroids, Geographically Duplicated, Identical Lat/Long, Institutions, Invalid, Non-terrestrial, Duplicated Cell (grid) 
+#> -- Data partitioning --
+#> Training/validation method     : repeatedcv 
+#> Number of folds/repeats        : 4 
+#> -- Predictor variables --
+#> Number of predictors           : 3 
+#> Predictor names                : bio1, bio4, bio12 
+#> Spatial extent                 : -5276744.44724281, -3295036.62222337, -4626744.44724281, -2795036.62222337  (xmin,xmax,ymin,ymax)
+#> Spatial resolution             : (25000, 25000) 
+#> Coordinate reference system    : WGS 84 / NSIDC EASE- ( EPSG: 6933 ) 
+#> -- Transfer data --
+#> Number of scenarios            : 5 
+#> Scenario names                 : current, ca_ssp245_2090, ca_ssp585_2090, mi_ssp245_2090, mi_ssp585_2090 
+#> Temporal extent (inferred)     : 2090 - 2090 
+#> 
+#> ============= Model ============
+#> -- Multicollinearity --
+#> Variable selection method      : vif 
+#> Selected variables             : bio1, bio12 
+#> -- Model settings --
+#> Predictors used                : bio1, bio12 
+#> Model hyperparameters          :
+#>                   species        algorithm                           parameters
+#> 1  Araucaria angustifolia  naive_bayes_pa1  laplace=0, usekernel=TRUE, adjust=1
+#> 2  Araucaria angustifolia         kknn_pa1   kmax=9, distance=2, kernel=optimal
+#> 3  Araucaria angustifolia  naive_bayes_pa2 laplace=0, usekernel=FALSE, adjust=1
+#> 4  Araucaria angustifolia         kknn_pa2   kmax=9, distance=2, kernel=optimal
+#> 5  Araucaria angustifolia  naive_bayes_pa3 laplace=0, usekernel=FALSE, adjust=1
+#> 6  Araucaria angustifolia         kknn_pa3   kmax=9, distance=2, kernel=optimal
+#> 7  Araucaria angustifolia  naive_bayes_pa4 laplace=0, usekernel=FALSE, adjust=1
+#> 8  Araucaria angustifolia         kknn_pa4   kmax=9, distance=2, kernel=optimal
+#> 9  Araucaria angustifolia  naive_bayes_pa5  laplace=0, usekernel=TRUE, adjust=1
+#> 10 Araucaria angustifolia         kknn_pa5   kmax=9, distance=2, kernel=optimal
+#> 11 Araucaria angustifolia  naive_bayes_pa6 laplace=0, usekernel=FALSE, adjust=1
+#> 12 Araucaria angustifolia         kknn_pa6   kmax=9, distance=2, kernel=optimal
+#> 13 Araucaria angustifolia  naive_bayes_pa7 laplace=0, usekernel=FALSE, adjust=1
+#> 14 Araucaria angustifolia         kknn_pa7   kmax=9, distance=2, kernel=optimal
+#> 15 Araucaria angustifolia  naive_bayes_pa8 laplace=0, usekernel=FALSE, adjust=1
+#> 16 Araucaria angustifolia         kknn_pa8   kmax=9, distance=2, kernel=optimal
+#> 17 Araucaria angustifolia  naive_bayes_pa9 laplace=0, usekernel=FALSE, adjust=1
+#> 18 Araucaria angustifolia         kknn_pa9   kmax=9, distance=2, kernel=optimal
+#> 19 Araucaria angustifolia naive_bayes_pa10  laplace=0, usekernel=TRUE, adjust=1
+#> 20 Araucaria angustifolia        kknn_pa10   kmax=9, distance=2, kernel=optimal
+#> 
+#> ========== Assessment ==========
+#> -- Performance statistics --
+#> Cross-validation metrics       :
 #> $`Araucaria angustifolia`
 #>          algo       ROC       TSS Sensitivity Specificity
 #> 1        kknn 0.9788004 0.9407967     0.98775    0.953000
@@ -661,41 +755,87 @@ i <- predict_sdm(i,
   tp = "prob"
 )
 i
-#>             caretSDM           
-#> ...............................
-#> Class                         : input_sdm
-#> --------  Occurrences  --------
-#> Species Names                 : Araucaria angustifolia 
-#> Number of presences           : 82 
-#> Pseudoabsence methods         :
-#>     Method to obtain PAs      : bioclim 
-#>     Number of PA sets         : 10 
-#>     Number of PAs in each set : 82 
-#> Data Cleaning                 : NAs, Capitals, Centroids, Geographically Duplicated, Identical Lat/Long, Institutions, Invalid, Non-terrestrial, Duplicated Cell (grid) 
-#> --------  Predictors  ---------
-#> Number of Predictors          : 3 
-#> Predictors Names              : bio1, bio4, bio12 
-#> Variable Selection            : vif 
-#> Selected Variables            : bio1, bio12 
-#> ---------  Scenarios  ---------
-#> Number of Scenarios           : 5 
-#> Scenarios Names               : current ca_ssp245_2090 ca_ssp585_2090 mi_ssp245_2090 mi_ssp585_2090 
-#> -----------  Models  ----------
-#> Algorithms Names              : naive_bayes kknn 
-#> Variables Names               : bio1 bio12 
-#> Model Validation              :
-#>     Method                    : repeatedcv 
-#>     Number                    : 4 
-#>     Metrics                   :
+#>              caretSDM           
+#> ................................
+#> Class                          : input_sdm
+#> 
+#> =========== Overview ===========
+#> Focal Taxon                    : Araucaria angustifolia 
+#> Spatial extent                 : -5276744.44724281, -3295036.62222337, -4626744.44724281, -2795036.62222337  (xmin,xmax,ymin,ymax)
+#> Temporal extent (inferred)     : 2090 - 2090 
+#> Observation type               : Presence-absence (pseudo-absence) 
+#> Predictor names                : bio1, bio4, bio12 
+#> Modelling techniques           : naive_bayes, kknn 
+#> Model complexity (tuneLength)  : naive_bayes, kknn 
+#> Software                       : caretSDM v1.9.4, R version 4.6.0 (2026-04-24)
+#> 
+#> ============= Data =============
+#> -- Biodiversity data --
+#> Taxon names                    : Araucaria angustifolia 
+#> Sample size                    : 82 
+#> (Pseudo)Absence data method    : bioclim 
+#> Number of PA sets              : 10 
+#> PAs per set                    : 82 
+#> PA-to-presence ratio           : 1 
+#> Data cleaning                  : NAs, Capitals, Centroids, Geographically Duplicated, Identical Lat/Long, Institutions, Invalid, Non-terrestrial, Duplicated Cell (grid) 
+#> -- Data partitioning --
+#> Training/validation method     : repeatedcv 
+#> Number of folds/repeats        : 4 
+#> -- Predictor variables --
+#> Number of predictors           : 3 
+#> Predictor names                : bio1, bio4, bio12 
+#> Spatial extent                 : -5276744.44724281, -3295036.62222337, -4626744.44724281, -2795036.62222337  (xmin,xmax,ymin,ymax)
+#> Spatial resolution             : (25000, 25000) 
+#> Coordinate reference system    : WGS 84 / NSIDC EASE- ( EPSG: 6933 ) 
+#> -- Transfer data --
+#> Number of scenarios            : 5 
+#> Scenario names                 : current, ca_ssp245_2090, ca_ssp585_2090, mi_ssp245_2090, mi_ssp585_2090 
+#> Temporal extent (inferred)     : 2090 - 2090 
+#> 
+#> ============= Model ============
+#> -- Multicollinearity --
+#> Variable selection method      : vif 
+#> Selected variables             : bio1, bio12 
+#> -- Model settings --
+#> Predictors used                : bio1, bio12 
+#> Model hyperparameters          :
+#>                   species        algorithm                           parameters
+#> 1  Araucaria angustifolia  naive_bayes_pa1  laplace=0, usekernel=TRUE, adjust=1
+#> 2  Araucaria angustifolia         kknn_pa1   kmax=9, distance=2, kernel=optimal
+#> 3  Araucaria angustifolia  naive_bayes_pa2 laplace=0, usekernel=FALSE, adjust=1
+#> 4  Araucaria angustifolia         kknn_pa2   kmax=9, distance=2, kernel=optimal
+#> 5  Araucaria angustifolia  naive_bayes_pa3 laplace=0, usekernel=FALSE, adjust=1
+#> 6  Araucaria angustifolia         kknn_pa3   kmax=9, distance=2, kernel=optimal
+#> 7  Araucaria angustifolia  naive_bayes_pa4 laplace=0, usekernel=FALSE, adjust=1
+#> 8  Araucaria angustifolia         kknn_pa4   kmax=9, distance=2, kernel=optimal
+#> 9  Araucaria angustifolia  naive_bayes_pa5  laplace=0, usekernel=TRUE, adjust=1
+#> 10 Araucaria angustifolia         kknn_pa5   kmax=9, distance=2, kernel=optimal
+#> 11 Araucaria angustifolia  naive_bayes_pa6 laplace=0, usekernel=FALSE, adjust=1
+#> 12 Araucaria angustifolia         kknn_pa6   kmax=9, distance=2, kernel=optimal
+#> 13 Araucaria angustifolia  naive_bayes_pa7 laplace=0, usekernel=FALSE, adjust=1
+#> 14 Araucaria angustifolia         kknn_pa7   kmax=9, distance=2, kernel=optimal
+#> 15 Araucaria angustifolia  naive_bayes_pa8 laplace=0, usekernel=FALSE, adjust=1
+#> 16 Araucaria angustifolia         kknn_pa8   kmax=9, distance=2, kernel=optimal
+#> 17 Araucaria angustifolia  naive_bayes_pa9 laplace=0, usekernel=FALSE, adjust=1
+#> 18 Araucaria angustifolia         kknn_pa9   kmax=9, distance=2, kernel=optimal
+#> 19 Araucaria angustifolia naive_bayes_pa10  laplace=0, usekernel=TRUE, adjust=1
+#> 20 Araucaria angustifolia        kknn_pa10   kmax=9, distance=2, kernel=optimal
+#> -- Threshold selection --
+#> Threshold method               : threshold 
+#> Threshold criteria             : 0.9 
+#> 
+#> ========== Assessment ==========
+#> -- Performance statistics --
+#> Cross-validation metrics       :
 #> $`Araucaria angustifolia`
 #>          algo       ROC       TSS Sensitivity Specificity
 #> 1        kknn 0.9788004 0.9407967     0.98775    0.953000
 #> 2 naive_bayes 0.9965948 0.9482630     0.99265    0.960525
 #> 
-#> --------  Predictions  --------
-#> Thresholds                    :
-#>     Method                    : threshold 
-#>     Criteria                  : 0.9
+#> 
+#> ========== Prediction ==========
+#> Prediction layers              : current, ca_ssp245_2090, ca_ssp585_2090, mi_ssp245_2090, mi_ssp585_2090 
+#> Prediction unit                : Occurrence Probability
 ```
 
 Finally, we can ensemble the predictions using:
@@ -712,44 +852,90 @@ i <- ensemble_sdm(i,
 #>   mi_ssp245_2090
 #>   mi_ssp585_2090
 i
-#>             caretSDM           
-#> ...............................
-#> Class                         : input_sdm
-#> --------  Occurrences  --------
-#> Species Names                 : Araucaria angustifolia 
-#> Number of presences           : 82 
-#> Pseudoabsence methods         :
-#>     Method to obtain PAs      : bioclim 
-#>     Number of PA sets         : 10 
-#>     Number of PAs in each set : 82 
-#> Data Cleaning                 : NAs, Capitals, Centroids, Geographically Duplicated, Identical Lat/Long, Institutions, Invalid, Non-terrestrial, Duplicated Cell (grid) 
-#> --------  Predictors  ---------
-#> Number of Predictors          : 3 
-#> Predictors Names              : bio1, bio4, bio12 
-#> Variable Selection            : vif 
-#> Selected Variables            : bio1, bio12 
-#> ---------  Scenarios  ---------
-#> Number of Scenarios           : 5 
-#> Scenarios Names               : current ca_ssp245_2090 ca_ssp585_2090 mi_ssp245_2090 mi_ssp585_2090 
-#> -----------  Models  ----------
-#> Algorithms Names              : naive_bayes kknn 
-#> Variables Names               : bio1 bio12 
-#> Model Validation              :
-#>     Method                    : repeatedcv 
-#>     Number                    : 4 
-#>     Metrics                   :
+#>              caretSDM           
+#> ................................
+#> Class                          : input_sdm
+#> 
+#> =========== Overview ===========
+#> Focal Taxon                    : Araucaria angustifolia 
+#> Spatial extent                 : -5276744.44724281, -3295036.62222337, -4626744.44724281, -2795036.62222337  (xmin,xmax,ymin,ymax)
+#> Temporal extent (inferred)     : 2090 - 2090 
+#> Observation type               : Presence-absence (pseudo-absence) 
+#> Predictor names                : bio1, bio4, bio12 
+#> Modelling techniques           : naive_bayes, kknn 
+#> Model complexity (tuneLength)  : naive_bayes, kknn 
+#> Model averaging                : average 
+#> Software                       : caretSDM v1.9.4, R version 4.6.0 (2026-04-24)
+#> 
+#> ============= Data =============
+#> -- Biodiversity data --
+#> Taxon names                    : Araucaria angustifolia 
+#> Sample size                    : 82 
+#> (Pseudo)Absence data method    : bioclim 
+#> Number of PA sets              : 10 
+#> PAs per set                    : 82 
+#> PA-to-presence ratio           : 1 
+#> Data cleaning                  : NAs, Capitals, Centroids, Geographically Duplicated, Identical Lat/Long, Institutions, Invalid, Non-terrestrial, Duplicated Cell (grid) 
+#> -- Data partitioning --
+#> Training/validation method     : repeatedcv 
+#> Number of folds/repeats        : 4 
+#> -- Predictor variables --
+#> Number of predictors           : 3 
+#> Predictor names                : bio1, bio4, bio12 
+#> Spatial extent                 : -5276744.44724281, -3295036.62222337, -4626744.44724281, -2795036.62222337  (xmin,xmax,ymin,ymax)
+#> Spatial resolution             : (25000, 25000) 
+#> Coordinate reference system    : WGS 84 / NSIDC EASE- ( EPSG: 6933 ) 
+#> -- Transfer data --
+#> Number of scenarios            : 5 
+#> Scenario names                 : current, ca_ssp245_2090, ca_ssp585_2090, mi_ssp245_2090, mi_ssp585_2090 
+#> Temporal extent (inferred)     : 2090 - 2090 
+#> 
+#> ============= Model ============
+#> -- Multicollinearity --
+#> Variable selection method      : vif 
+#> Selected variables             : bio1, bio12 
+#> -- Model settings --
+#> Predictors used                : bio1, bio12 
+#> Model hyperparameters          :
+#>                   species        algorithm                           parameters
+#> 1  Araucaria angustifolia  naive_bayes_pa1  laplace=0, usekernel=TRUE, adjust=1
+#> 2  Araucaria angustifolia         kknn_pa1   kmax=9, distance=2, kernel=optimal
+#> 3  Araucaria angustifolia  naive_bayes_pa2 laplace=0, usekernel=FALSE, adjust=1
+#> 4  Araucaria angustifolia         kknn_pa2   kmax=9, distance=2, kernel=optimal
+#> 5  Araucaria angustifolia  naive_bayes_pa3 laplace=0, usekernel=FALSE, adjust=1
+#> 6  Araucaria angustifolia         kknn_pa3   kmax=9, distance=2, kernel=optimal
+#> 7  Araucaria angustifolia  naive_bayes_pa4 laplace=0, usekernel=FALSE, adjust=1
+#> 8  Araucaria angustifolia         kknn_pa4   kmax=9, distance=2, kernel=optimal
+#> 9  Araucaria angustifolia  naive_bayes_pa5  laplace=0, usekernel=TRUE, adjust=1
+#> 10 Araucaria angustifolia         kknn_pa5   kmax=9, distance=2, kernel=optimal
+#> 11 Araucaria angustifolia  naive_bayes_pa6 laplace=0, usekernel=FALSE, adjust=1
+#> 12 Araucaria angustifolia         kknn_pa6   kmax=9, distance=2, kernel=optimal
+#> 13 Araucaria angustifolia  naive_bayes_pa7 laplace=0, usekernel=FALSE, adjust=1
+#> 14 Araucaria angustifolia         kknn_pa7   kmax=9, distance=2, kernel=optimal
+#> 15 Araucaria angustifolia  naive_bayes_pa8 laplace=0, usekernel=FALSE, adjust=1
+#> 16 Araucaria angustifolia         kknn_pa8   kmax=9, distance=2, kernel=optimal
+#> 17 Araucaria angustifolia  naive_bayes_pa9 laplace=0, usekernel=FALSE, adjust=1
+#> 18 Araucaria angustifolia         kknn_pa9   kmax=9, distance=2, kernel=optimal
+#> 19 Araucaria angustifolia naive_bayes_pa10  laplace=0, usekernel=TRUE, adjust=1
+#> 20 Araucaria angustifolia        kknn_pa10   kmax=9, distance=2, kernel=optimal
+#> -- Threshold selection --
+#> Threshold method               : threshold 
+#> Threshold criteria             : 0.9 
+#> 
+#> ========== Assessment ==========
+#> -- Performance statistics --
+#> Cross-validation metrics       :
 #> $`Araucaria angustifolia`
 #>          algo       ROC       TSS Sensitivity Specificity
 #> 1        kknn 0.9788004 0.9407967     0.98775    0.953000
 #> 2 naive_bayes 0.9965948 0.9482630     0.99265    0.960525
 #> 
-#> --------  Predictions  --------
-#> Thresholds                    :
-#>     Method                    : threshold 
-#>     Criteria                  : 0.9 
-#> ---------  Ensembles  ---------
-#> Ensembles                     :
-#>     Methods                   : average
+#> 
+#> ========== Prediction ==========
+#> Prediction layers              : current, ca_ssp245_2090, ca_ssp585_2090, mi_ssp245_2090, mi_ssp585_2090 
+#> Prediction unit                : Occurrence Probability 
+#> Ensemble method                : average 
+#> Ensemble names                 :
 ```
 
 In the above print, it is possible to see the “Methods” under the
@@ -1069,18 +1255,42 @@ obtained with the following code:
 
 mean_validation_metrics(i)
 #> $`Araucaria angustifolia`
-#> # A tibble: 2 × 59
-#>   algo       ROC   TSS Sensitivity Specificity `Pos Pred Value` `Neg Pred Value`
-#>   <chr>    <dbl> <dbl>       <dbl>       <dbl>            <dbl>            <dbl>
-#> 1 kknn     0.979 0.941       0.988       0.953            0.972            0.981
-#> 2 naive_b… 0.997 0.948       0.993       0.961            0.977            0.989
-#> # ℹ 52 more variables: Precision <dbl>, Recall <dbl>, F1 <dbl>,
-#> #   Prevalence <dbl>, `Detection Rate` <dbl>, `Detection Prevalence` <dbl>,
-#> #   `Balanced Accuracy` <dbl>, Accuracy <dbl>, Kappa <dbl>,
-#> #   AccuracyLower <dbl>, AccuracyUpper <dbl>, AccuracyNull <dbl>,
-#> #   AccuracyPValue <dbl>, McnemarPValue <dbl>, Positive <dbl>, Negative <dbl>,
-#> #   `True Positive` <dbl>, `False Positive` <dbl>, `True Negative` <dbl>,
-#> #   `False Negative` <dbl>, CBI <dbl>, pAUC <dbl>, Omission_10pct <dbl>, …
+#>          algo       ROC       TSS Sensitivity Specificity Pos Pred Value
+#> 1        kknn 0.9788004 0.9407967     0.98775    0.953000        0.97225
+#> 2 naive_bayes 0.9965948 0.9482630     0.99265    0.960525        0.97740
+#>   Neg Pred Value Precision  Recall       F1 Prevalence Detection Rate
+#> 1        0.98105   0.97225 0.98775 0.979575   0.619000       0.611450
+#> 2        0.98920   0.97740 0.99265 0.982175   0.619025       0.614525
+#>   Detection Prevalence Balanced Accuracy Accuracy    Kappa AccuracyLower
+#> 1             0.629425          0.970525   0.9745 0.945225      0.851850
+#> 2             0.634175          0.974150   0.9775 0.951600      0.857475
+#>   AccuracyUpper AccuracyNull AccuracyPValue McnemarPValue Positive Negative
+#> 1      0.998250     0.619000          0e+00     0.9306667     20.5   12.625
+#> 2      0.998075     0.619025          5e-05     0.8294667     20.5   12.625
+#>   True Positive False Positive True Negative False Negative    CBI pAUC
+#> 1         20.25          0.275        12.025           0.60    NaN  NaN
+#> 2         20.35          0.450        12.125           0.65 0.9229  NaN
+#>   Omission_10pct      ROCSD      TSSSD SensitivitySD SpecificitySD
+#> 1        0.04365 0.02586706 0.04985639    0.01861842    0.05515945
+#> 2        0.09750 0.01315488 0.07994954    0.03051973    0.07828383
+#>   Pos Pred ValueSD Neg Pred ValueSD PrecisionSD   RecallSD       F1SD
+#> 1       0.03257471       0.02887918  0.03257471 0.01861842 0.01531473
+#> 2       0.04389339       0.04491108  0.04389339 0.03051973 0.02514935
+#>   PrevalenceSD Detection RateSD Detection PrevalenceSD Balanced AccuracySD
+#> 1  0.010861897       0.01455073             0.02565161          0.02482265
+#> 2  0.009915861       0.02277620             0.03951568          0.03989989
+#>   AccuracySD    KappaSD AccuracyLowerSD AccuracyUpperSD AccuracyNullSD
+#> 1 0.01927565 0.04145365      0.03143687     0.001977849    0.010861897
+#> 2 0.03216134 0.07013332      0.04991526     0.005729135    0.009915861
+#>   AccuracyPValueSD McnemarPValueSD PositiveSD NegativeSD True PositiveSD
+#> 1            0e+00       0.1255391  0.5773503  0.2809401       0.6977172
+#> 2            1e-04              NA  0.5773503  0.2809401       0.9425463
+#>   False PositiveSD True NegativeSD False NegativeSD     CBISD pAUCSD
+#> 1        0.3809401       0.6118102        0.7075529        NA     NA
+#> 2        0.6224255       0.9967772        0.9927747 0.3462721     NA
+#>   Omission_10pctSD
+#> 1      0.035535054
+#> 2      0.002886751
 ```
 
 After building predictions, it is possible to ensemble GCMs using
@@ -1108,44 +1318,90 @@ i <- gcms_ensembles(i, gcms = c("ca", "mi"))
 #> • `cell_id` -> `cell_id...3`
 #> • `average` -> `average...4`
 i
-#>             caretSDM           
-#> ...............................
-#> Class                         : input_sdm
-#> --------  Occurrences  --------
-#> Species Names                 : Araucaria angustifolia 
-#> Number of presences           : 82 
-#> Pseudoabsence methods         :
-#>     Method to obtain PAs      : bioclim 
-#>     Number of PA sets         : 10 
-#>     Number of PAs in each set : 82 
-#> Data Cleaning                 : NAs, Capitals, Centroids, Geographically Duplicated, Identical Lat/Long, Institutions, Invalid, Non-terrestrial, Duplicated Cell (grid) 
-#> --------  Predictors  ---------
-#> Number of Predictors          : 3 
-#> Predictors Names              : bio1, bio4, bio12 
-#> Variable Selection            : vif 
-#> Selected Variables            : bio1, bio12 
-#> ---------  Scenarios  ---------
-#> Number of Scenarios           : 5 
-#> Scenarios Names               : current ca_ssp245_2090 ca_ssp585_2090 mi_ssp245_2090 mi_ssp585_2090 
-#> -----------  Models  ----------
-#> Algorithms Names              : naive_bayes kknn 
-#> Variables Names               : bio1 bio12 
-#> Model Validation              :
-#>     Method                    : repeatedcv 
-#>     Number                    : 4 
-#>     Metrics                   :
+#>              caretSDM           
+#> ................................
+#> Class                          : input_sdm
+#> 
+#> =========== Overview ===========
+#> Focal Taxon                    : Araucaria angustifolia 
+#> Spatial extent                 : -5276744.44724281, -3295036.62222337, -4626744.44724281, -2795036.62222337  (xmin,xmax,ymin,ymax)
+#> Temporal extent (inferred)     : 2090 - 2090 
+#> Observation type               : Presence-absence (pseudo-absence) 
+#> Predictor names                : bio1, bio4, bio12 
+#> Modelling techniques           : naive_bayes, kknn 
+#> Model complexity (tuneLength)  : naive_bayes, kknn 
+#> Model averaging                : average 
+#> Software                       : caretSDM v1.9.4, R version 4.6.0 (2026-04-24)
+#> 
+#> ============= Data =============
+#> -- Biodiversity data --
+#> Taxon names                    : Araucaria angustifolia 
+#> Sample size                    : 82 
+#> (Pseudo)Absence data method    : bioclim 
+#> Number of PA sets              : 10 
+#> PAs per set                    : 82 
+#> PA-to-presence ratio           : 1 
+#> Data cleaning                  : NAs, Capitals, Centroids, Geographically Duplicated, Identical Lat/Long, Institutions, Invalid, Non-terrestrial, Duplicated Cell (grid) 
+#> -- Data partitioning --
+#> Training/validation method     : repeatedcv 
+#> Number of folds/repeats        : 4 
+#> -- Predictor variables --
+#> Number of predictors           : 3 
+#> Predictor names                : bio1, bio4, bio12 
+#> Spatial extent                 : -5276744.44724281, -3295036.62222337, -4626744.44724281, -2795036.62222337  (xmin,xmax,ymin,ymax)
+#> Spatial resolution             : (25000, 25000) 
+#> Coordinate reference system    : WGS 84 / NSIDC EASE- ( EPSG: 6933 ) 
+#> -- Transfer data --
+#> Number of scenarios            : 5 
+#> Scenario names                 : current, ca_ssp245_2090, ca_ssp585_2090, mi_ssp245_2090, mi_ssp585_2090 
+#> Temporal extent (inferred)     : 2090 - 2090 
+#> 
+#> ============= Model ============
+#> -- Multicollinearity --
+#> Variable selection method      : vif 
+#> Selected variables             : bio1, bio12 
+#> -- Model settings --
+#> Predictors used                : bio1, bio12 
+#> Model hyperparameters          :
+#>                   species        algorithm                           parameters
+#> 1  Araucaria angustifolia  naive_bayes_pa1  laplace=0, usekernel=TRUE, adjust=1
+#> 2  Araucaria angustifolia         kknn_pa1   kmax=9, distance=2, kernel=optimal
+#> 3  Araucaria angustifolia  naive_bayes_pa2 laplace=0, usekernel=FALSE, adjust=1
+#> 4  Araucaria angustifolia         kknn_pa2   kmax=9, distance=2, kernel=optimal
+#> 5  Araucaria angustifolia  naive_bayes_pa3 laplace=0, usekernel=FALSE, adjust=1
+#> 6  Araucaria angustifolia         kknn_pa3   kmax=9, distance=2, kernel=optimal
+#> 7  Araucaria angustifolia  naive_bayes_pa4 laplace=0, usekernel=FALSE, adjust=1
+#> 8  Araucaria angustifolia         kknn_pa4   kmax=9, distance=2, kernel=optimal
+#> 9  Araucaria angustifolia  naive_bayes_pa5  laplace=0, usekernel=TRUE, adjust=1
+#> 10 Araucaria angustifolia         kknn_pa5   kmax=9, distance=2, kernel=optimal
+#> 11 Araucaria angustifolia  naive_bayes_pa6 laplace=0, usekernel=FALSE, adjust=1
+#> 12 Araucaria angustifolia         kknn_pa6   kmax=9, distance=2, kernel=optimal
+#> 13 Araucaria angustifolia  naive_bayes_pa7 laplace=0, usekernel=FALSE, adjust=1
+#> 14 Araucaria angustifolia         kknn_pa7   kmax=9, distance=2, kernel=optimal
+#> 15 Araucaria angustifolia  naive_bayes_pa8 laplace=0, usekernel=FALSE, adjust=1
+#> 16 Araucaria angustifolia         kknn_pa8   kmax=9, distance=2, kernel=optimal
+#> 17 Araucaria angustifolia  naive_bayes_pa9 laplace=0, usekernel=FALSE, adjust=1
+#> 18 Araucaria angustifolia         kknn_pa9   kmax=9, distance=2, kernel=optimal
+#> 19 Araucaria angustifolia naive_bayes_pa10  laplace=0, usekernel=TRUE, adjust=1
+#> 20 Araucaria angustifolia        kknn_pa10   kmax=9, distance=2, kernel=optimal
+#> -- Threshold selection --
+#> Threshold method               : threshold 
+#> Threshold criteria             : 0.9 
+#> 
+#> ========== Assessment ==========
+#> -- Performance statistics --
+#> Cross-validation metrics       :
 #> $`Araucaria angustifolia`
 #>          algo       ROC       TSS Sensitivity Specificity
 #> 1        kknn 0.9788004 0.9407967     0.98775    0.953000
 #> 2 naive_bayes 0.9965948 0.9482630     0.99265    0.960525
 #> 
-#> --------  Predictions  --------
-#> Thresholds                    :
-#>     Method                    : threshold 
-#>     Criteria                  : 0.9 
-#> ---------  Ensembles  ---------
-#> Ensembles                     :
-#>     Methods                   : average
+#> 
+#> ========== Prediction ==========
+#> Prediction layers              : current, ca_ssp245_2090, ca_ssp585_2090, mi_ssp245_2090, mi_ssp585_2090 
+#> Prediction unit                : Occurrence Probability 
+#> Ensemble method                : average 
+#> Ensemble names                 : _ssp245_2090, _ssp585_2090
 ```
 
 Note that now the “Ensembles” has two scenarios called \_ssp245_2090 and
@@ -1232,5 +1488,5 @@ cells in a grid.
 
 end_time <- Sys.time()
 end_time - start_time
-#> Time difference of 18.67521 secs
+#> Time difference of 18.70139 secs
 ```

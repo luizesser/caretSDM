@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">caretSDM</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.9.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.9.4</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -68,6 +68,8 @@
 <span><span class="fu">get_validation_metrics</span><span class="op">(</span><span class="va">i</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">mean_validation_metrics</span><span class="op">(</span><span class="va">i</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">models_hyperparameters</span><span class="op">(</span><span class="va">i</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">add_models</span><span class="op">(</span><span class="va">m1</span>, <span class="va">m2</span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -142,6 +144,8 @@ with complete values for ROC, Sensitivity, Specificity, with their respectives S
 Deviations (SD) and TSS to each of the algorithms and pseudoabsence datasets used.</p>
 <p><code>mean_validation_metrics</code> return a <code>list</code> with a <code>tibble</code> to each species
 summarizing values for ROC, Sensitivity, Specificity and TSS to each of the algorithms used.</p>
+<p><code>models_hyperparameters</code> returns the hyperparameters that returned the best tuning to each
+model to each species.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>

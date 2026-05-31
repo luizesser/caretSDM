@@ -89,38 +89,65 @@ i <- input_sdm(oc, sa) |>
 i
 ```
 
-    ##             caretSDM           
-    ## ...............................
-    ## Class                         : input_sdm
-    ## --------  Occurrences  --------
-    ## Species Names                 : Araucaria angustifolia 
-    ## Number of presences           : 419 
-    ## Background methods            :
-    ##     Method to obtain BGs.     : random 
-    ##     Number of Background sets : 1 
-    ##     Number of Bg in each set  : 593 
-    ##     Background proportion     : 1 
-    ## --------  Predictors  ---------
-    ## Number of Predictors          : 3 
-    ## Predictors Names              : bio1, bio4, bio12 
-    ## ---------  Scenarios  ---------
-    ## Number of Scenarios           : 1 
-    ## Scenarios Names               : current 
-    ## -----------  Models  ----------
-    ## Algorithms Names              : maxent 
-    ## Variables Names               : bio1 bio4 bio12 
-    ## Model Validation              :
-    ##     Method                    : repeatedcv 
-    ##     Number                    : 4 
-    ##     Metrics                   :
+    ##              caretSDM           
+    ## ................................
+    ## Class                          : input_sdm
+    ## 
+    ## =========== Overview ===========
+    ## Focal Taxon                    : Araucaria angustifolia 
+    ## Spatial extent                 : -5371069.60063324, -3405515.33951445, -4546069.60063324, -2680515.33951445  (xmin,xmax,ymin,ymax)
+    ## Temporal extent                : Current
+    ## Observation type               : Presence-background 
+    ## Predictor names                : bio1, bio4, bio12 
+    ## Modelling techniques           : maxent 
+    ## Model complexity (tuneLength)  : maxent 
+    ## Software                       : caretSDM v1.9.4, R version 4.6.0 (2026-04-24)
+    ## 
+    ## ============= Data =============
+    ## -- Biodiversity data --
+    ## Taxon names                    : Araucaria angustifolia 
+    ## Sample size                    : 419 
+    ## Background data method         : random 
+    ## Number of background sets      : 1 
+    ## BGs per set                    : 593 
+    ## Background proportion          : 1 
+    ## -- Data partitioning --
+    ## Training/validation method     : repeatedcv 
+    ## Number of folds/repeats        : 4 
+    ## -- Predictor variables --
+    ## Number of predictors           : 3 
+    ## Predictor names                : bio1, bio4, bio12 
+    ## Spatial extent                 : -5371069.60063324, -3405515.33951445, -4546069.60063324, -2680515.33951445  (xmin,xmax,ymin,ymax)
+    ## Spatial resolution             : (25000, 25000) 
+    ## Coordinate reference system    : WGS 84 / NSIDC EASE- ( EPSG: 6933 ) 
+    ## -- Transfer data --
+    ## Number of scenarios            : 1 
+    ## Scenario names                 : current 
+    ## Temporal extent                : Current
+    ## 
+    ## ============= Model ============
+    ## -- Model settings --
+    ## Predictors used                : bio1, bio4, bio12 
+    ## Model hyperparameters          :
+    ##                  species  algorithm
+    ## 1 Araucaria angustifolia maxent_bg1
+    ##                                                                            parameters
+    ## 1 regmult=2, linear=FALSE, quadratic=FALSE, product=FALSE, threshold=TRUE, hinge=TRUE
+    ## -- Threshold selection --
+    ## Threshold method               : threshold 
+    ## Threshold criteria             : 0.8 
+    ## 
+    ## ========== Assessment ==========
+    ## -- Performance statistics --
+    ## Cross-validation metrics       :
     ## $`Araucaria angustifolia`
     ##     algo       ROC       TSS Sensitivity Specificity
-    ## 1 maxent 0.8648194 0.5324845     0.69475     0.91625
+    ## 1 maxent 0.8846952 0.5652384      0.8835     0.75425
     ## 
-    ## --------  Predictions  --------
-    ## Thresholds                    :
-    ##     Method                    : threshold 
-    ##     Criteria                  : 0.8
+    ## 
+    ## ========== Prediction ==========
+    ## Prediction layers              : current 
+    ## Prediction unit                : Occurrence Probability
 
 ## The use of the `background` function
 
@@ -216,29 +243,29 @@ get_models(i)
     ## Resampling results across tuning parameters:
     ## 
     ##   regmult  linear  quadratic  product  threshold  hinge  ROC        TSS      
-    ##   0.5       TRUE    TRUE       TRUE    FALSE      FALSE  0.8373528  0.3852351
-    ##   2.0      FALSE   FALSE      FALSE     TRUE       TRUE  0.8648194  0.5324845
-    ##   4.0       TRUE    TRUE       TRUE     TRUE       TRUE  0.8555023  0.4105201
+    ##   0.5       TRUE    TRUE       TRUE    FALSE      FALSE  0.8738090  0.5652384
+    ##   2.0      FALSE   FALSE      FALSE     TRUE       TRUE  0.8846952  0.5356198
+    ##   4.0       TRUE    TRUE       TRUE     TRUE       TRUE  0.8690229  0.5506127
     ##   Sensitivity  Specificity  Pos Pred Value  Neg Pred Value  Precision  Recall 
-    ##   0.49725      0.88775      0.86375         0.55575         0.86375    0.49725
-    ##   0.69475      0.83775      0.85900         0.66000         0.85900    0.69475
-    ##   0.49425      0.91625      0.89375         0.56175         0.89375    0.49425
-    ##   F1      Prevalence  Detection Rate  Detection Prevalence  Balanced Accuracy
-    ##   0.6300  0.586       0.2915          0.33800               0.69275          
-    ##   0.7680  0.586       0.4070          0.47425               0.76625          
-    ##   0.6355  0.586       0.2895          0.32375               0.70525          
+    ##   0.81100      0.75425      0.82375         0.74000         0.82375    0.81100
+    ##   0.88350      0.65200      0.79000         0.81225         0.79000    0.88350
+    ##   0.82975      0.72125      0.81125         0.75725         0.81125    0.82975
+    ##   F1       Prevalence  Detection Rate  Detection Prevalence  Balanced Accuracy
+    ##   0.81700  0.586       0.47500         0.57700               0.78275          
+    ##   0.82950  0.586       0.51750         0.66175               0.76750          
+    ##   0.81775  0.586       0.48625         0.60175               0.77550          
     ##   Accuracy  Kappa    AccuracyLower  AccuracyUpper  AccuracyNull  AccuracyPValue
-    ##   0.65925   0.35400  0.59700        0.71725        0.586         0.02075       
-    ##   0.75400   0.51200  0.69625        0.80575        0.586         0.00000       
-    ##   0.66875   0.37575  0.60750        0.72675        0.586         0.00800       
+    ##   0.78775   0.56375  0.73200        0.83625        0.586         0             
+    ##   0.78775   0.54900  0.73200        0.83650        0.586         0             
+    ##   0.78475   0.55375  0.72875        0.83350        0.586         0             
     ##   McnemarPValue  Positive  Negative  True Positive  False Positive
-    ##   0.00000        148.25    104.75     73.75         74.50         
-    ##   0.00275        148.25    104.75    103.00         45.25         
-    ##   0.00000        148.25    104.75     73.25         75.00         
+    ##   0.5005         148.25    104.75    120.25         28.00         
+    ##   0.0010         148.25    104.75    131.00         17.25         
+    ##   0.1235         148.25    104.75    123.00         25.25         
     ##   True Negative  False Negative  CBI      pAUC  Omission_10pct
-    ##   93.00          11.75           0.78225  NaN   0.101         
-    ##   87.75          17.00           0.81775  NaN   0.101         
-    ##   96.00           8.75           0.68700  NaN   0.101         
+    ##   79.00          25.75           0.71850  NaN   0.101         
+    ##   68.25          36.50           0.68350  NaN   0.101         
+    ##   75.50          29.25           0.75825  NaN   0.101         
     ## 
     ## Accuracy was used to select the optimal model using the largest value.
     ## The final values used for the model were regmult = 2, linear = FALSE,

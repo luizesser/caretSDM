@@ -25,7 +25,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">caretSDM</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.9.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.9.4</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -73,7 +73,7 @@
                         <h4 data-toc-skip class="author">[author
 name]</h4>
             
-            <h4 data-toc-skip class="date">2026-05-22</h4>
+            <h4 data-toc-skip class="date">2026-05-31</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/luizesser/caretSDM/blob/main/vignettes/articles/07_maxent.Rmd" class="external-link"><code>vignettes/articles/07_maxent.Rmd</code></a></small>
       <div class="d-none name"><code>07_maxent.Rmd</code></div>
@@ -161,38 +161,65 @@ presence-pseudoabsence algorithms need to have pseudoabsence data.</p>
 <span>  <span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="../reference/predict_sdm.html">predict_sdm</a></span><span class="op">(</span>th <span class="op">=</span> <span class="fl">0.8</span><span class="op">)</span></span>
 <span><span class="va">i</span></span></code></pre></div>
-<pre><code><span><span class="co">##             caretSDM           </span></span>
-<span><span class="co">## ...............................</span></span>
-<span><span class="co">## Class                         : input_sdm</span></span>
-<span><span class="co">## --------  Occurrences  --------</span></span>
-<span><span class="co">## Species Names                 : Araucaria angustifolia </span></span>
-<span><span class="co">## Number of presences           : 419 </span></span>
-<span><span class="co">## Background methods            :</span></span>
-<span><span class="co">##     Method to obtain BGs.     : random </span></span>
-<span><span class="co">##     Number of Background sets : 1 </span></span>
-<span><span class="co">##     Number of Bg in each set  : 593 </span></span>
-<span><span class="co">##     Background proportion     : 1 </span></span>
-<span><span class="co">## --------  Predictors  ---------</span></span>
-<span><span class="co">## Number of Predictors          : 3 </span></span>
-<span><span class="co">## Predictors Names              : bio1, bio4, bio12 </span></span>
-<span><span class="co">## ---------  Scenarios  ---------</span></span>
-<span><span class="co">## Number of Scenarios           : 1 </span></span>
-<span><span class="co">## Scenarios Names               : current </span></span>
-<span><span class="co">## -----------  Models  ----------</span></span>
-<span><span class="co">## Algorithms Names              : maxent </span></span>
-<span><span class="co">## Variables Names               : bio1 bio4 bio12 </span></span>
-<span><span class="co">## Model Validation              :</span></span>
-<span><span class="co">##     Method                    : repeatedcv </span></span>
-<span><span class="co">##     Number                    : 4 </span></span>
-<span><span class="co">##     Metrics                   :</span></span>
+<pre><code><span><span class="co">##              caretSDM           </span></span>
+<span><span class="co">## ................................</span></span>
+<span><span class="co">## Class                          : input_sdm</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## =========== Overview ===========</span></span>
+<span><span class="co">## Focal Taxon                    : Araucaria angustifolia </span></span>
+<span><span class="co">## Spatial extent                 : -5371069.60063324, -3405515.33951445, -4546069.60063324, -2680515.33951445  (xmin,xmax,ymin,ymax)</span></span>
+<span><span class="co">## Temporal extent                : Current</span></span>
+<span><span class="co">## Observation type               : Presence-background </span></span>
+<span><span class="co">## Predictor names                : bio1, bio4, bio12 </span></span>
+<span><span class="co">## Modelling techniques           : maxent </span></span>
+<span><span class="co">## Model complexity (tuneLength)  : maxent </span></span>
+<span><span class="co">## Software                       : caretSDM v1.9.4, R version 4.6.0 (2026-04-24)</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## ============= Data =============</span></span>
+<span><span class="co">## -- Biodiversity data --</span></span>
+<span><span class="co">## Taxon names                    : Araucaria angustifolia </span></span>
+<span><span class="co">## Sample size                    : 419 </span></span>
+<span><span class="co">## Background data method         : random </span></span>
+<span><span class="co">## Number of background sets      : 1 </span></span>
+<span><span class="co">## BGs per set                    : 593 </span></span>
+<span><span class="co">## Background proportion          : 1 </span></span>
+<span><span class="co">## -- Data partitioning --</span></span>
+<span><span class="co">## Training/validation method     : repeatedcv </span></span>
+<span><span class="co">## Number of folds/repeats        : 4 </span></span>
+<span><span class="co">## -- Predictor variables --</span></span>
+<span><span class="co">## Number of predictors           : 3 </span></span>
+<span><span class="co">## Predictor names                : bio1, bio4, bio12 </span></span>
+<span><span class="co">## Spatial extent                 : -5371069.60063324, -3405515.33951445, -4546069.60063324, -2680515.33951445  (xmin,xmax,ymin,ymax)</span></span>
+<span><span class="co">## Spatial resolution             : (25000, 25000) </span></span>
+<span><span class="co">## Coordinate reference system    : WGS 84 / NSIDC EASE- ( EPSG: 6933 ) </span></span>
+<span><span class="co">## -- Transfer data --</span></span>
+<span><span class="co">## Number of scenarios            : 1 </span></span>
+<span><span class="co">## Scenario names                 : current </span></span>
+<span><span class="co">## Temporal extent                : Current</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## ============= Model ============</span></span>
+<span><span class="co">## -- Model settings --</span></span>
+<span><span class="co">## Predictors used                : bio1, bio4, bio12 </span></span>
+<span><span class="co">## Model hyperparameters          :</span></span>
+<span><span class="co">##                  species  algorithm</span></span>
+<span><span class="co">## 1 Araucaria angustifolia maxent_bg1</span></span>
+<span><span class="co">##                                                                            parameters</span></span>
+<span><span class="co">## 1 regmult=2, linear=FALSE, quadratic=FALSE, product=FALSE, threshold=TRUE, hinge=TRUE</span></span>
+<span><span class="co">## -- Threshold selection --</span></span>
+<span><span class="co">## Threshold method               : threshold </span></span>
+<span><span class="co">## Threshold criteria             : 0.8 </span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## ========== Assessment ==========</span></span>
+<span><span class="co">## -- Performance statistics --</span></span>
+<span><span class="co">## Cross-validation metrics       :</span></span>
 <span><span class="co">## $`Araucaria angustifolia`</span></span>
 <span><span class="co">##     algo       ROC       TSS Sensitivity Specificity</span></span>
-<span><span class="co">## 1 maxent 0.8648194 0.5324845     0.69475     0.91625</span></span>
+<span><span class="co">## 1 maxent 0.8846952 0.5652384      0.8835     0.75425</span></span>
 <span><span class="co">## </span></span>
-<span><span class="co">## --------  Predictions  --------</span></span>
-<span><span class="co">## Thresholds                    :</span></span>
-<span><span class="co">##     Method                    : threshold </span></span>
-<span><span class="co">##     Criteria                  : 0.8</span></span></code></pre>
+<span><span class="co">## </span></span>
+<span><span class="co">## ========== Prediction ==========</span></span>
+<span><span class="co">## Prediction layers              : current </span></span>
+<span><span class="co">## Prediction unit                : Occurrence Probability</span></span></code></pre>
 </div>
 <div class="section level2">
 <h2 id="the-use-of-the-background-function">The use of the <code>background</code> function<a class="anchor" aria-label="anchor" href="#the-use-of-the-background-function"></a>
@@ -283,29 +310,29 @@ function:</p>
 <span><span class="co">## Resampling results across tuning parameters:</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">##   regmult  linear  quadratic  product  threshold  hinge  ROC        TSS      </span></span>
-<span><span class="co">##   0.5       TRUE    TRUE       TRUE    FALSE      FALSE  0.8373528  0.3852351</span></span>
-<span><span class="co">##   2.0      FALSE   FALSE      FALSE     TRUE       TRUE  0.8648194  0.5324845</span></span>
-<span><span class="co">##   4.0       TRUE    TRUE       TRUE     TRUE       TRUE  0.8555023  0.4105201</span></span>
+<span><span class="co">##   0.5       TRUE    TRUE       TRUE    FALSE      FALSE  0.8738090  0.5652384</span></span>
+<span><span class="co">##   2.0      FALSE   FALSE      FALSE     TRUE       TRUE  0.8846952  0.5356198</span></span>
+<span><span class="co">##   4.0       TRUE    TRUE       TRUE     TRUE       TRUE  0.8690229  0.5506127</span></span>
 <span><span class="co">##   Sensitivity  Specificity  Pos Pred Value  Neg Pred Value  Precision  Recall </span></span>
-<span><span class="co">##   0.49725      0.88775      0.86375         0.55575         0.86375    0.49725</span></span>
-<span><span class="co">##   0.69475      0.83775      0.85900         0.66000         0.85900    0.69475</span></span>
-<span><span class="co">##   0.49425      0.91625      0.89375         0.56175         0.89375    0.49425</span></span>
-<span><span class="co">##   F1      Prevalence  Detection Rate  Detection Prevalence  Balanced Accuracy</span></span>
-<span><span class="co">##   0.6300  0.586       0.2915          0.33800               0.69275          </span></span>
-<span><span class="co">##   0.7680  0.586       0.4070          0.47425               0.76625          </span></span>
-<span><span class="co">##   0.6355  0.586       0.2895          0.32375               0.70525          </span></span>
+<span><span class="co">##   0.81100      0.75425      0.82375         0.74000         0.82375    0.81100</span></span>
+<span><span class="co">##   0.88350      0.65200      0.79000         0.81225         0.79000    0.88350</span></span>
+<span><span class="co">##   0.82975      0.72125      0.81125         0.75725         0.81125    0.82975</span></span>
+<span><span class="co">##   F1       Prevalence  Detection Rate  Detection Prevalence  Balanced Accuracy</span></span>
+<span><span class="co">##   0.81700  0.586       0.47500         0.57700               0.78275          </span></span>
+<span><span class="co">##   0.82950  0.586       0.51750         0.66175               0.76750          </span></span>
+<span><span class="co">##   0.81775  0.586       0.48625         0.60175               0.77550          </span></span>
 <span><span class="co">##   Accuracy  Kappa    AccuracyLower  AccuracyUpper  AccuracyNull  AccuracyPValue</span></span>
-<span><span class="co">##   0.65925   0.35400  0.59700        0.71725        0.586         0.02075       </span></span>
-<span><span class="co">##   0.75400   0.51200  0.69625        0.80575        0.586         0.00000       </span></span>
-<span><span class="co">##   0.66875   0.37575  0.60750        0.72675        0.586         0.00800       </span></span>
+<span><span class="co">##   0.78775   0.56375  0.73200        0.83625        0.586         0             </span></span>
+<span><span class="co">##   0.78775   0.54900  0.73200        0.83650        0.586         0             </span></span>
+<span><span class="co">##   0.78475   0.55375  0.72875        0.83350        0.586         0             </span></span>
 <span><span class="co">##   McnemarPValue  Positive  Negative  True Positive  False Positive</span></span>
-<span><span class="co">##   0.00000        148.25    104.75     73.75         74.50         </span></span>
-<span><span class="co">##   0.00275        148.25    104.75    103.00         45.25         </span></span>
-<span><span class="co">##   0.00000        148.25    104.75     73.25         75.00         </span></span>
+<span><span class="co">##   0.5005         148.25    104.75    120.25         28.00         </span></span>
+<span><span class="co">##   0.0010         148.25    104.75    131.00         17.25         </span></span>
+<span><span class="co">##   0.1235         148.25    104.75    123.00         25.25         </span></span>
 <span><span class="co">##   True Negative  False Negative  CBI      pAUC  Omission_10pct</span></span>
-<span><span class="co">##   93.00          11.75           0.78225  NaN   0.101         </span></span>
-<span><span class="co">##   87.75          17.00           0.81775  NaN   0.101         </span></span>
-<span><span class="co">##   96.00           8.75           0.68700  NaN   0.101         </span></span>
+<span><span class="co">##   79.00          25.75           0.71850  NaN   0.101         </span></span>
+<span><span class="co">##   68.25          36.50           0.68350  NaN   0.101         </span></span>
+<span><span class="co">##   75.50          29.25           0.75825  NaN   0.101         </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## Accuracy was used to select the optimal model using the largest value.</span></span>
 <span><span class="co">## The final values used for the model were regmult = 2, linear = FALSE,</span></span>

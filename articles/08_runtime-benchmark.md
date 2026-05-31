@@ -63,6 +63,8 @@ library(mda)
 library(gbm)
 library(earth)
 library(randomForest)
+
+set.seed(1)
 ```
 
 ------------------------------------------------------------------------
@@ -144,11 +146,12 @@ prep_biomod2 <- function() {
 fit_biomod2 <- function(prep) {
   biomod_model <- BIOMOD_Modeling(
     prep$data,
+    modeling.id = "AllModels",
     models = c("ANN", "CTA", "FDA", "GBM", "MARS", "RF"),
     CV.strategy = "kfold",
     CV.nb.rep = 1,
     CV.k = 5,
-    metric.eval = c("TSS", "ROC"),
+    metric.eval = c("TSS", "AUCroc"),
     do.progress = FALSE
   )
 
@@ -174,13 +177,15 @@ fit_biomod2 <- function(prep) {
 
 post_biomod2 <- function(fit) {
   biomod_proj <- lapply(names(fit$scen), function(nm) {
+    foreach::registerDoSEQ()
     BIOMOD_Projection(
       bm.mod = fit$model,
       proj.name = nm,
       new.env = fit$scen[[nm]],
       models.chosen = "all",
       overwrite = TRUE,
-      do.stack = FALSE
+      do.stack = TRUE,
+      nb.cpu = 1
     )
   })
 
@@ -222,11 +227,12 @@ run_biomod2 <- function() {
 
   biomod_model <- BIOMOD_Modeling(
     biomod_data,
+    modeling.id = "AllModels",
     models = c("ANN", "CTA", "FDA", "GBM", "MARS", "RF"),
     CV.strategy = "kfold",
     CV.nb.rep = 1,
     CV.k = 5,
-    metric.eval = c("TSS", "ROC"),
+    metric.eval = c("TSS", "AUCroc"),
     do.progress = FALSE
   )
 
@@ -240,13 +246,15 @@ run_biomod2 <- function() {
   )
 
   biomod_proj <- lapply(names(sc), function(nm) {
+    foreach::registerDoSEQ()
     BIOMOD_Projection(
       bm.mod = biomod_model,
       proj.name = nm,
       new.env = sc[[nm]],
       models.chosen = "all",
       overwrite = TRUE,
-      do.stack = FALSE
+      do.stack = TRUE,
+      nb.cpu = 1
     )
   })
 
@@ -577,9 +585,9 @@ bench_res_prep
 #> # A tibble: 3 × 6
 #>   expression      min   median `itr/sec` mem_alloc `gc/sec`
 #>   <bch:expr> <bch:tm> <bch:tm>     <dbl> <bch:byt>    <dbl>
-#> 1 biomod2    161.56ms 165.69ms     5.56     7.76MB    2.22 
-#> 2 sdm        129.79ms 134.84ms     3.98     6.02MB    0.796
-#> 3 caretSDM      1.35s    1.37s     0.675    7.21MB    1.89
+#> 1 biomod2    163.31ms 169.01ms     5.32     7.94MB    1.06 
+#> 2 sdm        136.02ms 138.62ms     3.91     6.02MB    0.782
+#> 3 caretSDM      1.35s    1.36s     0.727     7.2MB    1.45
 ```
 
 ``` r
@@ -588,9 +596,9 @@ bench_res_fit
 #> # A tibble: 3 × 6
 #>   expression      min   median `itr/sec` mem_alloc `gc/sec`
 #>   <bch:expr> <bch:tm> <bch:tm>     <dbl> <bch:byt>    <dbl>
-#> 1 biomod2       7.71s    7.87s    0.120  1016.27MB    0.625
-#> 2 sdm          17.18s   17.29s    0.0579    2.18GB    0.405
-#> 3 caretSDM     22.21s   25.05s    0.0394  801.56MB    0.891
+#> 1 biomod2       5.87s     5.9s    0.169   726.02MB    0.407
+#> 2 sdm          16.44s    16.5s    0.0596    2.42GB    0.310
+#> 3 caretSDM     22.13s    26.4s    0.0382  803.55MB    0.841
 ```
 
 ``` r
@@ -599,9 +607,9 @@ bench_res_post
 #> # A tibble: 3 × 6
 #>   expression      min   median `itr/sec` mem_alloc `gc/sec`
 #>   <bch:expr> <bch:tm> <bch:tm>     <dbl> <bch:byt>    <dbl>
-#> 1 biomod2         10s   10.66s    0.0930   953.8MB    0.372
-#> 2 sdm           18.3s   18.56s    0.0535   571.8MB    0    
-#> 3 caretSDM    998.2ms    1.01s    0.982     44.9MB    0
+#> 1 biomod2       7.86s    7.97s    0.125    696.1MB    0.550
+#> 2 sdm           17.5s   17.72s    0.0562   613.4MB    0    
+#> 3 caretSDM      1.05s    1.06s    0.883     44.5MB    0.177
 ```
 
 ``` r
@@ -610,9 +618,9 @@ bench_res_complete
 #> # A tibble: 3 × 6
 #>   expression      min   median `itr/sec` mem_alloc `gc/sec`
 #>   <bch:expr> <bch:tm> <bch:tm>     <dbl> <bch:byt>    <dbl>
-#> 1 biomod2       17.4s    18.1s    0.0540    1.93GB   0.400 
-#> 2 sdm           43.1s    43.8s    0.0228    2.84GB   0.0684
-#> 3 caretSDM        23s    28.4s    0.0363  855.25MB   0.748
+#> 1 biomod2       13.5s      14s    0.0700     1.4GB   0.630 
+#> 2 sdm           38.5s    38.5s    0.0258    2.85GB   0.0878
+#> 3 caretSDM      24.6s    28.7s    0.0357  857.52MB   0.892
 ```
 
 The table above summarizes the median runtime, iteration rate, and
@@ -781,14 +789,14 @@ sessionInfo()
 #>  [1] caret_7.0-1          lattice_0.22-9       ggplot2_4.0.3       
 #>  [4] kernlab_0.9-33       glmnet_5.0           Matrix_1.7-5        
 #>  [7] dismo_1.3-16         raster_3.6-32        sp_2.2-1            
-#> [10] RSNNS_0.4-18         Rcpp_1.1.1-1.1       caretSDM_1.9.2      
+#> [10] RSNNS_0.4-18         Rcpp_1.1.1-1.1       caretSDM_1.9.4      
 #> [13] sdm_1.2-59           xgboost_3.2.1.1      randomForest_4.7-1.2
 #> [16] maxnet_0.1.4         earth_5.3.5          plotmo_3.7.0        
 #> [19] plotrix_3.8-14       Formula_1.2-5        gbm_2.2.3           
 #> [22] mgcv_1.9-4           nlme_3.1-169         gam_1.22-7          
 #> [25] foreach_1.5.2        mda_0.5-5            class_7.3-23        
 #> [28] cito_1.1             rpart_4.1.27         nnet_7.3-20         
-#> [31] biomod2_4.3-4-5      bench_1.1.4          sf_1.1-1            
+#> [31] biomod2_4.3-4-6      bench_1.1.4          sf_1.1-1            
 #> [34] terra_1.9-27        
 #> 
 #> loaded via a namespace (and not attached):

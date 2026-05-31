@@ -23,6 +23,8 @@ get_validation_metrics(i)
 
 mean_validation_metrics(i)
 
+models_hyperparameters(i)
+
 add_models(m1, m2)
 ```
 
@@ -110,6 +112,9 @@ algorithms and pseudoabsence datasets used.
 `mean_validation_metrics` return a `list` with a `tibble` to each
 species summarizing values for ROC, Sensitivity, Specificity and TSS to
 each of the algorithms used.
+
+`models_hyperparameters` returns the hyperparameters that returned the
+best tuning to each model to each species.
 
 ## See also
 

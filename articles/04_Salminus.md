@@ -210,14 +210,17 @@ sa <- sdm_area(rivs,
 #> ℹ Using GDAL to make the grid and resample the variables.
 #> Linking to GEOS 3.12.1, GDAL 3.8.4, PROJ 9.4.0; sf_use_s2() is TRUE
 sa
-#>           caretSDM         
-#> ...........................
-#> Class                     : sdm_area
-#> Extent                    : -5269921 -3240236 -4697475 -2803134 (xmin, xmax, ymin, ymax)
-#> CRS                       : EPSG:6933 
-#> Resolution                : (25000, 25000) (x, y)
-#> Number of Predictors      : 2 
-#> Predictors Names          : LENGTH_KM, DIST_DN_KM
+#>              caretSDM           
+#> ................................
+#> Class                          : sdm_area
+#> 
+#> =========== Overview ===========
+#> -- Predictor variables --
+#> Number of predictors           : 2 
+#> Predictor names                : LENGTH_KM, DIST_DN_KM 
+#> Spatial extent                 : -5269920.54541171, -3240235.69291754, -4697474.75663173, -2803133.9792114  (xmin,xmax,ymin,ymax)
+#> Spatial resolution             : (25000, 25000) 
+#> Coordinate reference system    : EPSG:6933 ( EPSG: 6933 )
 ```
 
 Note that the function returned two predictor variables
@@ -256,14 +259,17 @@ sa <- add_predictors(sa,
 #> ! Making grid over the study area is an expensive task. Please, be patient!
 #> ℹ Using GDAL to make the grid and resample the variables.
 sa
-#>           caretSDM         
-#> ...........................
-#> Class                     : sdm_area
-#> Extent                    : -5269921 -3240236 -4700000 -2803134 (xmin, xmax, ymin, ymax)
-#> CRS                       : EPSG:6933 
-#> Resolution                : (25000, 25000) (x, y)
-#> Number of Predictors      : 5 
-#> Predictors Names          : LENGTH_KM, DIST_DN_KM, bio1, bio4, bio12
+#>              caretSDM           
+#> ................................
+#> Class                          : sdm_area
+#> 
+#> =========== Overview ===========
+#> -- Predictor variables --
+#> Number of predictors           : 5 
+#> Predictor names                : LENGTH_KM, DIST_DN_KM, bio1, bio4, bio12 
+#> Spatial extent                 : -5269920.54541171, -3240235.69291754, -4700000, -2803133.9792114  (xmin,xmax,ymin,ymax)
+#> Spatial resolution             : (25000, 25000) 
+#> Coordinate reference system    : EPSG:6933 ( EPSG: 6933 )
 ```
 
 Predictors variables are used to train the models. After training the
@@ -345,19 +351,26 @@ sa <- add_scenarios(sa,
 #> ℹ Using GDAL to make the grid and resample the variables.
 #> ! Making grid over the study area is an expensive task. Please, be patient!
 #> ℹ Using GDAL to make the grid and resample the variables.
+#> Reescaling data ■■■■■■■■■■■■■■■■■■■■■■■           75% | ETA:  1s
+#> 
 #> ! Making grid over the study area is an expensive task. Please, be patient!
 #> ℹ Using GDAL to make the grid and resample the variables.
 sa
-#>           caretSDM         
-#> ...........................
-#> Class                     : sdm_area
-#> Extent                    : -5269921 -3240236 -4700000 -2803134 (xmin, xmax, ymin, ymax)
-#> CRS                       : EPSG:6933 
-#> Resolution                : (25000, 25000) (x, y)
-#> Number of Predictors      : 5 
-#> Predictors Names          : LENGTH_KM, DIST_DN_KM, bio1, bio4, bio12 
-#> Number of Scenarios      : 5 
-#> Scenarios Names          : ca_ssp245_2090, ca_ssp585_2090, mi_ssp245_2090, mi_ssp585_2090, current
+#>              caretSDM           
+#> ................................
+#> Class                          : sdm_area
+#> 
+#> =========== Overview ===========
+#> -- Predictor variables --
+#> Number of predictors           : 5 
+#> Predictor names                : LENGTH_KM, DIST_DN_KM, bio1, bio4, bio12 
+#> Spatial extent                 : -5269920.54541171, -3240235.69291754, -4700000, -2803133.9792114  (xmin,xmax,ymin,ymax)
+#> Spatial resolution             : (25000, 25000) 
+#> Coordinate reference system    : EPSG:6933 ( EPSG: 6933 ) 
+#> -- Transfer data --
+#> Number of scenarios            : 5 
+#> Scenario names                 : ca_ssp245_2090, ca_ssp585_2090, mi_ssp245_2090, mi_ssp585_2090, current 
+#> Temporal extent (inferred)     : 2090 - 2090
 ```
 
 It is common that modelers need to subset variables that will inform
@@ -389,13 +402,16 @@ for more information on the data).
 
 oc <- occurrences_sdm(salm, occ_crs = 6933)
 oc
-#>         caretSDM       
-#> .......................
-#> Class                 : occurrences
-#> Species Names         : Salminus brasiliensis 
-#> Number of presences   : 46 
-#> ================================
-#> Data:
+#>              caretSDM           
+#> ................................
+#> Class                          : occurrences
+#> 
+#> =========== Overview ===========
+#> Focal Taxon                    : Salminus brasiliensis 
+#> Observation type               : Presence-only 
+#> Taxon names                    : Salminus brasiliensis 
+#> Sample size                    : 46 
+#> Data structure                 :
 #> Simple feature collection with 6 features and 1 field
 #> Geometry type: POINT
 #> Dimension:     XY
@@ -434,18 +450,36 @@ the study area or with NAs as predictors.
 
 i <- input_sdm(oc, sa)
 i
-#>             caretSDM           
-#> ...............................
-#> Class                         : input_sdm
-#> --------  Occurrences  --------
-#> Species Names                 : Salminus brasiliensis 
-#> Number of presences           : 46 
-#> --------  Predictors  ---------
-#> Number of Predictors          : 5 
-#> Predictors Names              : LENGTH_KM, DIST_DN_KM, bio1, bio4, bio12 
-#> ---------  Scenarios  ---------
-#> Number of Scenarios           : 5 
-#> Scenarios Names               : ca_ssp245_2090 ca_ssp585_2090 mi_ssp245_2090 mi_ssp585_2090 current
+#>              caretSDM           
+#> ................................
+#> Class                          : input_sdm
+#> 
+#> =========== Overview ===========
+#> Focal Taxon                    : Salminus brasiliensis 
+#> Spatial extent                 : -5269920.54541171, -3240235.69291754, -4700000, -2803133.9792114  (xmin,xmax,ymin,ymax)
+#> Temporal extent (inferred)     : 2090 - 2090 
+#> Observation type               : Presence-only 
+#> Predictor names                : LENGTH_KM, DIST_DN_KM, bio1, bio4, bio12 
+#> Software                       : caretSDM v1.9.4, R version 4.6.0 (2026-04-24)
+#> 
+#> ============= Data =============
+#> -- Biodiversity data --
+#> Taxon names                    : Salminus brasiliensis 
+#> Sample size                    : 46 
+#> -- Predictor variables --
+#> Number of predictors           : 5 
+#> Predictor names                : LENGTH_KM, DIST_DN_KM, bio1, bio4, bio12 
+#> Spatial extent                 : -5269920.54541171, -3240235.69291754, -4700000, -2803133.9792114  (xmin,xmax,ymin,ymax)
+#> Spatial resolution             : (25000, 25000) 
+#> Coordinate reference system    : EPSG:6933 ( EPSG: 6933 ) 
+#> -- Transfer data --
+#> Number of scenarios            : 5 
+#> Scenario names                 : ca_ssp245_2090, ca_ssp585_2090, mi_ssp245_2090, mi_ssp585_2090, current 
+#> Temporal extent (inferred)     : 2090 - 2090 
+#> 
+#> ============= Model ============
+#> 
+#> ========== Assessment ==========
 ```
 
 ### Data cleaning routine
@@ -562,25 +596,44 @@ i <- pseudoabsences(i,
   th = 0
 )
 i
-#>             caretSDM           
-#> ...............................
-#> Class                         : input_sdm
-#> --------  Occurrences  --------
-#> Species Names                 : Salminus brasiliensis 
-#> Number of presences           : 22 
-#> Pseudoabsence methods         :
-#>     Method to obtain PAs      : bioclim 
-#>     Number of PA sets         : 10 
-#>     Number of PAs in each set : 22 
-#> Data Cleaning                 : NAs, Capitals, Centroids, Geographically Duplicated, Identical Lat/Long, Institutions, Invalid, Non-terrestrial, Duplicated Cell (grid) 
-#> --------  Predictors  ---------
-#> Number of Predictors          : 5 
-#> Predictors Names              : LENGTH_KM, DIST_DN_KM, bio1, bio4, bio12 
-#> Variable Selection            : vif 
-#> Selected Variables            : LENGTH_KM, DIST_DN_KM, bio1 
-#> ---------  Scenarios  ---------
-#> Number of Scenarios           : 5 
-#> Scenarios Names               : ca_ssp245_2090 ca_ssp585_2090 mi_ssp245_2090 mi_ssp585_2090 current
+#>              caretSDM           
+#> ................................
+#> Class                          : input_sdm
+#> 
+#> =========== Overview ===========
+#> Focal Taxon                    : Salminus brasiliensis 
+#> Spatial extent                 : -5269920.54541171, -3240235.69291754, -4700000, -2803133.9792114  (xmin,xmax,ymin,ymax)
+#> Temporal extent (inferred)     : 2090 - 2090 
+#> Observation type               : Presence-absence (pseudo-absence) 
+#> Predictor names                : LENGTH_KM, DIST_DN_KM, bio1, bio4, bio12 
+#> Software                       : caretSDM v1.9.4, R version 4.6.0 (2026-04-24)
+#> 
+#> ============= Data =============
+#> -- Biodiversity data --
+#> Taxon names                    : Salminus brasiliensis 
+#> Sample size                    : 22 
+#> (Pseudo)Absence data method    : bioclim 
+#> Number of PA sets              : 10 
+#> PAs per set                    : 22 
+#> PA-to-presence ratio           : 1 
+#> Data cleaning                  : NAs, Capitals, Centroids, Geographically Duplicated, Identical Lat/Long, Institutions, Invalid, Non-terrestrial, Duplicated Cell (grid) 
+#> -- Predictor variables --
+#> Number of predictors           : 5 
+#> Predictor names                : LENGTH_KM, DIST_DN_KM, bio1, bio4, bio12 
+#> Spatial extent                 : -5269920.54541171, -3240235.69291754, -4700000, -2803133.9792114  (xmin,xmax,ymin,ymax)
+#> Spatial resolution             : (25000, 25000) 
+#> Coordinate reference system    : EPSG:6933 ( EPSG: 6933 ) 
+#> -- Transfer data --
+#> Number of scenarios            : 5 
+#> Scenario names                 : ca_ssp245_2090, ca_ssp585_2090, mi_ssp245_2090, mi_ssp585_2090, current 
+#> Temporal extent (inferred)     : 2090 - 2090 
+#> 
+#> ============= Model ============
+#> -- Multicollinearity --
+#> Variable selection method      : vif 
+#> Selected variables             : LENGTH_KM, DIST_DN_KM, bio1 
+#> 
+#> ========== Assessment ==========
 ```
 
 ## Processing
@@ -627,32 +680,75 @@ i <- train_sdm(i,
 #> Loading required package: ggplot2
 #> Loading required package: lattice
 i
-#>             caretSDM           
-#> ...............................
-#> Class                         : input_sdm
-#> --------  Occurrences  --------
-#> Species Names                 : Salminus brasiliensis 
-#> Number of presences           : 22 
-#> Pseudoabsence methods         :
-#>     Method to obtain PAs      : bioclim 
-#>     Number of PA sets         : 10 
-#>     Number of PAs in each set : 22 
-#> Data Cleaning                 : NAs, Capitals, Centroids, Geographically Duplicated, Identical Lat/Long, Institutions, Invalid, Non-terrestrial, Duplicated Cell (grid) 
-#> --------  Predictors  ---------
-#> Number of Predictors          : 5 
-#> Predictors Names              : LENGTH_KM, DIST_DN_KM, bio1, bio4, bio12 
-#> Variable Selection            : vif 
-#> Selected Variables            : LENGTH_KM, DIST_DN_KM, bio1 
-#> ---------  Scenarios  ---------
-#> Number of Scenarios           : 5 
-#> Scenarios Names               : ca_ssp245_2090 ca_ssp585_2090 mi_ssp245_2090 mi_ssp585_2090 current 
-#> -----------  Models  ----------
-#> Algorithms Names              : naive_bayes kknn 
-#> Variables Names               : LENGTH_KM DIST_DN_KM bio1 
-#> Model Validation              :
-#>     Method                    : repeatedcv 
-#>     Number                    : 4 
-#>     Metrics                   :
+#>              caretSDM           
+#> ................................
+#> Class                          : input_sdm
+#> 
+#> =========== Overview ===========
+#> Focal Taxon                    : Salminus brasiliensis 
+#> Spatial extent                 : -5269920.54541171, -3240235.69291754, -4700000, -2803133.9792114  (xmin,xmax,ymin,ymax)
+#> Temporal extent (inferred)     : 2090 - 2090 
+#> Observation type               : Presence-absence (pseudo-absence) 
+#> Predictor names                : LENGTH_KM, DIST_DN_KM, bio1, bio4, bio12 
+#> Modelling techniques           : naive_bayes, kknn 
+#> Model complexity (tuneLength)  : naive_bayes, kknn 
+#> Software                       : caretSDM v1.9.4, R version 4.6.0 (2026-04-24)
+#> 
+#> ============= Data =============
+#> -- Biodiversity data --
+#> Taxon names                    : Salminus brasiliensis 
+#> Sample size                    : 22 
+#> (Pseudo)Absence data method    : bioclim 
+#> Number of PA sets              : 10 
+#> PAs per set                    : 22 
+#> PA-to-presence ratio           : 1 
+#> Data cleaning                  : NAs, Capitals, Centroids, Geographically Duplicated, Identical Lat/Long, Institutions, Invalid, Non-terrestrial, Duplicated Cell (grid) 
+#> -- Data partitioning --
+#> Training/validation method     : repeatedcv 
+#> Number of folds/repeats        : 4 
+#> -- Predictor variables --
+#> Number of predictors           : 5 
+#> Predictor names                : LENGTH_KM, DIST_DN_KM, bio1, bio4, bio12 
+#> Spatial extent                 : -5269920.54541171, -3240235.69291754, -4700000, -2803133.9792114  (xmin,xmax,ymin,ymax)
+#> Spatial resolution             : (25000, 25000) 
+#> Coordinate reference system    : EPSG:6933 ( EPSG: 6933 ) 
+#> -- Transfer data --
+#> Number of scenarios            : 5 
+#> Scenario names                 : ca_ssp245_2090, ca_ssp585_2090, mi_ssp245_2090, mi_ssp585_2090, current 
+#> Temporal extent (inferred)     : 2090 - 2090 
+#> 
+#> ============= Model ============
+#> -- Multicollinearity --
+#> Variable selection method      : vif 
+#> Selected variables             : LENGTH_KM, DIST_DN_KM, bio1 
+#> -- Model settings --
+#> Predictors used                : LENGTH_KM, DIST_DN_KM, bio1 
+#> Model hyperparameters          :
+#>                  species        algorithm                           parameters
+#> 1  Salminus brasiliensis  naive_bayes_pa1 laplace=0, usekernel=FALSE, adjust=1
+#> 2  Salminus brasiliensis         kknn_pa1   kmax=7, distance=2, kernel=optimal
+#> 3  Salminus brasiliensis  naive_bayes_pa2  laplace=0, usekernel=TRUE, adjust=1
+#> 4  Salminus brasiliensis         kknn_pa2   kmax=9, distance=2, kernel=optimal
+#> 5  Salminus brasiliensis  naive_bayes_pa3  laplace=0, usekernel=TRUE, adjust=1
+#> 6  Salminus brasiliensis         kknn_pa3   kmax=5, distance=2, kernel=optimal
+#> 7  Salminus brasiliensis  naive_bayes_pa4  laplace=0, usekernel=TRUE, adjust=1
+#> 8  Salminus brasiliensis         kknn_pa4   kmax=9, distance=2, kernel=optimal
+#> 9  Salminus brasiliensis  naive_bayes_pa5  laplace=0, usekernel=TRUE, adjust=1
+#> 10 Salminus brasiliensis         kknn_pa5   kmax=9, distance=2, kernel=optimal
+#> 11 Salminus brasiliensis  naive_bayes_pa6  laplace=0, usekernel=TRUE, adjust=1
+#> 12 Salminus brasiliensis         kknn_pa6   kmax=9, distance=2, kernel=optimal
+#> 13 Salminus brasiliensis  naive_bayes_pa7 laplace=0, usekernel=FALSE, adjust=1
+#> 14 Salminus brasiliensis         kknn_pa7   kmax=9, distance=2, kernel=optimal
+#> 15 Salminus brasiliensis  naive_bayes_pa8  laplace=0, usekernel=TRUE, adjust=1
+#> 16 Salminus brasiliensis         kknn_pa8   kmax=5, distance=2, kernel=optimal
+#> 17 Salminus brasiliensis  naive_bayes_pa9 laplace=0, usekernel=FALSE, adjust=1
+#> 18 Salminus brasiliensis         kknn_pa9   kmax=9, distance=2, kernel=optimal
+#> 19 Salminus brasiliensis naive_bayes_pa10  laplace=0, usekernel=TRUE, adjust=1
+#> 20 Salminus brasiliensis        kknn_pa10   kmax=9, distance=2, kernel=optimal
+#> 
+#> ========== Assessment ==========
+#> -- Performance statistics --
+#> Cross-validation metrics       :
 #> $`Salminus brasiliensis`
 #>          algo       ROC       TSS Sensitivity Specificity
 #> 1        kknn 0.7600972 0.3641667    0.736625     0.63165
@@ -679,41 +775,87 @@ i <- predict_sdm(i,
   tp = "prob"
 )
 i
-#>             caretSDM           
-#> ...............................
-#> Class                         : input_sdm
-#> --------  Occurrences  --------
-#> Species Names                 : Salminus brasiliensis 
-#> Number of presences           : 22 
-#> Pseudoabsence methods         :
-#>     Method to obtain PAs      : bioclim 
-#>     Number of PA sets         : 10 
-#>     Number of PAs in each set : 22 
-#> Data Cleaning                 : NAs, Capitals, Centroids, Geographically Duplicated, Identical Lat/Long, Institutions, Invalid, Non-terrestrial, Duplicated Cell (grid) 
-#> --------  Predictors  ---------
-#> Number of Predictors          : 5 
-#> Predictors Names              : LENGTH_KM, DIST_DN_KM, bio1, bio4, bio12 
-#> Variable Selection            : vif 
-#> Selected Variables            : LENGTH_KM, DIST_DN_KM, bio1 
-#> ---------  Scenarios  ---------
-#> Number of Scenarios           : 5 
-#> Scenarios Names               : ca_ssp245_2090 ca_ssp585_2090 mi_ssp245_2090 mi_ssp585_2090 current 
-#> -----------  Models  ----------
-#> Algorithms Names              : naive_bayes kknn 
-#> Variables Names               : LENGTH_KM DIST_DN_KM bio1 
-#> Model Validation              :
-#>     Method                    : repeatedcv 
-#>     Number                    : 4 
-#>     Metrics                   :
+#>              caretSDM           
+#> ................................
+#> Class                          : input_sdm
+#> 
+#> =========== Overview ===========
+#> Focal Taxon                    : Salminus brasiliensis 
+#> Spatial extent                 : -5269920.54541171, -3240235.69291754, -4700000, -2803133.9792114  (xmin,xmax,ymin,ymax)
+#> Temporal extent (inferred)     : 2090 - 2090 
+#> Observation type               : Presence-absence (pseudo-absence) 
+#> Predictor names                : LENGTH_KM, DIST_DN_KM, bio1, bio4, bio12 
+#> Modelling techniques           : naive_bayes, kknn 
+#> Model complexity (tuneLength)  : naive_bayes, kknn 
+#> Software                       : caretSDM v1.9.4, R version 4.6.0 (2026-04-24)
+#> 
+#> ============= Data =============
+#> -- Biodiversity data --
+#> Taxon names                    : Salminus brasiliensis 
+#> Sample size                    : 22 
+#> (Pseudo)Absence data method    : bioclim 
+#> Number of PA sets              : 10 
+#> PAs per set                    : 22 
+#> PA-to-presence ratio           : 1 
+#> Data cleaning                  : NAs, Capitals, Centroids, Geographically Duplicated, Identical Lat/Long, Institutions, Invalid, Non-terrestrial, Duplicated Cell (grid) 
+#> -- Data partitioning --
+#> Training/validation method     : repeatedcv 
+#> Number of folds/repeats        : 4 
+#> -- Predictor variables --
+#> Number of predictors           : 5 
+#> Predictor names                : LENGTH_KM, DIST_DN_KM, bio1, bio4, bio12 
+#> Spatial extent                 : -5269920.54541171, -3240235.69291754, -4700000, -2803133.9792114  (xmin,xmax,ymin,ymax)
+#> Spatial resolution             : (25000, 25000) 
+#> Coordinate reference system    : EPSG:6933 ( EPSG: 6933 ) 
+#> -- Transfer data --
+#> Number of scenarios            : 5 
+#> Scenario names                 : ca_ssp245_2090, ca_ssp585_2090, mi_ssp245_2090, mi_ssp585_2090, current 
+#> Temporal extent (inferred)     : 2090 - 2090 
+#> 
+#> ============= Model ============
+#> -- Multicollinearity --
+#> Variable selection method      : vif 
+#> Selected variables             : LENGTH_KM, DIST_DN_KM, bio1 
+#> -- Model settings --
+#> Predictors used                : LENGTH_KM, DIST_DN_KM, bio1 
+#> Model hyperparameters          :
+#>                  species        algorithm                           parameters
+#> 1  Salminus brasiliensis  naive_bayes_pa1 laplace=0, usekernel=FALSE, adjust=1
+#> 2  Salminus brasiliensis         kknn_pa1   kmax=7, distance=2, kernel=optimal
+#> 3  Salminus brasiliensis  naive_bayes_pa2  laplace=0, usekernel=TRUE, adjust=1
+#> 4  Salminus brasiliensis         kknn_pa2   kmax=9, distance=2, kernel=optimal
+#> 5  Salminus brasiliensis  naive_bayes_pa3  laplace=0, usekernel=TRUE, adjust=1
+#> 6  Salminus brasiliensis         kknn_pa3   kmax=5, distance=2, kernel=optimal
+#> 7  Salminus brasiliensis  naive_bayes_pa4  laplace=0, usekernel=TRUE, adjust=1
+#> 8  Salminus brasiliensis         kknn_pa4   kmax=9, distance=2, kernel=optimal
+#> 9  Salminus brasiliensis  naive_bayes_pa5  laplace=0, usekernel=TRUE, adjust=1
+#> 10 Salminus brasiliensis         kknn_pa5   kmax=9, distance=2, kernel=optimal
+#> 11 Salminus brasiliensis  naive_bayes_pa6  laplace=0, usekernel=TRUE, adjust=1
+#> 12 Salminus brasiliensis         kknn_pa6   kmax=9, distance=2, kernel=optimal
+#> 13 Salminus brasiliensis  naive_bayes_pa7 laplace=0, usekernel=FALSE, adjust=1
+#> 14 Salminus brasiliensis         kknn_pa7   kmax=9, distance=2, kernel=optimal
+#> 15 Salminus brasiliensis  naive_bayes_pa8  laplace=0, usekernel=TRUE, adjust=1
+#> 16 Salminus brasiliensis         kknn_pa8   kmax=5, distance=2, kernel=optimal
+#> 17 Salminus brasiliensis  naive_bayes_pa9 laplace=0, usekernel=FALSE, adjust=1
+#> 18 Salminus brasiliensis         kknn_pa9   kmax=9, distance=2, kernel=optimal
+#> 19 Salminus brasiliensis naive_bayes_pa10  laplace=0, usekernel=TRUE, adjust=1
+#> 20 Salminus brasiliensis        kknn_pa10   kmax=9, distance=2, kernel=optimal
+#> -- Threshold selection --
+#> Threshold method               : threshold 
+#> Threshold criteria             : 0.7 
+#> 
+#> ========== Assessment ==========
+#> -- Performance statistics --
+#> Cross-validation metrics       :
 #> $`Salminus brasiliensis`
 #>          algo       ROC       TSS Sensitivity Specificity
 #> 1        kknn 0.7600972 0.3641667    0.736625     0.63165
 #> 2 naive_bayes 0.7784722 0.4150000    0.760850     0.67335
 #> 
-#> --------  Predictions  --------
-#> Thresholds                    :
-#>     Method                    : threshold 
-#>     Criteria                  : 0.7
+#> 
+#> ========== Prediction ==========
+#> Prediction layers              : current, ca_ssp245_2090, ca_ssp585_2090, mi_ssp245_2090, mi_ssp585_2090 
+#> Prediction unit                : Occurrence Probability
 ```
 
 Finally, we can ensemble the predictions using:
@@ -730,44 +872,90 @@ i <- ensemble_sdm(i,
 #>   mi_ssp245_2090
 #>   mi_ssp585_2090
 i
-#>             caretSDM           
-#> ...............................
-#> Class                         : input_sdm
-#> --------  Occurrences  --------
-#> Species Names                 : Salminus brasiliensis 
-#> Number of presences           : 22 
-#> Pseudoabsence methods         :
-#>     Method to obtain PAs      : bioclim 
-#>     Number of PA sets         : 10 
-#>     Number of PAs in each set : 22 
-#> Data Cleaning                 : NAs, Capitals, Centroids, Geographically Duplicated, Identical Lat/Long, Institutions, Invalid, Non-terrestrial, Duplicated Cell (grid) 
-#> --------  Predictors  ---------
-#> Number of Predictors          : 5 
-#> Predictors Names              : LENGTH_KM, DIST_DN_KM, bio1, bio4, bio12 
-#> Variable Selection            : vif 
-#> Selected Variables            : LENGTH_KM, DIST_DN_KM, bio1 
-#> ---------  Scenarios  ---------
-#> Number of Scenarios           : 5 
-#> Scenarios Names               : ca_ssp245_2090 ca_ssp585_2090 mi_ssp245_2090 mi_ssp585_2090 current 
-#> -----------  Models  ----------
-#> Algorithms Names              : naive_bayes kknn 
-#> Variables Names               : LENGTH_KM DIST_DN_KM bio1 
-#> Model Validation              :
-#>     Method                    : repeatedcv 
-#>     Number                    : 4 
-#>     Metrics                   :
+#>              caretSDM           
+#> ................................
+#> Class                          : input_sdm
+#> 
+#> =========== Overview ===========
+#> Focal Taxon                    : Salminus brasiliensis 
+#> Spatial extent                 : -5269920.54541171, -3240235.69291754, -4700000, -2803133.9792114  (xmin,xmax,ymin,ymax)
+#> Temporal extent (inferred)     : 2090 - 2090 
+#> Observation type               : Presence-absence (pseudo-absence) 
+#> Predictor names                : LENGTH_KM, DIST_DN_KM, bio1, bio4, bio12 
+#> Modelling techniques           : naive_bayes, kknn 
+#> Model complexity (tuneLength)  : naive_bayes, kknn 
+#> Model averaging                : average 
+#> Software                       : caretSDM v1.9.4, R version 4.6.0 (2026-04-24)
+#> 
+#> ============= Data =============
+#> -- Biodiversity data --
+#> Taxon names                    : Salminus brasiliensis 
+#> Sample size                    : 22 
+#> (Pseudo)Absence data method    : bioclim 
+#> Number of PA sets              : 10 
+#> PAs per set                    : 22 
+#> PA-to-presence ratio           : 1 
+#> Data cleaning                  : NAs, Capitals, Centroids, Geographically Duplicated, Identical Lat/Long, Institutions, Invalid, Non-terrestrial, Duplicated Cell (grid) 
+#> -- Data partitioning --
+#> Training/validation method     : repeatedcv 
+#> Number of folds/repeats        : 4 
+#> -- Predictor variables --
+#> Number of predictors           : 5 
+#> Predictor names                : LENGTH_KM, DIST_DN_KM, bio1, bio4, bio12 
+#> Spatial extent                 : -5269920.54541171, -3240235.69291754, -4700000, -2803133.9792114  (xmin,xmax,ymin,ymax)
+#> Spatial resolution             : (25000, 25000) 
+#> Coordinate reference system    : EPSG:6933 ( EPSG: 6933 ) 
+#> -- Transfer data --
+#> Number of scenarios            : 5 
+#> Scenario names                 : ca_ssp245_2090, ca_ssp585_2090, mi_ssp245_2090, mi_ssp585_2090, current 
+#> Temporal extent (inferred)     : 2090 - 2090 
+#> 
+#> ============= Model ============
+#> -- Multicollinearity --
+#> Variable selection method      : vif 
+#> Selected variables             : LENGTH_KM, DIST_DN_KM, bio1 
+#> -- Model settings --
+#> Predictors used                : LENGTH_KM, DIST_DN_KM, bio1 
+#> Model hyperparameters          :
+#>                  species        algorithm                           parameters
+#> 1  Salminus brasiliensis  naive_bayes_pa1 laplace=0, usekernel=FALSE, adjust=1
+#> 2  Salminus brasiliensis         kknn_pa1   kmax=7, distance=2, kernel=optimal
+#> 3  Salminus brasiliensis  naive_bayes_pa2  laplace=0, usekernel=TRUE, adjust=1
+#> 4  Salminus brasiliensis         kknn_pa2   kmax=9, distance=2, kernel=optimal
+#> 5  Salminus brasiliensis  naive_bayes_pa3  laplace=0, usekernel=TRUE, adjust=1
+#> 6  Salminus brasiliensis         kknn_pa3   kmax=5, distance=2, kernel=optimal
+#> 7  Salminus brasiliensis  naive_bayes_pa4  laplace=0, usekernel=TRUE, adjust=1
+#> 8  Salminus brasiliensis         kknn_pa4   kmax=9, distance=2, kernel=optimal
+#> 9  Salminus brasiliensis  naive_bayes_pa5  laplace=0, usekernel=TRUE, adjust=1
+#> 10 Salminus brasiliensis         kknn_pa5   kmax=9, distance=2, kernel=optimal
+#> 11 Salminus brasiliensis  naive_bayes_pa6  laplace=0, usekernel=TRUE, adjust=1
+#> 12 Salminus brasiliensis         kknn_pa6   kmax=9, distance=2, kernel=optimal
+#> 13 Salminus brasiliensis  naive_bayes_pa7 laplace=0, usekernel=FALSE, adjust=1
+#> 14 Salminus brasiliensis         kknn_pa7   kmax=9, distance=2, kernel=optimal
+#> 15 Salminus brasiliensis  naive_bayes_pa8  laplace=0, usekernel=TRUE, adjust=1
+#> 16 Salminus brasiliensis         kknn_pa8   kmax=5, distance=2, kernel=optimal
+#> 17 Salminus brasiliensis  naive_bayes_pa9 laplace=0, usekernel=FALSE, adjust=1
+#> 18 Salminus brasiliensis         kknn_pa9   kmax=9, distance=2, kernel=optimal
+#> 19 Salminus brasiliensis naive_bayes_pa10  laplace=0, usekernel=TRUE, adjust=1
+#> 20 Salminus brasiliensis        kknn_pa10   kmax=9, distance=2, kernel=optimal
+#> -- Threshold selection --
+#> Threshold method               : threshold 
+#> Threshold criteria             : 0.7 
+#> 
+#> ========== Assessment ==========
+#> -- Performance statistics --
+#> Cross-validation metrics       :
 #> $`Salminus brasiliensis`
 #>          algo       ROC       TSS Sensitivity Specificity
 #> 1        kknn 0.7600972 0.3641667    0.736625     0.63165
 #> 2 naive_bayes 0.7784722 0.4150000    0.760850     0.67335
 #> 
-#> --------  Predictions  --------
-#> Thresholds                    :
-#>     Method                    : threshold 
-#>     Criteria                  : 0.7 
-#> ---------  Ensembles  ---------
-#> Ensembles                     :
-#>     Methods                   : average
+#> 
+#> ========== Prediction ==========
+#> Prediction layers              : current, ca_ssp245_2090, ca_ssp585_2090, mi_ssp245_2090, mi_ssp585_2090 
+#> Prediction unit                : Occurrence Probability 
+#> Ensemble method                : average 
+#> Ensemble names                 :
 ```
 
 In the above print, it is possible to see the “Methods” under the
@@ -1087,18 +1275,42 @@ obtained with the following code:
 
 mean_validation_metrics(i)
 #> $`Salminus brasiliensis`
-#> # A tibble: 2 × 59
-#>   algo       ROC   TSS Sensitivity Specificity `Pos Pred Value` `Neg Pred Value`
-#>   <chr>    <dbl> <dbl>       <dbl>       <dbl>            <dbl>            <dbl>
-#> 1 kknn     0.760 0.364       0.737       0.632            0.695            0.726
-#> 2 naive_b… 0.778 0.415       0.761       0.673            0.715            0.748
-#> # ℹ 52 more variables: Precision <dbl>, Recall <dbl>, F1 <dbl>,
-#> #   Prevalence <dbl>, `Detection Rate` <dbl>, `Detection Prevalence` <dbl>,
-#> #   `Balanced Accuracy` <dbl>, Accuracy <dbl>, Kappa <dbl>,
-#> #   AccuracyLower <dbl>, AccuracyUpper <dbl>, AccuracyNull <dbl>,
-#> #   AccuracyPValue <dbl>, McnemarPValue <dbl>, Positive <dbl>, Negative <dbl>,
-#> #   `True Positive` <dbl>, `False Positive` <dbl>, `True Negative` <dbl>,
-#> #   `False Negative` <dbl>, CBI <dbl>, pAUC <dbl>, Omission_10pct <dbl>, …
+#>          algo       ROC       TSS Sensitivity Specificity Pos Pred Value
+#> 1        kknn 0.7600972 0.3641667    0.736625     0.63165       0.695400
+#> 2 naive_bayes 0.7784722 0.4150000    0.760850     0.67335       0.714675
+#>   Neg Pred Value Precision   Recall       F1 Prevalence Detection Rate
+#> 1      0.7255333  0.695400 0.736625 0.694075        0.5       0.368525
+#> 2      0.7478500  0.714675 0.760850 0.713050        0.5       0.379075
+#>   Detection Prevalence Balanced Accuracy Accuracy    Kappa AccuracyLower
+#> 1             0.566650          0.682100  0.68130 0.363275      0.357775
+#> 2             0.574175          0.707475  0.70335 0.411975      0.374000
+#>   AccuracyUpper AccuracyNull AccuracyPValue McnemarPValue Positive Negative
+#> 1       0.90545        0.518       0.340475      0.788225      5.5      5.5
+#> 2       0.92000        0.518       0.319225      0.839525      5.5      5.5
+#>   True Positive False Positive True Negative False Negative      CBI pAUC
+#> 1         4.075          1.675         3.475          2.225      NaN  NaN
+#> 2         4.150          1.650         3.675          2.275 0.320125  NaN
+#>   Omission_10pct     ROCSD     TSSSD SensitivitySD SpecificitySD
+#> 1         0.1318 0.1548168 0.2950242     0.1915987     0.2637458
+#> 2         0.1835 0.1619819 0.2688143     0.2141038     0.2368465
+#>   Pos Pred ValueSD Neg Pred ValueSD PrecisionSD  RecallSD      F1SD
+#> 1        0.1830959        0.1714442   0.1830959 0.1915987 0.1429000
+#> 2        0.1559124        0.2137376   0.1559124 0.2141038 0.1479028
+#>   PrevalenceSD Detection RateSD Detection PrevalenceSD Balanced AccuracySD
+#> 1   0.02939388        0.1004875              0.1750989           0.1474982
+#> 2   0.02724156        0.1121555              0.1802210           0.1343728
+#>   AccuracySD   KappaSD AccuracyLowerSD AccuracyUpperSD AccuracyNullSD
+#> 1  0.1480457 0.2950668       0.1360326      0.08165811     0.02078461
+#> 2  0.1362076 0.2671724       0.1164037      0.08064706     0.01558846
+#>   AccuracyPValueSD McnemarPValueSD PositiveSD NegativeSD True PositiveSD
+#> 1        0.2650306       0.3273169  0.5773503  0.5773503        1.241756
+#> 2        0.2545424       0.3201477  0.5773503  0.5773503        1.233723
+#>   False PositiveSD True NegativeSD False NegativeSD     CBISD pAUCSD
+#> 1        0.9826228        1.442255         1.462645        NA     NA
+#> 2        1.1995593        1.267185         1.389875 0.3381949     NA
+#>   Omission_10pctSD
+#> 1       0.08503172
+#> 2       0.01905256
 ```
 
 After building predictions, it is possible to ensemble GCMs using
@@ -1126,44 +1338,90 @@ i <- gcms_ensembles(i, gcms = c("ca", "mi"))
 #> • `cell_id` -> `cell_id...3`
 #> • `average` -> `average...4`
 i
-#>             caretSDM           
-#> ...............................
-#> Class                         : input_sdm
-#> --------  Occurrences  --------
-#> Species Names                 : Salminus brasiliensis 
-#> Number of presences           : 22 
-#> Pseudoabsence methods         :
-#>     Method to obtain PAs      : bioclim 
-#>     Number of PA sets         : 10 
-#>     Number of PAs in each set : 22 
-#> Data Cleaning                 : NAs, Capitals, Centroids, Geographically Duplicated, Identical Lat/Long, Institutions, Invalid, Non-terrestrial, Duplicated Cell (grid) 
-#> --------  Predictors  ---------
-#> Number of Predictors          : 5 
-#> Predictors Names              : LENGTH_KM, DIST_DN_KM, bio1, bio4, bio12 
-#> Variable Selection            : vif 
-#> Selected Variables            : LENGTH_KM, DIST_DN_KM, bio1 
-#> ---------  Scenarios  ---------
-#> Number of Scenarios           : 5 
-#> Scenarios Names               : ca_ssp245_2090 ca_ssp585_2090 mi_ssp245_2090 mi_ssp585_2090 current 
-#> -----------  Models  ----------
-#> Algorithms Names              : naive_bayes kknn 
-#> Variables Names               : LENGTH_KM DIST_DN_KM bio1 
-#> Model Validation              :
-#>     Method                    : repeatedcv 
-#>     Number                    : 4 
-#>     Metrics                   :
+#>              caretSDM           
+#> ................................
+#> Class                          : input_sdm
+#> 
+#> =========== Overview ===========
+#> Focal Taxon                    : Salminus brasiliensis 
+#> Spatial extent                 : -5269920.54541171, -3240235.69291754, -4700000, -2803133.9792114  (xmin,xmax,ymin,ymax)
+#> Temporal extent (inferred)     : 2090 - 2090 
+#> Observation type               : Presence-absence (pseudo-absence) 
+#> Predictor names                : LENGTH_KM, DIST_DN_KM, bio1, bio4, bio12 
+#> Modelling techniques           : naive_bayes, kknn 
+#> Model complexity (tuneLength)  : naive_bayes, kknn 
+#> Model averaging                : average 
+#> Software                       : caretSDM v1.9.4, R version 4.6.0 (2026-04-24)
+#> 
+#> ============= Data =============
+#> -- Biodiversity data --
+#> Taxon names                    : Salminus brasiliensis 
+#> Sample size                    : 22 
+#> (Pseudo)Absence data method    : bioclim 
+#> Number of PA sets              : 10 
+#> PAs per set                    : 22 
+#> PA-to-presence ratio           : 1 
+#> Data cleaning                  : NAs, Capitals, Centroids, Geographically Duplicated, Identical Lat/Long, Institutions, Invalid, Non-terrestrial, Duplicated Cell (grid) 
+#> -- Data partitioning --
+#> Training/validation method     : repeatedcv 
+#> Number of folds/repeats        : 4 
+#> -- Predictor variables --
+#> Number of predictors           : 5 
+#> Predictor names                : LENGTH_KM, DIST_DN_KM, bio1, bio4, bio12 
+#> Spatial extent                 : -5269920.54541171, -3240235.69291754, -4700000, -2803133.9792114  (xmin,xmax,ymin,ymax)
+#> Spatial resolution             : (25000, 25000) 
+#> Coordinate reference system    : EPSG:6933 ( EPSG: 6933 ) 
+#> -- Transfer data --
+#> Number of scenarios            : 5 
+#> Scenario names                 : ca_ssp245_2090, ca_ssp585_2090, mi_ssp245_2090, mi_ssp585_2090, current 
+#> Temporal extent (inferred)     : 2090 - 2090 
+#> 
+#> ============= Model ============
+#> -- Multicollinearity --
+#> Variable selection method      : vif 
+#> Selected variables             : LENGTH_KM, DIST_DN_KM, bio1 
+#> -- Model settings --
+#> Predictors used                : LENGTH_KM, DIST_DN_KM, bio1 
+#> Model hyperparameters          :
+#>                  species        algorithm                           parameters
+#> 1  Salminus brasiliensis  naive_bayes_pa1 laplace=0, usekernel=FALSE, adjust=1
+#> 2  Salminus brasiliensis         kknn_pa1   kmax=7, distance=2, kernel=optimal
+#> 3  Salminus brasiliensis  naive_bayes_pa2  laplace=0, usekernel=TRUE, adjust=1
+#> 4  Salminus brasiliensis         kknn_pa2   kmax=9, distance=2, kernel=optimal
+#> 5  Salminus brasiliensis  naive_bayes_pa3  laplace=0, usekernel=TRUE, adjust=1
+#> 6  Salminus brasiliensis         kknn_pa3   kmax=5, distance=2, kernel=optimal
+#> 7  Salminus brasiliensis  naive_bayes_pa4  laplace=0, usekernel=TRUE, adjust=1
+#> 8  Salminus brasiliensis         kknn_pa4   kmax=9, distance=2, kernel=optimal
+#> 9  Salminus brasiliensis  naive_bayes_pa5  laplace=0, usekernel=TRUE, adjust=1
+#> 10 Salminus brasiliensis         kknn_pa5   kmax=9, distance=2, kernel=optimal
+#> 11 Salminus brasiliensis  naive_bayes_pa6  laplace=0, usekernel=TRUE, adjust=1
+#> 12 Salminus brasiliensis         kknn_pa6   kmax=9, distance=2, kernel=optimal
+#> 13 Salminus brasiliensis  naive_bayes_pa7 laplace=0, usekernel=FALSE, adjust=1
+#> 14 Salminus brasiliensis         kknn_pa7   kmax=9, distance=2, kernel=optimal
+#> 15 Salminus brasiliensis  naive_bayes_pa8  laplace=0, usekernel=TRUE, adjust=1
+#> 16 Salminus brasiliensis         kknn_pa8   kmax=5, distance=2, kernel=optimal
+#> 17 Salminus brasiliensis  naive_bayes_pa9 laplace=0, usekernel=FALSE, adjust=1
+#> 18 Salminus brasiliensis         kknn_pa9   kmax=9, distance=2, kernel=optimal
+#> 19 Salminus brasiliensis naive_bayes_pa10  laplace=0, usekernel=TRUE, adjust=1
+#> 20 Salminus brasiliensis        kknn_pa10   kmax=9, distance=2, kernel=optimal
+#> -- Threshold selection --
+#> Threshold method               : threshold 
+#> Threshold criteria             : 0.7 
+#> 
+#> ========== Assessment ==========
+#> -- Performance statistics --
+#> Cross-validation metrics       :
 #> $`Salminus brasiliensis`
 #>          algo       ROC       TSS Sensitivity Specificity
 #> 1        kknn 0.7600972 0.3641667    0.736625     0.63165
 #> 2 naive_bayes 0.7784722 0.4150000    0.760850     0.67335
 #> 
-#> --------  Predictions  --------
-#> Thresholds                    :
-#>     Method                    : threshold 
-#>     Criteria                  : 0.7 
-#> ---------  Ensembles  ---------
-#> Ensembles                     :
-#>     Methods                   : average
+#> 
+#> ========== Prediction ==========
+#> Prediction layers              : current, ca_ssp245_2090, ca_ssp585_2090, mi_ssp245_2090, mi_ssp585_2090 
+#> Prediction unit                : Occurrence Probability 
+#> Ensemble method                : average 
+#> Ensemble names                 : _ssp245_2090, _ssp585_2090
 ```
 
 Note that now the “Ensembles” has two scenarios called \_ssp245_2090 and
@@ -1248,5 +1506,5 @@ species using a grid simplefeatures instead of lines.
 
 end_time <- Sys.time()
 end_time - start_time
-#> Time difference of 35.67308 secs
+#> Time difference of 37.39424 secs
 ```

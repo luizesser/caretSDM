@@ -601,7 +601,7 @@ sessionInfo()
     ## 
     ## other attached packages:
     ## [1] earth_5.3.5    plotmo_3.7.0   plotrix_3.8-14 Formula_1.2-5  caret_7.0-1   
-    ## [6] lattice_0.22-9 dplyr_1.2.1    ggplot2_4.0.3  caretSDM_1.9.2
+    ## [6] lattice_0.22-9 dplyr_1.2.1    ggplot2_4.0.3  caretSDM_1.9.4
     ## 
     ## loaded via a namespace (and not attached):
     ##   [1] RColorBrewer_1.1-3      ECDFniche_0.5           jsonlite_2.0.0         
@@ -614,7 +614,7 @@ sessionInfo()
     ##  [22] bslib_0.11.0            htmlwidgets_1.6.4       naivebayes_1.0.0       
     ##  [25] desc_1.4.3              plyr_1.8.9              httr2_1.2.2            
     ##  [28] lubridate_1.9.5         stars_0.7-2             cachem_1.1.0           
-    ##  [31] whisker_0.4.1           igraph_2.3.1            lifecycle_1.0.5        
+    ##  [31] whisker_0.4.1           igraph_2.3.2            lifecycle_1.0.5        
     ##  [34] iterators_1.0.14        pkgconfig_2.0.3         Matrix_1.7-5           
     ##  [37] R6_2.6.1                fastmap_1.2.0           future_1.70.0          
     ##  [40] digest_0.6.39           textshaping_1.0.5       labeling_0.4.3         

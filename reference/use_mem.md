@@ -6,12 +6,12 @@ the data cleaning routine.
 ## Usage
 
 ``` r
-use_mem(x, add = TRUE, name = "MEM")
+use_mem(i, add = TRUE, name = "MEM")
 ```
 
 ## Arguments
 
-- x:
+- i:
 
   A `occurrences` or `input_sdm` object containing occurrences.
 

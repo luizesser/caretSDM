@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">caretSDM</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.9.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.9.4</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -154,20 +154,39 @@ https://luizfesser.wordpress.com</p>
 <span class="r-in"><span><span class="co"># VIF calculation:</span></span></span>
 <span class="r-in"><span><span class="va">i</span> <span class="op">&lt;-</span> <span class="fu">multicollinearity_sdm</span><span class="op">(</span><span class="va">i</span>, method <span class="op">=</span> <span class="st">"vifcor"</span>, th <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">i</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>             caretSDM           </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ...............................</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Class                         : input_sdm</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> --------  Occurrences  --------</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Species Names                 : Araucaria angustifolia </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Number of presences           : 417 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> --------  Predictors  ---------</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Number of Predictors          : 3 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Predictors Names              : bio1, bio4, bio12 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Variable Selection            : vif </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Selected Variables            : bio1, bio12 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ---------  Scenarios  ---------</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Number of Scenarios           : 5 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Scenarios Names               : ca_ssp245_2090 ca_ssp585_2090 mi_ssp245_2090 mi_ssp585_2090 current </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>              caretSDM           </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ................................</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Class                          : input_sdm</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> =========== Overview ===========</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Focal Taxon                    : Araucaria angustifolia </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Spatial extent                 : -5276744.44724281, -3295036.62222337, -4626744.44724281, -2795036.62222337  (xmin,xmax,ymin,ymax)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Temporal extent (inferred)     : 2090 - 2090 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Observation type               : Presence-only </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Predictor names                : bio1, bio4, bio12 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Software                       : caretSDM v1.9.4, R version 4.6.0 (2026-04-24)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ============= Data =============</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> -- Biodiversity data --</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Taxon names                    : Araucaria angustifolia </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Sample size                    : 417 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> -- Predictor variables --</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Number of predictors           : 3 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Predictor names                : bio1, bio4, bio12 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Spatial extent                 : -5276744.44724281, -3295036.62222337, -4626744.44724281, -2795036.62222337  (xmin,xmax,ymin,ymax)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Spatial resolution             : (25000, 25000) </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Coordinate reference system    : WGS 84 / NSIDC EASE- ( EPSG: 6933 ) </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> -- Transfer data --</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Number of scenarios            : 5 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Scenario names                 : ca_ssp245_2090, ca_ssp585_2090, mi_ssp245_2090, mi_ssp585_2090, current </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Temporal extent (inferred)     : 2090 - 2090 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ============= Model ============</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> -- Multicollinearity --</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Variable selection method      : vif </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Selected variables             : bio1, bio12 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ========== Assessment ==========</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Retrieve information about vif:</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="vif_predictors.html">vif_summary</a></span><span class="op">(</span><span class="va">i</span><span class="op">)</span></span></span>

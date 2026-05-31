@@ -209,21 +209,21 @@ mean_perf_all
 ```
 
     ##                     method        algo       ROC       ROCSD
-    ## 1                   Random         fda 0.8754993 0.085439303
+    ## 1                   Random         fda 0.8755041 0.085435464
     ## 2                   Random         glm 0.7199502 0.063634574
     ## 3                   Random        kknn 0.8642331 0.051282920
     ## 4                   Random naive_bayes 0.8791250 0.048858554
     ## 5                   Random        nnet 0.7423152 0.121096985
     ## 6                   Random          rf 0.8759032 0.045148396
     ## 7                   Random   svmRadial 0.9002474 0.044029839
-    ## 8  Environmental Constrain         fda 0.9938096 0.081485119
+    ## 8  Environmental Constrain         fda 0.9938096 0.081484483
     ## 9  Environmental Constrain         glm 0.7735754 0.055487551
     ## 10 Environmental Constrain        kknn 0.9730556 0.024289331
     ## 11 Environmental Constrain naive_bayes 0.9960180 0.009451948
     ## 12 Environmental Constrain        nnet 0.8558365 0.156385356
     ## 13 Environmental Constrain          rf 0.9965006 0.006377251
     ## 14 Environmental Constrain   svmRadial 0.9985168 0.002974778
-    ## 15  Geographical Constrain         fda 0.9334746 0.083782513
+    ## 15  Geographical Constrain         fda 0.9334746 0.083787268
     ## 16  Geographical Constrain         glm 0.7661502 0.056351037
     ## 17  Geographical Constrain        kknn 0.9310052 0.043564110
     ## 18  Geographical Constrain naive_bayes 0.9410717 0.035163885
@@ -466,7 +466,7 @@ sessionInfo()
     ## 
     ## other attached packages:
     ## [1] earth_5.3.5    plotmo_3.7.0   plotrix_3.8-14 Formula_1.2-5  caret_7.0-1   
-    ## [6] lattice_0.22-9 ggplot2_4.0.3  caretSDM_1.9.2
+    ## [6] lattice_0.22-9 ggplot2_4.0.3  caretSDM_1.9.4
     ## 
     ## loaded via a namespace (and not attached):
     ##   [1] RColorBrewer_1.1-3      ECDFniche_0.5           jsonlite_2.0.0         
@@ -479,7 +479,7 @@ sessionInfo()
     ##  [22] KernSmooth_2.23-26      bslib_0.11.0            htmlwidgets_1.6.4      
     ##  [25] naivebayes_1.0.0        desc_1.4.3              plyr_1.8.9             
     ##  [28] httr2_1.2.2             lubridate_1.9.5         stars_0.7-2            
-    ##  [31] cachem_1.1.0            whisker_0.4.1           igraph_2.3.1           
+    ##  [31] cachem_1.1.0            whisker_0.4.1           igraph_2.3.2           
     ##  [34] lifecycle_1.0.5         iterators_1.0.14        pkgconfig_2.0.3        
     ##  [37] Matrix_1.7-5            R6_2.6.1                fastmap_1.2.0          
     ##  [40] future_1.70.0           digest_0.6.39           textshaping_1.0.5      

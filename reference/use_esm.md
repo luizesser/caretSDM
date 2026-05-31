@@ -5,12 +5,12 @@ This functions set parameters to run a ESM when running `train_sdm`.
 ## Usage
 
 ``` r
-use_esm(x, spp = NULL, n_records = 20)
+use_esm(i, spp = NULL, n_records = 20)
 ```
 
 ## Arguments
 
-- x:
+- i:
 
   A `occurrences` or `input_sdm` object containing occurrences.
 

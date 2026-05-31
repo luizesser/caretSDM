@@ -25,7 +25,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">caretSDM</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.9.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.9.4</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -73,7 +73,7 @@
                         <h4 data-toc-skip class="author">[author
 name]</h4>
             
-            <h4 data-toc-skip class="date">2026-05-22</h4>
+            <h4 data-toc-skip class="date">2026-05-31</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/luizesser/caretSDM/blob/main/vignettes/articles/08_runtime-benchmark.Rmd" class="external-link"><code>vignettes/articles/08_runtime-benchmark.Rmd</code></a></small>
       <div class="d-none name"><code>08_runtime-benchmark.Rmd</code></div>
@@ -145,7 +145,9 @@ included projection to future scenarios.</p>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">mda</span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/gbm-developers/gbm" class="external-link">gbm</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="http://www.milbo.users.sonic.net/earth/" class="external-link">earth</a></span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://www.stat.berkeley.edu/~breiman/RandomForests/" class="external-link">randomForest</a></span><span class="op">)</span></span></code></pre></div>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://www.stat.berkeley.edu/~breiman/RandomForests/" class="external-link">randomForest</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span></code></pre></div>
 <hr>
 </div>
 <div class="section level2">
@@ -225,11 +227,12 @@ included projection to future scenarios.</p>
 <span><span class="va">fit_biomod2</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">prep</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="va">biomod_model</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://biomodhub.github.io/biomod2/reference/BIOMOD_Modeling.html" class="external-link">BIOMOD_Modeling</a></span><span class="op">(</span></span>
 <span>    <span class="va">prep</span><span class="op">$</span><span class="va">data</span>,</span>
+<span>    modeling.id <span class="op">=</span> <span class="st">"AllModels"</span>,</span>
 <span>    models <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ANN"</span>, <span class="st">"CTA"</span>, <span class="st">"FDA"</span>, <span class="st">"GBM"</span>, <span class="st">"MARS"</span>, <span class="st">"RF"</span><span class="op">)</span>,</span>
 <span>    CV.strategy <span class="op">=</span> <span class="st">"kfold"</span>,</span>
 <span>    CV.nb.rep <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>    CV.k <span class="op">=</span> <span class="fl">5</span>,</span>
-<span>    metric.eval <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"TSS"</span>, <span class="st">"ROC"</span><span class="op">)</span>,</span>
+<span>    metric.eval <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"TSS"</span>, <span class="st">"AUCroc"</span><span class="op">)</span>,</span>
 <span>    do.progress <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span>  <span class="op">)</span></span>
 <span></span>
@@ -255,13 +258,15 @@ included projection to future scenarios.</p>
 <span></span>
 <span><span class="va">post_biomod2</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">fit</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="va">biomod_proj</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">fit</span><span class="op">$</span><span class="va">scen</span><span class="op">)</span>, <span class="kw">function</span><span class="op">(</span><span class="va">nm</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="fu">foreach</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/foreach/man/registerDoSEQ.html" class="external-link">registerDoSEQ</a></span><span class="op">(</span><span class="op">)</span></span>
 <span>    <span class="fu"><a href="https://biomodhub.github.io/biomod2/reference/BIOMOD_Projection.html" class="external-link">BIOMOD_Projection</a></span><span class="op">(</span></span>
 <span>      bm.mod <span class="op">=</span> <span class="va">fit</span><span class="op">$</span><span class="va">model</span>,</span>
 <span>      proj.name <span class="op">=</span> <span class="va">nm</span>,</span>
 <span>      new.env <span class="op">=</span> <span class="va">fit</span><span class="op">$</span><span class="va">scen</span><span class="op">[[</span><span class="va">nm</span><span class="op">]</span><span class="op">]</span>,</span>
 <span>      models.chosen <span class="op">=</span> <span class="st">"all"</span>,</span>
 <span>      overwrite <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>      do.stack <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span>      do.stack <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>      nb.cpu <span class="op">=</span> <span class="fl">1</span></span>
 <span>    <span class="op">)</span></span>
 <span>  <span class="op">}</span><span class="op">)</span></span>
 <span></span>
@@ -303,11 +308,12 @@ included projection to future scenarios.</p>
 <span></span>
 <span>  <span class="va">biomod_model</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://biomodhub.github.io/biomod2/reference/BIOMOD_Modeling.html" class="external-link">BIOMOD_Modeling</a></span><span class="op">(</span></span>
 <span>    <span class="va">biomod_data</span>,</span>
+<span>    modeling.id <span class="op">=</span> <span class="st">"AllModels"</span>,</span>
 <span>    models <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ANN"</span>, <span class="st">"CTA"</span>, <span class="st">"FDA"</span>, <span class="st">"GBM"</span>, <span class="st">"MARS"</span>, <span class="st">"RF"</span><span class="op">)</span>,</span>
 <span>    CV.strategy <span class="op">=</span> <span class="st">"kfold"</span>,</span>
 <span>    CV.nb.rep <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>    CV.k <span class="op">=</span> <span class="fl">5</span>,</span>
-<span>    metric.eval <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"TSS"</span>, <span class="st">"ROC"</span><span class="op">)</span>,</span>
+<span>    metric.eval <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"TSS"</span>, <span class="st">"AUCroc"</span><span class="op">)</span>,</span>
 <span>    do.progress <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span>  <span class="op">)</span></span>
 <span></span>
@@ -321,13 +327,15 @@ included projection to future scenarios.</p>
 <span>  <span class="op">)</span></span>
 <span></span>
 <span>  <span class="va">biomod_proj</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">sc</span><span class="op">)</span>, <span class="kw">function</span><span class="op">(</span><span class="va">nm</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="fu">foreach</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/foreach/man/registerDoSEQ.html" class="external-link">registerDoSEQ</a></span><span class="op">(</span><span class="op">)</span></span>
 <span>    <span class="fu"><a href="https://biomodhub.github.io/biomod2/reference/BIOMOD_Projection.html" class="external-link">BIOMOD_Projection</a></span><span class="op">(</span></span>
 <span>      bm.mod <span class="op">=</span> <span class="va">biomod_model</span>,</span>
 <span>      proj.name <span class="op">=</span> <span class="va">nm</span>,</span>
 <span>      new.env <span class="op">=</span> <span class="va">sc</span><span class="op">[[</span><span class="va">nm</span><span class="op">]</span><span class="op">]</span>,</span>
 <span>      models.chosen <span class="op">=</span> <span class="st">"all"</span>,</span>
 <span>      overwrite <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>      do.stack <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span>      do.stack <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>      nb.cpu <span class="op">=</span> <span class="fl">1</span></span>
 <span>    <span class="op">)</span></span>
 <span>  <span class="op">}</span><span class="op">)</span></span>
 <span></span>
@@ -633,33 +641,33 @@ to avoid first-run overhead (e.g. package initialization).</p>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 3 × 6</span></span></span>
 <span><span class="co">#&gt;   expression      min   median `itr/sec` mem_alloc `gc/sec`</span></span>
 <span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;bch:expr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;bch:tm&gt;</span> <span style="color: #949494; font-style: italic;">&lt;bch:tm&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;bch:byt&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> biomod2    161.56ms 165.69ms     5.56     7.76MB    2.22 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> sdm        129.79ms 134.84ms     3.98     6.02MB    0.796</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> caretSDM      1.35s    1.37s     0.675    7.21MB    1.89</span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> biomod2    163.31ms 169.01ms     5.32     7.94MB    1.06 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> sdm        136.02ms 138.62ms     3.91     6.02MB    0.782</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> caretSDM      1.35s    1.36s     0.727     7.2MB    1.45</span></span></code></pre></div>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">bench_res_fit</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 3 × 6</span></span></span>
 <span><span class="co">#&gt;   expression      min   median `itr/sec` mem_alloc `gc/sec`</span></span>
 <span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;bch:expr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;bch:tm&gt;</span> <span style="color: #949494; font-style: italic;">&lt;bch:tm&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;bch:byt&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> biomod2       7.71s    7.87s    0.120  1016.27MB    0.625</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> sdm          17.18s   17.29s    0.057<span style="text-decoration: underline;">9</span>    2.18GB    0.405</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> caretSDM     22.21s   25.05s    0.039<span style="text-decoration: underline;">4</span>  801.56MB    0.891</span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> biomod2       5.87s     5.9s    0.169   726.02MB    0.407</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> sdm          16.44s    16.5s    0.059<span style="text-decoration: underline;">6</span>    2.42GB    0.310</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> caretSDM     22.13s    26.4s    0.038<span style="text-decoration: underline;">2</span>  803.55MB    0.841</span></span></code></pre></div>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">bench_res_post</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 3 × 6</span></span></span>
 <span><span class="co">#&gt;   expression      min   median `itr/sec` mem_alloc `gc/sec`</span></span>
 <span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;bch:expr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;bch:tm&gt;</span> <span style="color: #949494; font-style: italic;">&lt;bch:tm&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;bch:byt&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> biomod2         10s   10.66s    0.093<span style="text-decoration: underline;">0</span>   953.8MB    0.372</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> sdm           18.3s   18.56s    0.053<span style="text-decoration: underline;">5</span>   571.8MB    0    </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> caretSDM    998.2ms    1.01s    0.982     44.9MB    0</span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> biomod2       7.86s    7.97s    0.125    696.1MB    0.550</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> sdm           17.5s   17.72s    0.056<span style="text-decoration: underline;">2</span>   613.4MB    0    </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> caretSDM      1.05s    1.06s    0.883     44.5MB    0.177</span></span></code></pre></div>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">bench_res_complete</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 3 × 6</span></span></span>
 <span><span class="co">#&gt;   expression      min   median `itr/sec` mem_alloc `gc/sec`</span></span>
 <span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;bch:expr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;bch:tm&gt;</span> <span style="color: #949494; font-style: italic;">&lt;bch:tm&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;bch:byt&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> biomod2       17.4s    18.1s    0.054<span style="text-decoration: underline;">0</span>    1.93GB   0.400 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> sdm           43.1s    43.8s    0.022<span style="text-decoration: underline;">8</span>    2.84GB   0.068<span style="text-decoration: underline;">4</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> caretSDM        23s    28.4s    0.036<span style="text-decoration: underline;">3</span>  855.25MB   0.748</span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> biomod2       13.5s      14s    0.070<span style="text-decoration: underline;">0</span>     1.4GB   0.630 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> sdm           38.5s    38.5s    0.025<span style="text-decoration: underline;">8</span>    2.85GB   0.087<span style="text-decoration: underline;">8</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> caretSDM      24.6s    28.7s    0.035<span style="text-decoration: underline;">7</span>  857.52MB   0.892</span></span></code></pre></div>
 <p>The table above summarizes the median runtime, iteration rate, and
 memory allocation for each package under identical conditions.</p>
 <hr>
@@ -827,14 +835,14 @@ some coding or function from sdm and/or biomod2, please contact me on
 <span><span class="co">#&gt;  [1] caret_7.0-1          lattice_0.22-9       ggplot2_4.0.3       </span></span>
 <span><span class="co">#&gt;  [4] kernlab_0.9-33       glmnet_5.0           Matrix_1.7-5        </span></span>
 <span><span class="co">#&gt;  [7] dismo_1.3-16         raster_3.6-32        sp_2.2-1            </span></span>
-<span><span class="co">#&gt; [10] RSNNS_0.4-18         Rcpp_1.1.1-1.1       caretSDM_1.9.2      </span></span>
+<span><span class="co">#&gt; [10] RSNNS_0.4-18         Rcpp_1.1.1-1.1       caretSDM_1.9.4      </span></span>
 <span><span class="co">#&gt; [13] sdm_1.2-59           xgboost_3.2.1.1      randomForest_4.7-1.2</span></span>
 <span><span class="co">#&gt; [16] maxnet_0.1.4         earth_5.3.5          plotmo_3.7.0        </span></span>
 <span><span class="co">#&gt; [19] plotrix_3.8-14       Formula_1.2-5        gbm_2.2.3           </span></span>
 <span><span class="co">#&gt; [22] mgcv_1.9-4           nlme_3.1-169         gam_1.22-7          </span></span>
 <span><span class="co">#&gt; [25] foreach_1.5.2        mda_0.5-5            class_7.3-23        </span></span>
 <span><span class="co">#&gt; [28] cito_1.1             rpart_4.1.27         nnet_7.3-20         </span></span>
-<span><span class="co">#&gt; [31] biomod2_4.3-4-5      bench_1.1.4          sf_1.1-1            </span></span>
+<span><span class="co">#&gt; [31] biomod2_4.3-4-6      bench_1.1.4          sf_1.1-1            </span></span>
 <span><span class="co">#&gt; [34] terra_1.9-27        </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; loaded via a namespace (and not attached):</span></span>

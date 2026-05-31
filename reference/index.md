@@ -176,6 +176,9 @@
 
   `sdm_as_X` functions to transform `caretSDM` data into other classes.
 
+- [`stack_sdm()`](https://luizesser.github.io/caretSDM/reference/stack_sdm.md)
+  : Train a Stacked Ensemble for SDM
+
 - [`summary_sdm()`](https://luizesser.github.io/caretSDM/reference/summary_sdm.md)
   [`summary_sdm_presence_only()`](https://luizesser.github.io/caretSDM/reference/summary_sdm.md)
   [`validate_on_independent_data()`](https://luizesser.github.io/caretSDM/reference/summary_sdm.md)
@@ -198,6 +201,7 @@
   [`get_models()`](https://luizesser.github.io/caretSDM/reference/train_sdm.md)
   [`get_validation_metrics()`](https://luizesser.github.io/caretSDM/reference/train_sdm.md)
   [`mean_validation_metrics()`](https://luizesser.github.io/caretSDM/reference/train_sdm.md)
+  [`models_hyperparameters()`](https://luizesser.github.io/caretSDM/reference/train_sdm.md)
   [`add_models()`](https://luizesser.github.io/caretSDM/reference/train_sdm.md)
   : Train SDM models
 

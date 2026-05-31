@@ -25,7 +25,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">caretSDM</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.9.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.9.4</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -73,7 +73,7 @@
                         <h4 data-toc-skip class="author">[author
 name]</h4>
             
-            <h4 data-toc-skip class="date">2026-05-22</h4>
+            <h4 data-toc-skip class="date">2026-05-31</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/luizesser/caretSDM/blob/main/vignettes/articles/01_Compact.Rmd" class="external-link"><code>vignettes/articles/01_Compact.Rmd</code></a></small>
       <div class="d-none name"><code>01_Compact.Rmd</code></div>
@@ -157,44 +157,90 @@ run your framework with only three objects.</p>
 <span><span class="co">#&gt;   current</span></span></code></pre></div>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">i</span></span>
-<span><span class="co">#&gt;             caretSDM           </span></span>
-<span><span class="co">#&gt; ...............................</span></span>
-<span><span class="co">#&gt; Class                         : input_sdm</span></span>
-<span><span class="co">#&gt; --------  Occurrences  --------</span></span>
-<span><span class="co">#&gt; Species Names                 : Salminus brasiliensis </span></span>
-<span><span class="co">#&gt; Number of presences           : 22 </span></span>
-<span><span class="co">#&gt; Pseudoabsence methods         :</span></span>
-<span><span class="co">#&gt;     Method to obtain PAs      : bioclim </span></span>
-<span><span class="co">#&gt;     Number of PA sets         : 10 </span></span>
-<span><span class="co">#&gt;     Number of PAs in each set : 22 </span></span>
-<span><span class="co">#&gt; Data Cleaning                 : NAs, Capitals, Centroids, Geographically Duplicated, Identical Lat/Long, Institutions, Invalid, Non-terrestrial, Duplicated Cell (grid) </span></span>
-<span><span class="co">#&gt; --------  Predictors  ---------</span></span>
-<span><span class="co">#&gt; Number of Predictors          : 5 </span></span>
-<span><span class="co">#&gt; Predictors Names              : LENGTH_KM, DIST_DN_KM, bio1, bio4, bio12 </span></span>
-<span><span class="co">#&gt; Variable Selection            : vif </span></span>
-<span><span class="co">#&gt; Selected Variables            : LENGTH_KM, DIST_DN_KM, bio1 </span></span>
-<span><span class="co">#&gt; ---------  Scenarios  ---------</span></span>
-<span><span class="co">#&gt; Number of Scenarios           : 1 </span></span>
-<span><span class="co">#&gt; Scenarios Names               : current </span></span>
-<span><span class="co">#&gt; -----------  Models  ----------</span></span>
-<span><span class="co">#&gt; Algorithms Names              : naive_bayes kknn </span></span>
-<span><span class="co">#&gt; Variables Names               : LENGTH_KM DIST_DN_KM bio1 </span></span>
-<span><span class="co">#&gt; Model Validation              :</span></span>
-<span><span class="co">#&gt;     Method                    : repeatedcv </span></span>
-<span><span class="co">#&gt;     Number                    : 4 </span></span>
-<span><span class="co">#&gt;     Metrics                   :</span></span>
+<span><span class="co">#&gt;              caretSDM           </span></span>
+<span><span class="co">#&gt; ................................</span></span>
+<span><span class="co">#&gt; Class                          : input_sdm</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; =========== Overview ===========</span></span>
+<span><span class="co">#&gt; Focal Taxon                    : Salminus brasiliensis </span></span>
+<span><span class="co">#&gt; Spatial extent                 : -5269920.54541171, -3240235.69291754, -4700000, -2803133.9792114  (xmin,xmax,ymin,ymax)</span></span>
+<span><span class="co">#&gt; Temporal extent                : Current</span></span>
+<span><span class="co">#&gt; Observation type               : Presence-absence (pseudo-absence) </span></span>
+<span><span class="co">#&gt; Predictor names                : LENGTH_KM, DIST_DN_KM, bio1, bio4, bio12 </span></span>
+<span><span class="co">#&gt; Modelling techniques           : naive_bayes, kknn </span></span>
+<span><span class="co">#&gt; Model complexity (tuneLength)  : naive_bayes, kknn </span></span>
+<span><span class="co">#&gt; Model averaging                : average </span></span>
+<span><span class="co">#&gt; Software                       : caretSDM v1.9.4, R version 4.6.0 (2026-04-24)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; ============= Data =============</span></span>
+<span><span class="co">#&gt; -- Biodiversity data --</span></span>
+<span><span class="co">#&gt; Taxon names                    : Salminus brasiliensis </span></span>
+<span><span class="co">#&gt; Sample size                    : 22 </span></span>
+<span><span class="co">#&gt; (Pseudo)Absence data method    : bioclim </span></span>
+<span><span class="co">#&gt; Number of PA sets              : 10 </span></span>
+<span><span class="co">#&gt; PAs per set                    : 22 </span></span>
+<span><span class="co">#&gt; PA-to-presence ratio           : 1 </span></span>
+<span><span class="co">#&gt; Data cleaning                  : NAs, Capitals, Centroids, Geographically Duplicated, Identical Lat/Long, Institutions, Invalid, Non-terrestrial, Duplicated Cell (grid) </span></span>
+<span><span class="co">#&gt; -- Data partitioning --</span></span>
+<span><span class="co">#&gt; Training/validation method     : repeatedcv </span></span>
+<span><span class="co">#&gt; Number of folds/repeats        : 4 </span></span>
+<span><span class="co">#&gt; -- Predictor variables --</span></span>
+<span><span class="co">#&gt; Number of predictors           : 5 </span></span>
+<span><span class="co">#&gt; Predictor names                : LENGTH_KM, DIST_DN_KM, bio1, bio4, bio12 </span></span>
+<span><span class="co">#&gt; Spatial extent                 : -5269920.54541171, -3240235.69291754, -4700000, -2803133.9792114  (xmin,xmax,ymin,ymax)</span></span>
+<span><span class="co">#&gt; Spatial resolution             : (25000, 25000) </span></span>
+<span><span class="co">#&gt; Coordinate reference system    : EPSG:6933 ( EPSG: 6933 ) </span></span>
+<span><span class="co">#&gt; -- Transfer data --</span></span>
+<span><span class="co">#&gt; Number of scenarios            : 1 </span></span>
+<span><span class="co">#&gt; Scenario names                 : current </span></span>
+<span><span class="co">#&gt; Temporal extent                : Current</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; ============= Model ============</span></span>
+<span><span class="co">#&gt; -- Multicollinearity --</span></span>
+<span><span class="co">#&gt; Variable selection method      : vif </span></span>
+<span><span class="co">#&gt; Selected variables             : LENGTH_KM, DIST_DN_KM, bio1 </span></span>
+<span><span class="co">#&gt; -- Model settings --</span></span>
+<span><span class="co">#&gt; Predictors used                : LENGTH_KM, DIST_DN_KM, bio1 </span></span>
+<span><span class="co">#&gt; Model hyperparameters          :</span></span>
+<span><span class="co">#&gt;                  species        algorithm                           parameters</span></span>
+<span><span class="co">#&gt; 1  Salminus brasiliensis  naive_bayes_pa1 laplace=0, usekernel=FALSE, adjust=1</span></span>
+<span><span class="co">#&gt; 2  Salminus brasiliensis         kknn_pa1   kmax=7, distance=2, kernel=optimal</span></span>
+<span><span class="co">#&gt; 3  Salminus brasiliensis  naive_bayes_pa2  laplace=0, usekernel=TRUE, adjust=1</span></span>
+<span><span class="co">#&gt; 4  Salminus brasiliensis         kknn_pa2   kmax=9, distance=2, kernel=optimal</span></span>
+<span><span class="co">#&gt; 5  Salminus brasiliensis  naive_bayes_pa3  laplace=0, usekernel=TRUE, adjust=1</span></span>
+<span><span class="co">#&gt; 6  Salminus brasiliensis         kknn_pa3   kmax=5, distance=2, kernel=optimal</span></span>
+<span><span class="co">#&gt; 7  Salminus brasiliensis  naive_bayes_pa4  laplace=0, usekernel=TRUE, adjust=1</span></span>
+<span><span class="co">#&gt; 8  Salminus brasiliensis         kknn_pa4   kmax=9, distance=2, kernel=optimal</span></span>
+<span><span class="co">#&gt; 9  Salminus brasiliensis  naive_bayes_pa5  laplace=0, usekernel=TRUE, adjust=1</span></span>
+<span><span class="co">#&gt; 10 Salminus brasiliensis         kknn_pa5   kmax=9, distance=2, kernel=optimal</span></span>
+<span><span class="co">#&gt; 11 Salminus brasiliensis  naive_bayes_pa6  laplace=0, usekernel=TRUE, adjust=1</span></span>
+<span><span class="co">#&gt; 12 Salminus brasiliensis         kknn_pa6   kmax=9, distance=2, kernel=optimal</span></span>
+<span><span class="co">#&gt; 13 Salminus brasiliensis  naive_bayes_pa7 laplace=0, usekernel=FALSE, adjust=1</span></span>
+<span><span class="co">#&gt; 14 Salminus brasiliensis         kknn_pa7   kmax=9, distance=2, kernel=optimal</span></span>
+<span><span class="co">#&gt; 15 Salminus brasiliensis  naive_bayes_pa8  laplace=0, usekernel=TRUE, adjust=1</span></span>
+<span><span class="co">#&gt; 16 Salminus brasiliensis         kknn_pa8   kmax=5, distance=2, kernel=optimal</span></span>
+<span><span class="co">#&gt; 17 Salminus brasiliensis  naive_bayes_pa9 laplace=0, usekernel=FALSE, adjust=1</span></span>
+<span><span class="co">#&gt; 18 Salminus brasiliensis         kknn_pa9   kmax=9, distance=2, kernel=optimal</span></span>
+<span><span class="co">#&gt; 19 Salminus brasiliensis naive_bayes_pa10  laplace=0, usekernel=TRUE, adjust=1</span></span>
+<span><span class="co">#&gt; 20 Salminus brasiliensis        kknn_pa10   kmax=9, distance=2, kernel=optimal</span></span>
+<span><span class="co">#&gt; -- Threshold selection --</span></span>
+<span><span class="co">#&gt; Threshold method               : threshold </span></span>
+<span><span class="co">#&gt; Threshold criteria             : 0.7 </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; ========== Assessment ==========</span></span>
+<span><span class="co">#&gt; -- Performance statistics --</span></span>
+<span><span class="co">#&gt; Cross-validation metrics       :</span></span>
 <span><span class="co">#&gt; $`Salminus brasiliensis`</span></span>
 <span><span class="co">#&gt;          algo       ROC       TSS Sensitivity Specificity</span></span>
 <span><span class="co">#&gt; 1        kknn 0.7600972 0.3641667    0.736625     0.63165</span></span>
 <span><span class="co">#&gt; 2 naive_bayes 0.7784722 0.4150000    0.760850     0.67335</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; --------  Predictions  --------</span></span>
-<span><span class="co">#&gt; Thresholds                    :</span></span>
-<span><span class="co">#&gt;     Method                    : threshold </span></span>
-<span><span class="co">#&gt;     Criteria                  : 0.7 </span></span>
-<span><span class="co">#&gt; ---------  Ensembles  ---------</span></span>
-<span><span class="co">#&gt; Ensembles                     :</span></span>
-<span><span class="co">#&gt;     Methods                   : average</span></span></code></pre></div>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; ========== Prediction ==========</span></span>
+<span><span class="co">#&gt; Prediction layers              : current </span></span>
+<span><span class="co">#&gt; Prediction unit                : Occurrence Probability </span></span>
+<span><span class="co">#&gt; Ensemble method                : average </span></span>
+<span><span class="co">#&gt; Ensemble names                 :</span></span></code></pre></div>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">i</span><span class="op">)</span></span></code></pre></div>
 <p><img src="01_Compact_files/figure-html/unnamed-chunk-4-1.png" class="r-plt" alt="" width="700"></p>

@@ -403,26 +403,49 @@ was successfully trained and evaluated.
 ``` r
 
 i
-#>             caretSDM           
-#> ...............................
-#> Class                         : input_sdm
-#> --------  Occurrences  --------
-#> Species Names                 : Araucaria angustifolia 
-#> Number of presences           : 419 
-#> Pseudoabsence methods         :
-#>     Method to obtain PAs      : bioclim 
-#>     Number of PA sets         : 3 
-#>     Number of PAs in each set : 419 
-#> --------  Predictors  ---------
-#> Number of Predictors          : 7 
-#> Predictors Names              : GID0, CODIGOIB1, NOMEUF2, SIGLAUF3, bio1, bio4, bio12 
-#> -----------  Models  ----------
-#> Algorithms Names              : mahal.custom 
-#> Variables Names               : bio1 bio4 bio12 
-#> Model Validation              :
-#>     Method                    : cv 
-#>     Number                    : 3 
-#>     Metrics                   :
+#>              caretSDM           
+#> ................................
+#> Class                          : input_sdm
+#> 
+#> =========== Overview ===========
+#> Focal Taxon                    : Araucaria angustifolia 
+#> Spatial extent                 : -5276744.44724281, -3295036.62222337, -4626744.44724281, -2795036.62222337  (xmin,xmax,ymin,ymax)
+#> Observation type               : Presence-absence (pseudo-absence) 
+#> Predictor names                : GID0, CODIGOIB1, NOMEUF2, SIGLAUF3, bio1, bio4, bio12 
+#> Modelling techniques           : mahal.custom 
+#> Model complexity (tuneLength)  : mahal.custom 
+#> Software                       : caretSDM v1.9.4, R version 4.6.0 (2026-04-24)
+#> 
+#> ============= Data =============
+#> -- Biodiversity data --
+#> Taxon names                    : Araucaria angustifolia 
+#> Sample size                    : 419 
+#> (Pseudo)Absence data method    : bioclim 
+#> Number of PA sets              : 3 
+#> PAs per set                    : 419 
+#> PA-to-presence ratio           : 1 
+#> -- Data partitioning --
+#> Training/validation method     : cv 
+#> Number of folds/repeats        : 3 
+#> -- Predictor variables --
+#> Number of predictors           : 7 
+#> Predictor names                : GID0, CODIGOIB1, NOMEUF2, SIGLAUF3, bio1, bio4, bio12 
+#> Spatial extent                 : -5276744.44724281, -3295036.62222337, -4626744.44724281, -2795036.62222337  (xmin,xmax,ymin,ymax)
+#> Spatial resolution             : (50000, 50000) 
+#> Coordinate reference system    : WGS 84 / NSIDC EASE- ( EPSG: 6933 ) 
+#> 
+#> ============= Model ============
+#> -- Model settings --
+#> Predictors used                : bio1, bio4, bio12 
+#> Model hyperparameters          :
+#>                  species        algorithm parameters
+#> 1 Araucaria angustifolia mahal.custom_pa1   abs=TRUE
+#> 2 Araucaria angustifolia mahal.custom_pa2   abs=TRUE
+#> 3 Araucaria angustifolia mahal.custom_pa3   abs=TRUE
+#> 
+#> ========== Assessment ==========
+#> -- Performance statistics --
+#> Cross-validation metrics       :
 #> $`Araucaria angustifolia`
 #>           algo      ROC       TSS Sensitivity Specificity
 #> 1 mahal.custom 0.978312 0.8139431       0.814           1
@@ -443,17 +466,30 @@ We can also inspect the model’s performance metrics.
 
 mean_validation_metrics(i)
 #> $`Araucaria angustifolia`
-#> # A tibble: 1 × 59
-#>   algo       ROC   TSS Sensitivity Specificity `Pos Pred Value` `Neg Pred Value`
-#>   <chr>    <dbl> <dbl>       <dbl>       <dbl>            <dbl>            <dbl>
-#> 1 mahal.c… 0.978 0.814       0.814           1                1            0.289
-#> # ℹ 52 more variables: Precision <dbl>, Recall <dbl>, F1 <dbl>,
-#> #   Prevalence <dbl>, `Detection Rate` <dbl>, `Detection Prevalence` <dbl>,
-#> #   `Balanced Accuracy` <dbl>, Accuracy <dbl>, Kappa <dbl>,
-#> #   AccuracyLower <dbl>, AccuracyUpper <dbl>, AccuracyNull <dbl>,
-#> #   AccuracyPValue <dbl>, McnemarPValue <dbl>, Positive <dbl>, Negative <dbl>,
-#> #   `True Positive` <dbl>, `False Positive` <dbl>, `True Negative` <dbl>,
-#> #   `False Negative` <dbl>, CBI <dbl>, pAUC <dbl>, Omission_10pct <dbl>, …
+#>           algo      ROC       TSS Sensitivity Specificity Pos Pred Value
+#> 1 mahal.custom 0.978312 0.8139431       0.814           1              1
+#>   Neg Pred Value Precision Recall    F1 Prevalence Detection Rate
+#> 1      0.2893333         1  0.814 0.897      0.931          0.758
+#>   Detection Prevalence Balanced Accuracy  Accuracy     Kappa AccuracyLower
+#> 1                0.758             0.907 0.8268889 0.3812222     0.7568889
+#>   AccuracyUpper AccuracyNull AccuracyPValue McnemarPValue Positive Negative
+#> 1     0.8832222        0.931              1             0 139.6667 10.33333
+#>   True Positive False Positive True Negative False Negative       CBI pAUC
+#> 1      113.6667       50.88889      10.33333              0 0.7032222  NaN
+#>   Omission_10pct      ROCSD      TSSSD SensitivitySD SpecificitySD
+#> 1     0.09466667 0.01173148 0.05609814    0.05603726             0
+#>   Pos Pred ValueSD Neg Pred ValueSD PrecisionSD   RecallSD       F1SD
+#> 1                0       0.04172452           0 0.05603726 0.03993683
+#>   PrevalenceSD Detection RateSD Detection PrevalenceSD Balanced AccuracySD
+#> 1  0.003464102       0.05375625             0.05375625          0.02800516
+#>   AccuracySD    KappaSD AccuracyLowerSD AccuracyUpperSD AccuracyNullSD
+#> 1 0.05194432 0.06155638      0.05435171      0.04697209    0.003464102
+#>   AccuracyPValueSD McnemarPValueSD PositiveSD NegativeSD True PositiveSD
+#> 1      0.002309401               0  0.5773503  0.5773503        7.451882
+#>   False PositiveSD True NegativeSD False NegativeSD     CBISD pAUCSD
+#> 1         7.981765       0.5773503                0 0.2846868     NA
+#>   Omission_10pctSD
+#> 1      0.009826991
 ```
 
 A final plot that can be useful is the Partial Dependence Plot
@@ -489,26 +525,49 @@ i2 <- input_sdm(oc, sa) |>
 ``` r
 
 i2
-#>             caretSDM           
-#> ...............................
-#> Class                         : input_sdm
-#> --------  Occurrences  --------
-#> Species Names                 : Araucaria angustifolia 
-#> Number of presences           : 419 
-#> Pseudoabsence methods         :
-#>     Method to obtain PAs      : bioclim 
-#>     Number of PA sets         : 3 
-#>     Number of PAs in each set : 419 
-#> --------  Predictors  ---------
-#> Number of Predictors          : 7 
-#> Predictors Names              : GID0, CODIGOIB1, NOMEUF2, SIGLAUF3, bio1, bio4, bio12 
-#> -----------  Models  ----------
-#> Algorithms Names              : mahal.dismo 
-#> Variables Names               : bio1 bio4 bio12 
-#> Model Validation              :
-#>     Method                    : cv 
-#>     Number                    : 3 
-#>     Metrics                   :
+#>              caretSDM           
+#> ................................
+#> Class                          : input_sdm
+#> 
+#> =========== Overview ===========
+#> Focal Taxon                    : Araucaria angustifolia 
+#> Spatial extent                 : -5276744.44724281, -3295036.62222337, -4626744.44724281, -2795036.62222337  (xmin,xmax,ymin,ymax)
+#> Observation type               : Presence-absence (pseudo-absence) 
+#> Predictor names                : GID0, CODIGOIB1, NOMEUF2, SIGLAUF3, bio1, bio4, bio12 
+#> Modelling techniques           : mahal.dismo 
+#> Model complexity (tuneLength)  : mahal.dismo 
+#> Software                       : caretSDM v1.9.4, R version 4.6.0 (2026-04-24)
+#> 
+#> ============= Data =============
+#> -- Biodiversity data --
+#> Taxon names                    : Araucaria angustifolia 
+#> Sample size                    : 419 
+#> (Pseudo)Absence data method    : bioclim 
+#> Number of PA sets              : 3 
+#> PAs per set                    : 419 
+#> PA-to-presence ratio           : 1 
+#> -- Data partitioning --
+#> Training/validation method     : cv 
+#> Number of folds/repeats        : 3 
+#> -- Predictor variables --
+#> Number of predictors           : 7 
+#> Predictor names                : GID0, CODIGOIB1, NOMEUF2, SIGLAUF3, bio1, bio4, bio12 
+#> Spatial extent                 : -5276744.44724281, -3295036.62222337, -4626744.44724281, -2795036.62222337  (xmin,xmax,ymin,ymax)
+#> Spatial resolution             : (50000, 50000) 
+#> Coordinate reference system    : WGS 84 / NSIDC EASE- ( EPSG: 6933 ) 
+#> 
+#> ============= Model ============
+#> -- Model settings --
+#> Predictors used                : bio1, bio4, bio12 
+#> Model hyperparameters          :
+#>                  species       algorithm parameters
+#> 1 Araucaria angustifolia mahal.dismo_pa1   abs=TRUE
+#> 2 Araucaria angustifolia mahal.dismo_pa2   abs=TRUE
+#> 3 Araucaria angustifolia mahal.dismo_pa3   abs=TRUE
+#> 
+#> ========== Assessment ==========
+#> -- Performance statistics --
+#> Cross-validation metrics       :
 #> $`Araucaria angustifolia`
 #>     algo      ROC       TSS Sensitivity Specificity
 #> 1 custom 0.996803 0.9315789   0.9952222   0.9363333
