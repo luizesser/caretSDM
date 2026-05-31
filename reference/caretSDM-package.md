@@ -19,6 +19,9 @@ Useful links:
 
 Authors:
 
+- Luíz Fernando Esser <luizesser@gmail.com>
+  ([ORCID](https://orcid.org/0000-0003-2982-7223)) \[copyright holder\]
+
 - Reginaldo Ré ([ORCID](https://orcid.org/0000-0001-6452-3466))
 
 - Marcos R. Lima ([ORCID](https://orcid.org/0000-0002-5901-0911))

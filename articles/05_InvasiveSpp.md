@@ -459,6 +459,7 @@ i
 #> Temporal extent (inferred)     : 2090 - 2090 
 #> Observation type               : Presence-only 
 #> Predictor names                : bio1, bio4, bio12 
+#> Software                       : caretSDM v1.9.4, R version 4.6.0 (2026-04-24)
 #> 
 #> ============= Data =============
 #> -- Biodiversity data --
@@ -585,6 +586,7 @@ i
 #> Temporal extent (inferred)     : 2090 - 2090 
 #> Observation type               : Presence-absence (pseudo-absence) 
 #> Predictor names                : bio1, bio4, bio12 
+#> Software                       : caretSDM v1.9.4, R version 4.6.0 (2026-04-24)
 #> 
 #> ============= Data =============
 #> -- Biodiversity data --
@@ -670,6 +672,7 @@ i
 #> Predictor names                : bio1, bio4, bio12 
 #> Modelling techniques           : naive_bayes, kknn 
 #> Model complexity (tuneLength)  : naive_bayes, kknn 
+#> Software                       : caretSDM v1.9.4, R version 4.6.0 (2026-04-24)
 #> 
 #> ============= Data =============
 #> -- Biodiversity data --
@@ -764,6 +767,7 @@ i
 #> Predictor names                : bio1, bio4, bio12 
 #> Modelling techniques           : naive_bayes, kknn 
 #> Model complexity (tuneLength)  : naive_bayes, kknn 
+#> Software                       : caretSDM v1.9.4, R version 4.6.0 (2026-04-24)
 #> 
 #> ============= Data =============
 #> -- Biodiversity data --
@@ -861,6 +865,7 @@ i
 #> Modelling techniques           : naive_bayes, kknn 
 #> Model complexity (tuneLength)  : naive_bayes, kknn 
 #> Model averaging                : average 
+#> Software                       : caretSDM v1.9.4, R version 4.6.0 (2026-04-24)
 #> 
 #> ============= Data =============
 #> -- Biodiversity data --
@@ -1326,6 +1331,7 @@ i
 #> Modelling techniques           : naive_bayes, kknn 
 #> Model complexity (tuneLength)  : naive_bayes, kknn 
 #> Model averaging                : average 
+#> Software                       : caretSDM v1.9.4, R version 4.6.0 (2026-04-24)
 #> 
 #> ============= Data =============
 #> -- Biodiversity data --
@@ -1482,5 +1488,5 @@ cells in a grid.
 
 end_time <- Sys.time()
 end_time - start_time
-#> Time difference of 18.13771 secs
+#> Time difference of 19.51773 secs
 ```

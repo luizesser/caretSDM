@@ -414,6 +414,7 @@ i
 #> Predictor names                : GID0, CODIGOIB1, NOMEUF2, SIGLAUF3, bio1, bio4, bio12 
 #> Modelling techniques           : mahal.custom 
 #> Model complexity (tuneLength)  : mahal.custom 
+#> Software                       : caretSDM v1.9.4, R version 4.6.0 (2026-04-24)
 #> 
 #> ============= Data =============
 #> -- Biodiversity data --
@@ -535,6 +536,7 @@ i2
 #> Predictor names                : GID0, CODIGOIB1, NOMEUF2, SIGLAUF3, bio1, bio4, bio12 
 #> Modelling techniques           : mahal.dismo 
 #> Model complexity (tuneLength)  : mahal.dismo 
+#> Software                       : caretSDM v1.9.4, R version 4.6.0 (2026-04-24)
 #> 
 #> ============= Data =============
 #> -- Biodiversity data --
