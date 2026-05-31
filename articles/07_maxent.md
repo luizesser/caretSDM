@@ -101,7 +101,6 @@ i
     ## Predictor names                : bio1, bio4, bio12 
     ## Modelling techniques           : maxent 
     ## Model complexity (tuneLength)  : maxent 
-    ## Software                       : caretSDM v1.9.4, R version 4.6.0 (2026-04-24)
     ## 
     ## ============= Data =============
     ## -- Biodiversity data --

@@ -117,7 +117,6 @@ i
 #> Temporal extent (inferred)     : 2090 - 2090 
 #> Observation type               : Presence-only 
 #> Predictor names                : bio1, bio4, bio12 
-#> Software                       : caretSDM v1.9.4, R version 4.6.0 (2026-04-24)
 #> 
 #> ============= Data =============
 #> -- Biodiversity data --
