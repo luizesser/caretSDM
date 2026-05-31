@@ -26,13 +26,6 @@ knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
 )
-tmp <- tempfile("biomod_")
-dir.create(tmp)
-
-oldwd <- getwd()
-setwd(tmp)
-
-on.exit(setwd(oldwd))
 ```
 
 ## Motivation
@@ -176,13 +169,15 @@ fit_biomod2 <- function(prep) {
 
 post_biomod2 <- function(fit) {
   biomod_proj <- lapply(names(fit$scen), function(nm) {
+    foreach::registerDoSEQ()
     BIOMOD_Projection(
       bm.mod = fit$model,
       proj.name = nm,
       new.env = fit$scen[[nm]],
       models.chosen = "all",
       overwrite = TRUE,
-      do.stack = FALSE
+      do.stack = TRUE,
+      nb.cpu = 1
     )
   })
 
@@ -229,7 +224,7 @@ run_biomod2 <- function() {
     CV.strategy = "kfold",
     CV.nb.rep = 1,
     CV.k = 5,
-    metric.eval = c("TSS", "ROC"),
+    metric.eval = c("TSS", "AUCroc"),
     do.progress = FALSE
   )
 
@@ -243,13 +238,15 @@ run_biomod2 <- function() {
   )
 
   biomod_proj <- lapply(names(sc), function(nm) {
+    foreach::registerDoSEQ()
     BIOMOD_Projection(
       bm.mod = biomod_model,
       proj.name = nm,
       new.env = sc[[nm]],
       models.chosen = "all",
       overwrite = TRUE,
-      do.stack = FALSE
+      do.stack = TRUE,
+      nb.cpu = 1
     )
   })
 
