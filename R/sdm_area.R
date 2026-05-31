@@ -54,13 +54,9 @@
 #'                       lines_as_sdm_area = TRUE)
 #'
 #' @importFrom stars st_as_stars read_stars write_stars st_dimensions st_warp
-#' @importFrom sf st_crs st_read st_bbox st_as_sf gdal_utils st_crop st_make_valid st_transform
-#' st_write st_intersects st_length st_intersection st_join st_area sf_extSoftVersion
-#' st_geometry_type st_as_sfc st_centroid st_geometry st_drop_geometry st_cast
-#' st_collection_extract st_nearest_feature
+#' @importFrom sf st_crs st_read st_bbox st_as_sf gdal_utils st_crop st_make_valid st_transform st_write st_intersects st_length st_intersection st_join st_area sf_extSoftVersion st_geometry_type st_as_sfc st_centroid st_geometry st_drop_geometry st_cast st_collection_extract st_nearest_feature
 #' @importFrom cli cli_abort cli_inform cli_warn
-#' @importFrom dplyr setdiff select all_of any_of join_by relocate mutate arrange desc filter
-#' group_by reframe across inner_join join_by distinct n rename row_number where
+#' @importFrom dplyr setdiff select all_of any_of join_by relocate mutate arrange desc filter group_by reframe across inner_join join_by distinct n rename row_number where
 #' @importFrom checkmate makeAssertCollection test_list
 #' @importFrom tidyr drop_na
 #' @importFrom fs path dir_exists dir_delete dir_create dir_ls path_file path_ext_remove

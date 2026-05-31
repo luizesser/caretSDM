@@ -30,9 +30,7 @@
 #' @author Luíz Fernando Esser (luizesser@gmail.com)
 #' https://luizfesser.wordpress.com
 #'
-#' @importFrom ggplot2 ggplot geom_sf aes scale_fill_viridis_c xlab ylab ggtitle theme_minimal unit
-#' scale_color_viridis_c geom_point scale_y_continuous scale_x_continuous stat_density_2d_filled
-#' after_stat stat_summary_2d
+#' @importFrom ggplot2 ggplot geom_sf aes scale_fill_viridis_c xlab ylab ggtitle theme_minimal unit scale_color_viridis_c geom_point scale_y_continuous scale_x_continuous stat_density_2d_filled after_stat stat_summary_2d
 #' @importFrom ggspatial annotation_scale north_arrow_fancy_orienteering annotation_north_arrow
 #' @importFrom dplyr filter select all_of mutate
 #' @importFrom gtools mixedsort

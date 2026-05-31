@@ -1,5 +1,5 @@
-#' @keywords internal
 #' Transform a occurrences simplefeature in a data.frame.
+#' @keywords internal
 #' @param occ_sf SimpleFeatures to transform in data.frame. Usually from occurrences slot.
 #' @return Data.frame with three columns: "species", "decimalLongitude" and "decimalLatitude".
 #' @importFrom sf st_coordinates

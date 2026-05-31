@@ -1,5 +1,5 @@
-#' @keywords internal
 #' Find species, longitude and latitudecolumns in a data.frame.
+#' @keywords internal
 #' @param df data.frame to search for.
 #' @param col_names Names of the columns so it doesn't need to look for.
 #' @param spp Boolean. Search for species column?

@@ -16,7 +16,7 @@
       Modelling techniques           : naive_bayes 
       Model complexity (tuneLength)  : naive_bayes 
       Model averaging                : average 
-      Software                       : caretSDM v1.9.4, R version 4.5.2 (2025-10-31)
+      Software                       : caretSDM v1.9.4, R version 4.6.0 (2026-04-24)
       
       ============= Data =============
       -- Biodiversity data --

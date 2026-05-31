@@ -23,6 +23,7 @@ Useful links:
 
 Authors:
 \itemize{
+  \item Luíz Fernando Esser \email{luizesser@gmail.com} (\href{https://orcid.org/0000-0003-2982-7223}{ORCID}) [copyright holder]
   \item Reginaldo Ré (\href{https://orcid.org/0000-0001-6452-3466}{ORCID})
   \item Marcos R. Lima (\href{https://orcid.org/0000-0002-5901-0911}{ORCID})
   \item Edivando Couto (\href{https://orcid.org/0000-0003-4264-8449}{ORCID})
