@@ -177,7 +177,6 @@ fit_biomod2 <- function(prep) {
 
 post_biomod2 <- function(fit) {
   biomod_proj <- lapply(names(fit$scen), function(nm) {
-    foreach::registerDoSEQ()
     BIOMOD_Projection(
       bm.mod = fit$model,
       proj.name = nm,
@@ -246,7 +245,6 @@ run_biomod2 <- function() {
   )
 
   biomod_proj <- lapply(names(sc), function(nm) {
-    foreach::registerDoSEQ()
     BIOMOD_Projection(
       bm.mod = biomod_model,
       proj.name = nm,
@@ -266,7 +264,7 @@ run_biomod2 <- function() {
       models.chosen = "all",
       overwrite = TRUE
     )
-  }, biomod_proj, names(scen))
+  }, biomod_proj, names(sc))
 }
 ```
 
@@ -328,33 +326,35 @@ fit_sdm <- function(prep) {
 }
 
 # ---------------------------
-# biomod2 - Post-processing
+# sdm - Post-processing
 # ---------------------------
 
 post_sdm <- function(fit) {
-  lapply(fit$scen, function(r) {
-    ensemble(fit$model,
-      newdata = r,
-      setting = list(method = "unweighted")
-    )
-  })
-
-  lapply(fit$scen, function(r) {
-    ensemble(fit$model,
-      newdata = r,
-      setting = list(
-        method = "weighted", stat = "AUC",
-        expr = "auc > 0.5"
+  list(
+    unweighted = lapply(fit$scen, function(r) {
+      ensemble(fit$model,
+        newdata = r,
+        setting = list(method = "unweighted")
       )
-    )
-  })
+    }),
 
-  lapply(fit$scen, function(r) {
-    ensemble(fit$model,
-      newdata = r,
-      setting = list(method = "pa", opt = 2)
-    )
-  })
+    weighted = lapply(fit$scen, function(r) {
+      ensemble(fit$model,
+        newdata = r,
+        setting = list(
+          method = "weighted", stat = "AUC",
+          expr = "auc > 0.5"
+        )
+      )
+    }),
+
+    pa = lapply(fit$scen, function(r) {
+      ensemble(fit$model,
+        newdata = r,
+        setting = list(method = "pa", opt = 2)
+      )
+    })
+  )
 }
 
 # ---------------------------
@@ -362,16 +362,10 @@ post_sdm <- function(fit) {
 # ---------------------------
 
 run_sdm <- function() {
-  occ_sdm <- occ
-  coords <- occ_sdm[, c("decimalLongitude", "decimalLatitude")]
+  coords <- occ[, c("decimalLongitude", "decimalLatitude")]
   names(coords) <- c("x", "y")
-  presence <- occ_sdm[, c("species", "decimalLongitude", "decimalLatitude")]
-  names(presence) <- c("species", "x", "y")
+
   env <- terra::rast(stars::st_warp(bioc, crs = 6933))
-  pres_vals <- terra::extract(env, vect(coords))
-  pres_vals <- pres_vals[, -1]
-  pres_data <- cbind(presence, pres_vals)
-  pres_data$species <- rep(1, nrow(pres_data))
   sc <- list(
     scen1 = terra::rast(stars::st_warp(scen[1], crs = 6933)),
     scen2 = terra::rast(stars::st_warp(scen[2], crs = 6933)),
@@ -379,13 +373,18 @@ run_sdm <- function() {
     scen4 = terra::rast(stars::st_warp(scen[4], crs = 6933))
   )
 
+  pres_vals <- terra::extract(env, vect(coords))
+  pres_vals <- pres_vals[, -1]
+  pres_data <- cbind(species = 1, pres_vals)
+
   bg <- sdm::background(env, n = nrow(pres_data), method = "gRandom")
-  bg$species <- rep(0, nrow(bg))
-  pres <- rbind(bg, pres_data)
+  bg$species <- 0
+
+  train <- rbind(dplyr::select(bg, -c("x", "y")), pres_data)
 
   d <- sdmData(
     formula = species ~ bio1 + bio4 + bio12,
-    train = dplyr::select(pres, -c("x", "y"))
+    train = train
   )
 
   m <- sdm(
@@ -396,29 +395,31 @@ run_sdm <- function() {
     cv.folds = 5
   )
 
-  lapply(sc, function(r) {
-    ensemble(m,
-      newdata = r,
-      setting = list(method = "unweighted")
-    )
-  })
-
-  lapply(sc, function(r) {
-    ensemble(m,
-      newdata = r,
-      setting = list(
-        method = "weighted", stat = "AUC",
-        expr = "auc > 0.5"
+  list(
+    unweighted = lapply(sc, function(r) {
+      ensemble(m,
+        newdata = r,
+        setting = list(method = "unweighted")
       )
-    )
-  })
+    }),
 
-  lapply(sc, function(r) {
-    ensemble(m,
-      newdata = r,
-      setting = list(method = "pa", opt = 2)
-    )
-  })
+    weighted = lapply(sc, function(r) {
+      ensemble(m,
+        newdata = r,
+        setting = list(
+          method = "weighted", stat = "AUC",
+          expr = "auc > 0.5"
+        )
+      )
+    }),
+
+    pa = lapply(sc, function(r) {
+      ensemble(m,
+        newdata = r,
+        setting = list(method = "pa", opt = 2)
+      )
+    })
+  )
 }
 ```
 
@@ -471,7 +472,7 @@ fit_caretSDM <- function(prep) {
 post_caretSDM <- function(fit) {
   fit |>
     predict_sdm(th = 0.5) |>
-    ensemble_sdm()
+    ensemble_sdm(c("average", "weighted_average", "committee_average"))
 }
 
 
@@ -479,11 +480,12 @@ post_caretSDM <- function(fit) {
 # caretSDM - Complete
 # ---------------------------
 run_caretSDM <- function() {
-  sa <- sdm_area(bioc)
+  sa <- sdm_area(bioc) |>
+    add_scenarios(scen)
 
   oc <- occurrences_sdm(occ, occ_crs = 6933)
 
-  i <- input_sdm(oc, sa) |>
+  input_sdm(oc, sa) |>
     pseudoabsences(method = "random", n_set = 1) |>
     train_sdm(
       algo = c("mlp", "rpart", "fda", "gbm", "gcvEarth", "rf"),
@@ -497,7 +499,6 @@ run_caretSDM <- function() {
         summaryFunction = summary_sdm
       )
     ) |>
-    add_scenarios(scen, pred_as_scen = FALSE) |>
     predict_sdm(th = 0.5) |>
     ensemble_sdm(c("average", "weighted_average", "committee_average"))
 }
@@ -585,9 +586,9 @@ bench_res_prep
 #> # A tibble: 3 × 6
 #>   expression      min   median `itr/sec` mem_alloc `gc/sec`
 #>   <bch:expr> <bch:tm> <bch:tm>     <dbl> <bch:byt>    <dbl>
-#> 1 biomod2    163.31ms 169.01ms     5.32     7.94MB    1.06 
-#> 2 sdm        136.02ms 138.62ms     3.91     6.02MB    0.782
-#> 3 caretSDM      1.35s    1.36s     0.727     7.2MB    1.45
+#> 1 biomod2    172.49ms 174.59ms     5.27     7.94MB    1.05 
+#> 2 sdm        136.58ms 144.03ms     3.86     6.02MB    0.772
+#> 3 caretSDM      1.66s    1.67s     0.594     7.2MB    1.19
 ```
 
 ``` r
@@ -596,9 +597,9 @@ bench_res_fit
 #> # A tibble: 3 × 6
 #>   expression      min   median `itr/sec` mem_alloc `gc/sec`
 #>   <bch:expr> <bch:tm> <bch:tm>     <dbl> <bch:byt>    <dbl>
-#> 1 biomod2       5.87s     5.9s    0.169   726.02MB    0.407
-#> 2 sdm          16.44s    16.5s    0.0596    2.42GB    0.310
-#> 3 caretSDM     22.13s    26.4s    0.0382  803.55MB    0.841
+#> 1 biomod2       6.22s    6.28s    0.152   712.48MB    0.365
+#> 2 sdm           16.9s   17.33s    0.0579    2.35GB    0.348
+#> 3 caretSDM     21.22s   23.03s    0.0420  805.46MB    0.865
 ```
 
 ``` r
@@ -607,9 +608,9 @@ bench_res_post
 #> # A tibble: 3 × 6
 #>   expression      min   median `itr/sec` mem_alloc `gc/sec`
 #>   <bch:expr> <bch:tm> <bch:tm>     <dbl> <bch:byt>    <dbl>
-#> 1 biomod2       7.86s    7.97s    0.125    696.1MB    0.550
-#> 2 sdm           17.5s   17.72s    0.0562   613.4MB    0    
-#> 3 caretSDM      1.05s    1.06s    0.883     44.5MB    0.177
+#> 1 biomod2       7.79s    7.91s    0.121    704.9MB   0.506 
+#> 2 sdm          18.24s   18.32s    0.0546   613.5MB   0.0109
+#> 3 caretSDM      1.05s    1.08s    0.888     44.7MB   0.178
 ```
 
 ``` r
@@ -618,9 +619,9 @@ bench_res_complete
 #> # A tibble: 3 × 6
 #>   expression      min   median `itr/sec` mem_alloc `gc/sec`
 #>   <bch:expr> <bch:tm> <bch:tm>     <dbl> <bch:byt>    <dbl>
-#> 1 biomod2       13.5s      14s    0.0700     1.4GB   0.630 
-#> 2 sdm           38.5s    38.5s    0.0258    2.85GB   0.0878
-#> 3 caretSDM      24.6s    28.7s    0.0357  857.52MB   0.892
+#> 1 biomod2       14.8s    15.7s    0.0636     1.4GB   0.699 
+#> 2 sdm           41.3s    41.6s    0.0240    2.96GB   0.0960
+#> 3 caretSDM      23.4s    27.4s    0.0375  858.32MB   0.877
 ```
 
 The table above summarizes the median runtime, iteration rate, and
@@ -638,19 +639,20 @@ these differences varying substantially among workflow stages.
 
 During the preprocessing stage, both biomod2 and sdm completed data
 preparation rapidly. In contrast, caretSDM required substantially more
-time, despite still being a very low running time.
+time, despite still being a very low running time (\< 1s).
 
 This difference primarily reflects the greater amount of internal data
 structuring performed by caretSDM, including the creation of
 standardized SDM objects, explicit pseudoabsence management, and
 preparation of workflow metadata used in later modeling and prediction
 steps. By contrast, biomod2 and sdm perform less structural
-preprocessing, relying more directly on raw data objects.
+preprocessing, relying more directly on raw data objects, with sdm
+package being the most efficient package in this stage.
 
 ### Model fitting
 
 Model fitting is more computationally demanding. Here, biomod2 exhibited
-the fastest performance, followed by sdm and caretSDM.Memory allocation
+the fastest performance, followed by sdm and caretSDM. Memory allocation
 during this stage also differed substantially across packages. The sdm
 package required the largest memory allocation, whereas caretSDM and
 biomod2 used a more close amount, with caretSDM allocating slightly more
@@ -666,26 +668,25 @@ during model training.
 
 ### Post-processing (projection and ensembling)
 
-The largest divergence among packages was observed during the
-post-processing stage. The sdm package completed projections and
-ensemble predictions most rapidly, followed by biomod2. In contrast,
-caretSDM required substantially longer runtimes and allocated
-considerably more memory.
+The package caretSDM excels during the post-processing stage, which is
+known to be the stage that requires the highest amount of processing
+time. The sdm and biomod2 packages did not differed in processing time,
+with biomod2 allocating slightly more memory.
 
-This increase reflects the design of caretSDM’s prediction pipeline,
-which explicitly manages multiple prediction objects, scenarios, and
-ensemble outputs using structured SDM containers. While this approach
-provides consistent handling of predictions and facilitates downstream
-analysis, it introduces additional computational overhead compared with
-the more direct projection implementations used in biomod2 and sdm.
+The improvement demonstrated by caretSDM is result of its Machine
+Learning approach, where the package projects models built with complete
+data and trained with optimized configurations infered from the internal
+validation process. In the other hand, biomod2 and sdm packages project
+all submodels generated through the pipeline, costing more memory and
+time to obtain results during this stage.
 
 ### End-to-end workflow
 
 When considering the complete workflow (preprocessing, model fitting,
-and projection), biomod2 was the fastest framework, followed by the sdm
-package and finally the caretSDM package. Memory usage followed a
-similar pattern, with caretSDM allocating the largest total memory,
-followed by sdm and biomod2.
+and projection), caretSDM was the fastest framework, followed by the
+biomod2 package and finally the sdm package. Memory usage followed the
+same pattern, with caretSDM allocating the fewest memory, followed by
+biomod2 and sdm.
 
 ### Overall implications
 
@@ -701,7 +702,7 @@ and workflow transparency. Moreover, caretSDM also needed substantial
 less lines of code to perform the same tasks, while also using only
 functions from its own package. This may be an advantage for users who
 prefer a more streamlined workflow or want to spend more coding time in
-other stages of the modeling process, such as post-processing.
+other stages of the modeling process.
 
 During preprocessing, this benchmark avoided the use of multiple sets of
 pseudoabsences to ensure that all packages were evaluated under
@@ -732,10 +733,15 @@ ensemble predictions are managed. While the more structured approach of
 caretSDM provides advantages in terms of workflow consistency and
 downstream analysis, it introduces additional computational overhead
 compared with the more direct implementations used in biomod2 and sdm.
-Moreover, biomod2 excels in time and memory management, once it has a
-strong output flow, that is, it does not create many intermediate
-objects during the workflow, which may be an advantage for users with
-limited computational resources or those who prioritize efficiency.
+Despite that, the projection of optimized models shrinks memory usage
+and processing time, allowing for more robust projections (fine-tuned
+models) to be obtained using the same amount of time and memory.
+
+Moreover, considering the complete workflow, caretSDM excels in time and
+memory management. Despite not being the most efficient package during
+neither the pre-processing of data, due to internal standardization
+functions, nor the processing of models, caretSDM accelerates the
+post-processing step, through a Machine Learning approach.
 
 ------------------------------------------------------------------------
 
@@ -750,9 +756,9 @@ differences.
 
 ## Limitations
 
-- No parallel processing was used
+- No parallel processing was used;
 - Performance may vary with dataset size, predictor dimensionality, and
-  hardware
+  hardware;
 - If you want to see your package here or if you think I am missing some
   coding or function from sdm and/or biomod2, please contact me on
   \[authors name\]@gmail.com.
@@ -823,7 +829,7 @@ sessionInfo()
 #>  [61] rgbif_3.8.5             future.apply_1.20.2     R.oo_1.27.1            
 #>  [64] glue_1.8.1              callr_3.7.6             profmem_0.7.0          
 #>  [67] stringdist_0.9.17       grid_4.6.0              checkmate_2.3.4        
-#>  [70] reshape2_1.4.5          generics_0.1.4          recipes_1.3.2          
+#>  [70] reshape2_1.4.5          generics_0.1.4          recipes_1.3.3          
 #>  [73] gtable_0.3.6            R.methodsS3_1.8.2       tidyr_1.3.2            
 #>  [76] data.table_1.18.4       utf8_1.2.6              xml2_1.5.2             
 #>  [79] pillar_1.11.1           stringr_1.6.0           ggspatial_1.1.10       
