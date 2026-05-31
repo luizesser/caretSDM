@@ -170,8 +170,8 @@ print.input_sdm <- function(x, ...) {
   if ("ensembles" %in% names(x)) {
     cat("Model averaging                :", x$ensembles$method, "\n")
   }
-  cat("Software                       : caretSDM v", as.character(utils::packageVersion("caretSDM")),
-      ", ", R.version$version.string, "\n", sep = "")
+  #cat("Software                       : caretSDM v", as.character(utils::packageVersion("caretSDM")),
+  #    ", ", R.version$version.string, "\n", sep = "")
   cat("\n============= Data =============\n")
   if ("occurrences" %in% names(x)) {
     cat("-- Biodiversity data --\n")
