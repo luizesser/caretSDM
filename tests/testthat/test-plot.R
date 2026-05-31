@@ -56,7 +56,7 @@ test_that("plot works with i", {
   expect_no_error(mapview_predictions(i, scenario = "current"))
   expect_no_error(plot_ensembles(i, ensemble_type = "average"))
   expect_no_error(mapview_predictions(i, id = "naive_bayes_pa1"))
-  expect_no_error(mapview_predictions(i, id = 1))
+  expect_error(mapview_predictions(i, id = 1))
   expect_error(mapview_predictions(i, id = "a"))
   expect_no_error(plot_scenarios(i))
   expect_true(ggplot2::is_ggplot(plot_scenarios(i)))

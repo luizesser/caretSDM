@@ -16,7 +16,7 @@
       Modelling techniques           : naive_bayes 
       Model complexity (tuneLength)  : naive_bayes 
       Model averaging                : average 
-      Software                       : caretSDM v1.9.3, R version 4.5.2 (2025-10-31)
+      Software                       : caretSDM v1.9.4, R version 4.5.2 (2025-10-31)
       
       ============= Data =============
       -- Biodiversity data --
@@ -67,6 +67,7 @@
       Prediction layers              : current 
       Prediction unit                : Occurrence Probability 
       Ensemble method                : average 
+      Ensemble names                 :  
 
 ---
 
@@ -86,7 +87,7 @@
       Modelling techniques           : naive_bayes 
       Model complexity (tuneLength)  : naive_bayes 
       Model averaging                : average 
-      Software                       : caretSDM v1.9.3, R version 4.5.2 (2025-10-31)
+      Software                       : caretSDM v1.9.4, R version 4.5.2 (2025-10-31)
       
       ============= Data =============
       -- Biodiversity data --
@@ -137,6 +138,7 @@
       Prediction layers              : current, ca_ssp245_2090, ca_ssp585_2090, mi_ssp245_2090, mi_ssp585_2090 
       Prediction unit                : Occurrence Probability 
       Ensemble method                : average 
+      Ensemble names                 : _ssp245_2090, _ssp585_2090 
 
 ---
 
@@ -156,7 +158,7 @@
       Modelling techniques           : naive_bayes 
       Model complexity (tuneLength)  : naive_bayes 
       Model averaging                : average 
-      Software                       : caretSDM v1.9.3, R version 4.5.2 (2025-10-31)
+      Software                       : caretSDM v1.9.4, R version 4.5.2 (2025-10-31)
       
       ============= Data =============
       -- Biodiversity data --
@@ -213,6 +215,7 @@
       Prediction layers              : current 
       Prediction unit                : Occurrence Probability 
       Ensemble method                : average 
+      Ensemble names                 :  
 
 ---
 
@@ -232,7 +235,7 @@
       Modelling techniques           : naive_bayes 
       Model complexity (tuneLength)  : naive_bayes 
       Model averaging                : average 
-      Software                       : caretSDM v1.9.3, R version 4.5.2 (2025-10-31)
+      Software                       : caretSDM v1.9.4, R version 4.5.2 (2025-10-31)
       
       ============= Data =============
       -- Biodiversity data --
@@ -289,4 +292,5 @@
       Prediction layers              : current, ca_ssp245_2090, ca_ssp585_2090, mi_ssp245_2090, mi_ssp585_2090 
       Prediction unit                : Occurrence Probability 
       Ensemble method                : average 
+      Ensemble names                 : _ssp245_2090, _ssp585_2090 
 

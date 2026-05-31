@@ -116,4 +116,4 @@
 
 # caretSDM 1.9.4
 
--   Mapview from ensembles and predictions was corrected.
+-   Mapview from ensembles and predictions were corrected.

@@ -26,6 +26,13 @@ knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
 )
+tmp <- tempfile("biomod_")
+dir.create(tmp)
+
+oldwd <- getwd()
+setwd(tmp)
+
+on.exit(setwd(oldwd))
 ```
 
 ## Motivation

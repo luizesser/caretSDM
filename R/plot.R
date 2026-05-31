@@ -453,11 +453,13 @@ mapview_predictions <- function(i, spp_name = NULL, scenario = NULL, id = NULL) 
   .check_suggested("mapview", "mapview_predictions")
   assert_class_cli(i, "input_sdm")
   assert_names_cli(names(i), must.include = "predictions")
+  assert_subset_cli(id, names(i$predictions$predictions[[1]][[1]]), empty.ok = TRUE)
+
   x <- i$predictions
   valid_spp <- names(x$predictions[[1]])
   valid_scen <- names(x$predictions)
   if (is.null(id)) {
-    id <- 1
+    id <- names(i$predictions$predictions[[1]][[1]])[1]
   }
   if (!is.null(scenario)) {
     scenario <- valid_scen[which.min(stringdist::stringdist(scenario, valid_scen))]
