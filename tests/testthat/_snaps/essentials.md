@@ -13,8 +13,8 @@
       Temporal extent                : Current
       Observation type               : Presence-absence (pseudo-absence) and Presence-background 
       Predictor names                : bio1, bio12 
-      Modelling techniques           : naive_bayes 
-      Model complexity (tuneLength)  : naive_bayes 
+      Modelling algorithms           : naive_bayes 
+      Model complexity (tuneLength)  : 1 
       Model averaging                : average 
       Software                       : caretSDM v1.9.4, R version 4.6.0 (2026-04-24)
       
@@ -84,8 +84,8 @@
       Temporal extent (inferred)     : 2090 - 2090 
       Observation type               : Presence-absence (pseudo-absence) and Presence-background 
       Predictor names                : bio1, bio12 
-      Modelling techniques           : naive_bayes 
-      Model complexity (tuneLength)  : naive_bayes 
+      Modelling algorithms           : naive_bayes 
+      Model complexity (tuneLength)  : 1 
       Model averaging                : average 
       Software                       : caretSDM v1.9.4, R version 4.6.0 (2026-04-24)
       
@@ -155,8 +155,8 @@
       Temporal extent                : Current
       Observation type               : Presence-absence (pseudo-absence) and Presence-background 
       Predictor names                : bio1, bio12 
-      Modelling techniques           : naive_bayes 
-      Model complexity (tuneLength)  : naive_bayes 
+      Modelling algorithms           : naive_bayes 
+      Model complexity (tuneLength)  : 1 
       Model averaging                : average 
       Software                       : caretSDM v1.9.4, R version 4.6.0 (2026-04-24)
       
@@ -232,8 +232,8 @@
       Temporal extent (inferred)     : 2090 - 2090 
       Observation type               : Presence-absence (pseudo-absence) and Presence-background 
       Predictor names                : bio1, bio12 
-      Modelling techniques           : naive_bayes 
-      Model complexity (tuneLength)  : naive_bayes 
+      Modelling algorithms           : naive_bayes 
+      Model complexity (tuneLength)  : 1 
       Model averaging                : average 
       Software                       : caretSDM v1.9.4, R version 4.6.0 (2026-04-24)
       

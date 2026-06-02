@@ -163,9 +163,9 @@ print.input_sdm <- function(x, ...) {
         cat("  Layer", j, ":", x$models$algorithms[[j]], "\n")
       }
     } else {
-      cat("Modelling techniques           :", paste(x$models$algorithms, collapse = ", "), "\n")
+      cat("Modelling algorithms           :", paste(x$models$algorithms, collapse = ", "), "\n")
     }
-    cat("Model complexity (tuneLength)  :", paste(x$models$algorithms, collapse = ", "), "\n")
+    cat("Model complexity (tuneLength)  :", paste(x$models$tuning, collapse = ", "), "\n")
   }
   if ("ensembles" %in% names(x)) {
     cat("Model averaging                :", x$ensembles$method, "\n")

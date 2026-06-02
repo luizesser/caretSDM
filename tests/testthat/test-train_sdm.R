@@ -124,7 +124,7 @@ test_that("train_sdm", {
     ctrl = ctrl
   ))
   expect_true("models" %in% names(i2))
-  expect_equal(10, get_tune_length(i2))
+  expect_equal(1, get_tune_length(i2))
   expect_equal(c("kknn", "naive_bayes"), algorithms_used(i2))
   expect_equal(
     c("kknn", "naive_bayes"),
@@ -151,7 +151,7 @@ test_that("train_sdm - pca", {
     ctrl = ctrl
   ))
   expect_true("models" %in% names(i2))
-  expect_equal(10, get_tune_length(i2))
+  expect_equal(1, get_tune_length(i2))
   expect_equal(c("kknn", "naive_bayes"), algorithms_used(i2))
   expect_equal(
     c("kknn", "naive_bayes"),
@@ -178,7 +178,7 @@ test_that("train_sdm - vif", {
     ctrl = ctrl
   ))
   expect_true("models" %in% names(i2))
-  expect_equal(10, get_tune_length(i2))
+  expect_equal(1, get_tune_length(i2))
   expect_equal(c("kknn", "naive_bayes"), algorithms_used(i2))
   expect_equal(
     c("kknn", "naive_bayes"),
@@ -228,7 +228,7 @@ test_that("train_sdm - selecting vars", {
     ctrl = ctrl
   ))
   expect_true("models" %in% names(i2))
-  expect_equal(10, get_tune_length(i2))
+  expect_equal(1, get_tune_length(i2))
   expect_equal(c("kknn", "naive_bayes"), algorithms_used(i2))
   expect_equal(
     c("kknn", "naive_bayes"),
@@ -268,7 +268,7 @@ test_that("train_sdm - ESM", {
     ctrl = ctrl
   ))
   expect_true("models" %in% names(i2))
-  expect_equal(10, get_tune_length(i2))
+  expect_equal(1, get_tune_length(i2))
   expect_equal(c("kknn", "naive_bayes"), algorithms_used(i2))
   expect_equal(
     c("kknn", "naive_bayes"),
@@ -321,7 +321,7 @@ test_that("mahal.custom train", {
   ) |>
     suppressWarnings()
   expect_true("models" %in% names(i2))
-  expect_equal(10, get_tune_length(i2))
+  expect_equal(1, get_tune_length(i2))
   expect_equal(c("mahal.custom"), algorithms_used(i2))
   expect_equal(
     c("mahal.custom"),
@@ -575,7 +575,7 @@ test_that("mahal.custom train", {
   ) |>
     suppressWarnings()
   expect_true("models" %in% names(i2))
-  expect_equal(10, get_tune_length(i2))
+  expect_equal(1, get_tune_length(i2))
   expect_equal(c("mahal.dist"), algorithms_used(i2))
   expect_equal(
     c("mahal.dist"),
@@ -602,7 +602,7 @@ test_that("train_sdm - cv_spatial PA", {
                                    )
   ))
   expect_true("models" %in% names(i2))
-  expect_equal(10, get_tune_length(i2))
+  expect_equal(1, get_tune_length(i2))
   expect_equal(c("kknn", "naive_bayes"), algorithms_used(i2))
   expect_equal(
     c("kknn", "naive_bayes"),
@@ -634,7 +634,7 @@ test_that("train_sdm - cv_cluster PA", {
                                    )
   ))
   expect_true("models" %in% names(i2))
-  expect_equal(10, get_tune_length(i2))
+  expect_equal(1, get_tune_length(i2))
   expect_equal(c("kknn", "naive_bayes"), algorithms_used(i2))
   expect_equal(
     c("kknn", "naive_bayes"),
@@ -669,7 +669,7 @@ test_that("train_sdm - cv_spatial BG", {
     ) |>
     suppressWarnings()
   expect_true("models" %in% names(i2))
-  expect_equal(10, get_tune_length(i2))
+  expect_equal(1, get_tune_length(i2))
   expect_equal(c("maxent"), algorithms_used(i2))
   expect_equal(
     c("maxent"),
@@ -697,7 +697,7 @@ test_that("train_sdm - cv_cluster BG", {
     ) |>
     suppressWarnings()
   expect_true("models" %in% names(i2))
-  expect_equal(10, get_tune_length(i2))
+  expect_equal(1, get_tune_length(i2))
   expect_equal(c("maxent"), algorithms_used(i2))
   expect_equal(
     c("maxent"),
@@ -731,7 +731,7 @@ test_that("train_sdm - ESM BG", {
                                    ctrl = ctrl
   ))
   expect_true("models" %in% names(i2))
-  expect_equal(10, get_tune_length(i2))
+  expect_equal(1, get_tune_length(i2))
   expect_equal(c("maxent"), algorithms_used(i2))
   expect_equal(
     c("maxent"),

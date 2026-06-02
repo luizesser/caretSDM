@@ -541,6 +541,16 @@ train_sdm <- function(occ, pred = NULL, algo, ctrl = NULL, variables_selected = 
     models = m
   )
 
+  dots <- list(...)
+  if ("tuneLength" %in% names(dots)) {
+    m2$tuning <- dots$tuneLength
+  } else {
+    m2$tuning <- 1
+  }
+  if ("tuneGrid" %in% names(dots)) {
+    m2$tuning <- "custom grid"
+  }
+
   if ("independent_test" %in% names(z)) {
     it <- sf::st_join(z$independent_test, dplyr::select(pred$grid, -"cell_id"))
     indep_val <- sapply(z$spp_names, function(sp) {
@@ -750,7 +760,7 @@ add_models <- function(m1, m2) {
         predictors = x$predictors,
         algorithms = x$algorithms,
         models = x$models,
-        tuning = 10
+        tuning = x$tuning
       ),
       class = "models"
     )
@@ -765,7 +775,7 @@ add_models <- function(m1, m2) {
         predictors = x$predictors,
         algorithms = x$algorithms,
         models = x$models,
-        tuning = 10
+        tuning = x$tuning
       ),
       class = "models"
     )

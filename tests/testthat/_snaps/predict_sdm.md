@@ -13,8 +13,8 @@
       Temporal extent                : Current
       Observation type               : Presence-absence (pseudo-absence) 
       Predictor names                : bio1, bio12 
-      Modelling techniques           : naive_bayes, kknn 
-      Model complexity (tuneLength)  : naive_bayes, kknn 
+      Modelling algorithms           : naive_bayes, kknn 
+      Model complexity (tuneLength)  : 1 
       Software                       : caretSDM v1.9.4, R version 4.6.0 (2026-04-24)
       
       ============= Data =============
@@ -100,8 +100,8 @@
       Temporal extent                : Current
       Observation type               : Presence-absence (pseudo-absence) 
       Predictor names                : bio1, bio12 
-      Modelling techniques           : naive_bayes, kknn 
-      Model complexity (tuneLength)  : naive_bayes, kknn 
+      Modelling algorithms           : naive_bayes, kknn 
+      Model complexity (tuneLength)  : 1 
       Software                       : caretSDM v1.9.4, R version 4.6.0 (2026-04-24)
       
       ============= Data =============
@@ -187,8 +187,8 @@
       Temporal extent                : Current
       Observation type               : Presence-absence (pseudo-absence) 
       Predictor names                : bio1, bio12 
-      Modelling techniques           : naive_bayes, kknn 
-      Model complexity (tuneLength)  : naive_bayes, kknn 
+      Modelling algorithms           : naive_bayes, kknn 
+      Model complexity (tuneLength)  : 1 
       Software                       : caretSDM v1.9.4, R version 4.6.0 (2026-04-24)
       
       ============= Data =============
