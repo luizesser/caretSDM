@@ -94,8 +94,8 @@ i
 #> Temporal extent                : Current
 #> Observation type               : Presence-absence (pseudo-absence) 
 #> Predictor names                : LENGTH_KM, DIST_DN_KM, bio1, bio4, bio12 
-#> Modelling techniques           : naive_bayes, kknn 
-#> Model complexity (tuneLength)  : naive_bayes, kknn 
+#> Modelling algorithms           : naive_bayes, kknn 
+#> Model complexity (tuneLength)  : 1 
 #> Model averaging                : average 
 #> Software                       : caretSDM v1.9.4, R version 4.6.0 (2026-04-24)
 #> 

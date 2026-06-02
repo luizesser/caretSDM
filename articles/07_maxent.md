@@ -99,8 +99,8 @@ i
     ## Temporal extent                : Current
     ## Observation type               : Presence-background 
     ## Predictor names                : bio1, bio4, bio12 
-    ## Modelling techniques           : maxent 
-    ## Model complexity (tuneLength)  : maxent 
+    ## Modelling algorithms           : maxent 
+    ## Model complexity (tuneLength)  : 1 
     ## Software                       : caretSDM v1.9.4, R version 4.6.0 (2026-04-24)
     ## 
     ## ============= Data =============

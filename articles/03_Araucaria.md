@@ -724,8 +724,8 @@ i
 #> Temporal extent (inferred)     : 2090 - 2090 
 #> Observation type               : Presence-absence (pseudo-absence) 
 #> Predictor names                : bio1, bio4, bio12, PC1, PC2, PC3 
-#> Modelling techniques           : naive_bayes, kknn 
-#> Model complexity (tuneLength)  : naive_bayes, kknn 
+#> Modelling algorithms           : naive_bayes, kknn 
+#> Model complexity (tuneLength)  : 1 
 #> Software                       : caretSDM v1.9.4, R version 4.6.0 (2026-04-24)
 #> 
 #> ============= Data =============
@@ -819,8 +819,8 @@ i
 #> Temporal extent (inferred)     : 2090 - 2090 
 #> Observation type               : Presence-absence (pseudo-absence) 
 #> Predictor names                : bio1, bio4, bio12, PC1, PC2, PC3 
-#> Modelling techniques           : naive_bayes, kknn 
-#> Model complexity (tuneLength)  : naive_bayes, kknn 
+#> Modelling algorithms           : naive_bayes, kknn 
+#> Model complexity (tuneLength)  : 1 
 #> Software                       : caretSDM v1.9.4, R version 4.6.0 (2026-04-24)
 #> 
 #> ============= Data =============
@@ -917,8 +917,8 @@ i
 #> Temporal extent (inferred)     : 2090 - 2090 
 #> Observation type               : Presence-absence (pseudo-absence) 
 #> Predictor names                : bio1, bio4, bio12, PC1, PC2, PC3 
-#> Modelling techniques           : naive_bayes, kknn 
-#> Model complexity (tuneLength)  : naive_bayes, kknn 
+#> Modelling algorithms           : naive_bayes, kknn 
+#> Model complexity (tuneLength)  : 1 
 #> Model averaging                : average 
 #> Software                       : caretSDM v1.9.4, R version 4.6.0 (2026-04-24)
 #> 
@@ -1384,8 +1384,8 @@ i
 #> Temporal extent (inferred)     : 2090 - 2090 
 #> Observation type               : Presence-absence (pseudo-absence) 
 #> Predictor names                : bio1, bio4, bio12, PC1, PC2, PC3 
-#> Modelling techniques           : naive_bayes, kknn 
-#> Model complexity (tuneLength)  : naive_bayes, kknn 
+#> Modelling algorithms           : naive_bayes, kknn 
+#> Model complexity (tuneLength)  : 1 
 #> Model averaging                : average 
 #> Software                       : caretSDM v1.9.4, R version 4.6.0 (2026-04-24)
 #> 
@@ -1545,5 +1545,5 @@ cells in a grid.
 
 end_time <- Sys.time()
 end_time - start_time
-#> Time difference of 23.94225 secs
+#> Time difference of 22.62548 secs
 ```

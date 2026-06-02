@@ -63,8 +63,6 @@ library(mda)
 library(gbm)
 library(earth)
 library(randomForest)
-
-set.seed(1)
 ```
 
 ------------------------------------------------------------------------
@@ -112,7 +110,6 @@ bioc
 # ---------------------------
 # biomod2 - Pre-processing
 # ---------------------------
-
 prep_biomod2 <- function() {
   occ_biomod <- occ
   occ_biomod$species <- rep(1, nrow(occ))
@@ -142,11 +139,10 @@ prep_biomod2 <- function() {
 # ---------------------------
 # biomod2 - Processing
 # ---------------------------
-
 fit_biomod2 <- function(prep) {
   biomod_model <- BIOMOD_Modeling(
     prep$data,
-    modeling.id = "AllModels",
+    modeling.id = paste0("test_", Sys.time()),
     models = c("ANN", "CTA", "FDA", "GBM", "MARS", "RF"),
     CV.strategy = "kfold",
     CV.nb.rep = 1,
@@ -174,7 +170,6 @@ fit_biomod2 <- function(prep) {
 # ---------------------------
 # biomod2 - Post-processing
 # ---------------------------
-
 post_biomod2 <- function(fit) {
   biomod_proj <- lapply(names(fit$scen), function(nm) {
     BIOMOD_Projection(
@@ -202,7 +197,6 @@ post_biomod2 <- function(fit) {
 # ---------------------------
 # biomod2 - Complete
 # ---------------------------
-
 run_biomod2 <- function() {
   occ_biomod <- occ
   occ_biomod$species <- rep(1, nrow(occ))
@@ -226,7 +220,7 @@ run_biomod2 <- function() {
 
   biomod_model <- BIOMOD_Modeling(
     biomod_data,
-    modeling.id = "AllModels",
+    modeling.id = paste0("test_", Sys.time()),
     models = c("ANN", "CTA", "FDA", "GBM", "MARS", "RF"),
     CV.strategy = "kfold",
     CV.nb.rep = 1,
@@ -277,7 +271,6 @@ run_biomod2 <- function() {
 # ---------------------------
 # sdm - Pre-processing
 # ---------------------------
-
 prep_sdm <- function() {
   coords <- occ[, c("decimalLongitude", "decimalLatitude")]
   names(coords) <- c("x", "y")
@@ -312,7 +305,6 @@ prep_sdm <- function() {
 # ---------------------------
 # sdm - Processing
 # ---------------------------
-
 fit_sdm <- function(prep) {
   m <- sdm(
     formula = species ~ bio1 + bio4 + bio12,
@@ -328,7 +320,6 @@ fit_sdm <- function(prep) {
 # ---------------------------
 # sdm - Post-processing
 # ---------------------------
-
 post_sdm <- function(fit) {
   list(
     unweighted = lapply(fit$scen, function(r) {
@@ -360,7 +351,6 @@ post_sdm <- function(fit) {
 # ---------------------------
 # sdm - Complete
 # ---------------------------
-
 run_sdm <- function() {
   coords <- occ[, c("decimalLongitude", "decimalLatitude")]
   names(coords) <- c("x", "y")
@@ -436,7 +426,6 @@ run_sdm <- function() {
 # ---------------------------
 # caretSDM - Pre-processing
 # ---------------------------
-
 prep_caretSDM <- function() {
   sa <- sdm_area(bioc) |>
     add_scenarios(scen)
@@ -448,7 +437,6 @@ prep_caretSDM <- function() {
 # ---------------------------
 # caretSDM - Processing
 # ---------------------------
-
 fit_caretSDM <- function(prep) {
   prep |>
     train_sdm(
@@ -468,7 +456,6 @@ fit_caretSDM <- function(prep) {
 # ---------------------------
 # caretSDM - Post-processing
 # ---------------------------
-
 post_caretSDM <- function(fit) {
   fit |>
     predict_sdm(th = 0.5) |>
@@ -509,7 +496,12 @@ run_caretSDM <- function() {
 ## Benchmark execution
 
 Before benchmarking, users are encouraged to run each function once to
-avoid first-run overhead (e.g. package initialization).
+avoid first-run overhead (e.g. package initialization). Benchmark was
+executed in the authors’ personal computer. Outputs were saved as RDS
+files and are imported in a hidden chunk. This was necessary, since
+biomod2 had very divergent benchmark values when running it
+interactively in RStudio (which is the main way users operate SDM
+analysis) and running it through knitr or through GitHub pages.
 
 ``` r
 
@@ -524,8 +516,9 @@ bench_res_prep <- bench::mark(
   biomod2 = prep_biomod2(),
   sdm = prep_sdm(),
   caretSDM = prep_caretSDM(),
-  iterations = 5,
-  check = FALSE
+  iterations = 25,
+  check = FALSE,
+  min_time = Inf
 )
 ```
 
@@ -542,8 +535,9 @@ bench_res_fit <- bench::mark(
   biomod2 = fit_biomod2(prep_biomod2_res),
   sdm = fit_sdm(prep_sdm_res),
   caretSDM = fit_caretSDM(prep_caretSDM_res),
-  iterations = 5,
-  check = FALSE
+  iterations = 25,
+  check = FALSE,
+  min_time = Inf
 )
 ```
 
@@ -560,19 +554,22 @@ bench_res_post <- bench::mark(
   biomod2 = post_biomod2(fit_biomod2_res),
   sdm = post_sdm(fit_sdm_res),
   caretSDM = post_caretSDM(fit_caretSDM_res),
-  iterations = 5,
-  check = FALSE
+  iterations = 25,
+  check = FALSE,
+  min_time = Inf
 )
 ```
 
 ``` r
 
+unlink("species", recursive = TRUE, force = TRUE)
 bench_res_complete <- bench::mark(
   biomod2 = run_biomod2(),
   sdm = run_sdm(),
   caretSDM = run_caretSDM(),
-  iterations = 5,
-  check = FALSE
+  iterations = 25,
+  check = FALSE,
+  min_time = Inf
 )
 ```
 
@@ -586,9 +583,9 @@ bench_res_prep
 #> # A tibble: 3 × 6
 #>   expression      min   median `itr/sec` mem_alloc `gc/sec`
 #>   <bch:expr> <bch:tm> <bch:tm>     <dbl> <bch:byt>    <dbl>
-#> 1 biomod2    163.04ms  166.9ms     5.50     7.94MB    1.10 
-#> 2 sdm        130.32ms 134.11ms     4.05     6.02MB    0.811
-#> 3 caretSDM      1.62s    1.62s     0.611     7.2MB    1.22
+#> 1 biomod2    103.51ms 141.15ms     4.91     5.35MB    0.785
+#> 2 sdm         80.76ms  92.16ms     6.17     5.46MB    0.987
+#> 3 caretSDM      1.04s    1.29s     0.760    7.65MB    1.79
 ```
 
 ``` r
@@ -597,9 +594,9 @@ bench_res_fit
 #> # A tibble: 3 × 6
 #>   expression      min   median `itr/sec` mem_alloc `gc/sec`
 #>   <bch:expr> <bch:tm> <bch:tm>     <dbl> <bch:byt>    <dbl>
-#> 1 biomod2       6.04s    6.08s    0.163   712.09MB    0.392
-#> 2 sdm          16.53s   16.57s    0.0603    2.38GB    0.302
-#> 3 caretSDM     19.75s    23.3s    0.0436  801.23MB    0.786
+#> 1 biomod2       8.34s    9.17s    0.108   714.95MB    0.369
+#> 2 sdm          15.82s   16.62s    0.0600    2.37GB    0.583
+#> 3 caretSDM     12.94s    15.7s    0.0614   807.9MB    1.30
 ```
 
 ``` r
@@ -608,9 +605,9 @@ bench_res_post
 #> # A tibble: 3 × 6
 #>   expression      min   median `itr/sec` mem_alloc `gc/sec`
 #>   <bch:expr> <bch:tm> <bch:tm>     <dbl> <bch:byt>    <dbl>
-#> 1 biomod2       7.82s    7.83s    0.125    718.9MB    0.475
-#> 2 sdm           17.1s   17.13s    0.0582   610.2MB    0    
-#> 3 caretSDM   988.04ms    1.01s    0.995     44.7MB    0
+#> 1 biomod2       11.8s    12.9s    0.0760   676.5MB    0.298
+#> 2 sdm           11.5s    11.8s    0.0826   624.1MB    0    
+#> 3 caretSDM    711.8ms  810.4ms    1.19      45.5MB    0.190
 ```
 
 ``` r
@@ -619,9 +616,9 @@ bench_res_complete
 #> # A tibble: 3 × 6
 #>   expression      min   median `itr/sec` mem_alloc `gc/sec`
 #>   <bch:expr> <bch:tm> <bch:tm>     <dbl> <bch:byt>    <dbl>
-#> 1 biomod2       13.7s      14s    0.0687    1.37GB   0.439 
-#> 2 sdm           39.7s    40.4s    0.0249    2.88GB   0.0846
-#> 3 caretSDM      23.1s      26s    0.0367  859.31MB   0.778
+#> 1 biomod2       13.1s    23.2s    0.0435    1.37GB    0.311
+#> 2 sdm           35.6s    40.9s    0.0244    2.85GB    0.147
+#> 3 caretSDM      15.2s      21s    0.0488  857.61MB    1.14
 ```
 
 The table above summarizes the median runtime, iteration rate, and
@@ -747,8 +744,9 @@ post-processing step, through a Machine Learning approach.
 
 ## Reproducibility
 
-This benchmark is fully reproducible and can be executed on any system
-with the required packages installed. Users are encouraged to rerun the
+Runtime benchmarks were conducted on an Apple Silicon Mac (ARM64 M1
+processor) running R 4.6.0. Absolute execution times may vary across
+hardware and operating systems. Users are encouraged to rerun the
 analysis on their own hardware to assess absolute performance
 differences.
 
@@ -770,80 +768,57 @@ differences.
 ``` r
 
 sessionInfo()
-#> R version 4.6.0 (2026-04-24)
-#> Platform: x86_64-pc-linux-gnu
-#> Running under: Ubuntu 24.04.4 LTS
-#> 
-#> Matrix products: default
-#> BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 
-#> LAPACK: /usr/lib/x86_64-linux-gnu/openblas-pthread/libopenblasp-r0.3.26.so;  LAPACK version 3.12.0
-#> 
-#> locale:
-#>  [1] LC_CTYPE=C.UTF-8       LC_NUMERIC=C           LC_TIME=C.UTF-8       
-#>  [4] LC_COLLATE=C.UTF-8     LC_MONETARY=C.UTF-8    LC_MESSAGES=C.UTF-8   
-#>  [7] LC_PAPER=C.UTF-8       LC_NAME=C              LC_ADDRESS=C          
-#> [10] LC_TELEPHONE=C         LC_MEASUREMENT=C.UTF-8 LC_IDENTIFICATION=C   
-#> 
-#> time zone: UTC
-#> tzcode source: system (glibc)
-#> 
-#> attached base packages:
-#> [1] splines   stats     graphics  grDevices utils     datasets  methods  
-#> [8] base     
-#> 
-#> other attached packages:
-#>  [1] caret_7.0-1          lattice_0.22-9       ggplot2_4.0.3       
-#>  [4] kernlab_0.9-33       glmnet_5.0           Matrix_1.7-5        
-#>  [7] dismo_1.3-16         raster_3.6-32        sp_2.2-1            
-#> [10] RSNNS_0.4-18         Rcpp_1.1.1-1.1       caretSDM_1.9.4      
-#> [13] sdm_1.2-59           xgboost_3.2.1.1      randomForest_4.7-1.2
-#> [16] maxnet_0.1.4         earth_5.3.5          plotmo_3.7.0        
-#> [19] plotrix_3.8-14       Formula_1.2-5        gbm_2.2.3           
-#> [22] mgcv_1.9-4           nlme_3.1-169         gam_1.22-7          
-#> [25] foreach_1.5.2        mda_0.5-5            class_7.3-23        
-#> [28] cito_1.1             rpart_4.1.27         nnet_7.3-20         
-#> [31] biomod2_4.3-4-6      bench_1.1.4          sf_1.1-1            
-#> [34] terra_1.9-27        
-#> 
-#> loaded via a namespace (and not attached):
-#>   [1] RColorBrewer_1.1-3      torch_0.17.0            wk_0.9.5               
-#>   [4] shape_1.4.6.1           ECDFniche_0.5           jsonlite_2.0.0         
-#>   [7] magrittr_2.0.5          farver_2.1.2            CoordinateCleaner_3.0.1
-#>  [10] rmarkdown_2.31          fs_2.1.0                ragg_1.5.2             
-#>  [13] vctrs_0.7.3             htmltools_0.5.9         polynom_1.4-1          
-#>  [16] s2_1.1.9                pROC_1.19.0.1           parallelly_1.47.0      
-#>  [19] sass_0.4.10             KernSmooth_2.23-26      bslib_0.11.0           
-#>  [22] htmlwidgets_1.6.4       desc_1.4.3              plyr_1.8.9             
-#>  [25] stars_0.7-2             lubridate_1.9.5         cachem_1.1.0           
-#>  [28] whisker_0.4.1           lifecycle_1.0.5         iterators_1.0.14       
-#>  [31] pkgconfig_2.0.3         R6_2.6.1                fastmap_1.2.0          
-#>  [34] future_1.70.0           digest_0.6.39           reshape_0.8.10         
-#>  [37] ps_1.9.3                textshaping_1.0.5       timechange_0.4.0       
-#>  [40] httr_1.4.8              abind_1.4-8             compiler_4.6.0         
-#>  [43] proxy_0.4-29            withr_3.0.2             bit64_4.8.2            
-#>  [46] S7_0.2.2                backports_1.5.1         DBI_1.3.0              
-#>  [49] R.utils_2.13.0          ecospat_4.1.3           MASS_7.3-65            
-#>  [52] lava_1.9.1              classInt_0.4-11         ggpp_0.6.0             
-#>  [55] gtools_3.9.5            ModelMetrics_1.2.2.2    oai_0.4.0              
-#>  [58] tools_4.6.0             units_1.0-1             otel_0.2.0             
-#>  [61] rgbif_3.8.5             future.apply_1.20.2     R.oo_1.27.1            
-#>  [64] glue_1.8.1              callr_3.7.6             profmem_0.7.0          
-#>  [67] stringdist_0.9.17       grid_4.6.0              checkmate_2.3.4        
-#>  [70] reshape2_1.4.5          generics_0.1.4          recipes_1.3.3          
-#>  [73] gtable_0.3.6            R.methodsS3_1.8.2       tidyr_1.3.2            
-#>  [76] data.table_1.18.4       utf8_1.2.6              xml2_1.5.2             
-#>  [79] pillar_1.11.1           stringr_1.6.0           ggspatial_1.1.10       
-#>  [82] dplyr_1.2.1             survival_3.8-6          bit_4.6.0              
-#>  [85] tidyselect_1.2.1        coro_1.1.0              lemon_0.5.2            
-#>  [88] knitr_1.51              gridExtra_2.3           stats4_4.6.0           
-#>  [91] xfun_0.57               hardhat_1.4.3           checkCLI_1.0           
-#>  [94] timeDate_4052.112       stringi_1.8.7           lazyeval_0.2.3         
-#>  [97] yaml_2.3.12             evaluate_1.0.5          codetools_0.2-20       
-#> [100] tibble_3.3.1            cli_3.6.6               systemfonts_1.3.2      
-#> [103] processx_3.9.0          jquerylib_0.1.4         globals_0.19.1         
-#> [106] PresenceAbsence_1.1.11  rnaturalearth_1.2.0     parallel_4.6.0         
-#> [109] pkgdown_2.2.0           gower_1.0.2             listenv_0.10.1         
-#> [112] ipred_0.9-15            scales_1.4.0            prodlim_2026.03.11     
-#> [115] e1071_1.7-17            purrr_1.2.2             geosphere_1.6-8        
-#> [118] rlang_1.2.0
+# R version 4.6.0 (2026-04-24)
+# Platform: aarch64-apple-darwin23
+# Running under: macOS Tahoe 26.5
+# 
+# Matrix products: default
+# BLAS:   /System/Library/Frameworks/Accelerate.framework/Versions/A/Frameworks/vecLib.framework/Versions/A/libBLAS.dylib 
+# LAPACK: /Library/Frameworks/R.framework/Versions/4.6/Resources/lib/libRlapack.dylib;  LAPACK version 3.12.1
+# 
+# locale:
+# [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
+# 
+# time zone: America/Sao_Paulo
+# tzcode source: internal
+# 
+# attached base packages:
+# [1] splines   stats     graphics  grDevices utils     datasets  methods   base     
+# 
+# other attached packages:
+#  [1] caret_7.0-1          lattice_0.22-9       ggplot2_4.0.3        kernlab_0.9-33       glmnet_5.0          
+#  [6] Matrix_1.7-5         dismo_1.3-16         raster_3.6-32        sp_2.2-1             RSNNS_0.4-18        
+# [11] Rcpp_1.1.1-1.1       caretSDM_1.9.4       sdm_1.2-59           xgboost_3.2.1.1      randomForest_4.7-1.2
+# [16] maxnet_0.1.4         earth_5.3.5          plotmo_3.7.0         plotrix_3.8-14       Formula_1.2-5       
+# [21] gbm_2.2.3            mgcv_1.9-4           nlme_3.1-169         gam_1.22-7           foreach_1.5.2       
+# [26] mda_0.5-5            class_7.3-23         cito_1.1             rpart_4.1.27         nnet_7.3-20         
+# [31] biomod2_4.3-4-6      bench_1.1.4          sf_1.1-1             terra_1.9-27        
+# 
+# loaded via a namespace (and not attached):
+#   [1] RColorBrewer_1.1-3      torch_0.17.0            wk_0.9.5                shape_1.4.6.1          
+#   [5] ECDFniche_0.5           rstudioapi_0.18.0       jsonlite_2.0.0          magrittr_2.0.5         
+#   [9] farver_2.1.2            CoordinateCleaner_3.0.1 fs_2.1.0                vctrs_0.7.3            
+#  [13] polynom_1.4-1           s2_1.1.9                pROC_1.19.0.1           parallelly_1.47.0      
+#  [17] KernSmooth_2.23-26      plyr_1.8.9              stars_0.7-2             lubridate_1.9.5        
+#  [21] whisker_0.4.1           lifecycle_1.0.5         iterators_1.0.14        pkgconfig_2.0.3        
+#  [25] R6_2.6.1                future_1.70.0           digest_0.6.39           reshape_0.8.10         
+#  [29] timechange_0.4.0        httr_1.4.8              abind_1.4-8             compiler_4.6.0         
+#  [33] proxy_0.4-29            bit64_4.8.2             withr_3.0.2             S7_0.2.2               
+#  [37] backports_1.5.1         DBI_1.3.0               R.utils_2.13.0          ecospat_4.1.3          
+#  [41] MASS_7.3-65             lava_1.9.1              classInt_0.4-11         ggpp_0.6.0             
+#  [45] gtools_3.9.5            oai_0.4.0               ModelMetrics_1.2.2.2    tools_4.6.0            
+#  [49] units_1.0-1             otel_0.2.0              rgbif_3.8.5             future.apply_1.20.2    
+#  [53] R.oo_1.27.1             glue_1.8.1              callr_3.7.6             profmem_0.7.0          
+#  [57] grid_4.6.0              stringdist_0.9.17       checkmate_2.3.4         reshape2_1.4.5         
+#  [61] generics_0.1.4          recipes_1.3.3           gtable_0.3.6            R.methodsS3_1.8.2      
+#  [65] tidyr_1.3.2             data.table_1.18.4       xml2_1.5.2              pillar_1.11.1          
+#  [69] stringr_1.6.0           ggspatial_1.1.10        dplyr_1.2.1             survival_3.8-6         
+#  [73] bit_4.6.0               tidyselect_1.2.1        coro_1.1.0              lemon_0.5.2            
+#  [77] knitr_1.51              gridExtra_2.3           stats4_4.6.0            xfun_0.57              
+#  [81] hardhat_1.4.3           checkCLI_1.0            timeDate_4052.112       stringi_1.8.7          
+#  [85] lazyeval_0.2.3          evaluate_1.0.5          codetools_0.2-20        tibble_3.3.1           
+#  [89] cli_3.6.6               processx_3.9.0          globals_0.19.1          PresenceAbsence_1.1.11 
+#  [93] rnaturalearth_1.2.0     parallel_4.6.0          gower_1.0.2             listenv_0.10.1         
+#  [97] ipred_0.9-15            scales_1.4.0            prodlim_2026.03.11      e1071_1.7-17           
+# [101] purrr_1.2.2             geosphere_1.6-8         rlang_1.2.0            
 ```

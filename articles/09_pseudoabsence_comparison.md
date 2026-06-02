@@ -474,7 +474,7 @@ sessionInfo()
     ##   [7] CoordinateCleaner_3.0.1 rmarkdown_2.31          fs_2.1.0               
     ##  [10] ragg_1.5.2              vctrs_0.7.3             kknn_1.4.1             
     ##  [13] terra_1.9-27            htmltools_0.5.9         polynom_1.4-1          
-    ##  [16] curl_7.1.0              raster_3.6-32           s2_1.1.9               
+    ##  [16] curl_7.1.0              raster_3.6-32           s2_1.1.11              
     ##  [19] pROC_1.19.0.1           sass_0.4.10             parallelly_1.47.0      
     ##  [22] KernSmooth_2.23-26      bslib_0.11.0            htmlwidgets_1.6.4      
     ##  [25] naivebayes_1.0.0        desc_1.4.3              plyr_1.8.9             
@@ -501,7 +501,7 @@ sessionInfo()
     ##  [88] stringr_1.6.0           ggspatial_1.1.10        splines_4.6.0          
     ##  [91] dplyr_1.2.1             survival_3.8-6          tidyselect_1.2.1       
     ##  [94] lemon_0.5.2             knitr_1.51              gridExtra_2.3          
-    ##  [97] stats4_4.6.0            xfun_0.57               hardhat_1.4.3          
+    ##  [97] stats4_4.6.0            xfun_0.58               hardhat_1.4.3          
     ## [100] checkCLI_1.0            timeDate_4052.112       stringi_1.8.7          
     ## [103] lazyeval_0.2.3          yaml_2.3.12             evaluate_1.0.5         
     ## [106] codetools_0.2-20        kernlab_0.9-33          tibble_3.3.1           

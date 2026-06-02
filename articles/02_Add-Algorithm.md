@@ -412,8 +412,8 @@ i
 #> Spatial extent                 : -5276744.44724281, -3295036.62222337, -4626744.44724281, -2795036.62222337  (xmin,xmax,ymin,ymax)
 #> Observation type               : Presence-absence (pseudo-absence) 
 #> Predictor names                : GID0, CODIGOIB1, NOMEUF2, SIGLAUF3, bio1, bio4, bio12 
-#> Modelling techniques           : mahal.custom 
-#> Model complexity (tuneLength)  : mahal.custom 
+#> Modelling algorithms           : mahal.custom 
+#> Model complexity (tuneLength)  : 1 
 #> Software                       : caretSDM v1.9.4, R version 4.6.0 (2026-04-24)
 #> 
 #> ============= Data =============
@@ -534,8 +534,8 @@ i2
 #> Spatial extent                 : -5276744.44724281, -3295036.62222337, -4626744.44724281, -2795036.62222337  (xmin,xmax,ymin,ymax)
 #> Observation type               : Presence-absence (pseudo-absence) 
 #> Predictor names                : GID0, CODIGOIB1, NOMEUF2, SIGLAUF3, bio1, bio4, bio12 
-#> Modelling techniques           : mahal.dismo 
-#> Model complexity (tuneLength)  : mahal.dismo 
+#> Modelling algorithms           : mahal.dismo 
+#> Model complexity (tuneLength)  : 1 
 #> Software                       : caretSDM v1.9.4, R version 4.6.0 (2026-04-24)
 #> 
 #> ============= Data =============
