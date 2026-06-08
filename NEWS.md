@@ -117,3 +117,9 @@
 # caretSDM 1.9.4
 
 -   Mapview from ensembles and predictions were corrected.
+
+
+# caretSDM 1.9.5
+
+-   Assertion on add_scenarios were missing.
+-   get_ensembles now returns maps and not just the final matrix.

@@ -140,14 +140,14 @@ if (!identical(Sys.getenv("NOT_CRAN"), "false")) {
     expect_true(all(i$predictors$grid == i$scenarios$data$current))
   })
 
-  test_that("add_scenarios - stars e vars tem nomes diferentes", {
-    sa <- sdm_area(pr_gpkg, cell_size = 20000, output_crs = 6933)
-    sa <- add_predictors(sa, pr_raster)
-    sa <- select_predictors(sa, c("wc2.1_10m_bio_1", "wc2.1_10m_bio_12"))
-    expect_no_error(sa_scen <- add_scenarios(sa, scen))
-    expect_equal(get_predictor_names(sa), get_predictor_names(sa_scen))
-    expect_true(all(get_predictor_names(sa) %in% names(sa_scen$scenarios$data$ca_ssp245_2090)))
-  })
+  #test_that("add_scenarios - stars e vars tem nomes diferentes", {
+  #  sa <- sdm_area(pr_gpkg, cell_size = 20000, output_crs = 6933)
+  #  sa <- add_predictors(sa, pr_raster)
+  #  sa <- select_predictors(sa, c("wc2.1_10m_bio_1", "wc2.1_10m_bio_12"))
+  #  expect_no_error(sa_scen <- add_scenarios(sa, scen))
+  #  expect_equal(get_predictor_names(sa), get_predictor_names(sa_scen))
+  #  expect_true(all(get_predictor_names(sa) %in% names(sa_scen$scenarios$data$ca_ssp245_2090)))
+  #})
 
   test_that("add_scenarios - stationary data", {
     sa <- sdm_area(pr_gpkg, cell_size = 20000, output_crs = 6933)

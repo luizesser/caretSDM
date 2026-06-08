@@ -13,7 +13,13 @@ ensemble_sdm(m,
             fun = NULL
             )
 
-get_ensembles(i)
+get_ensembles(
+  i,
+  type = "matrix",
+  spp_name = NULL,
+  scenario = NULL,
+  ensemble_type = NULL
+)
 
 add_ensembles(e1, e2)
 }
@@ -33,6 +39,20 @@ the data. It will receive caret's train object and must return a numeric value (
 see details).}
 
 \item{i}{A \code{input_sdm} or a \code{predictions} object.}
+
+\item{type}{Character. Output format desired. One of \code{"matrix"},
+\code{"sf"}, \code{"stars"}, \code{"raster"}, or \code{"rast"}. Defaults to
+\code{"matrix"}.}
+
+\item{spp_name}{Character or \code{NULL}. Name of the species to retrieve ensembles for.
+Defaults to the first available species if \code{NULL}.}
+
+\item{scenario}{Character or \code{NULL}. Name of the scenario to retrieve ensembles for.
+Defaults to the first available scenario if \code{NULL}.}
+
+\item{ensemble_type}{Character or \code{NULL}. The ensemble method to use for retrieval.
+Must be a subset of the methods stored in \code{i$ensembles$method}. Defaults to the first
+method if \code{NULL}.}
 
 \item{e1}{A \code{ensembles} object.}
 

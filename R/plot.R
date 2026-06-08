@@ -297,6 +297,7 @@ plot.predictions <- function(x, spp_name = NULL, scenario = NULL, id = NULL, ...
 plot_ensembles <- function(i, spp_name = NULL, scenario = NULL, id = NULL, ensemble_type = NULL, ...) {
   assert_class_cli(i, "input_sdm")
   assert_names_cli(names(i), must.include = "ensembles")
+  assert_names_cli(names(i), must.include = "predictions")
   if (!is.null(ensemble_type)) {
     assert_subset_cli(ensemble_type, i$ensembles$method)
   } else {
@@ -304,7 +305,6 @@ plot_ensembles <- function(i, spp_name = NULL, scenario = NULL, id = NULL, ensem
   }
 
   x <- i
-  ens <- "ensembles"
   valid_spp <- rownames(x$ensembles$data)
   valid_scen <- colnames(x$ensembles$data)
 

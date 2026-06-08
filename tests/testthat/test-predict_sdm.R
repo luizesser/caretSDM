@@ -35,10 +35,10 @@ test_that("predict_sdm - errors", {
   expect_error(predict_sdm(i, th = function(x) {
     NULL
   }))
+  expect_error(get_ensembles(i))
+  expect_error(get_ensembles("i"))
   expect_null(get_predictions(i))
-  expect_null(get_ensembles(i))
   expect_null(get_predictions("i"))
-  expect_null(get_ensembles("i"))
 })
 
 test_that("predict_sdm", {

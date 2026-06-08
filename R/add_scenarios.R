@@ -155,6 +155,28 @@ add_scenarios.SpatRaster <- function(sa, scen = NULL, scenarios_names = NULL, pr
 add_scenarios.stars <- function(sa, scen = NULL, scenarios_names = NULL, pred_as_scen = TRUE,
                                 variables_selected = NULL, stationary = NULL,
                                 crop_area = NULL) {
+  assert_cli(
+    check_class_cli(sa, c("input_sdm")),
+    check_class_cli(sa, c("sdm_area"))
+  )
+  assert_vector_cli(scenarios_names, len = length(scen), null.ok = TRUE)
+  assert_class_cli(pred_as_scen, "logical")
+  assert_vector_cli(variables_selected, min.len = 1, max.len = length(get_predictor_names(sa)), null.ok = TRUE)
+  if (!is.null(variables_selected)) {assert_subset_cli(variables_selected, get_predictor_names(sa))}
+  assert_vector_cli(stationary, min.len = 1, max.len = length(get_predictor_names(sa)), null.ok = TRUE)
+  if (!is.null(stationary)) {assert_subset_cli(stationary, get_predictor_names(sa))}
+  assert_vector_cli(stars::st_get_dimension_values(scen, "band"))
+  if (!check_subset_cli(stars::st_get_dimension_values(scen, "band"), get_predictor_names(sa))) {
+    cli::cli_abort(c(
+      "{.var scen} band names are not subsets of the predictor names from {.var sa}.",
+      "x" = "band names are {stars::st_get_dimension_values(scen, 'band')}, while predictors names are {get_predictor_names(sa)}.",
+      "i" = "you can alter stars bands names using the function caretSDM::set_variables_names, like that:\n
+      R> scen <- set_variables_names(scen, sa)\n
+      Or:\n
+      R> scen <- set_variables_names(scen, new_names = c('a', 'b', 'c'))"
+    ))
+  }
+
   if (is_input_sdm(sa)) {
     if ("scenarios" %in% names(sa)) {
       i2 <- sa
@@ -185,6 +207,8 @@ add_scenarios.stars <- function(sa, scen = NULL, scenarios_names = NULL, pred_as
     scenarios_names <- names(scen)
   }
   pres_names <- get_predictor_names(sa)
+
+
 
   if (!is.null(stationary) & exists("i2")) {
     stationary_grd <- sa$grid |> dplyr::select(all_of(c("cell_id", stationary)))

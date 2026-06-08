@@ -110,6 +110,7 @@ prep_biomod2 <- function() {
   env <- terra::rast(stars::st_warp(bioc, crs = 6933))
 
   sc <- list(
+    current = env,
     scen1 = terra::rast(stars::st_warp(scen[1], crs = 6933)),
     scen2 = terra::rast(stars::st_warp(scen[2], crs = 6933)),
     scen3 = terra::rast(stars::st_warp(scen[3], crs = 6933)),
@@ -195,6 +196,7 @@ run_biomod2 <- function() {
   occ_biomod$species <- rep(1, nrow(occ))
   env <- terra::rast(stars::st_warp(bioc, crs = 6933))
   sc <- list(
+    current = env,
     scen1 = terra::rast(stars::st_warp(scen[1], crs = 6933)),
     scen2 = terra::rast(stars::st_warp(scen[2], crs = 6933)),
     scen3 = terra::rast(stars::st_warp(scen[3], crs = 6933)),
@@ -280,6 +282,7 @@ prep_sdm <- function() {
   train <- rbind(dplyr::select(bg, -c("x", "y")), pres_data)
 
   sc <- list(
+    current = env,
     scen1 = terra::rast(stars::st_warp(scen[1], crs = 6933)),
     scen2 = terra::rast(stars::st_warp(scen[2], crs = 6933)),
     scen3 = terra::rast(stars::st_warp(scen[3], crs = 6933)),
@@ -349,6 +352,7 @@ run_sdm <- function() {
 
   env <- terra::rast(stars::st_warp(bioc, crs = 6933))
   sc <- list(
+    current = env,
     scen1 = terra::rast(stars::st_warp(scen[1], crs = 6933)),
     scen2 = terra::rast(stars::st_warp(scen[2], crs = 6933)),
     scen3 = terra::rast(stars::st_warp(scen[3], crs = 6933)),
@@ -548,6 +552,7 @@ bench_res_complete <- bench::mark(
   min_time = Inf
 )
 ```
+
 ---
 
 ## Results

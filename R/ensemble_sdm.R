@@ -25,6 +25,17 @@
 #' @param e1 A \code{ensembles} object.
 #' @param e2 A \code{ensembles} object.
 #'
+#' @param type Character. Output format desired. One of \code{"matrix"},
+#' \code{"sf"}, \code{"stars"}, \code{"raster"}, or \code{"rast"}. Defaults to
+#' \code{"matrix"}.
+#' @param spp_name Character or \code{NULL}. Name of the species to retrieve ensembles for.
+#' Defaults to the first available species if \code{NULL}.
+#' @param scenario Character or \code{NULL}. Name of the scenario to retrieve ensembles for.
+#' Defaults to the first available scenario if \code{NULL}.
+#' @param ensemble_type Character or \code{NULL}. The ensemble method to use for retrieval.
+#' Must be a subset of the methods stored in \code{i$ensembles$method}. Defaults to the first
+#' method if \code{NULL}.
+#'
 #' @returns A \code{input_sdm} or a \code{predictions} object.
 #'
 #' @details
@@ -269,11 +280,41 @@ ensemble_sdm <- function(m, scen = NULL, method = "average", metric = NULL, fun 
 
 #' @rdname ensemble_sdm
 #' @export
-get_ensembles <- function(i) {
-  if (is_input_sdm(i)) {
-    return(i$ensembles$data)
+get_ensembles <- function(i, type = "matrix", spp_name = NULL, scenario = NULL, ensemble_type = NULL) {
+  assert_class_cli(i, "input_sdm")
+  assert_names_cli(names(i), must.include = "ensembles")
+  assert_names_cli(names(i), must.include = "predictions")
+  assert_choice_cli(type, c("matrix", "sf", "stars", "raster", "rast"))
+  if (!is.null(ensemble_type)) {
+    assert_subset_cli(ensemble_type, i$ensembles$method)
+  } else {
+    ensemble_type <- i$ensembles$method[1]
   }
-  return(NULL)
+  x <- i
+  valid_spp <- rownames(x$ensembles$data)
+  valid_scen <- colnames(x$ensembles$data)
+
+  if (!is.null(scenario)) {
+    scenario <- valid_scen[which.min(stringdist::stringdist(scenario, valid_scen))]
+  } else {
+    scenario <- valid_scen[1]
+  }
+  if (!is.null(spp_name)) {
+    spp_name <- valid_spp[which.min(stringdist::stringdist(spp_name, valid_spp))]
+  } else {
+    spp_name <- valid_spp[1]
+  }
+
+  grd <- x$predictions$predictions[[grep(scenario, names(x$predictions$predictions))[1]]][[spp_name]][[1]]
+
+  cell_id <- x$ensembles$data[[spp_name, scenario]][, "cell_id"]
+  v <- x$ensembles$data[[spp_name, scenario]][, ensemble_type]
+  grd <- dplyr::filter(grd, grd$cell_id == cell_id)
+  grd[grd$cell_id %in% cell_id, "result"] <- v
+
+  if (type == "matrix") {return(x$ensembles$data)}
+  if (type == "sf") {return(grd)}
+  if (type == "stars") {return(stars::st_rasterize(grd, along = "band"))}
 }
 
 #' @rdname ensemble_sdm
