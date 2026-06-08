@@ -13,7 +13,13 @@ ensemble_sdm(m,
             fun = NULL
             )
 
-get_ensembles(i)
+get_ensembles(
+  i,
+  type = "matrix",
+  spp_name = NULL,
+  scenario = NULL,
+  ensemble_type = NULL
+)
 
 add_ensembles(e1, e2)
 ```
@@ -48,6 +54,27 @@ add_ensembles(e1, e2)
 - i:
 
   A `input_sdm` or a `predictions` object.
+
+- type:
+
+  Character. Output format desired. One of `"matrix"`, `"sf"`,
+  `"stars"`, `"raster"`, or `"rast"`. Defaults to `"matrix"`.
+
+- spp_name:
+
+  Character or `NULL`. Name of the species to retrieve ensembles for.
+  Defaults to the first available species if `NULL`.
+
+- scenario:
+
+  Character or `NULL`. Name of the scenario to retrieve ensembles for.
+  Defaults to the first available scenario if `NULL`.
+
+- ensemble_type:
+
+  Character or `NULL`. The ensemble method to use for retrieval. Must be
+  a subset of the methods stored in `i$ensembles$method`. Defaults to
+  the first method if `NULL`.
 
 - e1:
 

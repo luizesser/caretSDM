@@ -117,6 +117,7 @@ prep_biomod2 <- function() {
   env <- terra::rast(stars::st_warp(bioc, crs = 6933))
 
   sc <- list(
+    current = env,
     scen1 = terra::rast(stars::st_warp(scen[1], crs = 6933)),
     scen2 = terra::rast(stars::st_warp(scen[2], crs = 6933)),
     scen3 = terra::rast(stars::st_warp(scen[3], crs = 6933)),
@@ -202,6 +203,7 @@ run_biomod2 <- function() {
   occ_biomod$species <- rep(1, nrow(occ))
   env <- terra::rast(stars::st_warp(bioc, crs = 6933))
   sc <- list(
+    current = env,
     scen1 = terra::rast(stars::st_warp(scen[1], crs = 6933)),
     scen2 = terra::rast(stars::st_warp(scen[2], crs = 6933)),
     scen3 = terra::rast(stars::st_warp(scen[3], crs = 6933)),
@@ -288,6 +290,7 @@ prep_sdm <- function() {
   train <- rbind(dplyr::select(bg, -c("x", "y")), pres_data)
 
   sc <- list(
+    current = env,
     scen1 = terra::rast(stars::st_warp(scen[1], crs = 6933)),
     scen2 = terra::rast(stars::st_warp(scen[2], crs = 6933)),
     scen3 = terra::rast(stars::st_warp(scen[3], crs = 6933)),
@@ -357,6 +360,7 @@ run_sdm <- function() {
 
   env <- terra::rast(stars::st_warp(bioc, crs = 6933))
   sc <- list(
+    current = env,
     scen1 = terra::rast(stars::st_warp(scen[1], crs = 6933)),
     scen2 = terra::rast(stars::st_warp(scen[2], crs = 6933)),
     scen3 = terra::rast(stars::st_warp(scen[3], crs = 6933)),
@@ -583,9 +587,9 @@ bench_res_prep
 #> # A tibble: 3 × 6
 #>   expression      min   median `itr/sec` mem_alloc `gc/sec`
 #>   <bch:expr> <bch:tm> <bch:tm>     <dbl> <bch:byt>    <dbl>
-#> 1 biomod2    103.51ms 141.15ms     4.91     5.35MB    0.785
-#> 2 sdm         80.76ms  92.16ms     6.17     5.46MB    0.987
-#> 3 caretSDM      1.04s    1.29s     0.760    7.65MB    1.79
+#> 1 biomod2       152ms 176.06ms      4.89    5.34MB    0.204
+#> 2 sdm           103ms  125.5ms      7.91    5.46MB    0.688
+#> 3 caretSDM      750ms    1.02s      1.03     7.7MB    4.10
 ```
 
 ``` r
@@ -594,9 +598,9 @@ bench_res_fit
 #> # A tibble: 3 × 6
 #>   expression      min   median `itr/sec` mem_alloc `gc/sec`
 #>   <bch:expr> <bch:tm> <bch:tm>     <dbl> <bch:byt>    <dbl>
-#> 1 biomod2       8.34s    9.17s    0.108   714.95MB    0.369
-#> 2 sdm          15.82s   16.62s    0.0600    2.37GB    0.583
-#> 3 caretSDM     12.94s    15.7s    0.0614   807.9MB    1.30
+#> 1 biomod2       8.94s      10s    0.0976   708.3MB    0.293
+#> 2 sdm          18.24s    20.1s    0.0488    2.39GB    0.342
+#> 3 caretSDM     15.78s    19.3s    0.0493     804MB    0.780
 ```
 
 ``` r
@@ -605,9 +609,9 @@ bench_res_post
 #> # A tibble: 3 × 6
 #>   expression      min   median `itr/sec` mem_alloc `gc/sec`
 #>   <bch:expr> <bch:tm> <bch:tm>     <dbl> <bch:byt>    <dbl>
-#> 1 biomod2       11.8s    12.9s    0.0760   676.5MB    0.298
-#> 2 sdm           11.5s    11.8s    0.0826   624.1MB    0    
-#> 3 caretSDM    711.8ms  810.4ms    1.19      45.5MB    0.190
+#> 1 biomod2       14.7s    17.7s    0.0577     848MB    0.228
+#> 2 sdm           16.9s    27.6s    0.0372   773.3MB    0    
+#> 3 caretSDM    712.1ms  776.3ms    1.06      44.6MB    0.127
 ```
 
 ``` r
@@ -616,9 +620,9 @@ bench_res_complete
 #> # A tibble: 3 × 6
 #>   expression      min   median `itr/sec` mem_alloc `gc/sec`
 #>   <bch:expr> <bch:tm> <bch:tm>     <dbl> <bch:byt>    <dbl>
-#> 1 biomod2       13.1s    23.2s    0.0435    1.37GB    0.311
-#> 2 sdm           35.6s    40.9s    0.0244    2.85GB    0.147
-#> 3 caretSDM      15.2s      21s    0.0488  857.61MB    1.14
+#> 1 biomod2       25.3s    28.8s    0.0343    1.55GB   0.233 
+#> 2 sdm           44.7s    52.3s    0.0186    2.96GB   0.0626
+#> 3 caretSDM      16.7s    21.8s    0.0447  852.71MB   0.858
 ```
 
 The table above summarizes the median runtime, iteration rate, and

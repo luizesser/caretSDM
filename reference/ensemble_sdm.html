@@ -9,7 +9,7 @@ methods."><meta property="og:image" content="https://luizesser.github.io/caretSD
 
     <a class="navbar-brand me-2" href="../index.html">caretSDM</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.9.4</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.9.5</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -61,7 +61,13 @@ methods.</p>
 <span>            fun <span class="op">=</span> <span class="cn">NULL</span></span>
 <span>            <span class="op">)</span></span>
 <span></span>
-<span><span class="fu">get_ensembles</span><span class="op">(</span><span class="va">i</span><span class="op">)</span></span>
+<span><span class="fu">get_ensembles</span><span class="op">(</span></span>
+<span>  <span class="va">i</span>,</span>
+<span>  type <span class="op">=</span> <span class="st">"matrix"</span>,</span>
+<span>  spp_name <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  scenario <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  ensemble_type <span class="op">=</span> <span class="cn">NULL</span></span>
+<span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">add_ensembles</span><span class="op">(</span><span class="va">e1</span>, <span class="va">e2</span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -96,6 +102,28 @@ see details).</p></dd>
 
 <dt id="arg-i">i<a class="anchor" aria-label="anchor" href="#arg-i"></a></dt>
 <dd><p>A <code>input_sdm</code> or a <code>predictions</code> object.</p></dd>
+
+
+<dt id="arg-type">type<a class="anchor" aria-label="anchor" href="#arg-type"></a></dt>
+<dd><p>Character. Output format desired. One of <code>"matrix"</code>,
+<code>"sf"</code>, <code>"stars"</code>, <code>"raster"</code>, or <code>"rast"</code>. Defaults to
+<code>"matrix"</code>.</p></dd>
+
+
+<dt id="arg-spp-name">spp_name<a class="anchor" aria-label="anchor" href="#arg-spp-name"></a></dt>
+<dd><p>Character or <code>NULL</code>. Name of the species to retrieve ensembles for.
+Defaults to the first available species if <code>NULL</code>.</p></dd>
+
+
+<dt id="arg-scenario">scenario<a class="anchor" aria-label="anchor" href="#arg-scenario"></a></dt>
+<dd><p>Character or <code>NULL</code>. Name of the scenario to retrieve ensembles for.
+Defaults to the first available scenario if <code>NULL</code>.</p></dd>
+
+
+<dt id="arg-ensemble-type">ensemble_type<a class="anchor" aria-label="anchor" href="#arg-ensemble-type"></a></dt>
+<dd><p>Character or <code>NULL</code>. The ensemble method to use for retrieval.
+Must be a subset of the methods stored in <code>i$ensembles$method</code>. Defaults to the first
+method if <code>NULL</code>.</p></dd>
 
 
 <dt id="arg-e-">e1<a class="anchor" aria-label="anchor" href="#arg-e-"></a></dt>

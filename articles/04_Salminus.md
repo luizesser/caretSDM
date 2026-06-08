@@ -460,7 +460,7 @@ i
 #> Temporal extent (inferred)     : 2090 - 2090 
 #> Observation type               : Presence-only 
 #> Predictor names                : LENGTH_KM, DIST_DN_KM, bio1, bio4, bio12 
-#> Software                       : caretSDM v1.9.4, R version 4.6.0 (2026-04-24)
+#> Software                       : caretSDM v1.9.5, R version 4.6.0 (2026-04-24)
 #> 
 #> ============= Data =============
 #> -- Biodiversity data --
@@ -606,7 +606,7 @@ i
 #> Temporal extent (inferred)     : 2090 - 2090 
 #> Observation type               : Presence-absence (pseudo-absence) 
 #> Predictor names                : LENGTH_KM, DIST_DN_KM, bio1, bio4, bio12 
-#> Software                       : caretSDM v1.9.4, R version 4.6.0 (2026-04-24)
+#> Software                       : caretSDM v1.9.5, R version 4.6.0 (2026-04-24)
 #> 
 #> ============= Data =============
 #> -- Biodiversity data --
@@ -692,7 +692,7 @@ i
 #> Predictor names                : LENGTH_KM, DIST_DN_KM, bio1, bio4, bio12 
 #> Modelling algorithms           : naive_bayes, kknn 
 #> Model complexity (tuneLength)  : 1 
-#> Software                       : caretSDM v1.9.4, R version 4.6.0 (2026-04-24)
+#> Software                       : caretSDM v1.9.5, R version 4.6.0 (2026-04-24)
 #> 
 #> ============= Data =============
 #> -- Biodiversity data --
@@ -787,7 +787,7 @@ i
 #> Predictor names                : LENGTH_KM, DIST_DN_KM, bio1, bio4, bio12 
 #> Modelling algorithms           : naive_bayes, kknn 
 #> Model complexity (tuneLength)  : 1 
-#> Software                       : caretSDM v1.9.4, R version 4.6.0 (2026-04-24)
+#> Software                       : caretSDM v1.9.5, R version 4.6.0 (2026-04-24)
 #> 
 #> ============= Data =============
 #> -- Biodiversity data --
@@ -885,7 +885,7 @@ i
 #> Modelling algorithms           : naive_bayes, kknn 
 #> Model complexity (tuneLength)  : 1 
 #> Model averaging                : average 
-#> Software                       : caretSDM v1.9.4, R version 4.6.0 (2026-04-24)
+#> Software                       : caretSDM v1.9.5, R version 4.6.0 (2026-04-24)
 #> 
 #> ============= Data =============
 #> -- Biodiversity data --
@@ -1351,7 +1351,7 @@ i
 #> Modelling algorithms           : naive_bayes, kknn 
 #> Model complexity (tuneLength)  : 1 
 #> Model averaging                : average 
-#> Software                       : caretSDM v1.9.4, R version 4.6.0 (2026-04-24)
+#> Software                       : caretSDM v1.9.5, R version 4.6.0 (2026-04-24)
 #> 
 #> ============= Data =============
 #> -- Biodiversity data --
@@ -1506,5 +1506,5 @@ species using a grid simplefeatures instead of lines.
 
 end_time <- Sys.time()
 end_time - start_time
-#> Time difference of 35.85187 secs
+#> Time difference of 40.05974 secs
 ```
