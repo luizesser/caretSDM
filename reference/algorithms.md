@@ -13,7 +13,9 @@ algorithms
 
 ## Format
 
-\## \`algorithms\` A `data.frame` with 230 rows and 60 columns:
+### `algorithms`
+
+A `data.frame` with 230 rows and 60 columns:
 
 - X:
 
@@ -25,4 +27,4 @@ algorithms
 
 ## Source
 
-\<https://topepo.github.io/caret/models-clustered-by-tag-similarity.html\>
+<https://topepo.github.io/caret/models-clustered-by-tag-similarity.html>

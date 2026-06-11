@@ -158,3 +158,9 @@ CRAN release: 2026-05-12
 
 - Assertion on add_scenarios were missing.
 - get_ensembles now returns maps and not just the final matrix.
+
+## caretSDM 1.9.6
+
+- Correction on add_scenarios and sdm_area to allow the usage of a
+  character (automatizing the import of data through these functions).
+- Use of Rmd in documentation.

@@ -12,7 +12,9 @@ bioc
 
 ## Format
 
-\## \`bioc\` A `stars` with 1 attribute and 3 bands:
+### `bioc`
+
+A `stars` with 1 attribute and 3 bands:
 
 - bio1:
 
@@ -28,4 +30,4 @@ bioc
 
 ## Source
 
-\<https://www.worldclim.org/\>
+<https://www.worldclim.org/>

@@ -12,7 +12,9 @@ scen_rs
 
 ## Format
 
-\## \`scen_rs\` A `stars` with 5 attribute and 3 bands:
+### `scen_rs`
+
+A `stars` with 5 attribute and 3 bands:
 
 - current:
 
@@ -48,4 +50,4 @@ scen_rs
 
 ## Source
 
-\<https://www.worldclim.org/\>
+<https://www.worldclim.org/>

@@ -12,7 +12,9 @@ scen
 
 ## Format
 
-\## \`scen\` A `stars` with 4 attribute and 3 bands:
+### `scen`
+
+A `stars` with 4 attribute and 3 bands:
 
 - ca_ssp245_2090:
 
@@ -44,4 +46,4 @@ scen
 
 ## Source
 
-\<https://www.worldclim.org/\>
+<https://www.worldclim.org/>

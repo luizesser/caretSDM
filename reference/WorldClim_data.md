@@ -40,7 +40,7 @@ WorldClim_data(path = NULL,
 - gcm:
 
   GCMs to be considered in future scenarios. You can use a vector to
-  provide more than one entry.
+  provide more than one entry (see Details).
 
 - ssp:
 
@@ -61,17 +61,49 @@ return value.
 
 This function will create a folder. All the data downloaded will be
 stored in this folder. Note that, despite being possible to retrieve a
-lot of data at once, it is not recommended to do so, since the data is
-very heavy.
+lot of data at once, it is not recommended to do so, since the data
+could be very heavy.
+
+Possible values for GCMs are:
+
+|      |                    |
+|------|--------------------|
+| Code | GCM                |
+| ac   | ACCESS-CM2         |
+| ae   | ACCESS-ESM1-5      |
+| bc   | BCC-CSM2-MR        |
+| ca   | CanESM5            |
+| cc   | CanESM5-CanOE      |
+| ce   | CMCC-ESM2          |
+| cn   | CNRM-CM6-1         |
+| ch   | CNRM-CM6-1-HR      |
+| cr   | CNRM-ESM2-1        |
+| ec   | EC-Earth3-Veg      |
+| ev   | EC-Earth3-Veg-LR   |
+| fi   | FIO-ESM-2-0        |
+| gf   | GFDL-ESM4          |
+| gg   | GISS-E2-1-G        |
+| gh   | GISS-E2-1-H        |
+| hg   | HadGEM3-GC31-LL    |
+| in   | INM-CM4-8          |
+| ic   | INM-CM5-0          |
+| ip   | IPSL-CM6A-LR       |
+| me   | MIROC-ES2L         |
+| mi   | MIROC6             |
+| mp   | MPI-ESM1-2-HR      |
+| ml   | MPI-ESM1-2-LR      |
+| mr   | MRI-ESM2-0         |
+| uk   | UKESM1-0-LL        |
+| all  | All available GCMs |
 
 ## References
 
-\[https://www.worldclim.org/data/index.html\](https://www.worldclim.org/data/index.html)
+<https://www.worldclim.org/data/index.html>
 
 ## Author
 
 Luíz Fernando Esser (luizesser@gmail.com)
-\[https://luizfesser.wordpress.com\](https://luizfesser.wordpress.com)
+<https://luizfesser.wordpress.com>
 
 ## Examples
 

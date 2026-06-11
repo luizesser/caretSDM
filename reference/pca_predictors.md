@@ -21,8 +21,8 @@ get_pca_model(i)
 - cumulative_proportion:
 
   A `numeric` with the threshold for cumulative proportion. Standard is
-  0.99, meaning that axes returned as predictors sum up more than 99
-  variance.
+  0.99, meaning that axes returned as predictors sum up more than 99% of
+  environmental variance.
 
 ## Value
 

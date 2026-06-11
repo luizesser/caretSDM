@@ -12,7 +12,9 @@ rivs
 
 ## Format
 
-\## \`rivs\` A `sf` with 1031 attributes and 2 fiels:
+### `rivs`
+
+A `sf` with 1031 attributes and 2 fiels:
 
 - LENGTH_KM:
 
@@ -27,4 +29,4 @@ rivs
 
 ## Source
 
-\<https://www.hydrosheds.org/\>
+<https://www.hydrosheds.org/>

@@ -11,7 +11,9 @@ occ
 
 ## Format
 
-\## \`occ\` A `data.frame` with 420 rows and 3 columns (EPSG:6933):
+### `occ`
+
+A `data.frame` with 420 rows and 3 columns (EPSG:6933):
 
 - species:
 
@@ -27,4 +29,4 @@ occ
 
 ## Source
 
-\<https://www.gbif.org\>
+<https://www.gbif.org>

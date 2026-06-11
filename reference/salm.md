@@ -11,7 +11,9 @@ salm
 
 ## Format
 
-\## \`salm\` A `data.frame` with 46 rows and 3 columns (EPSG:6933):
+### `salm`
+
+A `data.frame` with 46 rows and 3 columns (EPSG:6933):
 
 - species:
 
@@ -27,4 +29,4 @@ salm
 
 ## Source
 
-\<https://www.gbif.org\>
+<https://www.gbif.org>
