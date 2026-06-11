@@ -331,7 +331,10 @@ the predictors data as the current scenario by applying the function
 happens because the argument <code>pred_as_scen</code> is standarly set
 to <code>TRUE</code>.</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/add_scenarios.html">add_scenarios</a></span><span class="op">(</span><span class="va">sa</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="co"># This is an example code for when you want only to obtain the current distribution.</span></span>
+<span><span class="co"># For projecting to current and future scenarios we will add all scenarios in the following steps</span></span>
+<span><span class="co"># in only one run.</span></span>
+<span><span class="va">sa</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_scenarios.html">add_scenarios</a></span><span class="op">(</span><span class="va">sa</span><span class="op">)</span></span></code></pre></div>
 <p>If we are aiming to project species distributions in other scenarios,
 we can download data and add in the same way we did for current
 data.</p>
@@ -388,8 +391,6 @@ will be replicated between scenarios.</p>
 <span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Using GDAL to make the grid and resample the variables.</span></span>
 <span><span class="co">#&gt; <span style="color: #BBBB00;">!</span> Making grid over the study area is an expensive task. Please, be patient!</span></span>
 <span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Using GDAL to make the grid and resample the variables.</span></span>
-<span><span class="co">#&gt; Reescaling data <span style="color: #00BB00;">■■■■■■■■■■■■■■■■■■■■■■■         </span>  75% | ETA:  1s</span></span>
-<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; <span style="color: #BBBB00;">!</span> Making grid over the study area is an expensive task. Please, be patient!</span></span>
 <span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Using GDAL to make the grid and resample the variables.</span></span>
 <span><span class="va">sa</span></span>
@@ -1497,7 +1498,7 @@ instead of lines.</p>
 <div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">end_time</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">end_time</span> <span class="op">-</span> <span class="va">start_time</span></span>
-<span><span class="co">#&gt; Time difference of 37.87577 secs</span></span></code></pre></div>
+<span><span class="co">#&gt; Time difference of 36.68578 secs</span></span></code></pre></div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>

@@ -281,7 +281,10 @@ because the argument `pred_as_scen` is standarly set to `TRUE`.
 
 ``` r
 
-add_scenarios(sa)
+# This is an example code for when you want only to obtain the current distribution.
+# For projecting to current and future scenarios we will add all scenarios in the following steps
+# in only one run.
+sa <- add_scenarios(sa)
 ```
 
 If we are aiming to project species distributions in other scenarios, we
@@ -351,8 +354,6 @@ sa <- add_scenarios(sa,
 #> ℹ Using GDAL to make the grid and resample the variables.
 #> ! Making grid over the study area is an expensive task. Please, be patient!
 #> ℹ Using GDAL to make the grid and resample the variables.
-#> Reescaling data ■■■■■■■■■■■■■■■■■■■■■■■           75% | ETA:  1s
-#> 
 #> ! Making grid over the study area is an expensive task. Please, be patient!
 #> ℹ Using GDAL to make the grid and resample the variables.
 sa
@@ -1506,5 +1507,5 @@ species using a grid simplefeatures instead of lines.
 
 end_time <- Sys.time()
 end_time - start_time
-#> Time difference of 37.87577 secs
+#> Time difference of 36.68578 secs
 ```
