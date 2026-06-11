@@ -106,19 +106,25 @@ add_scenarios.character <- function(sa, scen = NULL, scenarios_names = NULL, pre
   } else {
     stop()
   }
+  ####
+  s <- tryCatch(
+    stars::read_stars(
+      files,
+      proxy = FALSE,
+      normalize_path = TRUE
+    ), error = function(e) NULL
+  )
 
-  if (!is.null(crop_area)) {
-    s <- stars::read_stars(files, proxy = TRUE)
-    if (sf::st_crs(s) != sf::st_crs(crop_area)) {
-      crop_area <- sf::st_transform(crop_area, crs = sf::st_crs(s))
-      crop_area <- .adjust_bbox(x = crop_area, cell_size = sa$cell_size)
-    }
-    s <- sf::st_crop(s, crop_area)
-  } else {
-    s <- stars::read_stars(files, proxy = FALSE)
+  if (is.null(s)) {
+    s <- tryCatch(
+      stars::read_stars(
+        files,
+        proxy = FALSE,
+        normalize_path = FALSE
+      ), error = function(e) NULL
+    )
   }
 
-  scen <- stars::st_as_stars(scen)
   sa <- add_scenarios(
     sa, s, scenarios_names, pred_as_scen, variables_selected, stationary,
     crop_area
@@ -165,8 +171,10 @@ add_scenarios.stars <- function(sa, scen = NULL, scenarios_names = NULL, pred_as
   if (!is.null(variables_selected)) {assert_subset_cli(variables_selected, get_predictor_names(sa))}
   assert_vector_cli(stationary, min.len = 1, max.len = length(get_predictor_names(sa)), null.ok = TRUE)
   if (!is.null(stationary)) {assert_subset_cli(stationary, get_predictor_names(sa))}
-  assert_vector_cli(stars::st_get_dimension_values(scen, "band"))
-  if (!check_subset_cli(stars::st_get_dimension_values(scen, "band"), get_predictor_names(sa))) {
+
+  band_values <- stars::st_get_dimension_values(scen, "band")
+  assert_vector_cli(band_values)
+  if (!check_subset_cli(band_values, get_predictor_names(sa))) {
     cli::cli_abort(c(
       "{.var scen} band names are not subsets of the predictor names from {.var sa}.",
       "x" = "band names are {stars::st_get_dimension_values(scen, 'band')}, while predictors names are {get_predictor_names(sa)}.",
@@ -344,21 +352,14 @@ add_scenarios.stars <- function(sa, scen = NULL, scenarios_names = NULL, pred_as
       scen <- set_variables_names(scen, sa)
     }
 
-    assert_choice_cli(
-      x = variables_selected,
-      choices = pres_names,
-      null.ok = TRUE,
-      .var.name = "variables_selected"
-    )
-
     sa_data <- sa
 
     if (!is.null(variables_selected)) {
-      assert_names_cli(
+      assert_subset_cli(
         variables_selected,
-        subset.of = stars::st_get_dimension_values(scen, "band")
+        choices = stars::st_get_dimension_values(scen, "band"),
+        .var.name = "variables_selected"
       )
-      scen <- scen[, , , variables_selected]
     } else {
       variables_selected <- get_predictor_names(sa)
       if (!all(variables_selected %in% stars::st_get_dimension_values(scen, "band"))) {
@@ -368,6 +369,7 @@ add_scenarios.stars <- function(sa, scen = NULL, scenarios_names = NULL, pred_as
         ))
       }
     }
+    scen <- scen[, , , variables_selected]
 
     grid_t <- sa$grid
 

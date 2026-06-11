@@ -29,14 +29,15 @@
 #'
 #' @export
 buffer_sdm <- function(occ_data, size = NULL, occ_crs = NULL, mcp = FALSE) {
+  if (is_occurrences(occ_data)) {
+    if (is.null(occ_crs)) {
+      occ_crs <- occ_data$crs
+    }
+    occ_data <- occ_data$occurrences |> .sf_to_df_sdm()
+  }
   assert_class_cli(size, "numeric")
   assert_class_cli(occ_crs, "numeric")
   assert_class_cli(mcp, "logical")
-
-  if (is_occurrences(occ_data)) {
-    occ_data <- occ_data$occurrences |> .sf_to_df_sdm()
-  }
-
   assert_class_cli(occ_data, "data.frame")
 
   cnames <- .find_columns(occ_data)
@@ -49,12 +50,14 @@ buffer_sdm <- function(occ_data, size = NULL, occ_crs = NULL, mcp = FALSE) {
       sf::st_combine() |>
       sf::st_convex_hull() |>
       sf::st_buffer(dist = size) |>
-      sf::st_union()
+      sf::st_union() |>
+      sf::st_as_sf()
   } else {
     x <- occ_data |>
       sf::st_as_sf(coords = cnames[c(1, 2)], crs = sf::st_crs(occ_crs)) |>
       sf::st_buffer(dist = size) |>
-      sf::st_union()
+      sf::st_union() |>
+      sf::st_as_sf()
   }
   return(x)
 }

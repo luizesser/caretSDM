@@ -147,19 +147,35 @@ sdm_area.character <- function(x, cell_size = NULL, output_crs = NULL, variables
   )
   if (length(xs) == 1) {
     if (is.na(xs)) {
-      if (utils::file_test("-d", x)) {
+      if (all(utils::file_test("-d", x))) {
         x <- x |> fs::dir_ls(type = "file")
       }
       xs <- tryCatch(
         stars::read_stars(
           x,
           normalize_path = FALSE,
-          quiet = TRUE
+          quiet = TRUE,
+          along = "band"
         ),
-        error = function(e) {
-          cli::cli_abort(c("x" = e$message))
-        }
+        error = function(e) NULL
       )
+      if (is.null(xs)) {
+        xs <- tryCatch(
+          stars::read_stars(
+            x,
+            normalize_path = TRUE,
+            quiet = TRUE,
+            along = "band"
+          ),
+          error = function(e) {
+            cli::cli_abort(c("x" = e$message))
+          }
+        )
+      }
+      # rename band names if / is present (otherwise could return errors in future)
+      if (any(grepl("[/\\\\]", stars::st_get_dimension_values(xs, "band")))) {
+        xs <- set_variables_names(xs, new_names = basename(x))
+      }
     }
   }
   if (!class(xs)[1] %in% c("stars", "sf")) {
