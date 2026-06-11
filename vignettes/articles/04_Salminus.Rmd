@@ -195,7 +195,10 @@ considering any other argument. This happens because the argument `pred_as_scen`
 `TRUE`.
 
 ```{r add_scenario_current, eval = FALSE}
-add_scenarios(sa)
+# This is an example code for when you want only to obtain the current distribution.
+# For projecting to current and future scenarios we will add all scenarios in the following steps
+# in only one run.
+sa <- add_scenarios(sa)
 ```
 
 If we are aiming to project species distributions in other scenarios, we can download data and add
