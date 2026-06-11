@@ -789,8 +789,8 @@ i
 #> Cross-validation metrics       :
 #> $`Araucaria angustifolia`
 #>          algo       ROC       TSS Sensitivity Specificity
-#> 1        kknn 0.9600632 0.8702531    0.959550      0.9106
-#> 2 naive_bayes 0.9785421 0.8570063    0.976775      0.8934
+#> 1        kknn 0.9600632 0.8702531     0.95955      0.9106
+#> 2 naive_bayes 0.9783813 0.8554804     0.97560      0.8934
 ```
 
 ## Post-Processing
@@ -887,8 +887,8 @@ i
 #> Cross-validation metrics       :
 #> $`Araucaria angustifolia`
 #>          algo       ROC       TSS Sensitivity Specificity
-#> 1        kknn 0.9600632 0.8702531    0.959550      0.9106
-#> 2 naive_bayes 0.9785421 0.8570063    0.976775      0.8934
+#> 1        kknn 0.9600632 0.8702531     0.95955      0.9106
+#> 2 naive_bayes 0.9783813 0.8554804     0.97560      0.8934
 #> 
 #> 
 #> ========== Prediction ==========
@@ -986,8 +986,8 @@ i
 #> Cross-validation metrics       :
 #> $`Araucaria angustifolia`
 #>          algo       ROC       TSS Sensitivity Specificity
-#> 1        kknn 0.9600632 0.8702531    0.959550      0.9106
-#> 2 naive_bayes 0.9785421 0.8570063    0.976775      0.8934
+#> 1        kknn 0.9600632 0.8702531     0.95955      0.9106
+#> 2 naive_bayes 0.9783813 0.8554804     0.97560      0.8934
 #> 
 #> 
 #> ========== Prediction ==========
@@ -1022,16 +1022,16 @@ get_validation_metrics(i)
 #> kknn_pa8                kknn 0.9671807 0.9207251     0.96425     0.95650
 #> kknn_pa9                kknn 0.9798230 0.8518315     0.95100     0.90050
 #> kknn_pa10               kknn 0.9522436 0.8320055     0.96250     0.86950
-#> naive_bayes_pa1  naive_bayes 0.9732233 0.8712121     1.00000     0.87125
-#> naive_bayes_pa2  naive_bayes 0.9774267 0.8564103     0.97500     0.88125
-#> naive_bayes_pa3  naive_bayes 0.9710317 0.7968864     0.93975     0.88125
-#> naive_bayes_pa4  naive_bayes 0.9810058 0.8714744     0.96350     0.92150
-#> naive_bayes_pa5  naive_bayes 0.9706845 0.8833333     0.98750     0.89600
-#> naive_bayes_pa6  naive_bayes 0.9904762 0.8669414     0.97550     0.90375
-#> naive_bayes_pa7  naive_bayes 0.9774573 0.8434982     0.98800     0.87975
-#> naive_bayes_pa8  naive_bayes 0.9801272 0.8234848     0.97500     0.89375
-#> naive_bayes_pa9  naive_bayes 0.9780907 0.8813645     0.97550     0.91825
-#> naive_bayes_pa10 naive_bayes 0.9858974 0.8754579     0.98800     0.88725
+#> naive_bayes_pa1  naive_bayes 0.9644187 0.8712121     1.00000     0.87125
+#> naive_bayes_pa2  naive_bayes 0.9729739 0.8564103     0.97500     0.88125
+#> naive_bayes_pa3  naive_bayes 0.9768010 0.7968864     0.93975     0.88125
+#> naive_bayes_pa4  naive_bayes 0.9857372 0.8714744     0.96350     0.92150
+#> naive_bayes_pa5  naive_bayes 0.9721726 0.8833333     0.98750     0.89600
+#> naive_bayes_pa6  naive_bayes 0.9895604 0.8669414     0.97550     0.90375
+#> naive_bayes_pa7  naive_bayes 0.9794414 0.8434982     0.98800     0.87975
+#> naive_bayes_pa8  naive_bayes 0.9811688 0.8326299     0.97500     0.89375
+#> naive_bayes_pa9  naive_bayes 0.9811355 0.8688645     0.97550     0.91825
+#> naive_bayes_pa10 naive_bayes 0.9804029 0.8635531     0.97625     0.88725
 #>                  Pos Pred Value Neg Pred Value Precision  Recall      F1
 #> kknn_pa1                0.94200        0.95850   0.94200 0.97500 0.95800
 #> kknn_pa2                0.93150        0.95800   0.93150 0.97600 0.95325
@@ -1050,9 +1050,9 @@ get_validation_metrics(i)
 #> naive_bayes_pa5         0.94500        0.97925   0.94500 0.98750 0.96500
 #> naive_bayes_pa6         0.94075        0.95450   0.94075 0.97550 0.95100
 #> naive_bayes_pa7         0.93000        0.97725   0.93000 0.98800 0.94625
-#> naive_bayes_pa8         0.93700        0.95450   0.93700 0.97500 0.94650
-#> naive_bayes_pa9         0.95425        0.95650   0.95425 0.97550 0.95725
-#> naive_bayes_pa10        0.93125        0.98075   0.93125 0.98800 0.95825
+#> naive_bayes_pa8         0.93850        0.95450   0.93850 0.97500 0.94650
+#> naive_bayes_pa9         0.95350        0.95650   0.95350 0.97550 0.95025
+#> naive_bayes_pa10        0.93075        0.96425   0.93075 0.97625 0.95200
 #>                  Prevalence Detection Rate Detection Prevalence
 #> kknn_pa1            0.63550        0.62000              0.66650
 #> kknn_pa2            0.62150        0.60650              0.65150
@@ -1073,7 +1073,7 @@ get_validation_metrics(i)
 #> naive_bayes_pa7     0.62100        0.61350              0.68975
 #> naive_bayes_pa8     0.64050        0.62500              0.67975
 #> naive_bayes_pa9     0.61675        0.60175              0.70000
-#> naive_bayes_pa10    0.60750        0.60000              0.66600
+#> naive_bayes_pa10    0.60750        0.59275              0.66600
 #>                  Balanced Accuracy Accuracy   Kappa AccuracyLower AccuracyUpper
 #> kknn_pa1                   0.93450  0.94600 0.88175       0.80500       0.99400
 #> kknn_pa2                   0.92875  0.94025 0.87050       0.80100       0.98950
@@ -1092,9 +1092,9 @@ get_validation_metrics(i)
 #> naive_bayes_pa5            0.94150  0.95425 0.89800       0.82050       0.99300
 #> naive_bayes_pa6            0.93375  0.94000 0.87350       0.80125       0.99150
 #> naive_bayes_pa7            0.92200  0.93175 0.85350       0.78850       0.98850
-#> naive_bayes_pa8            0.91200  0.92975 0.84450       0.78250       0.98775
-#> naive_bayes_pa9            0.94075  0.94650 0.88500       0.81275       0.99000
-#> naive_bayes_pa10           0.93800  0.94800 0.88950       0.81275       0.99450
+#> naive_bayes_pa8            0.91650  0.92975 0.84450       0.78250       0.98775
+#> naive_bayes_pa9            0.93450  0.93900 0.87025       0.80300       0.98625
+#> naive_bayes_pa10           0.93200  0.94075 0.87475       0.80275       0.99150
 #>                  AccuracyNull AccuracyPValue McnemarPValue Positive Negative
 #> kknn_pa1              0.63550        0.00000     0.8700000     20.5    11.75
 #> kknn_pa2              0.62150        0.00025     0.9042500     20.5    12.50
@@ -1113,8 +1113,8 @@ get_validation_metrics(i)
 #> naive_bayes_pa5       0.63050        0.00225     0.7493333     20.5    12.00
 #> naive_bayes_pa6       0.61200        0.00050     0.8700000     20.5    13.00
 #> naive_bayes_pa7       0.62100        0.00050     0.8700000     20.5    12.50
-#> naive_bayes_pa8       0.64050        0.00500     0.8700000     20.5    11.50
-#> naive_bayes_pa9       0.61675        0.00500     0.7493333     20.5    12.75
+#> naive_bayes_pa8       0.64050        0.00175     0.8700000     20.5    11.50
+#> naive_bayes_pa9       0.61675        0.00500     0.6216667     20.5    12.75
 #> naive_bayes_pa10      0.60750        0.00100     0.7400000     20.5    13.25
 #>                  True Positive False Positive True Negative False Negative
 #> kknn_pa1                 20.00           0.50         10.50           1.50
@@ -1134,9 +1134,9 @@ get_validation_metrics(i)
 #> naive_bayes_pa5          20.25           0.75         10.75           2.75
 #> naive_bayes_pa6          20.00           0.75         11.75           2.75
 #> naive_bayes_pa7          20.25           0.75         11.00           2.50
-#> naive_bayes_pa8          20.00           1.50         10.25           1.75
-#> naive_bayes_pa9          20.00           0.75         11.75           3.25
-#> naive_bayes_pa10         20.25           0.75         11.75           2.75
+#> naive_bayes_pa8          20.00           1.25         10.25           1.75
+#> naive_bayes_pa9          20.00           1.00         11.75           3.25
+#> naive_bayes_pa10         20.00           0.75         11.75           2.75
 #>                      CBI pAUC Omission_10pct       ROCSD      TSSSD
 #> kknn_pa1         0.75675  NaN        0.04950 0.021405827 0.05315822
 #> kknn_pa2         0.80400  NaN        0.06075 0.049605757 0.09271724
@@ -1148,15 +1148,15 @@ get_validation_metrics(i)
 #> kknn_pa8         0.72350  NaN        0.01200 0.030877792 0.05910171
 #> kknn_pa9         0.45650  NaN        0.09750 0.043398736 0.04703003
 #> kknn_pa10        0.47350  NaN        0.07325 0.073201041 0.11441805
-#> naive_bayes_pa1  0.40450  NaN        0.09750 0.022588972 0.08913247
+#> naive_bayes_pa1  0.41075  NaN        0.09750 0.037386487 0.08913247
 #> naive_bayes_pa2  0.64800  NaN        0.09750 0.042191321 0.12624137
-#> naive_bayes_pa3  0.58600  NaN        0.09750 0.040223930 0.12672778
-#> naive_bayes_pa4  0.41875  NaN        0.09750 0.035453650 0.09245687
+#> naive_bayes_pa3  0.58075  NaN        0.09750 0.028910540 0.12672778
+#> naive_bayes_pa4  0.50275  NaN        0.09750 0.035453650 0.09245687
 #> naive_bayes_pa5  0.51325  NaN        0.09750 0.052027118 0.10715829
-#> naive_bayes_pa6  0.53850  NaN        0.09750 0.007398905 0.05937916
+#> naive_bayes_pa6  0.51100  NaN        0.09750 0.007261622 0.05937916
 #> naive_bayes_pa7  0.67900  NaN        0.09750 0.016549184 0.08461162
-#> naive_bayes_pa8  0.59200  NaN        0.09750 0.021370988 0.14995549
-#> naive_bayes_pa9  0.77300  NaN        0.09750 0.038874325 0.15280942
+#> naive_bayes_pa8  0.59850  NaN        0.09750 0.021370988 0.12994267
+#> naive_bayes_pa9  0.77950  NaN        0.09750 0.038874325 0.15280942
 #> naive_bayes_pa10 0.62825  NaN        0.09750 0.039259236 0.11965865
 #>                  SensitivitySD SpecificitySD Pos Pred ValueSD Neg Pred ValueSD
 #> kknn_pa1           0.028867513   0.046303348      0.025408332       0.05033554
@@ -1176,8 +1176,8 @@ get_validation_metrics(i)
 #> naive_bayes_pa5    0.047707442   0.124889284      0.057697487       0.07848726
 #> naive_bayes_pa6    0.047707442   0.038500000      0.021422340       0.06898792
 #> naive_bayes_pa7    0.045711961   0.087548082      0.034500000       0.07430287
-#> naive_bayes_pa8    0.095339306   0.079378314      0.049078169       0.13950239
-#> naive_bayes_pa9    0.047707442   0.164228246      0.066188493       0.06841296
+#> naive_bayes_pa8    0.074204110   0.079378314      0.047176972       0.11782614
+#> naive_bayes_pa9    0.070717749   0.164228246      0.066188493       0.09430580
 #> naive_bayes_pa10   0.047871355   0.101500000      0.058654355       0.07656588
 #>                  PrecisionSD    RecallSD       F1SD PrevalenceSD
 #> kknn_pa1         0.025408332 0.028867513 0.02051625  0.014617341
@@ -1197,8 +1197,8 @@ get_validation_metrics(i)
 #> naive_bayes_pa5  0.057697487 0.047707442 0.02954093  0.006350853
 #> naive_bayes_pa6  0.021422340 0.047707442 0.02207563  0.006928203
 #> naive_bayes_pa7  0.034500000 0.045711961 0.02382401  0.017320508
-#> naive_bayes_pa8  0.049078169 0.095339306 0.06617338  0.017897858
-#> naive_bayes_pa9  0.066188493 0.047707442 0.03694478  0.007889867
+#> naive_bayes_pa8  0.047176972 0.074204110 0.05328149  0.017897858
+#> naive_bayes_pa9  0.066188493 0.070717749 0.04690682  0.007889867
 #> naive_bayes_pa10 0.058654355 0.047871355 0.04463556  0.014177447
 #>                  Detection RateSD Detection PrevalenceSD Balanced AccuracySD
 #> kknn_pa1              0.031112698             0.03914397          0.02655027
@@ -1218,8 +1218,8 @@ get_validation_metrics(i)
 #> naive_bayes_pa5       0.032612625             0.06884282          0.05349766
 #> naive_bayes_pa6       0.031972645             0.03950527          0.02952259
 #> naive_bayes_pa7       0.028722813             0.04550000          0.04242641
-#> naive_bayes_pa8       0.067430829             0.05372383          0.07484818
-#> naive_bayes_pa9       0.036395970             0.07701082          0.07637190
+#> naive_bayes_pa8       0.053382269             0.04040936          0.06484083
+#> naive_bayes_pa9       0.050295792             0.07701082          0.07637190
 #> naive_bayes_pa10      0.038531372             0.04242641          0.05999097
 #>                   AccuracySD     KappaSD AccuracyLowerSD AccuracyUpperSD
 #> kknn_pa1         0.025729361 0.053922012     0.036013886     0.007958224
@@ -1239,8 +1239,8 @@ get_validation_metrics(i)
 #> naive_bayes_pa5  0.039381679 0.093114177     0.058529195     0.018997807
 #> naive_bayes_pa6  0.028248894 0.061732622     0.037049516     0.012816006
 #> naive_bayes_pa7  0.029159047 0.072302605     0.040566817     0.012816006
-#> naive_bayes_pa8  0.078400680 0.160754471     0.105594744     0.032393415
-#> naive_bayes_pa9  0.054912051 0.136255887     0.071453365     0.028241518
+#> naive_bayes_pa8  0.065012819 0.136561036     0.091237328     0.023329166
+#> naive_bayes_pa9  0.056077328 0.136255887     0.083278649     0.028241518
 #> naive_bayes_pa10 0.056340483 0.121071260     0.072010995     0.028948230
 #>                  AccuracyNullSD AccuracyPValueSD McnemarPValueSD PositiveSD
 #> kknn_pa1            0.014617341     0.0000000000       0.2600000  0.5773503
@@ -1260,8 +1260,8 @@ get_validation_metrics(i)
 #> naive_bayes_pa5     0.006350853     0.0033040379       0.4341674  0.5773503
 #> naive_bayes_pa6     0.006928203     0.0005773503       0.2600000  0.5773503
 #> naive_bayes_pa7     0.017320508     0.0010000000       0.3570934  0.5773503
-#> naive_bayes_pa8     0.017897858     0.0093452305       0.2620744  0.5773503
-#> naive_bayes_pa9     0.007889867     0.0093452305       0.4341674  0.5773503
+#> naive_bayes_pa8     0.017897858     0.0028722813       0.3002221  0.5773503
+#> naive_bayes_pa9     0.007889867     0.0093452305       0.3958152  0.5773503
 #> naive_bayes_pa10    0.014177447     0.0014142136       0.3268286  0.5773503
 #>                  NegativeSD True PositiveSD False PositiveSD True NegativeSD
 #> kknn_pa1          0.5000000       1.1547005        0.5773503       0.5773503
@@ -1281,9 +1281,9 @@ get_validation_metrics(i)
 #> naive_bayes_pa5   0.0000000       1.2583057        0.9574271       1.5000000
 #> naive_bayes_pa6   0.0000000       1.2583057        0.9574271       0.5000000
 #> naive_bayes_pa7   0.5773503       0.9574271        0.9574271       1.4142136
-#> naive_bayes_pa8   0.5773503       2.1602469        1.9148542       0.5000000
-#> naive_bayes_pa9   0.5000000       1.2583057        0.9574271       2.3804761
-#> naive_bayes_pa10  0.5000000       1.5000000        0.9574271       1.0000000
+#> naive_bayes_pa8   0.5773503       1.7078251        1.5000000       0.5000000
+#> naive_bayes_pa9   0.5000000       1.7320508        1.4142136       2.3804761
+#> naive_bayes_pa10  0.5000000       1.5000000        1.0000000       1.0000000
 #>                  False NegativeSD     CBISD pAUCSD Omission_10pctSD
 #> kknn_pa1                0.5773503 0.2989582     NA      0.040837075
 #> kknn_pa2                1.0000000 0.3394820     NA      0.022852790
@@ -1296,14 +1296,14 @@ get_validation_metrics(i)
 #> kknn_pa9                0.5773503 0.1783206     NA      0.028087660
 #> kknn_pa10               0.9574271 0.3339975     NA      0.028087660
 #> naive_bayes_pa1         0.8164966 0.1453742     NA      0.002886751
-#> naive_bayes_pa2         1.2909944 0.3224076     NA      0.002886751
-#> naive_bayes_pa3         2.0615528 0.4782977     NA      0.002886751
-#> naive_bayes_pa4         1.2909944 0.1574217     NA      0.002886751
+#> naive_bayes_pa2         1.2909944 0.3710750     NA      0.002886751
+#> naive_bayes_pa3         2.0615528 0.4894714     NA      0.002886751
+#> naive_bayes_pa4         1.2909944 0.3448926     NA      0.002886751
 #> naive_bayes_pa5         1.5000000 0.3371324     NA      0.002886751
-#> naive_bayes_pa6         0.5000000 0.3119920     NA      0.002886751
+#> naive_bayes_pa6         0.5000000 0.3415855     NA      0.002886751
 #> naive_bayes_pa7         1.0000000 0.3722419     NA      0.002886751
-#> naive_bayes_pa8         0.9574271 0.2722976     NA      0.002886751
-#> naive_bayes_pa9         1.8929694 0.2686286     NA      0.002886751
+#> naive_bayes_pa8         0.9574271 0.2688302     NA      0.002886751
+#> naive_bayes_pa9         1.8929694 0.2591287     NA      0.002886751
 #> naive_bayes_pa10        1.5000000 0.2947206     NA      0.002886751
 ```
 
@@ -1315,38 +1315,38 @@ obtained with the following code:
 mean_validation_metrics(i)
 #> $`Araucaria angustifolia`
 #>          algo       ROC       TSS Sensitivity Specificity Pos Pred Value
-#> 1        kknn 0.9600632 0.8702531    0.959550      0.9106       0.946875
-#> 2 naive_bayes 0.9785421 0.8570063    0.976775      0.8934       0.938975
-#>   Neg Pred Value Precision   Recall       F1 Prevalence Detection Rate
-#> 1        0.93605  0.946875 0.959550 0.952625   0.622325         0.5973
-#> 2        0.95955  0.938975 0.976775 0.950975   0.622300         0.6079
+#> 1        kknn 0.9600632 0.8702531     0.95955      0.9106       0.946875
+#> 2 naive_bayes 0.9783813 0.8554804     0.97560      0.8934       0.939000
+#>   Neg Pred Value Precision  Recall       F1 Prevalence Detection Rate
+#> 1        0.93605  0.946875 0.95955 0.952625   0.622325       0.597300
+#> 2        0.95790  0.939000 0.97560 0.949650   0.622300       0.607175
 #>   Detection Prevalence Balanced Accuracy Accuracy    Kappa AccuracyLower
-#> 1             0.633575           0.93525  0.94105 0.874225        0.8021
-#> 2             0.680750           0.92865  0.93845 0.867700        0.7985
+#> 1             0.633575          0.935250 0.941050 0.874225      0.802100
+#> 2             0.680750          0.927875 0.936975 0.864750      0.796525
 #>   AccuracyUpper AccuracyNull AccuracyPValue McnemarPValue Positive Negative
-#> 1       0.99010     0.622325       0.000175     0.9198583     20.5    12.45
-#> 2       0.98945     0.622300       0.002075     0.7535500     20.5    12.45
+#> 1      0.990100     0.622325       0.000175     0.9198583     20.5    12.45
+#> 2      0.988775     0.622300       0.001750     0.7407833     20.5    12.45
 #>   True Positive False Positive True Negative False Negative      CBI pAUC
 #> 1        19.675          0.900        11.325          1.200 0.695725  NaN
-#> 2        20.025          0.925        11.125          2.575 0.578125  NaN
+#> 2        20.000          0.925        11.125          2.575 0.585175  NaN
 #>   Omission_10pct      ROCSD      TSSSD SensitivitySD SpecificitySD
 #> 1        0.06225 0.03966102 0.07355905    0.03846638    0.05730697
-#> 2        0.09750 0.03159376 0.11081311    0.06154248    0.10256431
+#> 2        0.09750 0.03192845 0.10881183    0.06172999    0.10256431
 #>   Pos Pred ValueSD Neg Pred ValueSD PrecisionSD   RecallSD       F1SD
 #> 1       0.03353828       0.05874474  0.03353828 0.03846638 0.02836501
-#> 2       0.05051347       0.09122526  0.05051347 0.06154248 0.03645742
+#> 2       0.05032335       0.09164692  0.05032335 0.06172999 0.03616443
 #>   PrevalenceSD Detection RateSD Detection PrevalenceSD Balanced AccuracySD
 #> 1   0.01042697       0.02971791             0.03455492          0.03680474
-#> 2   0.01095487       0.04113926             0.05761225          0.05540512
+#> 2   0.01095487       0.04112438             0.05628080          0.05440438
 #>   AccuracySD    KappaSD AccuracyLowerSD AccuracyUpperSD AccuracyNullSD
 #> 1 0.03474926 0.07332129      0.04826437      0.01178634     0.01042697
-#> 2 0.04637601 0.10433055      0.06258141      0.02154619     0.01095487
+#> 2 0.04515375 0.10191120      0.06232820      0.02063976     0.01095487
 #>   AccuracyPValueSD McnemarPValueSD PositiveSD NegativeSD True PositiveSD
 #> 1      0.000307735       0.1407015  0.5773503  0.4309401        1.029985
-#> 2      0.003609519       0.3691840  0.5773503  0.4309401        1.535323
+#> 2      0.002962224       0.3691636  0.5773503  0.4309401        1.537455
 #>   False PositiveSD True NegativeSD False NegativeSD     CBISD pAUCSD
 #> 1         0.776428       0.7596395        0.7237325        NA     NA
-#> 2         1.247911       1.2532715        1.2810435 0.2960514     NA
+#> 2         1.256362       1.2532715        1.2810435 0.3224453     NA
 #>   Omission_10pctSD
 #> 1      0.033114898
 #> 2      0.002886751
@@ -1453,8 +1453,8 @@ i
 #> Cross-validation metrics       :
 #> $`Araucaria angustifolia`
 #>          algo       ROC       TSS Sensitivity Specificity
-#> 1        kknn 0.9600632 0.8702531    0.959550      0.9106
-#> 2 naive_bayes 0.9785421 0.8570063    0.976775      0.8934
+#> 1        kknn 0.9600632 0.8702531     0.95955      0.9106
+#> 2 naive_bayes 0.9783813 0.8554804     0.97560      0.8934
 #> 
 #> 
 #> ========== Prediction ==========
@@ -1548,5 +1548,5 @@ cells in a grid.
 
 end_time <- Sys.time()
 end_time - start_time
-#> Time difference of 22.22269 secs
+#> Time difference of 22.92719 secs
 ```
