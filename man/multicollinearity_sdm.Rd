@@ -23,7 +23,7 @@ or a custom \code{function}.}
 \item{variables_selected}{A vector with pre-selected variables names to filter variables.}
 
 \item{cumulative_proportion}{A \code{numeric} with the threshold for cumulative proportion in
-PCA. Standard is 0.99, meaning that axes returned as predictors sum up more than 99% of
+PCA. Standard is 0.99, meaning that axes returned as predictors sum up more than 99\% of
 environmental variance.}
 
 \item{th}{Threshold to be applied in VIF routine. See ?usdm::vifcor.}

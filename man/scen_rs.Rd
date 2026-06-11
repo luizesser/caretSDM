@@ -5,21 +5,23 @@
 \alias{scen_rs}
 \title{Bioclimatic Variables}
 \format{
-## `scen_rs`
+\subsection{\code{scen_rs}}{
+
 A \code{stars} with 5 attribute and 3 bands:
 \describe{
-  \item{current}{Current scenario with the average values for the years 1970-2000}
-  \item{ca_ssp245_2090}{Intermediate scenario for the year 2090 and GCM CanESM5}
-  \item{ca_ssp585_2090}{Extreme  scenario for the year 2090 and GCM CanESM5}
-  \item{mi_ssp245_2090}{Intermediate scenario for the year 2090 and GCM MIROC6}
-  \item{mi_ssp585_2090}{Extreme  scenario for the year 2090 and GCM MIROC6}
-  \item{bio1}{Annual Mean Temperature}
-  \item{bio4}{Temperature Seasonality}
-  \item{bio12}{Annual Precipitation}
+\item{current}{Current scenario with the average values for the years 1970-2000}
+\item{ca_ssp245_2090}{Intermediate scenario for the year 2090 and GCM CanESM5}
+\item{ca_ssp585_2090}{Extreme  scenario for the year 2090 and GCM CanESM5}
+\item{mi_ssp245_2090}{Intermediate scenario for the year 2090 and GCM MIROC6}
+\item{mi_ssp585_2090}{Extreme  scenario for the year 2090 and GCM MIROC6}
+\item{bio1}{Annual Mean Temperature}
+\item{bio4}{Temperature Seasonality}
+\item{bio12}{Annual Precipitation}
+}
 }
 }
 \source{
-<https://www.worldclim.org/>
+\url{https://www.worldclim.org/}
 }
 \usage{
 scen_rs

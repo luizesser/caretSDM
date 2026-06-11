@@ -5,18 +5,20 @@
 \alias{parana}
 \title{Paraná State}
 \format{
-## `parana`
+\subsection{\code{parana}}{
+
 A \code{sf} with 1 row and 5 columns:
 \describe{
-  \item{GID0}{State code}
-  \item{CODIGOIB1}{State's phone code}
-  \item{NOMEUF2}{Name of the state}
-  \item{SIGLAUF3}{Abbreviation of the state's name}
-  \item{geom}{Geometry column of the \code{sf}}
+\item{GID0}{State code}
+\item{CODIGOIB1}{State's phone code}
+\item{NOMEUF2}{Name of the state}
+\item{SIGLAUF3}{Abbreviation of the state's name}
+\item{geom}{Geometry column of the \code{sf}}
+}
 }
 }
 \source{
-<https://www.ibge.gov.br/geociencias/cartas-e-mapas/bases-cartograficas-continuas/15759-brasil.html>
+\url{https://www.ibge.gov.br/geociencias/cartas-e-mapas/bases-cartograficas-continuas/15759-brasil.html}
 }
 \usage{
 parana

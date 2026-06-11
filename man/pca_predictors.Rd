@@ -16,7 +16,7 @@ get_pca_model(i)
 \item{i}{A \code{input_sdm} object.}
 
 \item{cumulative_proportion}{A \code{numeric} with the threshold for cumulative proportion.
-Standard is 0.99, meaning that axes returned as predictors sum up more than 99% of environmental
+Standard is 0.99, meaning that axes returned as predictors sum up more than 99\% of environmental
 variance.}
 }
 \value{

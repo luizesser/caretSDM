@@ -5,17 +5,19 @@
 \alias{rivs}
 \title{Hydrologic Variables}
 \format{
-## `rivs`
+\subsection{\code{rivs}}{
+
 A \code{sf} with 1031 attributes and 2 fiels:
 \describe{
-  \item{LENGTH_KM}{Length of the river reach segment, in kilometers.}
-  \item{DIST_DN_KM}{Distance from the reach outlet, i.e., the most downstream pixel of the reach,
-  to the final downstream location along the river network, in kilometers. This downstream
-  location is either the pour point into the ocean or an endorheic sink.}
+\item{LENGTH_KM}{Length of the river reach segment, in kilometers.}
+\item{DIST_DN_KM}{Distance from the reach outlet, i.e., the most downstream pixel of the reach,
+to the final downstream location along the river network, in kilometers. This downstream
+location is either the pour point into the ocean or an endorheic sink.}
+}
 }
 }
 \source{
-<https://www.hydrosheds.org/>
+\url{https://www.hydrosheds.org/}
 }
 \usage{
 rivs

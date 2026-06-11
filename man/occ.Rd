@@ -5,16 +5,18 @@
 \alias{occ}
 \title{Araucaria angustifolia occurrence data}
 \format{
-## `occ`
+\subsection{\code{occ}}{
+
 A \code{data.frame} with 420 rows and 3 columns (EPSG:6933):
 \describe{
-  \item{species}{Species name}
-  \item{decimalLongitude}{Longitude in meters}
-  \item{decimalLatitude}{Latitude in meters}
+\item{species}{Species name}
+\item{decimalLongitude}{Longitude in meters}
+\item{decimalLatitude}{Latitude in meters}
+}
 }
 }
 \source{
-<https://www.gbif.org>
+\url{https://www.gbif.org}
 }
 \usage{
 occ

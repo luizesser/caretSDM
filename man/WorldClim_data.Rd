@@ -24,7 +24,7 @@ WorldClim_data(path = NULL,
 "2030", "2050", "2070" and/or "2090". You can use a vector to provide more than one entry.}
 
 \item{gcm}{GCMs to be considered in future scenarios. You can use a vector to provide more than
-one entry.}
+one entry (see Details).}
 
 \item{ssp}{SSPs for future data. Possible entries are: "126", "245", "370" and/or "585".
 You can use a vector to provide more than one entry.}
@@ -41,7 +41,37 @@ This function allows to download data from WorldClim v.2.1
 \details{
 This function will create a folder. All the data downloaded will be stored in this
 folder. Note that, despite being possible to retrieve a lot of data at once, it is not
-recommended to do so, since the data is very heavy.
+recommended to do so, since the data could be very heavy.
+
+Possible values for GCMs are:\tabular{ll}{
+   Code \tab GCM \cr
+   ac \tab ACCESS-CM2 \cr
+   ae \tab ACCESS-ESM1-5 \cr
+   bc \tab BCC-CSM2-MR \cr
+   ca \tab CanESM5 \cr
+   cc \tab CanESM5-CanOE \cr
+   ce \tab CMCC-ESM2 \cr
+   cn \tab CNRM-CM6-1 \cr
+   ch \tab CNRM-CM6-1-HR \cr
+   cr \tab CNRM-ESM2-1 \cr
+   ec \tab EC-Earth3-Veg \cr
+   ev \tab EC-Earth3-Veg-LR \cr
+   fi \tab FIO-ESM-2-0 \cr
+   gf \tab GFDL-ESM4 \cr
+   gg \tab GISS-E2-1-G \cr
+   gh \tab GISS-E2-1-H \cr
+   hg \tab HadGEM3-GC31-LL \cr
+   in \tab INM-CM4-8 \cr
+   ic \tab INM-CM5-0 \cr
+   ip \tab IPSL-CM6A-LR \cr
+   me \tab MIROC-ES2L \cr
+   mi \tab MIROC6 \cr
+   mp \tab MPI-ESM1-2-HR \cr
+   ml \tab MPI-ESM1-2-LR \cr
+   mr \tab MRI-ESM2-0 \cr
+   uk \tab UKESM1-0-LL \cr
+   all \tab All available GCMs \cr
+}
 }
 \examples{
 ## download data from multiple periods:
@@ -65,9 +95,9 @@ recommended to do so, since the data is very heavy.
 
 }
 \references{
-[https://www.worldclim.org/data/index.html](https://www.worldclim.org/data/index.html)
+\url{https://www.worldclim.org/data/index.html}
 }
 \author{
 Luíz Fernando Esser (luizesser@gmail.com)
-[https://luizfesser.wordpress.com](https://luizfesser.wordpress.com)
+\url{https://luizfesser.wordpress.com}
 }

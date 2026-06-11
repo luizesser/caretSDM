@@ -5,16 +5,18 @@
 \alias{bioc}
 \title{Bioclimatic Variables}
 \format{
-## `bioc`
+\subsection{\code{bioc}}{
+
 A \code{stars} with 1 attribute and 3 bands:
 \describe{
-  \item{bio1}{Annual Mean Temperature}
-  \item{bio4}{Temperature Seasonality}
-  \item{bio12}{Annual Precipitation}
+\item{bio1}{Annual Mean Temperature}
+\item{bio4}{Temperature Seasonality}
+\item{bio12}{Annual Precipitation}
+}
 }
 }
 \source{
-<https://www.worldclim.org/>
+\url{https://www.worldclim.org/}
 }
 \usage{
 bioc

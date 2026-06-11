@@ -5,15 +5,17 @@
 \alias{algorithms}
 \title{Caret Algorithms}
 \format{
-## `algorithms`
+\subsection{\code{algorithms}}{
+
 A \code{data.frame} with 230 rows and 60 columns:
 \describe{
-  \item{X}{Algorithms names}
-  \item{Further columns}{Algorithms attributes}
+\item{X}{Algorithms names}
+\item{Further columns}{Algorithms attributes}
+}
 }
 }
 \source{
-<https://topepo.github.io/caret/models-clustered-by-tag-similarity.html>
+\url{https://topepo.github.io/caret/models-clustered-by-tag-similarity.html}
 }
 \usage{
 algorithms

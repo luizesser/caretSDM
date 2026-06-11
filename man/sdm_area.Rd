@@ -43,9 +43,9 @@ used to model species distribution in lines and not grid cells.}
 }
 \value{
 A \code{sdm_area} object containing:
-   \item{grid}{\code{sf} with \code{POLYGON} geometry representing the grid for the study area.}
-   \item{cell_size}{\code{numeric} information regarding the size of the cell used to rescale
-   variables to the study area, representing also the cell size in the \code{grid}.}
+\item{grid}{\code{sf} with \code{POLYGON} geometry representing the grid for the study area.}
+\item{cell_size}{\code{numeric} information regarding the size of the cell used to rescale
+variables to the study area, representing also the cell size in the \code{grid}.}
 }
 \description{
 This function creates a new \code{sdm_area} object.
