@@ -48,9 +48,9 @@
       -- Model settings --
       Predictors used                : bio1, bio12 
       Model hyperparameters          :
-                       species       algorithm                          parameters
-      1 Araucaria angustifolia naive_bayes_pa1 laplace=0, usekernel=TRUE, adjust=1
-      2 Araucaria angustifolia naive_bayes_pa2 laplace=0, usekernel=TRUE, adjust=1
+                       species       algorithm                           parameters
+      1 Araucaria angustifolia naive_bayes_pa1 laplace=0, usekernel=FALSE, adjust=1
+      2 Araucaria angustifolia naive_bayes_pa2 laplace=0, usekernel=FALSE, adjust=1
       -- Threshold selection --
       Threshold method               : threshold 
       Threshold criteria             : 0.5 
@@ -60,7 +60,7 @@
       Cross-validation metrics       :
       $`Araucaria angustifolia`
                algo       ROC       TSS Sensitivity Specificity
-      1 naive_bayes 0.8495643 0.1953128       0.977       0.218
+      1 naive_bayes 0.8524245 0.1656022      0.9675      0.1985
       
       
       ========== Prediction ==========
@@ -119,9 +119,9 @@
       -- Model settings --
       Predictors used                : bio1, bio12 
       Model hyperparameters          :
-                       species       algorithm                          parameters
-      1 Araucaria angustifolia naive_bayes_pa1 laplace=0, usekernel=TRUE, adjust=1
-      2 Araucaria angustifolia naive_bayes_pa2 laplace=0, usekernel=TRUE, adjust=1
+                       species       algorithm                           parameters
+      1 Araucaria angustifolia naive_bayes_pa1 laplace=0, usekernel=FALSE, adjust=1
+      2 Araucaria angustifolia naive_bayes_pa2  laplace=0, usekernel=TRUE, adjust=1
       -- Threshold selection --
       Threshold method               : threshold 
       Threshold criteria             : 0.5 
@@ -130,8 +130,8 @@
       -- Performance statistics --
       Cross-validation metrics       :
       $`Araucaria angustifolia`
-               algo       ROC       TSS Sensitivity Specificity
-      1 naive_bayes 0.8301571 0.4364947       0.946         0.5
+               algo       ROC     TSS Sensitivity Specificity
+      1 naive_bayes 0.8507893 0.39611       0.949        0.45
       
       
       ========== Prediction ==========
@@ -194,7 +194,7 @@
       1  Salminus brasiliensis naive_bayes_pa1 laplace=0, usekernel=FALSE, adjust=1
       2  Salminus brasiliensis naive_bayes_pa2 laplace=0, usekernel=FALSE, adjust=1
       3 Araucaria angustifolia naive_bayes_pa1  laplace=0, usekernel=TRUE, adjust=1
-      4 Araucaria angustifolia naive_bayes_pa2  laplace=0, usekernel=TRUE, adjust=1
+      4 Araucaria angustifolia naive_bayes_pa2 laplace=0, usekernel=FALSE, adjust=1
       -- Threshold selection --
       Threshold method               : threshold 
       Threshold criteria             : 0.5 
@@ -203,12 +203,12 @@
       -- Performance statistics --
       Cross-validation metrics       :
       $`Salminus brasiliensis`
-               algo       ROC  TSS Sensitivity Specificity
-      1 naive_bayes 0.9041667 0.65           1        0.65
+               algo    ROC  TSS Sensitivity Specificity
+      1 naive_bayes 0.8975 0.65           1        0.65
       
       $`Araucaria angustifolia`
                algo       ROC       TSS Sensitivity Specificity
-      1 naive_bayes 0.8925104 0.3524286      0.9935      0.3655
+      1 naive_bayes 0.8366899 0.2559507      0.9935      0.2655
       
       
       ========== Prediction ==========
@@ -271,7 +271,7 @@
       1  Salminus brasiliensis naive_bayes_pa1 laplace=0, usekernel=FALSE, adjust=1
       2  Salminus brasiliensis naive_bayes_pa2  laplace=0, usekernel=TRUE, adjust=1
       3 Araucaria angustifolia naive_bayes_pa1 laplace=0, usekernel=FALSE, adjust=1
-      4 Araucaria angustifolia naive_bayes_pa2  laplace=0, usekernel=TRUE, adjust=1
+      4 Araucaria angustifolia naive_bayes_pa2 laplace=0, usekernel=FALSE, adjust=1
       -- Threshold selection --
       Threshold method               : threshold 
       Threshold criteria             : 0.5 
@@ -281,11 +281,11 @@
       Cross-validation metrics       :
       $`Salminus brasiliensis`
                algo       ROC      TSS Sensitivity Specificity
-      1 naive_bayes 0.7311363 0.251462        0.89      0.4165
+      1 naive_bayes 0.6979979 0.251462        0.89      0.4165
       
       $`Araucaria angustifolia`
                algo       ROC       TSS Sensitivity Specificity
-      1 naive_bayes 0.8938589 0.3466975      0.9845      0.3715
+      1 naive_bayes 0.8852163 0.4802378      0.9755      0.5145
       
       
       ========== Prediction ==========

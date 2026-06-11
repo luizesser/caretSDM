@@ -56,7 +56,7 @@
       Cross-validation metrics       :
       $`Araucaria angustifolia`
                algo       ROC       TSS Sensitivity Specificity
-      1 naive_bayes 0.8318881 0.2148404      0.9665       0.255
+      1 naive_bayes 0.8204348 0.2845519      0.9665       0.325
       
       
       ========== Prediction ==========

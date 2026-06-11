@@ -13,7 +13,7 @@ test_that("multicollinearity vifcor", {
   expect_true("vif" %in% names(i$predictors$variable_selection))
   expect_equal(i$predictors$variable_selection$vif$threshold, th)
   expect_true(any(get_predictor_names(i) %in% i$predictors$variable_selection$vif$selected_variables))
-  expect_equal(selected_variables(i), c("div", "prod"))
+  expect_equal(selected_variables(i), c("bio1", "prod"))
   expect_snapshot(vif_summary(i))
 
   sa <- sdm_area(parana, 1)
@@ -116,11 +116,11 @@ test_that("multicollinearity pca", {
   expect_true(all(get_predictor_names(i)[-c(1:6)] %in% colnames(i$scenarios$data$current)))
 
   val <- pca_summary(i)
-  expect_equal(val$importance[, 1] |> as.numeric() |> round(4), c(573.37600, 0.99440, 0.99440))
-  expect_equal(val$sdev |> round(3), c(573.376, 42.846, 0.259, 0.000, 0.000, 0.000))
-  expect_equal(as.numeric(val$rotation[, 1]) |> round(4), c(-0.00170, -0.02410, -0.00000, -0.99910, -0.02240, -0.02580))
-  expect_equal(as.numeric(val$x[1, ]) |> round(4), c(-19.95450, 73.23320, 0.45290, -0.00020, 0.00000, -0.00000))
-  expect_equal(as.numeric(val$center) |> round(3), c(19.2340, 299.4870, 0.0650, 5734.4410, 280.2530, 318.7220))
+  expect_equal(val$importance[, 1] |> as.numeric() |> round(4), c(3753.9363, 0.9954, 0.9954))
+  expect_equal(val$sdev |> round(3), c(3753.9360, 254.6980, 0.3860, 0.000, 0.000, 0.000))
+  expect_equal(as.numeric(val$rotation[, 1]) |> round(4), c(-0.0001, -0.0453, -0.0000, -0.9969, -0.0452, -0.0454))
+  expect_equal(as.numeric(val$x[1, ]) |> round(4), c(-1050.37970, 380.35420, 0.36860, -0.00030, -0.00000, -0.00000))
+  expect_equal(as.numeric(val$center) |> round(3), c(19.2340, 1514.345, 0.013, 28912.132, 1495.110, 1533.579))
   expect_equal(class(get_pca_model(i)), "prcomp")
 
   # No scenarios
@@ -139,11 +139,11 @@ test_that("multicollinearity pca", {
   expect_true(all(get_predictor_names(i)[-c(1:6)] %in% colnames(i$scenarios$data$current)))
 
   val <- pca_summary(i)
-  expect_equal(val$importance[, 1] |> as.numeric() |> round(4), c(573.37600, 0.99440, 0.99440))
-  expect_equal(val$sdev |> round(3), c(573.376, 42.846, 0.259, 0.000, 0.000, 0.000))
-  expect_equal(as.numeric(val$rotation[, 1]) |> round(4), c(-0.00170, -0.02410, -0.00000, -0.99910, -0.02240, -0.02580))
-  expect_equal(as.numeric(val$x[1, ]) |> round(4), c(-19.95450, 73.23320, 0.45290, -0.00020, 0.00000, -0.00000))
-  expect_equal(as.numeric(val$center) |> round(3), c(19.2340, 299.4870, 0.0650, 5734.4410, 280.2530, 318.7220))
+  expect_equal(val$importance[, 1] |> as.numeric() |> round(4), c(3753.9363, 0.9954, 0.9954))
+  expect_equal(val$sdev |> round(3), c(3753.9360, 254.6980, 0.3860, 0.000, 0.000, 0.000))
+  expect_equal(as.numeric(val$rotation[, 1]) |> round(4), c(-0.0001, -0.0453, -0.0000, -0.9969, -0.0452, -0.0454))
+  expect_equal(as.numeric(val$x[1, ]) |> round(4), c(-1050.37970, 380.35420, 0.36860, -0.00030, -0.00000, -0.00000))
+  expect_equal(as.numeric(val$center) |> round(3), c(19.2340, 1514.345, 0.013, 28912.132, 1495.110, 1533.579))
   expect_equal(class(get_pca_model(i)), "prcomp")
 })
 

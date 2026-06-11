@@ -59,8 +59,8 @@
       Cross-validation metrics       :
       $`Araucaria angustifolia`
                algo       ROC      Sens       Spec      ROCSD
-      1        kknn 0.5832341 0.9936242 0.03194444 0.09516020
-      2 naive_bayes 0.8595126 0.9737298 0.37986111 0.03705704
+      1        kknn 0.6473093 0.9928230 0.05416667 0.15758692
+      2 naive_bayes 0.8514628 0.9721425 0.35833333 0.05340634
       
       
       ========== Prediction ==========
@@ -146,8 +146,8 @@
       Cross-validation metrics       :
       $`Araucaria angustifolia`
                algo       ROC      Sens       Spec      ROCSD
-      1        kknn 0.5832341 0.9936242 0.03194444 0.09516020
-      2 naive_bayes 0.8595126 0.9737298 0.37986111 0.03705704
+      1        kknn 0.6473093 0.9928230 0.05416667 0.15758692
+      2 naive_bayes 0.8514628 0.9721425 0.35833333 0.05340634
       
       
       ========== Prediction ==========
@@ -226,15 +226,15 @@
       6 Araucaria angustifolia        kknn_pa3  kmax=9, distance=2, kernel=optimal
       -- Threshold selection --
       Threshold method               : mean 
-      Threshold criteria             : 0.7213733 
+      Threshold criteria             : 0.749386 
       
       ========== Assessment ==========
       -- Performance statistics --
       Cross-validation metrics       :
       $`Araucaria angustifolia`
                algo       ROC      Sens       Spec      ROCSD
-      1        kknn 0.5832341 0.9936242 0.03194444 0.09516020
-      2 naive_bayes 0.8595126 0.9737298 0.37986111 0.03705704
+      1        kknn 0.6473093 0.9928230 0.05416667 0.15758692
+      2 naive_bayes 0.8514628 0.9721425 0.35833333 0.05340634
       
       
       ========== Prediction ==========
@@ -253,7 +253,7 @@
       =========== Overview ===========
       Focal Taxon                    : Araucaria angustifolia 
       Threshold method               : mean 
-      Threshold criteria             : 0.7213733 
+      Threshold criteria             : 0.749386 
       Prediction layers              : current 
       Prediction unit                : Occurrence Probability 
       Spatial extent                 : -5301744.44724281, -3295036.62222337, -4601744.44724281, -2795036.62222337  (xmin,xmax,ymin,ymax)
@@ -345,16 +345,16 @@
       1  Salminus brasiliensis naive_bayes_pa1 laplace=0, usekernel=FALSE, adjust=1
       2  Salminus brasiliensis naive_bayes_pa2 laplace=0, usekernel=FALSE, adjust=1
       3 Araucaria angustifolia naive_bayes_pa1  laplace=0, usekernel=TRUE, adjust=1
-      4 Araucaria angustifolia naive_bayes_pa2  laplace=0, usekernel=TRUE, adjust=1
+      4 Araucaria angustifolia naive_bayes_pa2 laplace=0, usekernel=FALSE, adjust=1
       
       Validation metrics           :
       $`Salminus brasiliensis`
                algo       ROC       TSS Sensitivity Specificity
-      1 naive_bayes 0.6609127 0.2277778        0.95      0.2775
+      1 naive_bayes 0.6787698 0.2277778        0.95      0.2775
       
       $`Araucaria angustifolia`
                algo       ROC       TSS Sensitivity Specificity
-      1 naive_bayes 0.8759758 0.3906614       0.974      0.4165
+      1 naive_bayes 0.8550803 0.3605538       0.977      0.3835
       
 
 ---

@@ -442,9 +442,9 @@ sdm_area.stars <- function(x, cell_size = NULL, output_crs = NULL, variables_sel
   }
 
   grd <- out_dir |>
-    list.files(full.names = T) |>
-    stars::read_stars(normalize_path = F) |>
-    stats::setNames(var_names)
+    list.files(full.names = TRUE) |>
+    stars::read_stars(normalize_path = FALSE) |>
+    stats::setNames(sub("\\.[^.]+$", "", basename(list.files(out_dir, full.names = TRUE))))
 
   n_col <- attr(grd, "dimensions")[["x"]]$to
   n_row <- attr(grd, "dimensions")[["y"]]$to
