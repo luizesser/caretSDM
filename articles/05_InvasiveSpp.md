@@ -611,7 +611,7 @@ i
 #> ============= Model ============
 #> -- Multicollinearity --
 #> Variable selection method      : vif 
-#> Selected variables             : bio1, bio12 
+#> Selected variables             : bio1, bio4 
 #> 
 #> ========== Assessment ==========
 ```
@@ -700,9 +700,9 @@ i
 #> ============= Model ============
 #> -- Multicollinearity --
 #> Variable selection method      : vif 
-#> Selected variables             : bio1, bio12 
+#> Selected variables             : bio1, bio4 
 #> -- Model settings --
-#> Predictors used                : bio1, bio12 
+#> Predictors used                : bio1, bio4 
 #> Model hyperparameters          :
 #>                   species        algorithm                           parameters
 #> 1  Araucaria angustifolia  naive_bayes_pa1  laplace=0, usekernel=TRUE, adjust=1
@@ -795,9 +795,9 @@ i
 #> ============= Model ============
 #> -- Multicollinearity --
 #> Variable selection method      : vif 
-#> Selected variables             : bio1, bio12 
+#> Selected variables             : bio1, bio4 
 #> -- Model settings --
-#> Predictors used                : bio1, bio12 
+#> Predictors used                : bio1, bio4 
 #> Model hyperparameters          :
 #>                   species        algorithm                           parameters
 #> 1  Araucaria angustifolia  naive_bayes_pa1  laplace=0, usekernel=TRUE, adjust=1
@@ -893,9 +893,9 @@ i
 #> ============= Model ============
 #> -- Multicollinearity --
 #> Variable selection method      : vif 
-#> Selected variables             : bio1, bio12 
+#> Selected variables             : bio1, bio4 
 #> -- Model settings --
-#> Predictors used                : bio1, bio12 
+#> Predictors used                : bio1, bio4 
 #> Model hyperparameters          :
 #>                   species        algorithm                           parameters
 #> 1  Araucaria angustifolia  naive_bayes_pa1  laplace=0, usekernel=TRUE, adjust=1
@@ -1359,9 +1359,9 @@ i
 #> ============= Model ============
 #> -- Multicollinearity --
 #> Variable selection method      : vif 
-#> Selected variables             : bio1, bio12 
+#> Selected variables             : bio1, bio4 
 #> -- Model settings --
-#> Predictors used                : bio1, bio12 
+#> Predictors used                : bio1, bio4 
 #> Model hyperparameters          :
 #>                   species        algorithm                           parameters
 #> 1  Araucaria angustifolia  naive_bayes_pa1  laplace=0, usekernel=TRUE, adjust=1
@@ -1488,5 +1488,5 @@ cells in a grid.
 
 end_time <- Sys.time()
 end_time - start_time
-#> Time difference of 18.66272 secs
+#> Time difference of 20.08512 secs
 ```

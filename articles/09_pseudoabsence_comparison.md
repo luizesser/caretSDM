@@ -114,7 +114,7 @@ run_sdm <- function(pseudoabsence_method, ...) {
       ),
       variables_selected = "vif"
     ) |>
-    predict_sdm(th = 0.9) |>
+    predict_sdm(th = 0.8) |>
     ensemble_sdm()
   return(i)
 }
@@ -209,27 +209,27 @@ mean_perf_all
 ```
 
     ##                     method        algo       ROC       ROCSD
-    ## 1                   Random         fda 0.8754993 0.085439303
-    ## 2                   Random         glm 0.7199502 0.063634574
-    ## 3                   Random        kknn 0.8642331 0.051282920
-    ## 4                   Random naive_bayes 0.8791250 0.048858554
-    ## 5                   Random        nnet 0.7423152 0.121096985
-    ## 6                   Random          rf 0.8759032 0.045148396
-    ## 7                   Random   svmRadial 0.9002474 0.044029839
-    ## 8  Environmental Constrain         fda 0.9938096 0.081485119
-    ## 9  Environmental Constrain         glm 0.7735754 0.055487551
-    ## 10 Environmental Constrain        kknn 0.9730556 0.024289331
-    ## 11 Environmental Constrain naive_bayes 0.9960180 0.009451948
-    ## 12 Environmental Constrain        nnet 0.8558365 0.156385356
-    ## 13 Environmental Constrain          rf 0.9965006 0.006377251
-    ## 14 Environmental Constrain   svmRadial 0.9985168 0.002974778
-    ## 15  Geographical Constrain         fda 0.9334746 0.083782513
-    ## 16  Geographical Constrain         glm 0.7661502 0.056351037
-    ## 17  Geographical Constrain        kknn 0.9310052 0.043564110
-    ## 18  Geographical Constrain naive_bayes 0.9410717 0.035163885
-    ## 19  Geographical Constrain        nnet 0.8244594 0.160101410
-    ## 20  Geographical Constrain          rf 0.9490086 0.030377988
-    ## 21  Geographical Constrain   svmRadial 0.9545815 0.029159831
+    ## 1                   Random         fda 0.8759370 0.087241201
+    ## 2                   Random         glm 0.7208164 0.059768308
+    ## 3                   Random        kknn 0.8630350 0.053710483
+    ## 4                   Random naive_bayes 0.8790531 0.050385223
+    ## 5                   Random        nnet 0.7343957 0.122230734
+    ## 6                   Random          rf 0.8776543 0.043331161
+    ## 7                   Random   svmRadial 0.8994953 0.044711569
+    ## 8  Environmental Constrain         fda 0.9928639 0.081557130
+    ## 9  Environmental Constrain         glm 0.7725747 0.060104982
+    ## 10 Environmental Constrain        kknn 0.9720469 0.024826767
+    ## 11 Environmental Constrain naive_bayes 0.9954687 0.010576544
+    ## 12 Environmental Constrain        nnet 0.8670637 0.161781179
+    ## 13 Environmental Constrain          rf 0.9963111 0.006540733
+    ## 14 Environmental Constrain   svmRadial 0.9985059 0.003360904
+    ## 15  Geographical Constrain         fda 0.9327909 0.083751829
+    ## 16  Geographical Constrain         glm 0.7658892 0.054406189
+    ## 17  Geographical Constrain        kknn 0.9296304 0.043344080
+    ## 18  Geographical Constrain naive_bayes 0.9405870 0.036677821
+    ## 19  Geographical Constrain        nnet 0.8212010 0.149724345
+    ## 20  Geographical Constrain          rf 0.9506110 0.030391360
+    ## 21  Geographical Constrain   svmRadial 0.9514008 0.031823030
 
 ``` r
 

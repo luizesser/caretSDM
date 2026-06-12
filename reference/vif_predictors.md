@@ -123,7 +123,7 @@ i
 #> ============= Model ============
 #> -- Multicollinearity --
 #> Variable selection method      : vif 
-#> Selected variables             : bio1, bio12 
+#> Selected variables             : bio1, bio4 
 #> 
 #> ========== Assessment ==========
 
@@ -131,16 +131,16 @@ i
 vif_summary(i)
 #> 1 variables from the 3 input variables have collinearity problem: 
 #>  
-#> bio4 
+#> bio12 
 #> 
 #> After excluding the collinear variables, the linear correlation coefficients ranges between: 
-#> min correlation ( bio12 ~ bio1 ):  -0.3182326 
-#> max correlation ( bio12 ~ bio1 ):  -0.3182326 
+#> min correlation ( bio4 ~ bio1 ):  -0.3182326 
+#> max correlation ( bio4 ~ bio1 ):  -0.3182326 
 #> 
 #> ---------- VIFs of the remained variables -------- 
 #>   Variables      VIF
 #> 1      bio1 1.112684
-#> 2     bio12 1.112684
+#> 2      bio4 1.112684
 selected_variables(i)
-#> [1] "bio1"  "bio12"
+#> [1] "bio1" "bio4"
 ```

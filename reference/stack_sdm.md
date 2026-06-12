@@ -84,195 +84,218 @@ suppressWarnings()
 i <- stack_sdm(i, meta_algo = "nnet", ctrl = ctrl_sdm)
 #> Training meta-learner for: Araucaria angustifolia
 #> # weights:  23
-#> initial  value 108.600079 
-#> iter  10 value 55.045355
-#> final  value 55.039924 
+#> initial  value 108.642769 
+#> iter  10 value 55.044376
+#> iter  20 value 55.039419
+#> iter  30 value 54.904800
+#> iter  40 value 54.831573
+#> iter  50 value 54.830748
+#> iter  50 value 54.830748
+#> final  value 54.830748 
 #> converged
-#> Warning: Partial AUC correction not defined for ROC curves below the diagonal.
 #> # weights:  67
-#> initial  value 103.758247 
-#> iter  10 value 38.833769
-#> iter  20 value 31.293827
-#> iter  30 value 29.338925
-#> iter  40 value 27.052904
-#> iter  50 value 26.580397
-#> iter  60 value 26.252377
-#> iter  70 value 26.222419
-#> iter  80 value 26.135457
-#> iter  90 value 26.008467
-#> iter 100 value 25.764117
-#> final  value 25.764117 
+#> initial  value 104.057657 
+#> iter  10 value 54.159274
+#> iter  20 value 42.428457
+#> iter  30 value 32.451186
+#> iter  40 value 30.569141
+#> iter  50 value 29.327606
+#> iter  60 value 28.721296
+#> iter  70 value 27.735747
+#> iter  80 value 24.412101
+#> iter  90 value 23.631049
+#> iter 100 value 23.582697
+#> final  value 23.582697 
 #> stopped after 100 iterations
 #> Warning: Partial AUC correction not defined for ROC curves below the diagonal.
 #> # weights:  111
-#> initial  value 135.897037 
-#> final  value 55.039699 
+#> initial  value 136.302818 
+#> final  value 55.039827 
 #> converged
 #> # weights:  23
-#> initial  value 258.560283 
-#> iter  10 value 57.099883
-#> iter  20 value 46.856021
-#> iter  30 value 44.722845
-#> iter  40 value 43.725217
-#> iter  50 value 43.477366
-#> final  value 43.477364 
+#> initial  value 259.093772 
+#> iter  10 value 57.464543
+#> iter  20 value 54.677755
+#> iter  30 value 48.329168
+#> iter  40 value 48.219007
+#> final  value 48.219006 
 #> converged
 #> Warning: Partial AUC correction not defined for ROC curves below the diagonal.
 #> # weights:  67
-#> initial  value 95.448489 
-#> iter  10 value 47.398741
-#> iter  20 value 43.227570
-#> iter  30 value 42.315806
-#> iter  40 value 42.304203
-#> iter  50 value 42.287337
-#> final  value 42.287035 
+#> initial  value 95.862805 
+#> iter  10 value 53.672253
+#> iter  20 value 46.998737
+#> iter  30 value 45.956958
+#> iter  40 value 45.747951
+#> iter  50 value 45.738336
+#> final  value 45.738223 
 #> converged
 #> Warning: Partial AUC correction not defined for ROC curves below the diagonal.
 #> # weights:  111
-#> initial  value 80.317922 
-#> iter  10 value 45.974185
-#> iter  20 value 42.579221
-#> iter  30 value 42.256052
-#> iter  40 value 42.222074
-#> iter  50 value 42.168230
-#> iter  60 value 42.117418
-#> iter  70 value 42.087948
-#> iter  80 value 42.073391
-#> iter  90 value 42.072704
-#> iter 100 value 42.072628
-#> final  value 42.072628 
+#> initial  value 80.379815 
+#> iter  10 value 48.273541
+#> iter  20 value 45.740333
+#> iter  30 value 45.686786
+#> iter  40 value 45.658320
+#> iter  50 value 45.623006
+#> iter  60 value 45.604657
+#> iter  70 value 45.591284
+#> final  value 45.590435 
+#> converged
+#> Warning: Partial AUC correction not defined for ROC curves below the diagonal.
+#> # weights:  23
+#> initial  value 140.760200 
+#> iter  10 value 55.046307
+#> iter  20 value 55.042355
+#> iter  30 value 55.036693
+#> iter  40 value 54.910747
+#> iter  50 value 54.844936
+#> iter  60 value 54.836545
+#> iter  70 value 54.768774
+#> iter  80 value 54.647594
+#> iter  90 value 54.646010
+#> iter 100 value 54.643834
+#> final  value 54.643834 
 #> stopped after 100 iterations
-#> Warning: Partial AUC correction not defined for ROC curves below the diagonal.
-#> # weights:  23
-#> initial  value 140.835811 
-#> final  value 55.042684 
-#> converged
 #> # weights:  67
-#> initial  value 125.265962 
-#> iter  10 value 55.129110
-#> iter  20 value 55.048698
-#> iter  30 value 54.998468
-#> iter  40 value 54.825528
-#> iter  50 value 54.806023
-#> iter  60 value 54.794748
-#> iter  70 value 54.781229
-#> iter  80 value 54.717750
-#> iter  90 value 54.592264
-#> iter 100 value 36.117110
-#> final  value 36.117110 
-#> stopped after 100 iterations
-#> Warning: Partial AUC correction not defined for ROC curves below the diagonal.
-#> # weights:  111
-#> initial  value 234.989744 
-#> iter  10 value 55.752340
-#> iter  20 value 55.033089
-#> iter  30 value 38.874448
-#> iter  40 value 32.078827
-#> iter  50 value 27.314119
-#> iter  60 value 22.560794
-#> iter  70 value 21.180326
-#> iter  80 value 20.401282
-#> iter  90 value 19.930483
-#> iter 100 value 19.646656
-#> final  value 19.646656 
-#> stopped after 100 iterations
-#> Warning: Partial AUC correction not defined for ROC curves below the diagonal.
-#> # weights:  23
-#> initial  value 108.591033 
-#> iter  10 value 57.784692
-#> iter  20 value 57.394921
-#> iter  30 value 52.381264
-#> iter  40 value 52.187220
-#> iter  50 value 31.325745
-#> iter  60 value 30.940868
-#> iter  70 value 30.926010
-#> iter  80 value 30.923787
-#> final  value 30.923779 
-#> converged
-#> Warning: Partial AUC correction not defined for ROC curves below the diagonal.
-#> # weights:  67
-#> initial  value 126.467987 
-#> iter  10 value 57.787707
-#> iter  20 value 57.786981
-#> final  value 57.786909 
-#> converged
-#> Warning: Partial AUC correction not defined for ROC curves below the diagonal.
-#> # weights:  111
-#> initial  value 267.692038 
-#> iter  10 value 57.833302
-#> iter  20 value 57.787367
-#> final  value 57.786908 
-#> converged
-#> # weights:  23
-#> initial  value 143.797519 
-#> iter  10 value 42.232616
-#> iter  20 value 40.811571
-#> final  value 40.811522 
-#> converged
-#> Warning: Partial AUC correction not defined for ROC curves below the diagonal.
-#> # weights:  67
-#> initial  value 116.955445 
-#> iter  10 value 40.437078
-#> iter  20 value 38.727866
-#> iter  30 value 38.425141
-#> iter  40 value 38.384121
-#> iter  50 value 38.362436
-#> iter  60 value 38.360708
-#> final  value 38.360707 
-#> converged
-#> Warning: Partial AUC correction not defined for ROC curves below the diagonal.
-#> # weights:  111
-#> initial  value 115.607771 
-#> iter  10 value 41.606041
-#> iter  20 value 38.505495
-#> iter  30 value 38.201256
-#> iter  40 value 38.132549
-#> iter  50 value 38.091982
-#> iter  60 value 38.087735
-#> final  value 38.087695 
-#> converged
-#> Warning: Partial AUC correction not defined for ROC curves below the diagonal.
-#> # weights:  23
-#> initial  value 185.094579 
-#> final  value 57.793863 
-#> converged
-#> Warning: Partial AUC correction not defined for ROC curves below the diagonal.
-#> # weights:  67
-#> initial  value 206.103482 
-#> iter  10 value 55.825787
-#> iter  20 value 31.165728
-#> iter  30 value 28.428164
-#> iter  40 value 27.640815
-#> iter  50 value 27.616391
-#> iter  60 value 27.605841
-#> iter  70 value 27.592002
-#> iter  80 value 27.582631
-#> iter  90 value 27.513011
-#> iter 100 value 26.769151
-#> final  value 26.769151 
+#> initial  value 125.553887 
+#> iter  10 value 55.136117
+#> iter  20 value 55.054753
+#> iter  30 value 54.883424
+#> iter  40 value 54.864862
+#> iter  50 value 53.369409
+#> iter  60 value 35.249814
+#> iter  70 value 33.586052
+#> iter  80 value 32.499708
+#> iter  90 value 31.347759
+#> iter 100 value 30.393129
+#> final  value 30.393129 
 #> stopped after 100 iterations
 #> Warning: Partial AUC correction not defined for ROC curves below the diagonal.
 #> # weights:  111
-#> initial  value 163.378546 
-#> iter  10 value 38.980465
-#> iter  20 value 27.121334
-#> iter  30 value 22.905095
-#> iter  40 value 22.237791
-#> iter  50 value 20.578573
-#> iter  60 value 15.927004
-#> iter  70 value 14.763404
-#> iter  80 value 14.126781
-#> iter  90 value 13.278670
-#> iter 100 value 11.773852
-#> final  value 11.773852 
+#> initial  value 235.925316 
+#> iter  10 value 55.796976
+#> iter  20 value 55.060308
+#> iter  30 value 54.927287
+#> iter  40 value 44.882946
+#> iter  50 value 32.724838
+#> iter  60 value 29.740715
+#> iter  70 value 29.059700
+#> iter  80 value 28.766945
+#> iter  90 value 28.651619
+#> iter 100 value 28.589905
+#> final  value 28.589905 
+#> stopped after 100 iterations
+#> # weights:  23
+#> initial  value 108.855286 
+#> iter  10 value 57.788110
+#> iter  20 value 57.784558
+#> iter  30 value 57.673793
+#> iter  40 value 35.347278
+#> iter  50 value 21.441044
+#> iter  60 value 19.890835
+#> iter  70 value 19.881146
+#> final  value 19.881108 
+#> converged
+#> Warning: Partial AUC correction not defined for ROC curves below the diagonal.
+#> # weights:  67
+#> initial  value 127.166083 
+#> iter  10 value 57.787072
+#> iter  10 value 57.787072
+#> iter  10 value 57.787072
+#> final  value 57.787072 
+#> converged
+#> Warning: Partial AUC correction not defined for ROC curves below the diagonal.
+#> # weights:  111
+#> initial  value 267.311242 
+#> iter  10 value 57.819291
+#> iter  20 value 57.787647
+#> final  value 57.786883 
+#> converged
+#> Warning: Partial AUC correction not defined for ROC curves below the diagonal.
+#> # weights:  23
+#> initial  value 143.798978 
+#> iter  10 value 41.771414
+#> iter  20 value 39.359303
+#> final  value 39.334479 
+#> converged
+#> Warning: Partial AUC correction not defined for ROC curves below the diagonal.
+#> # weights:  67
+#> initial  value 117.661565 
+#> iter  10 value 43.630621
+#> iter  20 value 37.518490
+#> iter  30 value 36.850078
+#> iter  40 value 36.766183
+#> iter  50 value 36.719618
+#> final  value 36.719575 
+#> converged
+#> Warning: Partial AUC correction not defined for ROC curves below the diagonal.
+#> # weights:  111
+#> initial  value 115.631426 
+#> iter  10 value 42.874248
+#> iter  20 value 37.625991
+#> iter  30 value 36.897484
+#> iter  40 value 36.797548
+#> iter  50 value 36.749645
+#> iter  60 value 36.710664
+#> iter  70 value 36.692043
+#> iter  80 value 36.612113
+#> iter  90 value 36.558735
+#> iter 100 value 36.517680
+#> final  value 36.517680 
+#> stopped after 100 iterations
+#> Warning: Partial AUC correction not defined for ROC curves below the diagonal.
+#> # weights:  23
+#> initial  value 184.386788 
+#> iter  10 value 57.794010
+#> iter  20 value 57.791405
+#> iter  30 value 50.499946
+#> iter  40 value 34.219155
+#> iter  50 value 33.966819
+#> iter  60 value 33.821201
+#> iter  70 value 33.791153
+#> iter  80 value 33.783653
+#> iter  90 value 33.780123
+#> iter 100 value 33.777222
+#> final  value 33.777222 
+#> stopped after 100 iterations
+#> Warning: Partial AUC correction not defined for ROC curves below the diagonal.
+#> # weights:  67
+#> initial  value 205.627231 
+#> iter  10 value 54.543604
+#> iter  20 value 29.932008
+#> iter  30 value 27.796186
+#> iter  40 value 22.307523
+#> iter  50 value 19.951554
+#> iter  60 value 19.455105
+#> iter  70 value 19.053832
+#> iter  80 value 17.578168
+#> iter  90 value 17.427921
+#> iter 100 value 17.251758
+#> final  value 17.251758 
+#> stopped after 100 iterations
+#> Warning: Partial AUC correction not defined for ROC curves below the diagonal.
+#> # weights:  111
+#> initial  value 163.664029 
+#> iter  10 value 44.144007
+#> iter  20 value 23.952789
+#> iter  30 value 23.553007
+#> iter  40 value 23.447256
+#> iter  50 value 23.345208
+#> iter  60 value 23.262434
+#> iter  70 value 22.627157
+#> iter  80 value 19.944006
+#> iter  90 value 17.106841
+#> iter 100 value 15.104620
+#> final  value 15.104620 
 #> stopped after 100 iterations
 #> Warning: Partial AUC correction not defined for ROC curves below the diagonal.
 #> Warning: There were missing values in resampled performance measures.
 #> # weights:  23
-#> initial  value 402.840494 
-#> iter  10 value 113.346280
-#> iter  20 value 82.466967
-#> iter  30 value 81.207313
-#> final  value 81.202395 
+#> initial  value 402.841770 
+#> iter  10 value 110.395272
+#> iter  20 value 84.986331
+#> iter  30 value 84.492639
+#> final  value 84.492218 
 #> converged
 ```

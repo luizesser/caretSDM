@@ -142,7 +142,7 @@ i
     ## Cross-validation metrics       :
     ## $`Araucaria angustifolia`
     ##     algo       ROC       TSS Sensitivity Specificity
-    ## 1 maxent 0.8846952 0.5652384      0.8835     0.75425
+    ## 1 maxent 0.8846145 0.5635493      0.8835     0.75425
     ## 
     ## 
     ## ========== Prediction ==========
@@ -243,29 +243,29 @@ get_models(i)
     ## Resampling results across tuning parameters:
     ## 
     ##   regmult  linear  quadratic  product  threshold  hinge  ROC        TSS      
-    ##   0.5       TRUE    TRUE       TRUE    FALSE      FALSE  0.8738090  0.5652384
-    ##   2.0      FALSE   FALSE      FALSE     TRUE       TRUE  0.8846952  0.5356198
+    ##   0.5       TRUE    TRUE       TRUE    FALSE      FALSE  0.8741145  0.5635493
+    ##   2.0      FALSE   FALSE      FALSE     TRUE       TRUE  0.8846145  0.5356198
     ##   4.0       TRUE    TRUE       TRUE     TRUE       TRUE  0.8690229  0.5506127
     ##   Sensitivity  Specificity  Pos Pred Value  Neg Pred Value  Precision  Recall 
-    ##   0.81100      0.75425      0.82375         0.74000         0.82375    0.81100
+    ##   0.80950      0.75425      0.82350         0.73825         0.82350    0.80950
     ##   0.88350      0.65200      0.79000         0.81225         0.79000    0.88350
     ##   0.82975      0.72125      0.81125         0.75725         0.81125    0.82975
     ##   F1       Prevalence  Detection Rate  Detection Prevalence  Balanced Accuracy
-    ##   0.81700  0.586       0.47500         0.57700               0.78275          
-    ##   0.82950  0.586       0.51750         0.66175               0.76750          
-    ##   0.81775  0.586       0.48625         0.60175               0.77550          
+    ##   0.81600  0.586       0.47400         0.57600               0.7820           
+    ##   0.82950  0.586       0.51750         0.66175               0.7675           
+    ##   0.81775  0.586       0.48625         0.60175               0.7755           
     ##   Accuracy  Kappa    AccuracyLower  AccuracyUpper  AccuracyNull  AccuracyPValue
-    ##   0.78775   0.56375  0.73200        0.83625        0.586         0             
+    ##   0.78675   0.56200  0.73075        0.83525        0.586         0             
     ##   0.78775   0.54900  0.73200        0.83650        0.586         0             
     ##   0.78475   0.55375  0.72875        0.83350        0.586         0             
     ##   McnemarPValue  Positive  Negative  True Positive  False Positive
-    ##   0.5005         148.25    104.75    120.25         28.00         
-    ##   0.0010         148.25    104.75    131.00         17.25         
-    ##   0.1235         148.25    104.75    123.00         25.25         
-    ##   True Negative  False Negative  CBI      pAUC  Omission_10pct
-    ##   79.00          25.75           0.71850  NaN   0.101         
-    ##   68.25          36.50           0.68350  NaN   0.101         
-    ##   75.50          29.25           0.75825  NaN   0.101         
+    ##   0.52725        148.25    104.75    120            28.25         
+    ##   0.00100        148.25    104.75    131            17.25         
+    ##   0.12350        148.25    104.75    123            25.25         
+    ##   True Negative  False Negative  CBI     pAUC  Omission_10pct
+    ##   79.00          25.75           0.7455  NaN   0.101         
+    ##   68.25          36.50           0.6825  NaN   0.101         
+    ##   75.50          29.25           0.7615  NaN   0.101         
     ## 
     ## Accuracy was used to select the optimal model using the largest value.
     ## The final values used for the model were regmult = 2, linear = FALSE,

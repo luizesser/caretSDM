@@ -354,6 +354,8 @@ sa <- add_scenarios(sa,
 #> ℹ Using GDAL to make the grid and resample the variables.
 #> ! Making grid over the study area is an expensive task. Please, be patient!
 #> ℹ Using GDAL to make the grid and resample the variables.
+#> Reescaling data ■■■■■■■■■■■■■■■■■■■■■■■           75% | ETA:  1s
+#> 
 #> ! Making grid over the study area is an expensive task. Please, be patient!
 #> ℹ Using GDAL to make the grid and resample the variables.
 sa
@@ -556,7 +558,7 @@ which is very self-explanatory.
 vif_summary(i)
 #> 2 variables from the 5 input variables have collinearity problem: 
 #>  
-#> bio12 bio4 
+#> bio4 bio12 
 #> 
 #> After excluding the collinear variables, the linear correlation coefficients ranges between: 
 #> min correlation ( DIST_DN_KM ~ LENGTH_KM ):  -0.03727042 
@@ -1507,5 +1509,5 @@ species using a grid simplefeatures instead of lines.
 
 end_time <- Sys.time()
 end_time - start_time
-#> Time difference of 36.09611 secs
+#> Time difference of 38.46234 secs
 ```
