@@ -459,7 +459,6 @@ i
 #> Temporal extent (inferred)     : 2090 - 2090 
 #> Observation type               : Presence-only 
 #> Predictor names                : bio1, bio4, bio12 
-#> Software                       : caretSDM v1.9.7, R version 4.6.1 (2026-06-24)
 #> 
 #> ============= Data =============
 #> -- Biodiversity data --
@@ -586,7 +585,6 @@ i
 #> Temporal extent (inferred)     : 2090 - 2090 
 #> Observation type               : Presence-absence (pseudo-absence) 
 #> Predictor names                : bio1, bio4, bio12 
-#> Software                       : caretSDM v1.9.7, R version 4.6.1 (2026-06-24)
 #> 
 #> ============= Data =============
 #> -- Biodiversity data --
@@ -672,7 +670,6 @@ i
 #> Predictor names                : bio1, bio4, bio12 
 #> Modelling algorithms           : naive_bayes, kknn 
 #> Model complexity (tuneLength)  : 1 
-#> Software                       : caretSDM v1.9.7, R version 4.6.1 (2026-06-24)
 #> 
 #> ============= Data =============
 #> -- Biodiversity data --
@@ -767,7 +764,6 @@ i
 #> Predictor names                : bio1, bio4, bio12 
 #> Modelling algorithms           : naive_bayes, kknn 
 #> Model complexity (tuneLength)  : 1 
-#> Software                       : caretSDM v1.9.7, R version 4.6.1 (2026-06-24)
 #> 
 #> ============= Data =============
 #> -- Biodiversity data --
@@ -865,7 +861,6 @@ i
 #> Modelling algorithms           : naive_bayes, kknn 
 #> Model complexity (tuneLength)  : 1 
 #> Model averaging                : average 
-#> Software                       : caretSDM v1.9.7, R version 4.6.1 (2026-06-24)
 #> 
 #> ============= Data =============
 #> -- Biodiversity data --
@@ -1331,7 +1326,6 @@ i
 #> Modelling algorithms           : naive_bayes, kknn 
 #> Model complexity (tuneLength)  : 1 
 #> Model averaging                : average 
-#> Software                       : caretSDM v1.9.7, R version 4.6.1 (2026-06-24)
 #> 
 #> ============= Data =============
 #> -- Biodiversity data --
@@ -1488,5 +1482,5 @@ cells in a grid.
 
 end_time <- Sys.time()
 end_time - start_time
-#> Time difference of 18.91561 secs
+#> Time difference of 19.87497 secs
 ```
