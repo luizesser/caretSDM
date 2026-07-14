@@ -513,8 +513,7 @@ i <- data_clean(i,
   duplicated = TRUE,
   identical = TRUE,
   institutions = TRUE,
-  invalid = TRUE,
-  terrestrial = TRUE
+  invalid = TRUE
 )
 #> Cell_ids identified, removing duplicated cell_id.
 #> Testing country capitals
@@ -1570,5 +1569,5 @@ cells in a grid.
 
 end_time <- Sys.time()
 end_time - start_time
-#> Time difference of 24.9938 secs
+#> Time difference of 23.03395 secs
 ```

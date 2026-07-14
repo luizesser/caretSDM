@@ -374,6 +374,8 @@ sa <- add_scenarios(sa,
 #> ℹ Using GDAL to make the grid and resample the variables.
 #> ! Making grid over the study area is an expensive task. Please, be patient!
 #> ℹ Using GDAL to make the grid and resample the variables.
+#> Reescaling data ■■■■■■■■■■■■■■■■                  50% | ETA:  2s
+#> 
 #> ! Making grid over the study area is an expensive task. Please, be patient!
 #> ℹ Using GDAL to make the grid and resample the variables.
 #> ! Making grid over the study area is an expensive task. Please, be patient!
@@ -529,8 +531,7 @@ i <- data_clean(i,
   duplicated = TRUE,
   identical = TRUE,
   institutions = TRUE,
-  invalid = TRUE,
-  terrestrial = TRUE
+  invalid = TRUE
 )
 #> Cell_ids identified, removing duplicated cell_id.
 #> Testing country capitals
@@ -1529,5 +1530,5 @@ species using a grid simplefeatures instead of lines.
 
 end_time <- Sys.time()
 end_time - start_time
-#> Time difference of 38.42464 secs
+#> Time difference of 35.18417 secs
 ```
