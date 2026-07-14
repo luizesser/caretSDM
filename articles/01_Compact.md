@@ -97,7 +97,7 @@ i
 #> Modelling algorithms           : naive_bayes, kknn 
 #> Model complexity (tuneLength)  : 1 
 #> Model averaging                : average 
-#> Software                       : caretSDM v1.9.6, R version 4.6.0 (2026-04-24)
+#> Software                       : caretSDM v1.9.7, R version 4.6.1 (2026-06-24)
 #> 
 #> ============= Data =============
 #> -- Biodiversity data --

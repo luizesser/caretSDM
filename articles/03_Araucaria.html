@@ -25,7 +25,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">caretSDM</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.9.6</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.9.7</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -48,6 +48,7 @@
     <li><a class="dropdown-item" href="../articles/08_runtime-benchmark.html">8. Benchmarking SDM Package Performance in R</a></li>
     <li><a class="dropdown-item" href="../articles/09_pseudoabsence_comparison.html">9. Comparing Pseudoabsence Methods in Species Distribution Modelling</a></li>
     <li><a class="dropdown-item" href="../articles/10_tunelength-ablation.html">10. Ablation Analysis of Hyperparameter Tuning Length in caretSDM</a></li>
+    <li><a class="dropdown-item" href="../articles/videos/Videos.html">Videos</a></li>
   </ul>
 </li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
@@ -73,7 +74,7 @@
                         <h4 data-toc-skip class="author">[author
 name]</h4>
             
-            <h4 data-toc-skip class="date">2026-06-12</h4>
+            <h4 data-toc-skip class="date">2026-07-14</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/luizesser/caretSDM/blob/main/vignettes/articles/03_Araucaria.Rmd" class="external-link"><code>vignettes/articles/03_Araucaria.Rmd</code></a></small>
       <div class="d-none name"><code>03_Araucaria.Rmd</code></div>
@@ -134,11 +135,30 @@ standard, <code>GBIF_data</code> function sets
 example code for this step would be:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">occ</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/GBIF_data.html">GBIF_data</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Araucaria angustifolia"</span><span class="op">)</span>, as_df <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-<p>But we already have a <code>occ</code> object included in the
-package, which is the same output, but with filtered records to match
-our study area. Note that coordinates are in a metric CRS (EPSG:
-6933).</p>
+<p>To make this process a little more difficult for our package to
+solve, we can transform the <code>occ</code> data to have a different
+CRS using the <code>sf</code> package. Here, we change it to
+EPSG:6933:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Create a sf object</span></span>
+<span><span class="va">occ_sf</span> <span class="op">&lt;-</span> <span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_as_sf.html" class="external-link">st_as_sf</a></span><span class="op">(</span></span>
+<span>  <span class="va">occ</span>,</span>
+<span>  coords <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"decimalLongitude"</span>, <span class="st">"decimalLatitude"</span><span class="op">)</span>,</span>
+<span>  crs <span class="op">=</span> <span class="fl">4326</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Transform to EPSG:6933</span></span>
+<span><span class="va">occ_sf</span> <span class="op">&lt;-</span> <span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_transform.html" class="external-link">st_transform</a></span><span class="op">(</span><span class="va">occ_sf</span>, <span class="fl">6933</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Substitute the coordinates</span></span>
+<span><span class="va">occ</span><span class="op">[</span><span class="fl">2</span><span class="op">:</span><span class="fl">3</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_coordinates.html" class="external-link">st_coordinates</a></span><span class="op">(</span><span class="va">occ_sf</span><span class="op">)</span></span></code></pre></div>
+<p>The <code>caretSDM</code> package also accepts <code>sf</code>
+objects and this approach could be used if the user has trouble passing
+<code>data.frame</code>s to the package. As we already have a
+<code>occ</code> object included in the package, which is the same
+output, but with filtered records to match our study area. Note that
+coordinates are already in the metric CRS (EPSG:6933).</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">occ</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt;                    species decimalLongitude decimalLatitude</span></span>
 <span><span class="co">#&gt; 327 Araucaria angustifolia         -4700678        -3065133</span></span>
@@ -161,7 +181,7 @@ in the folder “input_data/WorldClim_data_current/”. If period is set to
 could run this script with a smaller resolution, but as the aim here is
 to show how the package works, we will use a resolution of 10
 arc-minutes, which is very coarse, but quicker to download and run.</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Download current bioclimatic variables</span></span>
 <span><span class="fu"><a href="../reference/WorldClim_data.html">WorldClim_data</a></span><span class="op">(</span></span>
 <span>  path <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -175,7 +195,7 @@ arc-minutes, which is very coarse, but quicker to download and run.</p>
 <p>As in the previous section, we already have a <code>bioc</code>
 object included in the package, which is the same output, but masked to
 match our study area and with fewer variables.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">bioc</span></span>
 <span><span class="co">#&gt; stars object with 3 dimensions and 1 attribute</span></span>
 <span><span class="co">#&gt; attribute(s):</span></span>
@@ -200,7 +220,7 @@ species. To educational purposes, we will use a simple polygon of Parana
 state boundaries that is available in caretSDM as the
 <code>parana</code> object (see <code><a href="../reference/parana.html">?parana</a></code> for more
 information on the data)..</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">parana</span></span>
 <span><span class="co">#&gt; Simple feature collection with 1 feature and 4 fields</span></span>
 <span><span class="co">#&gt; Geometry type: MULTIPOLYGON</span></span>
@@ -209,7 +229,7 @@ information on the data)..</p>
 <span><span class="co">#&gt; Geodetic CRS:  WGS 84</span></span>
 <span><span class="co">#&gt;   GID0 CODIGOIB1 NOMEUF2 SIGLAUF3                           geom</span></span>
 <span><span class="co">#&gt; 1   19        41  PARANA       PR MULTIPOLYGON (((-52.06416 -...</span></span></code></pre></div>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">parana</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="../reference/tidyverse-methods.html">select_predictors</a></span><span class="op">(</span><span class="va">NOMEUF2</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
@@ -238,7 +258,7 @@ categorical variables) of the values falling within the cell. The
 approach using <code>stars</code> will do the same thing, but weighting
 for the area of each value within the cell. For other arguments meaning
 see <code><a href="../reference/sdm_area.html">?sdm_area</a></code>.</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">sa</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sdm_area.html">sdm_area</a></span><span class="op">(</span><span class="va">parana</span>,</span>
 <span>  cell_size <span class="op">=</span> <span class="fl">25000</span>,</span>
 <span>  output_crs <span class="op">=</span> <span class="fl">6933</span>,</span>
@@ -269,7 +289,7 @@ but we will not do that here, once the package will automatically drop
 them further. You can explore the grid generated and stored in the
 <code>sdm_area</code> object using the functions
 <code><a href="../reference/plot_occurrences.html">mapview_grid()</a></code> or <code><a href="../reference/plot_occurrences.html">plot_grid()</a></code>.</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_occurrences.html">plot_grid</a></span><span class="op">(</span><span class="va">sa</span><span class="op">)</span></span></code></pre></div>
 <p><img src="03_Araucaria_files/figure-html/plot_sdm_area-1.png" class="r-plt" alt="" width="700"></p>
 <p>Now that we have a study area, we can assign predictor variables to
@@ -280,7 +300,7 @@ usually will only use the fist two arguments, which are the
 object with predictors data. Note that <code>add_predictors</code> also
 has a <code>gdal</code> argument, which works as the previous one in
 <code>sdm_area</code> function.</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">sa</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_predictors.html">add_predictors</a></span><span class="op">(</span><span class="va">sa</span>,</span>
 <span>  <span class="va">bioc</span>,</span>
 <span>  variables_selected <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -307,7 +327,7 @@ the predictors data as the current scenario by applying the function
 <code>add_scenario</code> without considering any other argument. This
 happens because the argument <code>pred_as_scen</code> is standarly set
 to <code>TRUE</code>.</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># This is an example code for when you want only to obtain the current distribution.</span></span>
 <span><span class="co"># For projecting to current and future scenarios we will add all scenarios in the following steps</span></span>
 <span><span class="co"># in only one run.</span></span>
@@ -315,7 +335,7 @@ to <code>TRUE</code>.</p>
 <p>If we are aiming to project species distributions in other scenarios,
 we can download data and add in the same way we did for current
 data.</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/WorldClim_data.html">WorldClim_data</a></span><span class="op">(</span></span>
 <span>  path <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  period <span class="op">=</span> <span class="st">"future"</span>,</span>
@@ -331,7 +351,7 @@ data.</p>
 <code>scen</code> object in the package, which is the same output from
 above, but masked to match our study area and with fewer variables (see
 <code><a href="../reference/scen.html">?scen</a></code> for more information on the data).</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">scen</span></span>
 <span><span class="co">#&gt; stars object with 3 dimensions and 4 attributes</span></span>
 <span><span class="co">#&gt; attribute(s):</span></span>
@@ -353,7 +373,7 @@ otherwise it will filter predictors (see the warning below). See that we
 also provide a stationary argument, where the modeler can inform
 variables that do not change between scenarios. These variables can be,
 e.g., soil variables.</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">sa</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_scenarios.html">add_scenarios</a></span><span class="op">(</span><span class="va">sa</span>,</span>
 <span>  scen <span class="op">=</span> <span class="va">scen</span>,</span>
 <span>  scenarios_names <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -409,7 +429,7 @@ and functions, as pseudoabsences generation. For a reference, GBIF data
 is in occ_crs = 4326, but our records stored in <code>occ</code> object
 is transformed to 6933 (see <code><a href="../reference/occ.html">?occ</a></code> for more information on
 the data).</p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">oc</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/occurrences_sdm.html">occurrences_sdm</a></span><span class="op">(</span><span class="va">occ</span>, occ_crs <span class="op">=</span> <span class="fl">6933</span><span class="op">)</span></span>
 <span><span class="va">oc</span></span>
 <span><span class="co">#&gt;              caretSDM           </span></span>
@@ -434,7 +454,7 @@ the data).</p>
 <span><span class="co">#&gt; 310 Araucaria angustifolia POINT (-4717665 -3142767)</span></span>
 <span><span class="co">#&gt; 49  Araucaria angustifolia POINT (-4726011 -3148963)</span></span>
 <span><span class="co">#&gt; 124 Araucaria angustifolia POINT (-4727265 -3148517)</span></span></code></pre></div>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_occurrences.html">plot_occurrences</a></span><span class="op">(</span><span class="va">oc</span><span class="op">)</span></span></code></pre></div>
 <p><img src="03_Araucaria_files/figure-html/plot_occurrences-1.png" class="r-plt" alt="" width="700"></p>
 </div>
@@ -452,7 +472,7 @@ classes are available. First, we create the object by informing the
 occurrences and the sdm_area. This step assigns occurrences into a study
 area, excluding records outside the study area or with NAs as
 predictors.</p>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">i</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/input_sdm.html">input_sdm</a></span><span class="op">(</span><span class="va">oc</span>, <span class="va">sa</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Warning: Some records from `occ` do not fall in `pred`.</span></span>
 <span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 2 elements from `occ` were excluded.</span></span>
@@ -468,7 +488,7 @@ predictors.</p>
 <span><span class="co">#&gt; Temporal extent (inferred)     : 2090 - 2090 </span></span>
 <span><span class="co">#&gt; Observation type               : Presence-only </span></span>
 <span><span class="co">#&gt; Predictor names                : bio1, bio4, bio12 </span></span>
-<span><span class="co">#&gt; Software                       : caretSDM v1.9.6, R version 4.6.0 (2026-04-24)</span></span>
+<span><span class="co">#&gt; Software                       : caretSDM v1.9.7, R version 4.6.1 (2026-06-24)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; ============= Data =============</span></span>
 <span><span class="co">#&gt; -- Biodiversity data --</span></span>
@@ -506,7 +526,7 @@ obtained from the <code>data_clean</code> function, note that at the end
 of the Data Cleaning information there is the Duplicated Cell method.
 This method is only possible when we have both the
 <code>occurrence</code> and <code>predictors</code> data.</p>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">i</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/data_clean.html">data_clean</a></span><span class="op">(</span><span class="va">i</span>,</span>
 <span>  capitals <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  centroids <span class="op">=</span> <span class="cn">TRUE</span>,</span>
@@ -546,7 +566,7 @@ variables selection through <code>usdm</code> package. The function is a
 wrapper for <code><a href="https://rdrr.io/pkg/usdm/man/vif.html" class="external-link">usdm::vifcor</a></code>, where variables are kept given a
 maximum threshold of colinearity. The standard is 0.5. Here is a example
 code for demonstration:</p>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">i</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/vif_predictors.html">vif_predictors</a></span><span class="op">(</span><span class="va">i</span>,</span>
 <span>  th <span class="op">=</span> <span class="fl">0.5</span>,</span>
 <span>  maxobservations <span class="op">=</span> <span class="fl">5000</span>,</span>
@@ -558,7 +578,7 @@ PCA-axis and project these axis to the geographic space to use them as
 predictors. <code>pca_predictors</code> does not have arguments other
 than the <code>input_sdm</code> object. PCA-axis will be included in
 predictors together with raw variables.</p>
-<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">i</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/pca_predictors.html">pca_predictors</a></span><span class="op">(</span><span class="va">i</span>, cumulative_proportion <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
 <span><span class="va">i</span></span>
 <span><span class="co">#&gt;              caretSDM           </span></span>
@@ -571,7 +591,7 @@ predictors together with raw variables.</p>
 <span><span class="co">#&gt; Temporal extent (inferred)     : 2090 - 2090 </span></span>
 <span><span class="co">#&gt; Observation type               : Presence-only </span></span>
 <span><span class="co">#&gt; Predictor names                : bio1, bio4, bio12, PC1, PC2, PC3 </span></span>
-<span><span class="co">#&gt; Software                       : caretSDM v1.9.6, R version 4.6.0 (2026-04-24)</span></span>
+<span><span class="co">#&gt; Software                       : caretSDM v1.9.7, R version 4.6.1 (2026-06-24)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; ============= Data =============</span></span>
 <span><span class="co">#&gt; -- Biodiversity data --</span></span>
@@ -599,7 +619,7 @@ predictors together with raw variables.</p>
 <p>To better visualize PCA parameters, users can run
 <code>pca_summary</code> and <code>get_pca_model</code> functions, which
 are very self-explanatory.</p>
-<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/pca_predictors.html">pca_summary</a></span><span class="op">(</span><span class="va">i</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Importance of components:</span></span>
 <span><span class="co">#&gt;                             PC1      PC2     PC3</span></span>
@@ -636,7 +656,7 @@ argument <code>variables_selected</code> will inform which variables you
 want to use to build your pseudoabsences/models. This can either be a
 vector of variables names or a previously performed selection
 method.</p>
-<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">i</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/pseudoabsences.html">pseudoabsences</a></span><span class="op">(</span><span class="va">i</span>,</span>
 <span>  method <span class="op">=</span> <span class="st">"bioclim"</span>,</span>
 <span>  n_set <span class="op">=</span> <span class="fl">10</span>,</span>
@@ -655,7 +675,7 @@ method.</p>
 <span><span class="co">#&gt; Temporal extent (inferred)     : 2090 - 2090 </span></span>
 <span><span class="co">#&gt; Observation type               : Presence-absence (pseudo-absence) </span></span>
 <span><span class="co">#&gt; Predictor names                : bio1, bio4, bio12, PC1, PC2, PC3 </span></span>
-<span><span class="co">#&gt; Software                       : caretSDM v1.9.6, R version 4.6.0 (2026-04-24)</span></span>
+<span><span class="co">#&gt; Software                       : caretSDM v1.9.7, R version 4.6.1 (2026-06-24)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; ============= Data =============</span></span>
 <span><span class="co">#&gt; -- Biodiversity data --</span></span>
@@ -708,7 +728,7 @@ defined through <code><a href="https://rdrr.io/pkg/caret/man/trainControl.html" 
 <p>Note that, when you are using an algorithm for the first time, caret
 will ask you to install the relevant packages to properly run the
 algorithm.</p>
-<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ctrl_sdm</span> <span class="op">&lt;-</span> <span class="fu">caret</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/caret/man/trainControl.html" class="external-link">trainControl</a></span><span class="op">(</span></span>
 <span>  method <span class="op">=</span> <span class="st">"repeatedcv"</span>,</span>
 <span>  number <span class="op">=</span> <span class="fl">4</span>,</span>
@@ -739,7 +759,7 @@ algorithm.</p>
 <span><span class="co">#&gt; Predictor names                : bio1, bio4, bio12, PC1, PC2, PC3 </span></span>
 <span><span class="co">#&gt; Modelling algorithms           : naive_bayes, kknn </span></span>
 <span><span class="co">#&gt; Model complexity (tuneLength)  : 1 </span></span>
-<span><span class="co">#&gt; Software                       : caretSDM v1.9.6, R version 4.6.0 (2026-04-24)</span></span>
+<span><span class="co">#&gt; Software                       : caretSDM v1.9.7, R version 4.6.1 (2026-06-24)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; ============= Data =============</span></span>
 <span><span class="co">#&gt; -- Biodiversity data --</span></span>
@@ -816,7 +836,7 @@ is set using <code>metric</code> and <code>th</code> arguments. In the
 following example, metric is set to be “ROC” and <code>th</code> is
 equal 0.9. This means that only models with ROC &gt; 0.9 will be used in
 predictions and ensembles.</p>
-<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">i</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/predict_sdm.html">predict_sdm</a></span><span class="op">(</span><span class="va">i</span>,</span>
 <span>  metric <span class="op">=</span> <span class="st">"ROC"</span>,</span>
 <span>  th <span class="op">=</span> <span class="fl">0.9</span>,</span>
@@ -835,7 +855,7 @@ predictions and ensembles.</p>
 <span><span class="co">#&gt; Predictor names                : bio1, bio4, bio12, PC1, PC2, PC3 </span></span>
 <span><span class="co">#&gt; Modelling algorithms           : naive_bayes, kknn </span></span>
 <span><span class="co">#&gt; Model complexity (tuneLength)  : 1 </span></span>
-<span><span class="co">#&gt; Software                       : caretSDM v1.9.6, R version 4.6.0 (2026-04-24)</span></span>
+<span><span class="co">#&gt; Software                       : caretSDM v1.9.7, R version 4.6.1 (2026-06-24)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; ============= Data =============</span></span>
 <span><span class="co">#&gt; -- Biodiversity data --</span></span>
@@ -906,7 +926,7 @@ predictions and ensembles.</p>
 <span><span class="co">#&gt; Prediction layers              : current, ca_ssp245_2090, ca_ssp585_2090, mi_ssp245_2090, mi_ssp585_2090 </span></span>
 <span><span class="co">#&gt; Prediction unit                : Occurrence Probability</span></span></code></pre></div>
 <p>Finally, we can ensemble the predictions using:</p>
-<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">i</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ensemble_sdm.html">ensemble_sdm</a></span><span class="op">(</span><span class="va">i</span>,</span>
 <span>  method <span class="op">=</span> <span class="st">"average"</span></span>
 <span><span class="op">)</span></span>
@@ -930,7 +950,7 @@ predictions and ensembles.</p>
 <span><span class="co">#&gt; Modelling algorithms           : naive_bayes, kknn </span></span>
 <span><span class="co">#&gt; Model complexity (tuneLength)  : 1 </span></span>
 <span><span class="co">#&gt; Model averaging                : average </span></span>
-<span><span class="co">#&gt; Software                       : caretSDM v1.9.6, R version 4.6.0 (2026-04-24)</span></span>
+<span><span class="co">#&gt; Software                       : caretSDM v1.9.7, R version 4.6.1 (2026-06-24)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; ============= Data =============</span></span>
 <span><span class="co">#&gt; -- Biodiversity data --</span></span>
@@ -1011,7 +1031,7 @@ the majority rule, or the committee average
 (<code>committee_average</code>; the sum of binaries).</p>
 <p>Besides the AUC/ROC metric, users can get every available metric by
 model using the following code before commit to “ROC”:</p>
-<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/train_sdm.html">get_validation_metrics</a></span><span class="op">(</span><span class="va">i</span><span class="op">)</span></span>
 <span><span class="co">#&gt; $`Araucaria angustifolia`</span></span>
 <span><span class="co">#&gt;                         algo       ROC       TSS Sensitivity Specificity</span></span>
@@ -1310,7 +1330,7 @@ model using the following code before commit to “ROC”:</p>
 <span><span class="co">#&gt; naive_bayes_pa10        1.5000000 0.31105452     NA      0.002886751</span></span></code></pre></div>
 <p>Otherwise, the mean validation metric values per algorithm can also
 be obtained with the following code:</p>
-<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/train_sdm.html">mean_validation_metrics</a></span><span class="op">(</span><span class="va">i</span><span class="op">)</span></span>
 <span><span class="co">#&gt; $`Araucaria angustifolia`</span></span>
 <span><span class="co">#&gt;          algo       ROC       TSS Sensitivity Specificity Pos Pred Value</span></span>
@@ -1364,7 +1384,7 @@ that, by removing the gcms abbreviation, the remaining name repeats
 itself two times). At the end, ensembles will be named after the new
 names generated in this last step and are included in object
 <code>i</code> scenarios.</p>
-<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">i</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/gcms_ensembles.html">gcms_ensembles</a></span><span class="op">(</span><span class="va">i</span>, gcms <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ca"</span>, <span class="st">"mi"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; New names:</span></span>
 <span><span class="co">#&gt; New names:</span></span>
@@ -1386,7 +1406,7 @@ names generated in this last step and are included in object
 <span><span class="co">#&gt; Modelling algorithms           : naive_bayes, kknn </span></span>
 <span><span class="co">#&gt; Model complexity (tuneLength)  : 1 </span></span>
 <span><span class="co">#&gt; Model averaging                : average </span></span>
-<span><span class="co">#&gt; Software                       : caretSDM v1.9.6, R version 4.6.0 (2026-04-24)</span></span>
+<span><span class="co">#&gt; Software                       : caretSDM v1.9.7, R version 4.6.1 (2026-06-24)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; ============= Data =============</span></span>
 <span><span class="co">#&gt; -- Biodiversity data --</span></span>
@@ -1480,13 +1500,13 @@ species you can inform the correct species to be plotted using the
 separate projections you can plot them informing the model
 <code>id</code> (see row names of <code>get_validation_metrics</code>
 above to retrieve models ids).</p>
-<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_occurrences.html">plot_ensembles</a></span><span class="op">(</span><span class="va">i</span>,</span>
 <span>  scenario <span class="op">=</span> <span class="st">"current"</span>,</span>
 <span>  ensemble_type <span class="op">=</span> <span class="st">"average"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p><img src="03_Araucaria_files/figure-html/plot_current_results-1.png" class="r-plt" alt="" width="700"></p>
-<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_occurrences.html">plot_ensembles</a></span><span class="op">(</span><span class="va">i</span>,</span>
 <span>  scenario <span class="op">=</span> <span class="st">"_ssp245_2090"</span>,</span>
 <span>  ensemble_type <span class="op">=</span> <span class="st">"average"</span></span>
@@ -1497,7 +1517,7 @@ Plot, which informs the response curves to each variable. Here we are
 using PCA axes as predictors, so there is not much sense in plotting
 these curves, but if someone want to do that, it is possible through the
 <code>pdp_sdm</code> function.</p>
-<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/pdp_sdm.html">pdp_sdm</a></span><span class="op">(</span><span class="va">i</span><span class="op">)</span></span>
 <span><span class="co">#&gt; `geom_smooth()` using method = 'gam' and formula = 'y ~ s(x, bs = "cs")'</span></span></code></pre></div>
 <p><img src="03_Araucaria_files/figure-html/pdp_sdm-1.png" class="r-plt" alt="" width="700"></p>
@@ -1510,7 +1530,7 @@ use the write functions. For all possibilities see the help file
 <code><a href="../reference/write_ensembles.html">?write_ensembles</a></code>. We encourage users to use standard path
 configuration, which organizes outputs in a straightforward fashion.
 Common functions are the following:</p>
-<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/write_ensembles.html">write_occurrences</a></span><span class="op">(</span><span class="va">i</span>, path <span class="op">=</span> <span class="st">"results/occurrences.csv"</span>, grid <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/write_ensembles.html">write_pseudoabsences</a></span><span class="op">(</span><span class="va">i</span>, path <span class="op">=</span> <span class="st">"results/pseudoabsences"</span>, ext <span class="op">=</span> <span class="st">".csv"</span>, centroid <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/write_ensembles.html">write_grid</a></span><span class="op">(</span><span class="va">i</span>, path <span class="op">=</span> <span class="st">"results/grid_study_area.gpkg"</span>, centroid <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
@@ -1526,10 +1546,10 @@ highlights the use of the package using a grid in the sdm_area.
 Alternative to that can be seen in vignettes(“Salminus”, “caretSDM”)
 where we build SDMs for a fish species using river lines in a
 simplefeatures object instead of cells in a grid.</p>
-<div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">end_time</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">end_time</span> <span class="op">-</span> <span class="va">start_time</span></span>
-<span><span class="co">#&gt; Time difference of 24.48277 secs</span></span></code></pre></div>
+<span><span class="co">#&gt; Time difference of 23.9386 secs</span></span></code></pre></div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>
@@ -1542,7 +1562,7 @@ simplefeatures object instead of cells in a grid.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
     </footer>

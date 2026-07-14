@@ -1,5 +1,5 @@
 pandoc: 3.8.3
-pkgdown: 2.2.0
+pkgdown: 2.2.1
 pkgdown_sha: ~
 articles:
   articles/01_Compact: 01_Compact.html
@@ -12,7 +12,8 @@ articles:
   articles/08_runtime-benchmark: 08_runtime-benchmark.html
   articles/09_pseudoabsence_comparison: 09_pseudoabsence_comparison.html
   articles/10_tunelength-ablation: 10_tunelength-ablation.html
-last_built: 2026-06-12T02:10Z
+  videos/Videos: videos/Videos.html
+last_built: 2026-07-14T16:59Z
 urls:
   reference: https://luizesser.github.io/caretSDM/reference
   article: https://luizesser.github.io/caretSDM/articles

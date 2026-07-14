@@ -57,9 +57,31 @@ retrieve an example table. As standard, `GBIF_data` function sets
 occ <- GBIF_data(c("Araucaria angustifolia"), as_df = TRUE)
 ```
 
-But we already have a `occ` object included in the package, which is the
+To make this process a little more difficult for our package to solve,
+we can transform the `occ` data to have a different CRS using the `sf`
+package. Here, we change it to EPSG:6933:
+
+``` r
+
+# Create a sf object
+occ_sf <- sf::st_as_sf(
+  occ,
+  coords = c("decimalLongitude", "decimalLatitude"),
+  crs = 4326
+)
+
+# Transform to EPSG:6933
+occ_sf <- sf::st_transform(occ_sf, 6933)
+
+# Substitute the coordinates
+occ[2:3] <- sf::st_coordinates(occ_sf)
+```
+
+The `caretSDM` package also accepts `sf` objects and this approach could
+be used if the user has trouble passing `data.frame`s to the package. As
+we already have a `occ` object included in the package, which is the
 same output, but with filtered records to match our study area. Note
-that coordinates are in a metric CRS (EPSG: 6933).
+that coordinates are already in the metric CRS (EPSG:6933).
 
 ``` r
 
@@ -445,7 +467,7 @@ i
 #> Temporal extent (inferred)     : 2090 - 2090 
 #> Observation type               : Presence-only 
 #> Predictor names                : bio1, bio4, bio12 
-#> Software                       : caretSDM v1.9.6, R version 4.6.0 (2026-04-24)
+#> Software                       : caretSDM v1.9.7, R version 4.6.1 (2026-06-24)
 #> 
 #> ============= Data =============
 #> -- Biodiversity data --
@@ -555,7 +577,7 @@ i
 #> Temporal extent (inferred)     : 2090 - 2090 
 #> Observation type               : Presence-only 
 #> Predictor names                : bio1, bio4, bio12, PC1, PC2, PC3 
-#> Software                       : caretSDM v1.9.6, R version 4.6.0 (2026-04-24)
+#> Software                       : caretSDM v1.9.7, R version 4.6.1 (2026-06-24)
 #> 
 #> ============= Data =============
 #> -- Biodiversity data --
@@ -642,7 +664,7 @@ i
 #> Temporal extent (inferred)     : 2090 - 2090 
 #> Observation type               : Presence-absence (pseudo-absence) 
 #> Predictor names                : bio1, bio4, bio12, PC1, PC2, PC3 
-#> Software                       : caretSDM v1.9.6, R version 4.6.0 (2026-04-24)
+#> Software                       : caretSDM v1.9.7, R version 4.6.1 (2026-06-24)
 #> 
 #> ============= Data =============
 #> -- Biodiversity data --
@@ -729,7 +751,7 @@ i
 #> Predictor names                : bio1, bio4, bio12, PC1, PC2, PC3 
 #> Modelling algorithms           : naive_bayes, kknn 
 #> Model complexity (tuneLength)  : 1 
-#> Software                       : caretSDM v1.9.6, R version 4.6.0 (2026-04-24)
+#> Software                       : caretSDM v1.9.7, R version 4.6.1 (2026-06-24)
 #> 
 #> ============= Data =============
 #> -- Biodiversity data --
@@ -824,7 +846,7 @@ i
 #> Predictor names                : bio1, bio4, bio12, PC1, PC2, PC3 
 #> Modelling algorithms           : naive_bayes, kknn 
 #> Model complexity (tuneLength)  : 1 
-#> Software                       : caretSDM v1.9.6, R version 4.6.0 (2026-04-24)
+#> Software                       : caretSDM v1.9.7, R version 4.6.1 (2026-06-24)
 #> 
 #> ============= Data =============
 #> -- Biodiversity data --
@@ -923,7 +945,7 @@ i
 #> Modelling algorithms           : naive_bayes, kknn 
 #> Model complexity (tuneLength)  : 1 
 #> Model averaging                : average 
-#> Software                       : caretSDM v1.9.6, R version 4.6.0 (2026-04-24)
+#> Software                       : caretSDM v1.9.7, R version 4.6.1 (2026-06-24)
 #> 
 #> ============= Data =============
 #> -- Biodiversity data --
@@ -1390,7 +1412,7 @@ i
 #> Modelling algorithms           : naive_bayes, kknn 
 #> Model complexity (tuneLength)  : 1 
 #> Model averaging                : average 
-#> Software                       : caretSDM v1.9.6, R version 4.6.0 (2026-04-24)
+#> Software                       : caretSDM v1.9.7, R version 4.6.1 (2026-06-24)
 #> 
 #> ============= Data =============
 #> -- Biodiversity data --
@@ -1548,5 +1570,5 @@ cells in a grid.
 
 end_time <- Sys.time()
 end_time - start_time
-#> Time difference of 24.48277 secs
+#> Time difference of 23.9386 secs
 ```

@@ -579,7 +579,7 @@ publication-quality models where marginal performance gains matter.
 sessionInfo()
 ```
 
-    ## R version 4.6.0 (2026-04-24)
+    ## R version 4.6.1 (2026-06-24)
     ## Platform: x86_64-pc-linux-gnu
     ## Running under: Ubuntu 24.04.4 LTS
     ## 
@@ -601,49 +601,48 @@ sessionInfo()
     ## 
     ## other attached packages:
     ## [1] earth_5.3.5    plotmo_3.7.0   plotrix_3.8-14 Formula_1.2-5  caret_7.0-1   
-    ## [6] lattice_0.22-9 dplyr_1.2.1    ggplot2_4.0.3  caretSDM_1.9.6
+    ## [6] lattice_0.22-9 dplyr_1.2.1    ggplot2_4.0.3  caretSDM_1.9.7
     ## 
     ## loaded via a namespace (and not attached):
     ##   [1] RColorBrewer_1.1-3      ECDFniche_0.5           jsonlite_2.0.0         
     ##   [4] wk_0.9.5                magrittr_2.0.5          farver_2.1.2           
     ##   [7] CoordinateCleaner_3.0.1 rmarkdown_2.31          fs_2.1.0               
     ##  [10] ragg_1.5.2              vctrs_0.7.3             kknn_1.4.1             
-    ##  [13] terra_1.9-27            htmltools_0.5.9         polynom_1.4-1          
+    ##  [13] terra_1.9-34            htmltools_0.5.9         polynom_1.4-1          
     ##  [16] raster_3.6-32           s2_1.1.11               pROC_1.19.0.1          
-    ##  [19] sass_0.4.10             parallelly_1.47.0       KernSmooth_2.23-26     
+    ##  [19] sass_0.4.10             parallelly_1.48.0       KernSmooth_2.23-26     
     ##  [22] bslib_0.11.0            htmlwidgets_1.6.4       naivebayes_1.0.0       
-    ##  [25] desc_1.4.3              plyr_1.8.9              httr2_1.2.2            
+    ##  [25] desc_1.4.3              plyr_1.8.9              httr2_1.3.0            
     ##  [28] lubridate_1.9.5         stars_0.7-2             cachem_1.1.0           
-    ##  [31] whisker_0.4.1           igraph_2.3.2            lifecycle_1.0.5        
+    ##  [31] whisker_0.4.1           igraph_2.3.3            lifecycle_1.0.5        
     ##  [34] iterators_1.0.14        pkgconfig_2.0.3         Matrix_1.7-5           
     ##  [37] R6_2.6.1                fastmap_1.2.0           future_1.70.0          
     ##  [40] digest_0.6.39           textshaping_1.0.5       labeling_0.4.3         
     ##  [43] randomForest_4.7-1.2    timechange_0.4.0        httr_1.4.8             
-    ##  [46] abind_1.4-8             compiler_4.6.0          proxy_0.4-29           
-    ##  [49] withr_3.0.2             S7_0.2.2                backports_1.5.1        
-    ##  [52] DBI_1.3.0               ecospat_4.1.3           MASS_7.3-65            
-    ##  [55] lava_1.9.1              rappdirs_0.3.4          classInt_0.4-11        
-    ##  [58] ggpp_0.6.0              gtools_3.9.5            oai_0.4.0              
-    ##  [61] ModelMetrics_1.2.2.2    tools_4.6.0             units_1.0-1            
-    ##  [64] otel_0.2.0              rgbif_3.8.5             future.apply_1.20.2    
-    ##  [67] nnet_7.3-20             glue_1.8.1              nlme_3.1-169           
-    ##  [70] grid_4.6.0              sf_1.1-1                stringdist_0.9.17      
-    ##  [73] checkmate_2.3.4         reshape2_1.4.5          generics_0.1.4         
-    ##  [76] recipes_1.3.3           maxnet_0.1.4            gtable_0.3.6           
-    ##  [79] class_7.3-23            tidyr_1.3.2             dismo_1.3-16           
-    ##  [82] data.table_1.18.4       utf8_1.2.6              sp_2.2-1               
-    ##  [85] xml2_1.5.2              foreach_1.5.2           pillar_1.11.1          
-    ##  [88] stringr_1.6.0           ggspatial_1.1.10        splines_4.6.0          
-    ##  [91] survival_3.8-6          tidyselect_1.2.1        lemon_0.5.2            
-    ##  [94] knitr_1.51              gridExtra_2.3           stats4_4.6.0           
-    ##  [97] xfun_0.58               hardhat_1.4.3           checkCLI_1.0           
-    ## [100] timeDate_4052.112       stringi_1.8.7           lazyeval_0.2.3         
-    ## [103] yaml_2.3.12             evaluate_1.0.5          codetools_0.2-20       
-    ## [106] kernlab_0.9-33          tibble_3.3.1            cli_3.6.6              
-    ## [109] rpart_4.1.27            systemfonts_1.3.2       jquerylib_0.1.4        
-    ## [112] Rcpp_1.1.1-1.1          globals_0.19.1          rnaturalearth_1.2.0    
-    ## [115] parallel_4.6.0          pkgdown_2.2.0           gower_1.0.2            
-    ## [118] mda_0.5-5               listenv_0.10.1          viridisLite_0.4.3      
-    ## [121] ipred_0.9-15            scales_1.4.0            prodlim_2026.03.11     
-    ## [124] e1071_1.7-17            purrr_1.2.2             geosphere_1.6-8        
-    ## [127] rlang_1.2.0
+    ##  [46] abind_1.4-8             compiler_4.6.1          proxy_0.4-29           
+    ##  [49] withr_3.0.3             S7_0.2.2                backports_1.5.1        
+    ##  [52] DBI_1.3.0               ecospat_4.1.4           MASS_7.3-65            
+    ##  [55] lava_1.9.2              classInt_0.4-11         ggpp_0.6.1             
+    ##  [58] gtools_3.9.5            oai_0.4.0               ModelMetrics_1.2.2.2   
+    ##  [61] tools_4.6.1             units_1.0-1             otel_0.2.0             
+    ##  [64] rgbif_3.8.5             future.apply_1.20.2     nnet_7.3-20            
+    ##  [67] glue_1.8.1              nlme_3.1-169            grid_4.6.1             
+    ##  [70] sf_1.1-1                stringdist_0.9.17       checkmate_2.3.4        
+    ##  [73] reshape2_1.4.5          generics_0.1.4          recipes_1.3.3          
+    ##  [76] maxnet_0.1.4            gtable_0.3.6            class_7.3-23           
+    ##  [79] tidyr_1.3.2             dismo_1.3-16            data.table_1.18.4      
+    ##  [82] utf8_1.2.6              sp_2.2-1                xml2_1.6.0             
+    ##  [85] foreach_1.5.2           pillar_1.11.1           stringr_1.6.0          
+    ##  [88] ggspatial_1.1.10        splines_4.6.1           survival_3.8-6         
+    ##  [91] tidyselect_1.2.1        lemon_0.5.2             knitr_1.51             
+    ##  [94] gridExtra_2.3.1         stats4_4.6.1            xfun_0.60              
+    ##  [97] hardhat_1.4.3           checkCLI_1.0            timeDate_4052.112      
+    ## [100] stringi_1.8.7           lazyeval_0.2.3          yaml_2.3.12            
+    ## [103] evaluate_1.0.5          codetools_0.2-20        kernlab_0.9-33         
+    ## [106] tibble_3.3.1            cli_3.6.6               rpart_4.1.27           
+    ## [109] systemfonts_1.3.2       jquerylib_0.1.4         Rcpp_1.1.2             
+    ## [112] globals_0.19.1          rnaturalearth_1.2.0     parallel_4.6.1         
+    ## [115] pkgdown_2.2.1           gower_1.0.2             mda_0.5-5              
+    ## [118] listenv_1.0.0           viridisLite_0.4.3       ipred_0.9-15           
+    ## [121] scales_1.4.0            prodlim_2026.03.11      e1071_1.7-17           
+    ## [124] purrr_1.2.2             geosphere_1.6-8         rlang_1.3.0

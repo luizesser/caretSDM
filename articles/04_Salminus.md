@@ -57,9 +57,31 @@ retrieve an example table. As standard, `GBIF_data` function sets
 salm <- GBIF_data(c("Salminus brasiliensis"), as_df = TRUE)
 ```
 
-But we already have a `salm` object included in the package, which is
-the same output, but with filtered records to match our study area. Note
-that coordinates are in a metric CRS (EPSG: 6933).
+To make this process a little more difficult for our package to solve,
+we can transform the `salm` data to have a different CRS using the `sf`
+package. Here, we change it to EPSG:6933:
+
+``` r
+
+# Create a sf object
+salm_sf <- sf::st_as_sf(
+  salm,
+  coords = c("decimalLongitude", "decimalLatitude"),
+  crs = 4326
+)
+
+# Transform to EPSG:6933
+salm_sf <- sf::st_transform(salm_sf, 6933)
+
+# Substitute the coordinates
+salm[2:3] <- sf::st_coordinates(salm_sf)
+```
+
+The `caretSDM` package also accepts `sf` objects and this approach could
+be used if the user has trouble passing `data.frame`s to the package. As
+we already have a `salm` object included in the package, which is the
+same output, but with filtered records to match our study area. Note
+that coordinates are already in the metric CRS (EPSG:6933).
 
 ``` r
 
@@ -463,7 +485,7 @@ i
 #> Temporal extent (inferred)     : 2090 - 2090 
 #> Observation type               : Presence-only 
 #> Predictor names                : LENGTH_KM, DIST_DN_KM, bio1, bio4, bio12 
-#> Software                       : caretSDM v1.9.6, R version 4.6.0 (2026-04-24)
+#> Software                       : caretSDM v1.9.7, R version 4.6.1 (2026-06-24)
 #> 
 #> ============= Data =============
 #> -- Biodiversity data --
@@ -609,7 +631,7 @@ i
 #> Temporal extent (inferred)     : 2090 - 2090 
 #> Observation type               : Presence-absence (pseudo-absence) 
 #> Predictor names                : LENGTH_KM, DIST_DN_KM, bio1, bio4, bio12 
-#> Software                       : caretSDM v1.9.6, R version 4.6.0 (2026-04-24)
+#> Software                       : caretSDM v1.9.7, R version 4.6.1 (2026-06-24)
 #> 
 #> ============= Data =============
 #> -- Biodiversity data --
@@ -695,7 +717,7 @@ i
 #> Predictor names                : LENGTH_KM, DIST_DN_KM, bio1, bio4, bio12 
 #> Modelling algorithms           : naive_bayes, kknn 
 #> Model complexity (tuneLength)  : 1 
-#> Software                       : caretSDM v1.9.6, R version 4.6.0 (2026-04-24)
+#> Software                       : caretSDM v1.9.7, R version 4.6.1 (2026-06-24)
 #> 
 #> ============= Data =============
 #> -- Biodiversity data --
@@ -790,7 +812,7 @@ i
 #> Predictor names                : LENGTH_KM, DIST_DN_KM, bio1, bio4, bio12 
 #> Modelling algorithms           : naive_bayes, kknn 
 #> Model complexity (tuneLength)  : 1 
-#> Software                       : caretSDM v1.9.6, R version 4.6.0 (2026-04-24)
+#> Software                       : caretSDM v1.9.7, R version 4.6.1 (2026-06-24)
 #> 
 #> ============= Data =============
 #> -- Biodiversity data --
@@ -888,7 +910,7 @@ i
 #> Modelling algorithms           : naive_bayes, kknn 
 #> Model complexity (tuneLength)  : 1 
 #> Model averaging                : average 
-#> Software                       : caretSDM v1.9.6, R version 4.6.0 (2026-04-24)
+#> Software                       : caretSDM v1.9.7, R version 4.6.1 (2026-06-24)
 #> 
 #> ============= Data =============
 #> -- Biodiversity data --
@@ -1354,7 +1376,7 @@ i
 #> Modelling algorithms           : naive_bayes, kknn 
 #> Model complexity (tuneLength)  : 1 
 #> Model averaging                : average 
-#> Software                       : caretSDM v1.9.6, R version 4.6.0 (2026-04-24)
+#> Software                       : caretSDM v1.9.7, R version 4.6.1 (2026-06-24)
 #> 
 #> ============= Data =============
 #> -- Biodiversity data --
@@ -1509,5 +1531,5 @@ species using a grid simplefeatures instead of lines.
 
 end_time <- Sys.time()
 end_time - start_time
-#> Time difference of 38.46234 secs
+#> Time difference of 38.16929 secs
 ```
