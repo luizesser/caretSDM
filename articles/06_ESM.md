@@ -201,5 +201,5 @@ bivariate models.
 
 end_time <- Sys.time()
 end_time - start_time
-#> Time difference of 58.39924 secs
+#> Time difference of 1.001816 mins
 ```

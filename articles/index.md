@@ -22,4 +22,4 @@
   Modelling](https://luizesser.github.io/caretSDM/articles/09_pseudoabsence_comparison.md):
 - [10. Ablation Analysis of Hyperparameter Tuning Length in
   caretSDM](https://luizesser.github.io/caretSDM/articles/10_tunelength-ablation.md):
-- [Videos](https://luizesser.github.io/caretSDM/articles/videos/Videos.md):
+- [Videos](https://luizesser.github.io/caretSDM/articles/Videos.md):

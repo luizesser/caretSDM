@@ -1,0 +1,73 @@
+# Videos
+
+## Introduction to `caretSDM` package
+
+This video introduces `caretSDM`, an R package designed to unify the
+Species Distribution Modeling (SDM) workflow into an integrated process,
+leveraging machine learning and GIS (Geographic Information System)
+tools.
+
+### Key features shown in the video:
+
+- **Unified Approach:** caretSDM addresses the fragmentation common in
+  biodiversity research by connecting GBIF data, environmental
+  variables, model training (based on the `caret` package), evaluation,
+  and projections into a single, coherent pipeline (1:00 - 1:25).
+
+- **Workflow:** I demonstrate a practical example where, using just a
+  few functions, one can download data, perform cleaning, define a study
+  area, train multiple algorithms, and generate projections for future
+  scenarios (2:35 - 3:35).
+
+- **Accessibility and Open Science:** The project is open-source,
+  focused on reproducibility, and features extensive documentation,
+  including 10 vignettes available on the official website for users of
+  all levels (4:28 - 4:45).
+
+The goal of `caretSDM` is to allow researchers to spend more time
+solving biogeographical hypotheses rather than fixing technical GIS
+issues or implementing standard methods, making the process more
+efficient and accessible.
+
+# An error occurred.
+
+Unable to execute JavaScript.
+
+## Beginner’s guide
+
+This video is a beginner’s guide on how to perform Species Distribution
+Modeling (SDM) using the `caretSDM` package. I demonstrate a unified
+workflow that allows users to complete the entire process, from data
+import to final visualization, within a single package.
+
+### Key Steps in the `caretSDM` Workflow, shown in the video:
+
+- **Data Preparation:** I explain how to obtain species occurrence data
+  (using local files or GBIF) (0:05:34) and how to define the study area
+  (`sdm_area`) using buffers, vectors, or rasters (0:15:44 - 0:29:29).
+
+- **Structuring (**`input_sdm`**):** Creation of the primary object that
+  integrates occurrences and environmental/predictor data (0:51:15).
+
+- **Cleaning and Processing:** Automated data cleaning routines
+  (0:55:35) and assessment of multicollinearity between predictor
+  variables (1:00:40).
+
+- **Pseudo-absences and Background:** Selecting background or
+  pseudo-absence data for model training (1:03:28).
+
+- **Training and Prediction:** Using machine learning algorithms to
+  train models (1:11:15) and make predictions across different climate
+  scenarios (1:23:28).
+
+- **Results and Ensemble:** I show how to create an ensemble of
+  predictions (1:25:09) and generate outputs such as occurrence
+  probability maps and partial dependence plots (1:27:57 - 1:29:06).
+
+The video emphasizes that `caretSDM` is ideal for those seeking a
+closed, reproducible framework, while still offering the flexibility for
+advanced users to implement custom functions.
+
+# An error occurred.
+
+Unable to execute JavaScript.
