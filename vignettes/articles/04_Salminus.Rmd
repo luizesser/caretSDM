@@ -70,8 +70,28 @@ below). An example code for this step would be:
 salm <- GBIF_data(c("Salminus brasiliensis"), as_df = TRUE)
 ```
 
-But we already have a `salm` object included in the package, which is the same output, but with
-filtered records to match our study area. Note that coordinates are in a metric CRS (EPSG: 6933).
+To make this process a little more difficult for our package to solve, we can transform the `salm` 
+data to have a different CRS using the `sf` package. Here, we change it to EPSG:6933:
+
+```{r gbif_data2, eval = FALSE}
+# Create a sf object
+salm_sf <- sf::st_as_sf(
+  salm,
+  coords = c("decimalLongitude", "decimalLatitude"),
+  crs = 4326
+)
+
+# Transform to EPSG:6933
+salm_sf <- sf::st_transform(salm_sf, 6933)
+
+# Substitute the coordinates
+salm[2:3] <- sf::st_coordinates(salm_sf)
+```
+
+The `caretSDM` package also accepts `sf` objects and this approach could be used if the user has 
+trouble passing `data.frame`s to the package. As we already have a `salm` object included in the 
+package, which is the same output, but with filtered records to match our study area. Note that 
+coordinates are already in the metric CRS (EPSG:6933).
 
 ```{r occ}
 salm |> head()

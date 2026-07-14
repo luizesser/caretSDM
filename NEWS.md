@@ -129,3 +129,7 @@
 -   Correction on add_scenarios and sdm_area to allow the usage of a character (automatizing the import of data through these functions).
 -   Use of Rmd in documentation.
 -   Change in add_scenarios naming.
+
+# caretSDM 1.9.7
+
+-   Inclusion of videos and update of vignettes in the website.
