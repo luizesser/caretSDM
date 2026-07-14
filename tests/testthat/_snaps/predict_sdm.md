@@ -15,7 +15,6 @@
       Predictor names                : bio1, bio12 
       Modelling algorithms           : naive_bayes, kknn 
       Model complexity (tuneLength)  : 1 
-      Software                       : caretSDM v1.9.7, R version 4.6.0 (2026-04-24)
       
       ============= Data =============
       -- Biodiversity data --
@@ -102,7 +101,6 @@
       Predictor names                : bio1, bio12 
       Modelling algorithms           : naive_bayes, kknn 
       Model complexity (tuneLength)  : 1 
-      Software                       : caretSDM v1.9.7, R version 4.6.0 (2026-04-24)
       
       ============= Data =============
       -- Biodiversity data --
@@ -189,7 +187,6 @@
       Predictor names                : bio1, bio12 
       Modelling algorithms           : naive_bayes, kknn 
       Model complexity (tuneLength)  : 1 
-      Software                       : caretSDM v1.9.7, R version 4.6.0 (2026-04-24)
       
       ============= Data =============
       -- Biodiversity data --
