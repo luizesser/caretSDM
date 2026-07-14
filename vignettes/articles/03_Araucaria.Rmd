@@ -316,8 +316,7 @@ i <- data_clean(i,
   duplicated = TRUE,
   identical = TRUE,
   institutions = TRUE,
-  invalid = TRUE,
-  terrestrial = TRUE
+  invalid = TRUE
 )
 ```
 
