@@ -209,14 +209,14 @@ mean_perf_all
 ```
 
     ##                     method        algo       ROC       ROCSD
-    ## 1                   Random         fda 0.8759370 0.087241201
+    ## 1                   Random         fda 0.8759370 0.087234041
     ## 2                   Random         glm 0.7208164 0.059768308
     ## 3                   Random        kknn 0.8630350 0.053710483
     ## 4                   Random naive_bayes 0.8790531 0.050385223
     ## 5                   Random        nnet 0.7343957 0.122230734
     ## 6                   Random          rf 0.8776543 0.043331161
     ## 7                   Random   svmRadial 0.8994953 0.044711569
-    ## 8  Environmental Constrain         fda 0.9928639 0.081557130
+    ## 8  Environmental Constrain         fda 0.9928639 0.081557087
     ## 9  Environmental Constrain         glm 0.7725747 0.060104982
     ## 10 Environmental Constrain        kknn 0.9720469 0.024826767
     ## 11 Environmental Constrain naive_bayes 0.9954687 0.010576544
