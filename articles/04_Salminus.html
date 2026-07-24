@@ -74,9 +74,9 @@
                         <h4 data-toc-skip class="author">[author
 name]</h4>
             
-            <h4 data-toc-skip class="date">2026-07-15</h4>
+            <h4 data-toc-skip class="date">2026-07-24</h4>
       
-      <small class="dont-index">Source: <a href="https://github.com/luizesser/caretSDM/blob/v.1.9.7/vignettes/articles/04_Salminus.Rmd" class="external-link"><code>vignettes/articles/04_Salminus.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/luizesser/caretSDM/blob/main/vignettes/articles/04_Salminus.Rmd" class="external-link"><code>vignettes/articles/04_Salminus.Rmd</code></a></small>
       <div class="d-none name"><code>04_Salminus.Rmd</code></div>
     </div>
 
@@ -179,7 +179,7 @@ files. If you don’t set it, files will be saved in your working
 directory (run <code><a href="https://rdrr.io/r/base/getwd.html" class="external-link">getwd()</a></code> to find out your working directory)
 in the folder “input_data/WorldClim_data_current/”. If period is set to
 “future”, then it is saved in “input_data/WorldClim_data_future/”. We
-could run this script with a smaller resolution, but as the aim here is
+could run this script with a higher resolution, but as the aim here is
 to show how the package works, we will use a resolution of 10
 arc-minutes, which is very coarse, but quicker to download and run.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
@@ -411,8 +411,6 @@ will be replicated between scenarios.</p>
 <span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Using GDAL to make the grid and resample the variables.</span></span>
 <span><span class="co">#&gt; <span style="color: #BBBB00;">!</span> Making grid over the study area is an expensive task. Please, be patient!</span></span>
 <span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Using GDAL to make the grid and resample the variables.</span></span>
-<span><span class="co">#&gt; Reescaling data <span style="color: #00BB00;">■■■■■■■■■■■■■■■■■■■■■■■         </span>  75% | ETA:  1s</span></span>
-<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; <span style="color: #BBBB00;">!</span> Making grid over the study area is an expensive task. Please, be patient!</span></span>
 <span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Using GDAL to make the grid and resample the variables.</span></span>
 <span><span class="va">sa</span></span>
@@ -1513,7 +1511,7 @@ instead of lines.</p>
 <div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">end_time</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">end_time</span> <span class="op">-</span> <span class="va">start_time</span></span>
-<span><span class="co">#&gt; Time difference of 27.50084 secs</span></span></code></pre></div>
+<span><span class="co">#&gt; Time difference of 38.49898 secs</span></span></code></pre></div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>

@@ -168,4 +168,6 @@ CRAN release: 2026-05-12
 
 ## caretSDM 1.9.7
 
+CRAN release: 2026-07-16
+
 - Inclusion of videos and update of vignettes in the website.

@@ -105,9 +105,9 @@ set it, files will be saved in your working directory (run
 directory) in the folder “input_data/WorldClim_data_current/”. If period
 is set to “future”, then it is saved in
 “input_data/WorldClim_data_future/”. We could run this script with a
-smaller resolution, but as the aim here is to show how the package
-works, we will use a resolution of 10 arc-minutes, which is very coarse,
-but quicker to download and run.
+higher resolution, but as the aim here is to show how the package works,
+we will use a resolution of 10 arc-minutes, which is very coarse, but
+quicker to download and run.
 
 ``` r
 
@@ -376,8 +376,6 @@ sa <- add_scenarios(sa,
 #> ℹ Using GDAL to make the grid and resample the variables.
 #> ! Making grid over the study area is an expensive task. Please, be patient!
 #> ℹ Using GDAL to make the grid and resample the variables.
-#> Reescaling data ■■■■■■■■■■■■■■■■■■■■■■■           75% | ETA:  1s
-#> 
 #> ! Making grid over the study area is an expensive task. Please, be patient!
 #> ℹ Using GDAL to make the grid and resample the variables.
 sa
@@ -1524,5 +1522,5 @@ species using a grid simplefeatures instead of lines.
 
 end_time <- Sys.time()
 end_time - start_time
-#> Time difference of 27.50084 secs
+#> Time difference of 38.49898 secs
 ```

@@ -42,7 +42,7 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Add scenarios to <code>sdm_area</code></h1>
-      <small class="dont-index">Source: <a href="https://github.com/luizesser/caretSDM/blob/v.1.9.7/R/add_scenarios.R" class="external-link"><code>R/add_scenarios.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/luizesser/caretSDM/blob/main/R/add_scenarios.R" class="external-link"><code>R/add_scenarios.R</code></a></small>
       <div class="d-none name"><code>add_scenarios.Rd</code></div>
     </div>
 
@@ -136,9 +136,10 @@ https://luizfesser.wordpress.com</p>
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Create sdm_area object:</span></span></span>
-<span class="r-in"><span><span class="va">sa</span> <span class="op">&lt;-</span> <span class="fu"><a href="sdm_area.html">sdm_area</a></span><span class="op">(</span><span class="va">parana</span>, cell_size <span class="op">=</span> <span class="fl">100000</span>, output_crs <span class="op">=</span> <span class="fl">6933</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">sa</span> <span class="op">&lt;-</span> <span class="fu"><a href="sdm_area.html">sdm_area</a></span><span class="op">(</span><span class="va">rivs</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">200</span><span class="op">)</span>, <span class="op">]</span>, cell_size <span class="op">=</span> <span class="fl">100000</span>, output_crs <span class="op">=</span> <span class="fl">6933</span>, lines_as_sdm_area <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> Making grid over study area is an expensive task. Please, be patient!</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Using GDAL to make the grid and resample the variables.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Linking to GEOS 3.12.1, GDAL 3.8.4, PROJ 9.4.0; sf_use_s2() is TRUE</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Include predictors:</span></span></span>
 <span class="r-in"><span><span class="va">sa</span> <span class="op">&lt;-</span> <span class="fu"><a href="add_predictors.html">add_predictors</a></span><span class="op">(</span><span class="va">sa</span>, <span class="va">bioc</span><span class="op">)</span></span></span>
@@ -146,9 +147,16 @@ https://luizfesser.wordpress.com</p>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Using GDAL to make the grid and resample the variables.</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Include scenarios:</span></span></span>
-<span class="r-in"><span><span class="va">sa</span> <span class="op">&lt;-</span> <span class="fu">add_scenarios</span><span class="op">(</span><span class="va">sa</span>, <span class="va">scen</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">2</span><span class="op">]</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="tidyverse-methods.html">select_predictors</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"bio1"</span>, <span class="st">"bio12"</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Some variables in `variables_selected` are not present in `scen`.</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Using only variables present in `scen`: bio1, bio4, and bio12</span>
+<span class="r-in"><span><span class="va">sa_bioc</span> <span class="op">&lt;-</span> <span class="va">sa</span> <span class="op">|&gt;</span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="tidyverse-methods.html">select_predictors</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"bio1"</span>, <span class="st">"bio12"</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
+<span class="r-in"><span>  <span class="fu">add_scenarios</span><span class="op">(</span><span class="va">scen</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">2</span><span class="op">]</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> Making grid over the study area is an expensive task. Please, be patient!</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Using GDAL to make the grid and resample the variables.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> Making grid over the study area is an expensive task. Please, be patient!</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Using GDAL to make the grid and resample the variables.</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># OR to include sationary variables:</span></span></span>
+<span class="r-in"><span><span class="va">sa</span> <span class="op">&lt;-</span> <span class="fu">add_scenarios</span><span class="op">(</span><span class="va">sa</span>, <span class="va">scen</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">2</span><span class="op">]</span>, stationary <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"LENGTH_KM"</span>, <span class="st">"DIST_DN_KM"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> Making grid over the study area is an expensive task. Please, be patient!</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Using GDAL to make the grid and resample the variables.</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> Making grid over the study area is an expensive task. Please, be patient!</span>
@@ -166,83 +174,98 @@ https://luizfesser.wordpress.com</p>
 <span class="r-in"><span><span class="va">scenarios_grid</span> <span class="op">&lt;-</span> <span class="fu">get_scenarios_data</span><span class="op">(</span><span class="va">sa</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">scenarios_grid</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $future_1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Simple feature collection with 25 features and 3 fields</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Geometry type: POLYGON</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Simple feature collection with 208 features and 6 fields</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Geometry type: LINESTRING</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Dimension:     XY</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Bounding box:  xmin: -5371070 ymin: -3380515 xmax: -4571070 ymax: -2680515</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Bounding box:  xmin: -5177092 ymin: -2875359 xmax: -4771046 ymax: -2803134</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Projected CRS: WGS 84 / NSIDC EASE-Grid 2.0 Global</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> First 10 features:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    cell_id     bio1    bio12                       geometry</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1       11 27.23990 1105.015 POLYGON ((-5171070 -2780515...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2       12 26.67789 1089.278 POLYGON ((-5071070 -2780515...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3       13 26.77645 1135.707 POLYGON ((-4971070 -2780515...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4       14 25.75506 1100.358 POLYGON ((-4871070 -2780515...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5       18 26.64249 1287.040 POLYGON ((-5271070 -2880515...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6       19 25.78418 1226.114 POLYGON ((-5171070 -2880515...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7       20 24.56363 1232.960 POLYGON ((-5071070 -2880515...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8       21 24.13556 1306.557 POLYGON ((-4971070 -2880515...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9       22 24.81822 1146.873 POLYGON ((-4871070 -2880515...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10      26 25.63413 1407.331 POLYGON ((-5271070 -2980515...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    cell_id     bio1     bio4    bio12 LENGTH_KM DIST_DN_KM</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1        1 27.20938 273.4452 1149.013      7.31     2189.9</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2        2 27.20938 273.4452 1149.013      4.21     2186.2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3        3 27.20938 273.4452 1149.013      2.14     2200.3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4        4 27.20938 273.4452 1149.013      3.45     2186.7</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5        5 27.20938 273.4452 1149.013      1.26     2184.9</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7        6 27.20938 273.4452 1149.013      2.12     2202.7</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8        7 27.20938 273.4452 1149.013      2.54     2183.9</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9        8 27.20938 273.4452 1149.013      4.89     2195.6</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11       9 27.20938 273.4452 1149.013      2.12     2204.8</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12      10 27.20938 273.4452 1149.013      4.66     2179.5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                          geometry</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1  LINESTRING (-5164171 -28031...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2  LINESTRING (-5118891 -28038...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3  LINESTRING (-5106335 -28066...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4  LINESTRING (-5166639 -28041...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5  LINESTRING (-5121210 -28061...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7  LINESTRING (-5104727 -28076...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8  LINESTRING (-5167443 -28071...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9  LINESTRING (-5108346 -28066...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11 LINESTRING (-5103119 -28086...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12 LINESTRING (-5165433 -28081...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $future_2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Simple feature collection with 25 features and 3 fields</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Geometry type: POLYGON</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Simple feature collection with 208 features and 6 fields</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Geometry type: LINESTRING</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Dimension:     XY</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Bounding box:  xmin: -5371070 ymin: -3380515 xmax: -4571070 ymax: -2680515</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Bounding box:  xmin: -5177092 ymin: -2875359 xmax: -4771046 ymax: -2803134</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Projected CRS: WGS 84 / NSIDC EASE-Grid 2.0 Global</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> First 10 features:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    cell_id     bio1     bio12                       geometry</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1       11 32.58110  978.0547 POLYGON ((-5171070 -2780515...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2       12 31.94988  963.9417 POLYGON ((-5071070 -2780515...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3       13 31.98031 1000.3107 POLYGON ((-4971070 -2780515...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4       14 30.81193  952.3783 POLYGON ((-4871070 -2780515...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5       18 32.04770 1134.1117 POLYGON ((-5271070 -2880515...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6       19 31.13231 1083.4467 POLYGON ((-5171070 -2880515...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7       20 29.82842 1086.9093 POLYGON ((-5071070 -2880515...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8       21 29.31869 1147.7869 POLYGON ((-4971070 -2880515...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9       22 29.82839  983.9998 POLYGON ((-4871070 -2880515...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10      26 30.82495 1249.6981 POLYGON ((-5271070 -2980515...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    cell_id     bio1     bio4    bio12 LENGTH_KM DIST_DN_KM</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1        1 32.57484 272.2632 1015.714      7.31     2189.9</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2        2 32.57484 272.2632 1015.714      4.21     2186.2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3        3 32.57484 272.2632 1015.714      2.14     2200.3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4        4 32.57484 272.2632 1015.714      3.45     2186.7</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5        5 32.57484 272.2632 1015.714      1.26     2184.9</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7        6 32.57484 272.2632 1015.714      2.12     2202.7</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8        7 32.57484 272.2632 1015.714      2.54     2183.9</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9        8 32.57484 272.2632 1015.714      4.89     2195.6</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11       9 32.57484 272.2632 1015.714      2.12     2204.8</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12      10 32.57484 272.2632 1015.714      4.66     2179.5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                          geometry</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1  LINESTRING (-5164171 -28031...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2  LINESTRING (-5118891 -28038...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3  LINESTRING (-5106335 -28066...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4  LINESTRING (-5166639 -28041...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5  LINESTRING (-5121210 -28061...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7  LINESTRING (-5104727 -28076...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8  LINESTRING (-5167443 -28071...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9  LINESTRING (-5108346 -28066...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11 LINESTRING (-5103119 -28086...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12 LINESTRING (-5165433 -28081...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $current</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Simple feature collection with 31 features and 3 fields</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Geometry type: POLYGON</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Simple feature collection with 208 features and 6 fields</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Geometry type: LINESTRING</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Dimension:     XY</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Bounding box:  xmin: -5301744 ymin: -3295037 xmax: -4601744 ymax: -2795037</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Bounding box:  xmin: -5177092 ymin: -2875359 xmax: -4771046 ymax: -2803134</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Projected CRS: WGS 84 / NSIDC EASE-Grid 2.0 Global</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> First 10 features:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    cell_id     bio1 bio12                       geometry</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1        2 21.92975  1343 POLYGON ((-5201744 -2795037...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2        3 21.92975  1343 POLYGON ((-5101744 -2795037...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3        4 21.11269  1272 POLYGON ((-5001744 -2795037...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4        5 21.36936  1329 POLYGON ((-4901744 -2795037...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5        6 21.02648  1272 POLYGON ((-4801744 -2795037...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6        8 21.47524  1592 POLYGON ((-5301744 -2895037...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7        9 21.92975  1343 POLYGON ((-5201744 -2895037...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8       10 21.92975  1343 POLYGON ((-5101744 -2895037...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9       11 21.11269  1272 POLYGON ((-5001744 -2895037...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10      12 21.36936  1329 POLYGON ((-4901744 -2895037...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    cell_id LENGTH_KM DIST_DN_KM     bio1     bio4 bio12</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1        1      7.31     2189.9 21.95178 271.4204  1343</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2        2      4.21     2186.2 21.95178 271.4204  1343</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3        3      2.14     2200.3 21.95178 271.4204  1343</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4        4      3.45     2186.7 21.95178 271.4204  1343</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5        5      1.26     2184.9 21.95178 271.4204  1343</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7        6      2.12     2202.7 21.95178 271.4204  1343</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8        7      2.54     2183.9 21.95178 271.4204  1343</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9        8      4.89     2195.6 21.95178 271.4204  1343</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11       9      2.12     2204.8 21.95178 271.4204  1343</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12      10      4.66     2179.5 21.95178 271.4204  1343</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                          geometry</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1  LINESTRING (-5164171 -28031...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2  LINESTRING (-5118891 -28038...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3  LINESTRING (-5106335 -28066...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4  LINESTRING (-5166639 -28041...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5  LINESTRING (-5121210 -28061...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7  LINESTRING (-5104727 -28076...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8  LINESTRING (-5167443 -28071...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9  LINESTRING (-5108346 -28066...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11 LINESTRING (-5103119 -28086...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12 LINESTRING (-5165433 -28081...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Select scenarios:</span></span></span>
 <span class="r-in"><span><span class="va">sa</span> <span class="op">&lt;-</span> <span class="fu">select_scenarios</span><span class="op">(</span><span class="va">sa</span>, scenarios_names <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"future_1"</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Setting stationary variables in scenarios:</span></span></span>
-<span class="r-in"><span><span class="va">sa</span> <span class="op">&lt;-</span> <span class="fu"><a href="sdm_area.html">sdm_area</a></span><span class="op">(</span><span class="va">rivs</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">200</span><span class="op">)</span>, <span class="op">]</span>, cell_size <span class="op">=</span> <span class="fl">100000</span>, output_crs <span class="op">=</span> <span class="fl">6933</span>, lines_as_sdm_area <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
-<span class="r-in"><span>  <span class="fu"><a href="add_predictors.html">add_predictors</a></span><span class="op">(</span><span class="va">bioc</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
-<span class="r-in"><span>  <span class="fu">add_scenarios</span><span class="op">(</span><span class="va">scen</span>, stationary <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"LENGTH_KM"</span>, <span class="st">"DIST_DN_KM"</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> Making grid over study area is an expensive task. Please, be patient!</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Using GDAL to make the grid and resample the variables.</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Linking to GEOS 3.12.1, GDAL 3.8.4, PROJ 9.4.0; sf_use_s2() is TRUE</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> Making grid over the study area is an expensive task. Please, be patient!</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Using GDAL to make the grid and resample the variables.</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> Making grid over the study area is an expensive task. Please, be patient!</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Using GDAL to make the grid and resample the variables.</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> Making grid over the study area is an expensive task. Please, be patient!</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Using GDAL to make the grid and resample the variables.</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> Making grid over the study area is an expensive task. Please, be patient!</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Using GDAL to make the grid and resample the variables.</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> Making grid over the study area is an expensive task. Please, be patient!</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Using GDAL to make the grid and resample the variables.</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

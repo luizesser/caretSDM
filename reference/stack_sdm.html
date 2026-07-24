@@ -44,7 +44,7 @@ from models trained in Layer 1."><meta property="og:image" content="https://luiz
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Train a Stacked Ensemble for SDM</h1>
-      <small class="dont-index">Source: <a href="https://github.com/luizesser/caretSDM/blob/v.1.9.7/R/stack_sdm.R" class="external-link"><code>R/stack_sdm.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/luizesser/caretSDM/blob/main/R/stack_sdm.R" class="external-link"><code>R/stack_sdm.R</code></a></small>
       <div class="d-none name"><code>stack_sdm.Rd</code></div>
     </div>
 
@@ -94,259 +94,46 @@ https://luizfesser.wordpress.com</p>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Create sdm_area object:</span></span></span>
-<span class="r-in"><span><span class="va">sa</span> <span class="op">&lt;-</span> <span class="fu"><a href="sdm_area.html">sdm_area</a></span><span class="op">(</span><span class="va">parana</span>, cell_size <span class="op">=</span> <span class="fl">100000</span>, output_crs <span class="op">=</span> <span class="fl">6933</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> Making grid over study area is an expensive task. Please, be patient!</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Using GDAL to make the grid and resample the variables.</span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/interactive.html" class="external-link">interactive</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span>  <span class="co"># Create sdm_area object:</span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="va">sa</span> <span class="op">&lt;-</span> <span class="fu"><a href="sdm_area.html">sdm_area</a></span><span class="op">(</span><span class="va">parana</span>, cell_size <span class="op">=</span> <span class="fl">100000</span>, output_crs <span class="op">=</span> <span class="fl">6933</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Include predictors:</span></span></span>
-<span class="r-in"><span><span class="va">sa</span> <span class="op">&lt;-</span> <span class="fu"><a href="add_predictors.html">add_predictors</a></span><span class="op">(</span><span class="va">sa</span>, <span class="va">bioc</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="tidyverse-methods.html">select_predictors</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"bio1"</span>, <span class="st">"bio12"</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> Making grid over the study area is an expensive task. Please, be patient!</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Using GDAL to make the grid and resample the variables.</span>
+<span class="r-in"><span>  <span class="co"># Include predictors:</span></span></span>
+<span class="r-in"><span>  <span class="va">sa</span> <span class="op">&lt;-</span> <span class="fu"><a href="add_predictors.html">add_predictors</a></span><span class="op">(</span><span class="va">sa</span>, <span class="va">bioc</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="tidyverse-methods.html">select_predictors</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"bio1"</span>, <span class="st">"bio12"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Include scenarios:</span></span></span>
-<span class="r-in"><span><span class="va">sa</span> <span class="op">&lt;-</span> <span class="fu"><a href="add_scenarios.html">add_scenarios</a></span><span class="op">(</span><span class="va">sa</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="co"># Include scenarios:</span></span></span>
+<span class="r-in"><span>  <span class="va">sa</span> <span class="op">&lt;-</span> <span class="fu"><a href="add_scenarios.html">add_scenarios</a></span><span class="op">(</span><span class="va">sa</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Create occurrences:</span></span></span>
-<span class="r-in"><span><span class="va">oc</span> <span class="op">&lt;-</span> <span class="fu"><a href="occurrences_sdm.html">occurrences_sdm</a></span><span class="op">(</span><span class="va">occ</span>, occ_crs <span class="op">=</span> <span class="fl">6933</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="co"># Create occurrences:</span></span></span>
+<span class="r-in"><span>  <span class="va">oc</span> <span class="op">&lt;-</span> <span class="fu"><a href="occurrences_sdm.html">occurrences_sdm</a></span><span class="op">(</span><span class="va">occ</span>, occ_crs <span class="op">=</span> <span class="fl">6933</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Create input_sdm:</span></span></span>
-<span class="r-in"><span><span class="va">i</span> <span class="op">&lt;-</span> <span class="fu"><a href="input_sdm.html">input_sdm</a></span><span class="op">(</span><span class="va">oc</span>, <span class="va">sa</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="co"># Create input_sdm:</span></span></span>
+<span class="r-in"><span>  <span class="va">i</span> <span class="op">&lt;-</span> <span class="fu"><a href="input_sdm.html">input_sdm</a></span><span class="op">(</span><span class="va">oc</span>, <span class="va">sa</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Pseudoabsence generation:</span></span></span>
-<span class="r-in"><span><span class="va">i</span> <span class="op">&lt;-</span> <span class="fu"><a href="pseudoabsences.html">pseudoabsences</a></span><span class="op">(</span><span class="va">i</span>, method <span class="op">=</span> <span class="st">"random"</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="co"># Pseudoabsence generation:</span></span></span>
+<span class="r-in"><span>  <span class="va">i</span> <span class="op">&lt;-</span> <span class="fu"><a href="pseudoabsences.html">pseudoabsences</a></span><span class="op">(</span><span class="va">i</span>, method <span class="op">=</span> <span class="st">"random"</span>, n_set <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Custom trainControl:</span></span></span>
-<span class="r-in"><span><span class="va">ctrl_sdm</span> <span class="op">&lt;-</span> <span class="fu">caret</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/caret/man/trainControl.html" class="external-link">trainControl</a></span><span class="op">(</span>method <span class="op">=</span> <span class="st">"repeatedcv"</span>,</span></span>
-<span class="r-in"><span>                                number <span class="op">=</span> <span class="fl">2</span>,</span></span>
-<span class="r-in"><span>                                repeats <span class="op">=</span> <span class="fl">1</span>,</span></span>
-<span class="r-in"><span>                                classProbs <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
-<span class="r-in"><span>                                returnResamp <span class="op">=</span> <span class="st">"all"</span>,</span></span>
-<span class="r-in"><span>                                summaryFunction <span class="op">=</span> <span class="va">summary_sdm</span>,</span></span>
-<span class="r-in"><span>                                savePredictions <span class="op">=</span> <span class="st">"all"</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="co"># Custom trainControl:</span></span></span>
+<span class="r-in"><span>  <span class="va">ctrl_sdm</span> <span class="op">&lt;-</span> <span class="fu">caret</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/caret/man/trainControl.html" class="external-link">trainControl</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>    method <span class="op">=</span> <span class="st">"repeatedcv"</span>,</span></span>
+<span class="r-in"><span>    number <span class="op">=</span> <span class="fl">2</span>,</span></span>
+<span class="r-in"><span>    repeats <span class="op">=</span> <span class="fl">1</span>,</span></span>
+<span class="r-in"><span>    classProbs <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
+<span class="r-in"><span>    returnResamp <span class="op">=</span> <span class="st">"all"</span>,</span></span>
+<span class="r-in"><span>    summaryFunction <span class="op">=</span> <span class="va">summary_sdm</span>,</span></span>
+<span class="r-in"><span>    savePredictions <span class="op">=</span> <span class="st">"all"</span></span></span>
+<span class="r-in"><span>  <span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Train models:</span></span></span>
-<span class="r-in"><span><span class="va">i</span> <span class="op">&lt;-</span> <span class="fu"><a href="train_sdm.html">train_sdm</a></span><span class="op">(</span><span class="va">i</span>, algo <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"naive_bayes"</span>, <span class="st">"kknn"</span><span class="op">)</span>, ctrl <span class="op">=</span> <span class="va">ctrl_sdm</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/warning.html" class="external-link">suppressWarnings</a></span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="co"># Train models:</span></span></span>
+<span class="r-in"><span>  <span class="va">i</span> <span class="op">&lt;-</span> <span class="fu"><a href="train_sdm.html">train_sdm</a></span><span class="op">(</span><span class="va">i</span>, algo <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"naive_bayes"</span>, <span class="st">"kknn"</span><span class="op">)</span>, ctrl <span class="op">=</span> <span class="va">ctrl_sdm</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
+<span class="r-in"><span>    <span class="fu"><a href="https://rdrr.io/r/base/warning.html" class="external-link">suppressWarnings</a></span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Train stacked ensemble:</span></span></span>
-<span class="r-in"><span><span class="va">i</span> <span class="op">&lt;-</span> <span class="fu">stack_sdm</span><span class="op">(</span><span class="va">i</span>, meta_algo <span class="op">=</span> <span class="st">"nnet"</span>, ctrl <span class="op">=</span> <span class="va">ctrl_sdm</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Training meta-learner for: Araucaria angustifolia</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> # weights:  23</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> initial  value 108.642769 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  10 value 55.044376</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  20 value 55.039419</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  30 value 54.904800</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  40 value 54.831573</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  50 value 54.830748</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  50 value 54.830748</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> final  value 54.830748 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> converged</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> # weights:  67</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> initial  value 104.057657 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  10 value 54.159274</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  20 value 42.428457</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  30 value 32.451186</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  40 value 30.569141</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  50 value 29.327606</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  60 value 28.721296</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  70 value 27.735747</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  80 value 24.412101</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  90 value 23.631049</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter 100 value 23.582697</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> final  value 23.582697 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> stopped after 100 iterations</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Partial AUC correction not defined for ROC curves below the diagonal.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> # weights:  111</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> initial  value 136.302818 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> final  value 55.039827 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> converged</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> # weights:  23</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> initial  value 259.093772 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  10 value 57.464543</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  20 value 54.677755</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  30 value 48.329168</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  40 value 48.219007</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> final  value 48.219006 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> converged</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Partial AUC correction not defined for ROC curves below the diagonal.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> # weights:  67</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> initial  value 95.862805 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  10 value 53.672253</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  20 value 46.998737</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  30 value 45.956958</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  40 value 45.747951</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  50 value 45.738336</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> final  value 45.738223 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> converged</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Partial AUC correction not defined for ROC curves below the diagonal.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> # weights:  111</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> initial  value 80.379815 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  10 value 48.273541</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  20 value 45.740333</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  30 value 45.686786</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  40 value 45.658320</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  50 value 45.623006</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  60 value 45.604657</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  70 value 45.591284</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> final  value 45.590435 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> converged</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Partial AUC correction not defined for ROC curves below the diagonal.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> # weights:  23</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> initial  value 140.760200 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  10 value 55.046307</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  20 value 55.042355</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  30 value 55.036693</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  40 value 54.910747</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  50 value 54.844936</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  60 value 54.836545</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  70 value 54.768774</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  80 value 54.647594</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  90 value 54.646010</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter 100 value 54.643834</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> final  value 54.643834 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> stopped after 100 iterations</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> # weights:  67</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> initial  value 125.553887 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  10 value 55.136117</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  20 value 55.054753</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  30 value 54.883424</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  40 value 54.864862</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  50 value 53.369409</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  60 value 35.249814</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  70 value 33.586052</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  80 value 32.499708</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  90 value 31.347759</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter 100 value 30.393129</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> final  value 30.393129 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> stopped after 100 iterations</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Partial AUC correction not defined for ROC curves below the diagonal.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> # weights:  111</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> initial  value 235.925316 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  10 value 55.796976</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  20 value 55.060308</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  30 value 54.927287</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  40 value 44.882946</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  50 value 32.724838</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  60 value 29.740715</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  70 value 29.059700</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  80 value 28.766945</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  90 value 28.651619</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter 100 value 28.589905</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> final  value 28.589905 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> stopped after 100 iterations</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> # weights:  23</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> initial  value 108.855286 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  10 value 57.788110</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  20 value 57.784558</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  30 value 57.673793</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  40 value 35.347278</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  50 value 21.441044</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  60 value 19.890835</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  70 value 19.881146</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> final  value 19.881108 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> converged</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Partial AUC correction not defined for ROC curves below the diagonal.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> # weights:  67</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> initial  value 127.166083 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  10 value 57.787072</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  10 value 57.787072</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  10 value 57.787072</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> final  value 57.787072 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> converged</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Partial AUC correction not defined for ROC curves below the diagonal.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> # weights:  111</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> initial  value 267.311242 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  10 value 57.819291</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  20 value 57.787647</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> final  value 57.786883 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> converged</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Partial AUC correction not defined for ROC curves below the diagonal.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> # weights:  23</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> initial  value 143.798978 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  10 value 41.771414</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  20 value 39.359303</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> final  value 39.334479 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> converged</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Partial AUC correction not defined for ROC curves below the diagonal.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> # weights:  67</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> initial  value 117.661565 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  10 value 43.630621</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  20 value 37.518490</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  30 value 36.850078</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  40 value 36.766183</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  50 value 36.719618</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> final  value 36.719575 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> converged</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Partial AUC correction not defined for ROC curves below the diagonal.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> # weights:  111</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> initial  value 115.631426 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  10 value 42.874248</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  20 value 37.625991</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  30 value 36.897484</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  40 value 36.797548</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  50 value 36.749645</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  60 value 36.710664</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  70 value 36.692043</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  80 value 36.612113</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  90 value 36.558735</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter 100 value 36.517680</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> final  value 36.517680 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> stopped after 100 iterations</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Partial AUC correction not defined for ROC curves below the diagonal.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> # weights:  23</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> initial  value 184.386788 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  10 value 57.794010</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  20 value 57.791405</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  30 value 50.499946</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  40 value 34.219155</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  50 value 33.966819</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  60 value 33.821201</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  70 value 33.791153</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  80 value 33.783653</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  90 value 33.780123</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter 100 value 33.777222</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> final  value 33.777222 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> stopped after 100 iterations</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Partial AUC correction not defined for ROC curves below the diagonal.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> # weights:  67</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> initial  value 205.627231 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  10 value 54.543604</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  20 value 29.932008</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  30 value 27.796186</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  40 value 22.307523</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  50 value 19.951554</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  60 value 19.455105</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  70 value 19.053832</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  80 value 17.578168</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  90 value 17.427921</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter 100 value 17.251758</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> final  value 17.251758 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> stopped after 100 iterations</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Partial AUC correction not defined for ROC curves below the diagonal.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> # weights:  111</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> initial  value 163.664029 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  10 value 44.144007</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  20 value 23.952789</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  30 value 23.553007</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  40 value 23.447256</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  50 value 23.345208</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  60 value 23.262434</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  70 value 22.627157</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  80 value 19.944006</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  90 value 17.106841</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter 100 value 15.104620</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> final  value 15.104620 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> stopped after 100 iterations</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Partial AUC correction not defined for ROC curves below the diagonal.</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>There were missing values in resampled performance measures.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> # weights:  23</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> initial  value 402.841770 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  10 value 110.395272</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  20 value 84.986331</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iter  30 value 84.492639</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> final  value 84.492218 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> converged</span>
+<span class="r-in"><span>  <span class="co"># Train stacked ensemble:</span></span></span>
+<span class="r-in"><span>  <span class="va">i</span> <span class="op">&lt;-</span> <span class="fu">stack_sdm</span><span class="op">(</span><span class="va">i</span>, meta_algo <span class="op">=</span> <span class="st">"nnet"</span>, ctrl <span class="op">=</span> <span class="va">ctrl_sdm</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span>  <span class="co"># Prediction of stacked models is still under development.</span></span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

@@ -209,14 +209,14 @@ mean_perf_all
 ```
 
     ##                     method        algo       ROC       ROCSD
-    ## 1                   Random         fda 0.8759370 0.087234041
+    ## 1                   Random         fda 0.8759370 0.087241201
     ## 2                   Random         glm 0.7208164 0.059768308
     ## 3                   Random        kknn 0.8630350 0.053710483
     ## 4                   Random naive_bayes 0.8790531 0.050385223
     ## 5                   Random        nnet 0.7343957 0.122230734
     ## 6                   Random          rf 0.8776543 0.043331161
     ## 7                   Random   svmRadial 0.8994953 0.044711569
-    ## 8  Environmental Constrain         fda 0.9928639 0.081557087
+    ## 8  Environmental Constrain         fda 0.9928639 0.081557130
     ## 9  Environmental Constrain         glm 0.7725747 0.060104982
     ## 10 Environmental Constrain        kknn 0.9720469 0.024826767
     ## 11 Environmental Constrain naive_bayes 0.9954687 0.010576544
@@ -478,11 +478,11 @@ sessionInfo()
     ##  [19] pROC_1.19.0.1           sass_0.4.10             parallelly_1.48.0      
     ##  [22] KernSmooth_2.23-26      bslib_0.11.0            htmlwidgets_1.6.4      
     ##  [25] naivebayes_1.0.0        desc_1.4.3              plyr_1.8.9             
-    ##  [28] httr2_1.3.0             lubridate_1.9.5         stars_0.7-2            
+    ##  [28] httr2_1.3.0             lubridate_1.9.5         stars_0.7-3            
     ##  [31] cachem_1.1.0            whisker_0.4.1           igraph_2.3.3           
     ##  [34] lifecycle_1.0.5         iterators_1.0.14        pkgconfig_2.0.3        
     ##  [37] Matrix_1.7-5            R6_2.6.1                fastmap_1.2.0          
-    ##  [40] future_1.70.0           digest_0.6.39           textshaping_1.0.5      
+    ##  [40] future_1.75.0           digest_0.6.39           textshaping_1.0.5      
     ##  [43] labeling_0.4.3          randomForest_4.7-1.2    timechange_0.4.0       
     ##  [46] httr_1.4.8              abind_1.4-8             compiler_4.6.1         
     ##  [49] proxy_0.4-29            withr_3.0.3             S7_0.2.2               
@@ -492,11 +492,11 @@ sessionInfo()
     ##  [61] ModelMetrics_1.2.2.2    tools_4.6.1             units_1.0-1            
     ##  [64] otel_0.2.0              rgbif_3.8.5             future.apply_1.20.2    
     ##  [67] nnet_7.3-20             glue_1.8.1              nlme_3.1-169           
-    ##  [70] grid_4.6.1              sf_1.1-1                stringdist_0.9.17      
+    ##  [70] grid_4.6.1              sf_1.1-2                stringdist_0.9.17      
     ##  [73] checkmate_2.3.4         reshape2_1.4.5          generics_0.1.4         
     ##  [76] recipes_1.3.3           maxnet_0.1.4            gtable_0.3.6           
     ##  [79] class_7.3-23            tidyr_1.3.2             dismo_1.3-16           
-    ##  [82] data.table_1.18.4       sp_2.2-1                xml2_1.6.0             
+    ##  [82] data.table_1.18.4       sp_2.2-3                xml2_1.6.0             
     ##  [85] foreach_1.5.2           pillar_1.11.1           stringr_1.6.0          
     ##  [88] ggspatial_1.1.10        splines_4.6.1           dplyr_1.2.1            
     ##  [91] survival_3.8-6          tidyselect_1.2.1        lemon_0.5.2            

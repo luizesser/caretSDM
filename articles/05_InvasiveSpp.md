@@ -384,6 +384,34 @@ and
 but also
 [`?select_predictors`](https://luizesser.github.io/caretSDM/reference/tidyverse-methods.md).
 
+### Avoiding the use of other packages
+
+To avoid the use of external packages, it is possible to add predictors,
+study area and scenarios directly through `caretSDM` package as follows:
+
+``` r
+
+sa <- sdm_area(
+  "input_data/current", # Add predictors data
+  cell_size = 25000,    # Set grid size
+  output_crs = 6933,    # Set Coordinate Reference System
+  gdal = T,
+  crop_by = parana      # Crop predictors given the shape of the study area
+) |>  
+  set_predictor_names(c("bio01","bio10", "bio11", "bio12", "bio13", "bio14", "bio15", "bio16",
+                        "bio17", "bio18", "bio19", "bio02", "bio03", "bio04", "bio05", "bio06",
+                        "bio07", "bio08", "bio09")) |>
+  add_scenarios(
+    "input_data/future_rs", # Add future scenarios data
+    crop_area = scen_rs   # Crop scenarios given the shape of the invaded area
+  ) |> 
+  select_predictors(c("bio01", "bio12", "bio13", "bio14", "bio15", "bio02",
+                      "bio03", "bio04", "bio05", "bio06", "bio07"))
+```
+
+We strongly recommend the use of this approach to avoid errors that
+could arise from other packages.
+
 ### Defining the occurrences set in the study area
 
 As `caretSDM` has a strong GIS background, it is necessary to explicitly
@@ -1482,5 +1510,5 @@ cells in a grid.
 
 end_time <- Sys.time()
 end_time - start_time
-#> Time difference of 14.04139 secs
+#> Time difference of 19.92886 secs
 ```

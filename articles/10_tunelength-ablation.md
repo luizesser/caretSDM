@@ -613,10 +613,10 @@ sessionInfo()
     ##  [19] sass_0.4.10             parallelly_1.48.0       KernSmooth_2.23-26     
     ##  [22] bslib_0.11.0            htmlwidgets_1.6.4       naivebayes_1.0.0       
     ##  [25] desc_1.4.3              plyr_1.8.9              httr2_1.3.0            
-    ##  [28] lubridate_1.9.5         stars_0.7-2             cachem_1.1.0           
+    ##  [28] lubridate_1.9.5         stars_0.7-3             cachem_1.1.0           
     ##  [31] whisker_0.4.1           igraph_2.3.3            lifecycle_1.0.5        
     ##  [34] iterators_1.0.14        pkgconfig_2.0.3         Matrix_1.7-5           
-    ##  [37] R6_2.6.1                fastmap_1.2.0           future_1.70.0          
+    ##  [37] R6_2.6.1                fastmap_1.2.0           future_1.75.0          
     ##  [40] digest_0.6.39           textshaping_1.0.5       labeling_0.4.3         
     ##  [43] randomForest_4.7-1.2    timechange_0.4.0        httr_1.4.8             
     ##  [46] abind_1.4-8             compiler_4.6.1          proxy_0.4-29           
@@ -627,11 +627,11 @@ sessionInfo()
     ##  [61] tools_4.6.1             units_1.0-1             otel_0.2.0             
     ##  [64] rgbif_3.8.5             future.apply_1.20.2     nnet_7.3-20            
     ##  [67] glue_1.8.1              nlme_3.1-169            grid_4.6.1             
-    ##  [70] sf_1.1-1                stringdist_0.9.17       checkmate_2.3.4        
+    ##  [70] sf_1.1-2                stringdist_0.9.17       checkmate_2.3.4        
     ##  [73] reshape2_1.4.5          generics_0.1.4          recipes_1.3.3          
     ##  [76] maxnet_0.1.4            gtable_0.3.6            class_7.3-23           
     ##  [79] tidyr_1.3.2             dismo_1.3-16            data.table_1.18.4      
-    ##  [82] utf8_1.2.6              sp_2.2-1                xml2_1.6.0             
+    ##  [82] utf8_1.2.6              sp_2.2-3                xml2_1.6.0             
     ##  [85] foreach_1.5.2           pillar_1.11.1           stringr_1.6.0          
     ##  [88] ggspatial_1.1.10        splines_4.6.1           survival_3.8-6         
     ##  [91] tidyselect_1.2.1        lemon_0.5.2             knitr_1.51             
