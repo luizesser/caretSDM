@@ -3,6 +3,9 @@ title: "2. Adding New Algorithms to caretSDM"
 author: '[author name]'
 date: "`r Sys.Date()`"
 output:
+  pdf_document:
+    toc: true
+    toc_depth: '3'
   html_document:
     toc: true
     toc_float: true
@@ -11,9 +14,6 @@ output:
     highlight: tango
     code_folding: show
     df_print: paged
-  pdf_document:
-    toc: true
-    toc_depth: '3'
 vignette: "%\\VignetteIndexEntry{2. Adding New Algorithms to caretSDM} %\\VignetteEncoding{UTF-8}
   %\\VignetteEngine{knitr::knitr}\n"
 editor_options:

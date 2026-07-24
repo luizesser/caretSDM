@@ -3,6 +3,9 @@ title: "5. Projecting Non-native Distribution using SDMs"
 author: '[author name]'
 date: "`r Sys.Date()`"
 output:
+  pdf_document:
+    toc: true
+    toc_depth: '3'
   html_document:
     toc: true
     toc_float: true
@@ -11,9 +14,6 @@ output:
     highlight: tango
     code_folding: show
     df_print: paged
-  pdf_document:
-    toc: true
-    toc_depth: '3'
 vignette: "%\\VignetteIndexEntry{5. Projecting Non-native Distribution using SDMs}
   %\\VignetteEncoding{UTF-8} %\\VignetteEngine{knitr::knitr}\n"
 editor_options:
@@ -265,6 +265,32 @@ aiming for those variables with causality effect on species distribution. The us
 change scenarios names, predictors names or retrieve predictors data. For that there are a myriad of
 functions that can be found in the package, most of them under the help files of the functions
 `?add_predictors` and `?add_scenarios`, but also `?select_predictors`.
+
+### Avoiding the use of other packages
+
+To avoid the use of external packages, it is possible to add predictors, study area and scenarios
+directly through `caretSDM` package as follows:
+
+```{r caretSDM_only, eval = FALSE}
+sa <- sdm_area(
+  "input_data/current", # Add predictors data
+  cell_size = 25000,    # Set grid size
+  output_crs = 6933,    # Set Coordinate Reference System
+  gdal = T,
+  crop_by = parana      # Crop predictors given the shape of the study area
+) |>  
+  set_predictor_names(c("bio01","bio10", "bio11", "bio12", "bio13", "bio14", "bio15", "bio16",
+                        "bio17", "bio18", "bio19", "bio02", "bio03", "bio04", "bio05", "bio06",
+                        "bio07", "bio08", "bio09")) |>
+  add_scenarios(
+    "input_data/future_rs", # Add future scenarios data
+    crop_area = scen_rs   # Crop scenarios given the shape of the invaded area
+  ) |> 
+  select_predictors(c("bio01", "bio12", "bio13", "bio14", "bio15", "bio02",
+                      "bio03", "bio04", "bio05", "bio06", "bio07"))
+```
+
+We strongly recommend the use of this approach to avoid errors that could arise from other packages.
 
 ### Defining the occurrences set in the study area
 

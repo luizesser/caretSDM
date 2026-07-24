@@ -41,13 +41,18 @@
 #'
 #' @examples
 #' # Create sdm_area object:
-#' sa <- sdm_area(parana, cell_size = 100000, output_crs = 6933)
+#' sa <- sdm_area(rivs[c(1:200), ], cell_size = 100000, output_crs = 6933, lines_as_sdm_area = TRUE)
 #'
 #' # Include predictors:
 #' sa <- add_predictors(sa, bioc)
 #'
 #' # Include scenarios:
-#' sa <- add_scenarios(sa, scen[1:2]) |> select_predictors(c("bio1", "bio12"))
+#' sa_bioc <- sa |>
+#'   select_predictors(c("bio1", "bio12")) |>
+#'   add_scenarios(scen[1:2])
+#'
+#' # OR to include sationary variables:
+#' sa <- add_scenarios(sa, scen[1:2], stationary = c("LENGTH_KM", "DIST_DN_KM"))
 #'
 #' # Set scenarios names:
 #' sa <- set_scenarios_names(sa, scenarios_names = c(
@@ -62,11 +67,6 @@
 #'
 #' # Select scenarios:
 #' sa <- select_scenarios(sa, scenarios_names = c("future_1"))
-#'
-#' # Setting stationary variables in scenarios:
-#' sa <- sdm_area(rivs[c(1:200), ], cell_size = 100000, output_crs = 6933, lines_as_sdm_area = TRUE) |>
-#'   add_predictors(bioc) |>
-#'   add_scenarios(scen, stationary = c("LENGTH_KM", "DIST_DN_KM"))
 #'
 #' @importFrom stars read_stars st_as_stars st_dimensions st_get_dimension_values st_warp
 #' @importFrom sf st_transform st_crs st_as_sf st_crop st_join st_geometry_type st_cast
@@ -172,18 +172,18 @@ add_scenarios.stars <- function(sa, scen = NULL, scenarios_names = NULL, pred_as
   assert_vector_cli(stationary, min.len = 1, max.len = length(get_predictor_names(sa)), null.ok = TRUE)
   if (!is.null(stationary)) {assert_subset_cli(stationary, get_predictor_names(sa))}
 
-  band_values <- stars::st_get_dimension_values(scen, "band")
-  assert_vector_cli(band_values)
-  if (!check_subset_cli(band_values, get_predictor_names(sa))) {
-    cli::cli_abort(c(
-      "{.var scen} band names are not subsets of the predictor names from {.var sa}.",
-      "x" = "band names are {stars::st_get_dimension_values(scen, 'band')}, while predictors names are {get_predictor_names(sa)}.",
-      "i" = "you can alter stars bands names using the function caretSDM::set_variables_names, like that:\n
-      R> scen <- set_variables_names(scen, sa)\n
-      Or:\n
-      R> scen <- set_variables_names(scen, new_names = c('a', 'b', 'c'))"
-    ))
-  }
+  #band_values <- stars::st_get_dimension_values(scen, "band")
+  #assert_vector_cli(band_values)
+  #if (!all(get_predictor_names(sa) %in% band_values)) {
+  #  cli::cli_abort(c(
+  #    "{.var scen} band names are not subsets of the predictor names from {.var sa}.",
+  #    "x" = "band names are {stars::st_get_dimension_values(scen, 'band')}, while predictors names are {get_predictor_names(sa)}.",
+  #    "i" = "you can alter stars bands names using the function caretSDM::set_variables_names, like that:\n
+  #    R> scen <- set_variables_names(scen, sa)\n
+  #    Or:\n
+  #    R> scen <- set_variables_names(scen, new_names = c('a', 'b', 'c'))"
+  #  ))
+  #}
 
   if (is_input_sdm(sa)) {
     if ("scenarios" %in% names(sa)) {
@@ -225,7 +225,12 @@ add_scenarios.stars <- function(sa, scen = NULL, scenarios_names = NULL, pred_as
       len <- length(missing_vars)
       cli::cli_abort(c("{.var scen} does not have all variables from {.var variables_selected}:",
         "x" = "There {?is/are} {len} variables missing from {.var scen}.",
-        "i" = "Check for: {missing_vars}"
+        "i" = "Check for: {missing_vars}",
+        "i" = "band names are {stars::st_get_dimension_values(scen, 'band')}, while predictors names are {get_predictor_names(sa)}.",
+        "i" = "you can alter stars bands names using the function caretSDM::set_variables_names, like that:\n
+      R> scen <- set_variables_names(scen, sa)\n
+      Or:\n
+      R> scen <- set_variables_names(scen, new_names = c('a', 'b', 'c'))"
       ))
     }
     scen <- scen[, , , variables_selected]
@@ -277,6 +282,19 @@ add_scenarios.stars <- function(sa, scen = NULL, scenarios_names = NULL, pred_as
   } else if (!is.null(stationary) & !exists("i2")) {
     stationary_grd <- sa$grid |> dplyr::select(all_of(c("cell_id", stationary)))
     variables_selected <- pres_names[!pres_names %in% stationary]
+    missing_vars <- variables_selected[!variables_selected %in% stars::st_get_dimension_values(scen, "band")]
+    if (length(missing_vars > 0)) {
+      len <- length(missing_vars)
+      cli::cli_abort(c("{.var scen} does not have all variables from {.var variables_selected}:",
+                       "x" = "There {?is/are} {len} variables missing from {.var scen}.",
+                       "i" = "Check for: {missing_vars}",
+                       "i" = "Band names are {stars::st_get_dimension_values(scen, 'band')}, while predictors names are {get_predictor_names(sa)}.",
+                       "i" = "You can alter stars bands names using the function caretSDM::set_variables_names, like that:\n
+      R> scen <- set_variables_names(scen, sa)\n
+      Or:\n
+      R> scen <- set_variables_names(scen, new_names = c('a', 'b', 'c'))"
+      ))
+    }
     scen <- scen[, , , variables_selected]
     bbox1 <- sf::st_as_sfc(sf::st_bbox(scen))
     bbox2 <- sf::st_as_sfc(sf::st_bbox(sf::st_transform(stationary_grd, crs = sf::st_crs(scen))))
@@ -346,10 +364,6 @@ add_scenarios.stars <- function(sa, scen = NULL, scenarios_names = NULL, pred_as
     return(sa)
 
   } else if (is.null(stationary)) {
-    #####
-    #if (!test_variables_names(sa, scen)) {
-    #  scen <- set_variables_names(scen, sa)
-    #}
 
     sa_data <- sa
 

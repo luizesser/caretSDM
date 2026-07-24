@@ -3,6 +3,9 @@ title: "4. Modeling Species Distributions in Continental Water Bodies"
 author: '[author name]'
 date: "`r Sys.Date()`"
 output:
+  pdf_document:
+    toc: true
+    toc_depth: '3'
   html_document:
     toc: true
     toc_float: true
@@ -11,9 +14,6 @@ output:
     highlight: tango
     code_folding: show
     df_print: paged
-  pdf_document:
-    toc: true
-    toc_depth: '3'
 vignette: "%\\VignetteIndexEntry{4. Modeling Species Distributions in Continental
   Water Bodies} %\\VignetteEncoding{UTF-8} %\\VignetteEngine{knitr::knitr}\n"
 editor_options:
@@ -104,7 +104,7 @@ models. `WorldClim_data` function has an argument to set the directory in which 
 files. If you don't set it, files will be saved in your working directory (run `getwd()` to find out
 your working directory) in the folder "input_data/WorldClim_data_current/". If period is set to
 "future", then it is saved in "input_data/WorldClim_data_future/". We could run this script with a
-smaller resolution, but as the aim here is to show how the package works, we will use a resolution
+higher resolution, but as the aim here is to show how the package works, we will use a resolution
 of 10 arc-minutes, which is very coarse, but quicker to download and run.
 
 ```{r WorldClim_data_current, eval = FALSE}

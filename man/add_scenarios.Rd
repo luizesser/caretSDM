@@ -62,13 +62,18 @@ always add a new "current" scenario. To avoid that, set \code{pred_as_scen = FAL
 }
 \examples{
 # Create sdm_area object:
-sa <- sdm_area(parana, cell_size = 100000, output_crs = 6933)
+sa <- sdm_area(rivs[c(1:200), ], cell_size = 100000, output_crs = 6933, lines_as_sdm_area = TRUE)
 
 # Include predictors:
 sa <- add_predictors(sa, bioc)
 
 # Include scenarios:
-sa <- add_scenarios(sa, scen[1:2]) |> select_predictors(c("bio1", "bio12"))
+sa_bioc <- sa |>
+  select_predictors(c("bio1", "bio12")) |>
+  add_scenarios(scen[1:2])
+
+# OR to include sationary variables:
+sa <- add_scenarios(sa, scen[1:2], stationary = c("LENGTH_KM", "DIST_DN_KM"))
 
 # Set scenarios names:
 sa <- set_scenarios_names(sa, scenarios_names = c(
@@ -83,11 +88,6 @@ scenarios_grid
 
 # Select scenarios:
 sa <- select_scenarios(sa, scenarios_names = c("future_1"))
-
-# Setting stationary variables in scenarios:
-sa <- sdm_area(rivs[c(1:200), ], cell_size = 100000, output_crs = 6933, lines_as_sdm_area = TRUE) |>
-  add_predictors(bioc) |>
-  add_scenarios(scen, stationary = c("LENGTH_KM", "DIST_DN_KM"))
 
 }
 \seealso{

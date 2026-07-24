@@ -72,9 +72,11 @@
 #'
 #' @export
 gcms_ensembles <- function(i, gcms = NULL) {
-  if (is_input_sdm(i)) {
-    y <- i$ensembles$data
-  }
+  assert_class_cli(i, "input_sdm")
+  assert_names_cli(names(i), must.include = "ensembles")
+  assert_vector_cli(gcms, unique = TRUE)
+
+  y <- i$ensembles$data
   emet <- colnames(y[[1]])[-1]
   cols <- colnames(y)
   for (g in gcms) {
