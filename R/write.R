@@ -56,16 +56,18 @@ write_ensembles <- function(x, path = NULL, ext = ".tif", centroid = FALSE) {
   )
   scen <- colnames(y$data)
   spp <- rownames(y$data)
-  grd <- x$predictions$grid
-  if (centroid) {
-    suppressWarnings(cent <- sf::st_coordinates(sf::st_centroid(grd)))
-    colnames(cent) <- c("x_centroid", "y_centroid")
-    grd <- cbind(grd, cent)
-  }
+
   for (sp in spp) {
     for (sc in scen) {
+
       v <- y[["data"]][[sp, sc]]
       if (is.data.frame(v)) {
+        grd <- x$predictions$predictions[[grep(sc, names(x$predictions$predictions))[1]]][[sp]][[1]]
+        if (centroid) {
+          suppressWarnings(cent <- sf::st_coordinates(sf::st_centroid(grd)))
+          colnames(cent) <- c("x_centroid", "y_centroid")
+          grd <- cbind(grd, cent)
+        }
         result <- merge(grd, v, by = "cell_id")
         if (!dir.exists(paste0(path, "/", sp))) {
           dir.create(paste0(path, "/", sp), recursive = TRUE)
