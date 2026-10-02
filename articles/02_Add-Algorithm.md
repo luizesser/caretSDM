@@ -28,6 +28,9 @@ library(caretSDM)
 #>   method                  from   
 #>   heightDetails.titleGrob ggplot2
 #>   widthDetails.titleGrob  ggplot2
+#> Registered S3 method overwritten by 'stars':
+#>   method                  from
+#>   st_interpolate_aw.stars sf
 library(dismo)
 #> Loading required package: raster
 #> Loading required package: sp
@@ -343,20 +346,32 @@ typical SDM analysis.
 ``` r
 
 # Create an sdm_area object
-sa <- sdm_area(parana,
+sa <- sdm_area(x = parana,
   cell_size = 50000, # Using a coarse resolution for speed
-  output_crs = 6933
+  output_crs = 6933,
+  variables_selected = NULL,
+  gdal = TRUE, 
+  crop_by = NULL, 
+  lines_as_sdm_area = FALSE
 )
 #> ! Making grid over study area is an expensive task. Please, be patient!
 #> ℹ Using GDAL to make the grid and resample the variables.
 
 # Add predictors to the study area
-sa <- add_predictors(sa, bioc)
+sa <- add_predictors(sa = sa, 
+                     pred = bioc, 
+                     variables_selected = NULL, 
+                     gdal = TRUE,
+                     lines_as_sdm_area = FALSE)
 #> ! Making grid over the study area is an expensive task. Please, be patient!
 #> ℹ Using GDAL to make the grid and resample the variables.
 
 # Format occurrences
-oc <- occurrences_sdm(occ, occ_crs = 6933)
+oc <- occurrences_sdm(occ = occ, 
+                      occ_crs = 6933,
+                      independent_test = NULL,
+                      p = 0.1,
+                      independent_test_crs = NULL,)
 
 # Create the final input_sdm object
 i <- input_sdm(oc, sa)
@@ -364,7 +379,13 @@ i <- input_sdm(oc, sa)
 # Generate pseudoabsences
 i <- pseudoabsences(i,
   method = "bioclim",
-  n_set = 3
+  n_set = 3,
+  n_pa = NULL,
+  variables_selected = NULL,
+  th = 0,
+  size = 1,
+  size_crs = 4326,
+  mcp = FALSE
 )
 ```
 
@@ -388,7 +409,7 @@ ctrl_sdm <- caret::trainControl(
 
 # Train the model using our custom algorithm
 # Note that 'algo' is now our list object instead of a string
-i <- train_sdm(i,
+i <- train_sdm(occ = i,
   algo = mahal.custom,
   variables_selected = c("bio1", "bio4", "bio12"), # Using only two variables for simplicity
   ctrl = ctrl_sdm
@@ -512,7 +533,13 @@ build models using the mahal.dismo method.
 i2 <- input_sdm(oc, sa) |>
   pseudoabsences(
     method = "bioclim",
-    n_set = 3
+    n_set = 3,
+    n_pa = NULL,
+    variables_selected = NULL,
+    th = 0,
+    size = 1,
+    size_crs = 4326,
+    mcp = FALSE
   ) |>
   train_sdm(
     algo = mahal.dismo,
@@ -576,10 +603,24 @@ Plotting the result of mahal.dismo.
 ``` r
 
 i2 |>
-  add_scenarios() |>
-  predict_sdm() |>
-  ensemble_sdm() |>
-  plot_ensembles()
+  add_scenarios(scen = NULL, 
+                scenarios_names = NULL, 
+                pred_as_scen = TRUE,
+                variables_selected = NULL, 
+                stationary = NULL, 
+                crop_area = NULL) |>
+  predict_sdm(metric = "ROC",
+              th = 0.9,
+              tp = "prob",
+              file = NULL,
+              add.current = TRUE) |>
+  ensemble_sdm(method = "average",
+               metric = NULL,
+               fun = NULL) |>
+  plot_ensembles(spp_name = NULL,
+                 scenario = NULL,
+                 id = NULL,
+                 ensemble_type = NULL)
 #> Ensemble function: average
 #>   current
 ```
@@ -591,10 +632,24 @@ Plotting the result of mahal.custom.
 ``` r
 
 i |>
-  add_scenarios() |>
-  predict_sdm() |>
-  ensemble_sdm() |>
-  plot_ensembles()
+  add_scenarios(scen = NULL, 
+                scenarios_names = NULL, 
+                pred_as_scen = TRUE,
+                variables_selected = NULL, 
+                stationary = NULL, 
+                crop_area = NULL) |>
+  predict_sdm(metric = "ROC",
+              th = 0.9,
+              tp = "prob",
+              file = NULL,
+              add.current = TRUE) |>
+  ensemble_sdm(method = "average",
+               metric = NULL,
+               fun = NULL) |>
+  plot_ensembles(spp_name = NULL,
+                 scenario = NULL,
+                 id = NULL,
+                 ensemble_type = NULL)
 #> Ensemble function: average
 #>   current
 ```

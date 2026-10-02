@@ -171,3 +171,8 @@ CRAN release: 2026-05-12
 CRAN release: 2026-07-16
 
 - Inclusion of videos and update of vignettes in the website.
+
+## caretSDM 1.9.8
+
+- Correction in write_ensembles to incorporate changing scenarios.
+- Correction on website’s articles to include all function parameters.

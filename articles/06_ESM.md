@@ -23,6 +23,9 @@ library(caretSDM)
 #>   method                  from   
 #>   heightDetails.titleGrob ggplot2
 #>   widthDetails.titleGrob  ggplot2
+#> Registered S3 method overwritten by 'stars':
+#>   method                  from
+#>   st_interpolate_aw.stars sf
 start_time <- Sys.time()
 set.seed(1)
 
@@ -100,10 +103,30 @@ to create the standard SDM. We will do that by just removing the
 ``` r
 
 i_sdm <- input_sdm(oc, sa) |>
-  data_clean() |>
-  pseudoabsences(method = "bioclim") |>
+  data_clean(
+    capitals = TRUE,
+    centroids = TRUE,
+    duplicated = TRUE,
+    identical = TRUE,
+    institutions = TRUE,
+    invalid = TRUE,
+    terrestrial = TRUE,
+    independent_test = TRUE,
+    fun = NULL
+  ) |>
+  pseudoabsences(
+    method = "bioclim",
+    n_set = 10,
+    n_pa = NULL,
+    variables_selected = NULL,
+    th = 0,
+    size = 1,
+    size_crs = 4326,
+    mcp = FALSE
+  ) |>
   train_sdm(
     algo = c("naive_bayes", "kknn"),
+    variables_selected = NULL,
     crtl = caret::trainControl(
       method = "repeatedcv",
       number = 4,
@@ -114,8 +137,18 @@ i_sdm <- input_sdm(oc, sa) |>
       savePredictions = "all"
     )
   ) |>
-  predict_sdm(th = 0.9) |>
-  ensemble_sdm() |>
+  predict_sdm(
+    metric = "ROC",
+    th = 0.9,
+    tp = "prob",
+    file = NULL,
+    add.current = TRUE
+  ) |>
+  ensemble_sdm(
+    method = "average",
+    metric = NULL,
+    fun = NULL
+  ) |>
   suppressWarnings()
 #> Cell_ids identified, removing duplicated cell_id.
 #> Testing country capitals
@@ -148,7 +181,9 @@ Now let’s compare both results:
 # Plotting ESM result for current scenario
 plot_ensembles(i_esm,
   scenario = "current",
-  ensemble_type = "average"
+  ensemble_type = "average",
+  spp_name = NULL,
+  id = NULL
 )
 ```
 
@@ -159,7 +194,9 @@ plot_ensembles(i_esm,
 # Plotting standard result for current scenario
 plot_ensembles(i_sdm,
   scenario = "current",
-  ensemble_type = "average"
+  ensemble_type = "average",
+  spp_name = NULL,
+  id = NULL
 )
 ```
 
@@ -175,7 +212,7 @@ to ESMs with standard SDMs, as shown bellow.
 
 ``` r
 
-pdp_sdm(i_esm)
+pdp_sdm(i_esm, spp = NULL, algo = NULL, variables_selected = NULL, mean.only = FALSE)
 #> `geom_smooth()` using method = 'gam' and formula = 'y ~ s(x, bs = "cs")'
 ```
 
@@ -183,7 +220,7 @@ pdp_sdm(i_esm)
 
 ``` r
 
-pdp_sdm(i_sdm)
+pdp_sdm(i_sdm, spp = NULL, algo = NULL, variables_selected = NULL, mean.only = FALSE)
 #> `geom_smooth()` using method = 'gam' and formula = 'y ~ s(x, bs = "cs")'
 ```
 
@@ -201,5 +238,5 @@ bivariate models.
 
 end_time <- Sys.time()
 end_time - start_time
-#> Time difference of 1.066448 mins
+#> Time difference of 1.046049 mins
 ```

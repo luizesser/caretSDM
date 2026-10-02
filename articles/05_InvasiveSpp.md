@@ -25,6 +25,9 @@ library(caretSDM)
 #>   method                  from   
 #>   heightDetails.titleGrob ggplot2
 #>   widthDetails.titleGrob  ggplot2
+#> Registered S3 method overwritten by 'stars':
+#>   method                  from
+#>   st_interpolate_aw.stars sf
 start_time <- Sys.time()
 set.seed(1)
 ```
@@ -58,7 +61,9 @@ retrieve an example table. As standard, `GBIF_data` function sets
 
 ``` r
 
-occ <- GBIF_data(c("Araucaria angustifolia"), as_df = TRUE)
+occ <- GBIF_data(s = "Araucaria angustifolia", 
+                 file = NULL,
+                 as_df = TRUE)
 ```
 
 But we already have a `occ` object included in the package, which is the
@@ -98,6 +103,9 @@ WorldClim_data(
   path = NULL,
   period = "current",
   variable = "bioc",
+  year = "2090",
+  gcm = "mi",
+  ssp = "585",
   resolution = 10
 )
 
@@ -251,7 +259,7 @@ other arguments meaning see
 
 ``` r
 
-sa <- sdm_area(parana,
+sa <- sdm_area(x = parana,
   cell_size = 25000,
   output_crs = 6933,
   variables_selected = NULL,
@@ -302,10 +310,11 @@ which works as the previous one in `sdm_area` function.
 
 ``` r
 
-sa <- add_predictors(sa,
-  bioc,
+sa <- add_predictors(sa = sa,
+  pred = bioc,
   variables_selected = NULL,
-  gdal = TRUE
+  gdal = TRUE,
+  lines_as_sdm_area = FALSE
 )
 #> ! Making grid over the study area is an expensive task. Please, be patient!
 #> ℹ Using GDAL to make the grid and resample the variables.
@@ -334,12 +343,13 @@ region. This region was previously set as the `scen_rs` object.
 
 ``` r
 
-sa <- add_scenarios(sa,
+sa <- add_scenarios(sa = sa,
   scen = scen_rs,
   scenarios_names = NULL,
   pred_as_scen = FALSE,
   variables_selected = NULL,
-  stationary = NULL
+  stationary = NULL,
+  crop_area = NULL
 )
 #> Warning: Some variables in `variables_selected` are not present in `scen`.
 #> ℹ Using only variables present in `scen`: bio1, bio4, and bio12
@@ -392,17 +402,23 @@ study area and scenarios directly through `caretSDM` package as follows:
 ``` r
 
 sa <- sdm_area(
-  "input_data/current", # Add predictors data
+  x = "input_data/current", # Add predictors data
   cell_size = 25000,    # Set grid size
   output_crs = 6933,    # Set Coordinate Reference System
-  gdal = T,
-  crop_by = parana      # Crop predictors given the shape of the study area
+  variables_selected = NULL,
+  gdal = TRUE,
+  crop_by = parana,      # Crop predictors given the shape of the study area
+  lines_as_sdm_area = FALSE
 ) |>  
-  set_predictor_names(c("bio01","bio10", "bio11", "bio12", "bio13", "bio14", "bio15", "bio16",
+  set_predictor_names(new_names = c("bio01","bio10", "bio11", "bio12", "bio13", "bio14", "bio15", "bio16",
                         "bio17", "bio18", "bio19", "bio02", "bio03", "bio04", "bio05", "bio06",
                         "bio07", "bio08", "bio09")) |>
   add_scenarios(
-    "input_data/future_rs", # Add future scenarios data
+    scen = "input_data/future_rs", # Add future scenarios data
+    scenarios_names = NULL, 
+    pred_as_scen = TRUE,
+    variables_selected = NULL, 
+    stationary = NULL, 
     crop_area = scen_rs   # Crop scenarios given the shape of the invaded area
   ) |> 
   select_predictors(c("bio01", "bio12", "bio13", "bio14", "bio15", "bio02",
@@ -426,7 +442,11 @@ information on the data).
 
 ``` r
 
-oc <- occurrences_sdm(occ, occ_crs = 6933)
+oc <- occurrences_sdm(occ = occ, 
+                      independent_test = NULL,
+                      p = 0.1,
+                      occ_crs = 6933,
+                      independent_test_crs = NULL)
 oc
 #>              caretSDM           
 #> ................................
@@ -454,7 +474,10 @@ oc
 
 ``` r
 
-plot_occurrences(oc)
+plot_occurrences(i = oc, 
+                 spp_name = NULL, 
+                 pa = TRUE, 
+                 pa_id = 1)
 ```
 
 ![](05_InvasiveSpp_files/figure-html/plot_occurrences-1.png)
@@ -526,14 +549,16 @@ and `predictors` data.
 
 ``` r
 
-i <- data_clean(i,
+i <- data_clean(occ = i,
   capitals = TRUE,
   centroids = TRUE,
   duplicated = TRUE,
   identical = TRUE,
   institutions = TRUE,
   invalid = TRUE,
-  terrestrial = TRUE
+  terrestrial = TRUE,
+  independent_test = TRUE,
+  fun = NULL
 )
 #> Cell_ids identified, removing duplicated cell_id.
 #> Testing country capitals
@@ -568,7 +593,8 @@ Here is a example code for demonstration:
 
 ``` r
 
-i <- vif_predictors(i,
+i <- vif_predictors(pred = i,
+  area = "all",
   th = 0.5,
   maxobservations = 5000,
   variables_selected = NULL
@@ -595,12 +621,15 @@ a previously performed selection method.
 
 ``` r
 
-i <- pseudoabsences(i,
+i <- pseudoabsences(occ = i,
   method = "bioclim",
   n_set = 10,
   n_pa = NULL,
   variables_selected = "vif",
-  th = 0
+  th = 0,
+  size = 1,
+  size_crs = 4326,
+  mcp = FALSE
 )
 i
 #>              caretSDM           
@@ -774,10 +803,12 @@ ROC \> 0.9 will be used in predictions and ensembles.
 
 ``` r
 
-i <- predict_sdm(i,
+i <- predict_sdm(m = i,
   metric = "ROC",
   th = 0.9,
-  tp = "prob"
+  tp = "prob",
+  file = NULL,
+  add.current = TRUE
 )
 i
 #>              caretSDM           
@@ -866,8 +897,10 @@ Finally, we can ensemble the predictions using:
 
 ``` r
 
-i <- ensemble_sdm(i,
-  method = "average"
+i <- ensemble_sdm(m = i,
+  method = "average",
+  metric = NULL,
+  fun = NULL
 )
 #> Ensemble function: average
 #>   current
@@ -1334,12 +1367,6 @@ scenarios.
 ``` r
 
 i <- gcms_ensembles(i, gcms = c("ca", "mi"))
-#> New names:
-#> New names:
-#> • `cell_id` -> `cell_id...1`
-#> • `average` -> `average...2`
-#> • `cell_id` -> `cell_id...3`
-#> • `average` -> `average...4`
 i
 #>              caretSDM           
 #> ................................
@@ -1449,7 +1476,9 @@ retrieve models ids).
 ``` r
 
 plot_ensembles(i,
+  spp_name = NULL,
   scenario = "current",
+  id = NULL,
   ensemble_type = "average"
 )
 ```
@@ -1459,7 +1488,9 @@ plot_ensembles(i,
 ``` r
 
 plot_ensembles(i,
+  spp_name = NULL,
   scenario = "_ssp585_2090",
+  id = NULL,
   ensemble_type = "average"
 )
 ```
@@ -1474,7 +1505,7 @@ curves, but if someone want to do that, it is possible through the
 
 ``` r
 
-pdp_sdm(i)
+pdp_sdm(i, spp = NULL, algo = NULL, variables_selected = NULL, mean.only = FALSE)
 #> `geom_smooth()` using method = 'gam' and formula = 'y ~ s(x, bs = "cs")'
 ```
 
@@ -1494,7 +1525,7 @@ following:
 write_occurrences(i, path = "results/occurrences.csv", grid = FALSE)
 write_pseudoabsences(i, path = "results/pseudoabsences", ext = ".csv", centroid = FALSE)
 write_grid(i, path = "results/grid_study_area.gpkg", centroid = FALSE)
-write_ensembles(i, path = "results/ensembles", ext = ".tif")
+write_ensembles(i, path = "results/ensembles", ext = ".tif", centroid = FALSE)
 ```
 
 ## Conclusion
@@ -1510,5 +1541,5 @@ cells in a grid.
 
 end_time <- Sys.time()
 end_time - start_time
-#> Time difference of 19.92886 secs
+#> Time difference of 19.77643 secs
 ```

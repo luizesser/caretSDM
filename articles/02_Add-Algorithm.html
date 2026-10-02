@@ -25,7 +25,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">caretSDM</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.9.7</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.9.8</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -74,7 +74,7 @@
                         <h4 data-toc-skip class="author">[author
 name]</h4>
             
-            <h4 data-toc-skip class="date">2026-07-24</h4>
+            <h4 data-toc-skip class="date">2026-10-02</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/luizesser/caretSDM/blob/main/vignettes/articles/02_Add-Algorithm.Rmd" class="external-link"><code>vignettes/articles/02_Add-Algorithm.Rmd</code></a></small>
       <div class="d-none name"><code>02_Add-Algorithm.Rmd</code></div>
@@ -110,6 +110,9 @@ environment.</p>
 <span><span class="co">#&gt;   method                  from   </span></span>
 <span><span class="co">#&gt;   heightDetails.titleGrob ggplot2</span></span>
 <span><span class="co">#&gt;   widthDetails.titleGrob  ggplot2</span></span>
+<span><span class="co">#&gt; Registered S3 method overwritten by 'stars':</span></span>
+<span><span class="co">#&gt;   method                  from</span></span>
+<span><span class="co">#&gt;   st_interpolate_aw.stars sf</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://rspatial.org/raster/sdm/" class="external-link">dismo</a></span><span class="op">)</span></span>
 <span><span class="co">#&gt; Loading required package: raster</span></span>
 <span><span class="co">#&gt; Loading required package: sp</span></span>
@@ -433,20 +436,32 @@ to create a simple <code>input_sdm</code> object. This simulates the
 pre-processing steps of a typical SDM analysis.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Create an sdm_area object</span></span>
-<span><span class="va">sa</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sdm_area.html">sdm_area</a></span><span class="op">(</span><span class="va">parana</span>,</span>
+<span><span class="va">sa</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sdm_area.html">sdm_area</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">parana</span>,</span>
 <span>  cell_size <span class="op">=</span> <span class="fl">50000</span>, <span class="co"># Using a coarse resolution for speed</span></span>
-<span>  output_crs <span class="op">=</span> <span class="fl">6933</span></span>
+<span>  output_crs <span class="op">=</span> <span class="fl">6933</span>,</span>
+<span>  variables_selected <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  gdal <span class="op">=</span> <span class="cn">TRUE</span>, </span>
+<span>  crop_by <span class="op">=</span> <span class="cn">NULL</span>, </span>
+<span>  lines_as_sdm_area <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span>
 <span><span class="co">#&gt; <span style="color: #BBBB00;">!</span> Making grid over study area is an expensive task. Please, be patient!</span></span>
 <span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Using GDAL to make the grid and resample the variables.</span></span>
 <span></span>
 <span><span class="co"># Add predictors to the study area</span></span>
-<span><span class="va">sa</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_predictors.html">add_predictors</a></span><span class="op">(</span><span class="va">sa</span>, <span class="va">bioc</span><span class="op">)</span></span>
+<span><span class="va">sa</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_predictors.html">add_predictors</a></span><span class="op">(</span>sa <span class="op">=</span> <span class="va">sa</span>, </span>
+<span>                     pred <span class="op">=</span> <span class="va">bioc</span>, </span>
+<span>                     variables_selected <span class="op">=</span> <span class="cn">NULL</span>, </span>
+<span>                     gdal <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>                     lines_as_sdm_area <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="co">#&gt; <span style="color: #BBBB00;">!</span> Making grid over the study area is an expensive task. Please, be patient!</span></span>
 <span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Using GDAL to make the grid and resample the variables.</span></span>
 <span></span>
 <span><span class="co"># Format occurrences</span></span>
-<span><span class="va">oc</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/occurrences_sdm.html">occurrences_sdm</a></span><span class="op">(</span><span class="va">occ</span>, occ_crs <span class="op">=</span> <span class="fl">6933</span><span class="op">)</span></span>
+<span><span class="va">oc</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/occurrences_sdm.html">occurrences_sdm</a></span><span class="op">(</span>occ <span class="op">=</span> <span class="va">occ</span>, </span>
+<span>                      occ_crs <span class="op">=</span> <span class="fl">6933</span>,</span>
+<span>                      independent_test <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>                      p <span class="op">=</span> <span class="fl">0.1</span>,</span>
+<span>                      independent_test_crs <span class="op">=</span> <span class="cn">NULL</span>,<span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Create the final input_sdm object</span></span>
 <span><span class="va">i</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/input_sdm.html">input_sdm</a></span><span class="op">(</span><span class="va">oc</span>, <span class="va">sa</span><span class="op">)</span></span>
@@ -454,7 +469,13 @@ pre-processing steps of a typical SDM analysis.</p>
 <span><span class="co"># Generate pseudoabsences</span></span>
 <span><span class="va">i</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/pseudoabsences.html">pseudoabsences</a></span><span class="op">(</span><span class="va">i</span>,</span>
 <span>  method <span class="op">=</span> <span class="st">"bioclim"</span>,</span>
-<span>  n_set <span class="op">=</span> <span class="fl">3</span></span>
+<span>  n_set <span class="op">=</span> <span class="fl">3</span>,</span>
+<span>  n_pa <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  variables_selected <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  th <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  size <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  size_crs <span class="op">=</span> <span class="fl">4326</span>,</span>
+<span>  mcp <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
@@ -476,7 +497,7 @@ need to define our training control parameters using
 <span></span>
 <span><span class="co"># Train the model using our custom algorithm</span></span>
 <span><span class="co"># Note that 'algo' is now our list object instead of a string</span></span>
-<span><span class="va">i</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/train_sdm.html">train_sdm</a></span><span class="op">(</span><span class="va">i</span>,</span>
+<span><span class="va">i</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/train_sdm.html">train_sdm</a></span><span class="op">(</span>occ <span class="op">=</span> <span class="va">i</span>,</span>
 <span>  algo <span class="op">=</span> <span class="va">mahal.custom</span>,</span>
 <span>  variables_selected <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"bio1"</span>, <span class="st">"bio4"</span>, <span class="st">"bio12"</span><span class="op">)</span>, <span class="co"># Using only two variables for simplicity</span></span>
 <span>  ctrl <span class="op">=</span> <span class="va">ctrl_sdm</span></span>
@@ -581,7 +602,13 @@ build models using the mahal.dismo method.</p>
 <span><span class="va">i2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/input_sdm.html">input_sdm</a></span><span class="op">(</span><span class="va">oc</span>, <span class="va">sa</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="../reference/pseudoabsences.html">pseudoabsences</a></span><span class="op">(</span></span>
 <span>    method <span class="op">=</span> <span class="st">"bioclim"</span>,</span>
-<span>    n_set <span class="op">=</span> <span class="fl">3</span></span>
+<span>    n_set <span class="op">=</span> <span class="fl">3</span>,</span>
+<span>    n_pa <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>    variables_selected <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>    th <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>    size <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>    size_crs <span class="op">=</span> <span class="fl">4326</span>,</span>
+<span>    mcp <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span>  <span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="../reference/train_sdm.html">train_sdm</a></span><span class="op">(</span></span>
 <span>    algo <span class="op">=</span> <span class="va">mahal.dismo</span>,</span>
@@ -638,20 +665,48 @@ build models using the mahal.dismo method.</p>
 <p>Plotting the result of mahal.dismo.</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">i2</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="../reference/add_scenarios.html">add_scenarios</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="../reference/predict_sdm.html">predict_sdm</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="../reference/ensemble_sdm.html">ensemble_sdm</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="../reference/plot_occurrences.html">plot_ensembles</a></span><span class="op">(</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="../reference/add_scenarios.html">add_scenarios</a></span><span class="op">(</span>scen <span class="op">=</span> <span class="cn">NULL</span>, </span>
+<span>                scenarios_names <span class="op">=</span> <span class="cn">NULL</span>, </span>
+<span>                pred_as_scen <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>                variables_selected <span class="op">=</span> <span class="cn">NULL</span>, </span>
+<span>                stationary <span class="op">=</span> <span class="cn">NULL</span>, </span>
+<span>                crop_area <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="../reference/predict_sdm.html">predict_sdm</a></span><span class="op">(</span>metric <span class="op">=</span> <span class="st">"ROC"</span>,</span>
+<span>              th <span class="op">=</span> <span class="fl">0.9</span>,</span>
+<span>              tp <span class="op">=</span> <span class="st">"prob"</span>,</span>
+<span>              file <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>              add.current <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="../reference/ensemble_sdm.html">ensemble_sdm</a></span><span class="op">(</span>method <span class="op">=</span> <span class="st">"average"</span>,</span>
+<span>               metric <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>               fun <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="../reference/plot_occurrences.html">plot_ensembles</a></span><span class="op">(</span>spp_name <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>                 scenario <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>                 id <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>                 ensemble_type <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Ensemble function: average</span></span>
 <span><span class="co">#&gt;   current</span></span></code></pre></div>
 <p><img src="02_Add-Algorithm_files/figure-html/mahal.dismo_plot-1.png" class="r-plt" alt="" width="700"></p>
 <p>Plotting the result of mahal.custom.</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">i</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="../reference/add_scenarios.html">add_scenarios</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="../reference/predict_sdm.html">predict_sdm</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="../reference/ensemble_sdm.html">ensemble_sdm</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="../reference/plot_occurrences.html">plot_ensembles</a></span><span class="op">(</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="../reference/add_scenarios.html">add_scenarios</a></span><span class="op">(</span>scen <span class="op">=</span> <span class="cn">NULL</span>, </span>
+<span>                scenarios_names <span class="op">=</span> <span class="cn">NULL</span>, </span>
+<span>                pred_as_scen <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>                variables_selected <span class="op">=</span> <span class="cn">NULL</span>, </span>
+<span>                stationary <span class="op">=</span> <span class="cn">NULL</span>, </span>
+<span>                crop_area <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="../reference/predict_sdm.html">predict_sdm</a></span><span class="op">(</span>metric <span class="op">=</span> <span class="st">"ROC"</span>,</span>
+<span>              th <span class="op">=</span> <span class="fl">0.9</span>,</span>
+<span>              tp <span class="op">=</span> <span class="st">"prob"</span>,</span>
+<span>              file <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>              add.current <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="../reference/ensemble_sdm.html">ensemble_sdm</a></span><span class="op">(</span>method <span class="op">=</span> <span class="st">"average"</span>,</span>
+<span>               metric <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>               fun <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="../reference/plot_occurrences.html">plot_ensembles</a></span><span class="op">(</span>spp_name <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>                 scenario <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>                 id <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>                 ensemble_type <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Ensemble function: average</span></span>
 <span><span class="co">#&gt;   current</span></span></code></pre></div>
 <p><img src="02_Add-Algorithm_files/figure-html/mahal.custom_plot-1.png" class="r-plt" alt="" width="700"></p>

@@ -20,7 +20,8 @@ vif_summary(i)
 - area:
 
   Character. Which area should be used in vif selection? Standard is
-  `"all"`.
+  `"all"`. Alternativelly, set it to `"occurrences"` to perform VIF only
+  in the occurrence records.
 
 - th:
 

@@ -25,7 +25,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">caretSDM</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.9.7</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.9.8</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -74,7 +74,7 @@
                         <h4 data-toc-skip class="author">[author
 name]</h4>
             
-            <h4 data-toc-skip class="date">2026-07-24</h4>
+            <h4 data-toc-skip class="date">2026-10-02</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/luizesser/caretSDM/blob/main/vignettes/articles/03_Araucaria.Rmd" class="external-link"><code>vignettes/articles/03_Araucaria.Rmd</code></a></small>
       <div class="d-none name"><code>03_Araucaria.Rmd</code></div>
@@ -102,6 +102,9 @@ angustifolia</em>, a keystone tree species from South Brazil.</p>
 <span><span class="co">#&gt;   method                  from   </span></span>
 <span><span class="co">#&gt;   heightDetails.titleGrob ggplot2</span></span>
 <span><span class="co">#&gt;   widthDetails.titleGrob  ggplot2</span></span>
+<span><span class="co">#&gt; Registered S3 method overwritten by 'stars':</span></span>
+<span><span class="co">#&gt;   method                  from</span></span>
+<span><span class="co">#&gt;   st_interpolate_aw.stars sf</span></span>
 <span><span class="va">start_time</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span></code></pre></div>
 </div>
@@ -134,7 +137,9 @@ standard, <code>GBIF_data</code> function sets
 <code>occurrences</code> object (more about that further below). An
 example code for this step would be:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">occ</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/GBIF_data.html">GBIF_data</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Araucaria angustifolia"</span><span class="op">)</span>, as_df <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">occ</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/GBIF_data.html">GBIF_data</a></span><span class="op">(</span>s <span class="op">=</span> <span class="st">"Araucaria angustifolia"</span>, </span>
+<span>                 file <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>                 as_df <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <p>To make this process a little more difficult for our package to
 solve, we can transform the <code>occ</code> data to have a different
 CRS using the <code>sf</code> package. Here, we change it to
@@ -187,7 +192,10 @@ arc-minutes, which is very coarse, but quicker to download and run.</p>
 <span>  path <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  period <span class="op">=</span> <span class="st">"current"</span>,</span>
 <span>  variable <span class="op">=</span> <span class="st">"bioc"</span>,</span>
-<span>  resolution <span class="op">=</span> <span class="fl">10</span></span>
+<span>  resolution <span class="op">=</span> <span class="fl">10</span>,</span>
+<span>  year <span class="op">=</span> <span class="st">"2090"</span>,</span>
+<span>  gcm <span class="op">=</span> <span class="st">"mi"</span>,</span>
+<span>  ssp <span class="op">=</span> <span class="st">"585"</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Import current bioclimatic variables to R</span></span>
@@ -259,7 +267,7 @@ approach using <code>stars</code> will do the same thing, but weighting
 for the area of each value within the cell. For other arguments meaning
 see <code><a href="../reference/sdm_area.html">?sdm_area</a></code>.</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">sa</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sdm_area.html">sdm_area</a></span><span class="op">(</span><span class="va">parana</span>,</span>
+<code class="sourceCode R"><span><span class="va">sa</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sdm_area.html">sdm_area</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">parana</span>,</span>
 <span>  cell_size <span class="op">=</span> <span class="fl">25000</span>,</span>
 <span>  output_crs <span class="op">=</span> <span class="fl">6933</span>,</span>
 <span>  variables_selected <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -301,10 +309,11 @@ object with predictors data. Note that <code>add_predictors</code> also
 has a <code>gdal</code> argument, which works as the previous one in
 <code>sdm_area</code> function.</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">sa</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_predictors.html">add_predictors</a></span><span class="op">(</span><span class="va">sa</span>,</span>
-<span>  <span class="va">bioc</span>,</span>
+<code class="sourceCode R"><span><span class="va">sa</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_predictors.html">add_predictors</a></span><span class="op">(</span>sa <span class="op">=</span> <span class="va">sa</span>,</span>
+<span>  pred <span class="op">=</span> <span class="va">bioc</span>,</span>
 <span>  variables_selected <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  gdal <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span>  gdal <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  lines_as_sdm_area <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span>
 <span><span class="co">#&gt; <span style="color: #BBBB00;">!</span> Making grid over the study area is an expensive task. Please, be patient!</span></span>
 <span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Using GDAL to make the grid and resample the variables.</span></span>
@@ -331,7 +340,13 @@ to <code>TRUE</code>.</p>
 <code class="sourceCode R"><span><span class="co"># This is an example code for when you want only to obtain the current distribution.</span></span>
 <span><span class="co"># For projecting to current and future scenarios we will add all scenarios in the following steps</span></span>
 <span><span class="co"># in only one run.</span></span>
-<span><span class="va">sa</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_scenarios.html">add_scenarios</a></span><span class="op">(</span><span class="va">sa</span><span class="op">)</span></span></code></pre></div>
+<span><span class="va">sa</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_scenarios.html">add_scenarios</a></span><span class="op">(</span>sa <span class="op">=</span> <span class="va">sa</span>,</span>
+<span>                    scenarios_names <span class="op">=</span> <span class="cn">NULL</span>, </span>
+<span>                    pred_as_scen <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>                    variables_selected <span class="op">=</span> <span class="cn">NULL</span>, </span>
+<span>                    stationary <span class="op">=</span> <span class="cn">NULL</span>, </span>
+<span>                    crop_area <span class="op">=</span> <span class="cn">NULL</span></span>
+<span>                    <span class="op">)</span></span></code></pre></div>
 <p>If we are aiming to project species distributions in other scenarios,
 we can download data and add in the same way we did for current
 data.</p>
@@ -374,12 +389,13 @@ also provide a stationary argument, where the modeler can inform
 variables that do not change between scenarios. These variables can be,
 e.g., soil variables.</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">sa</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_scenarios.html">add_scenarios</a></span><span class="op">(</span><span class="va">sa</span>,</span>
+<code class="sourceCode R"><span><span class="va">sa</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_scenarios.html">add_scenarios</a></span><span class="op">(</span>sa <span class="op">=</span> <span class="va">sa</span>,</span>
 <span>  scen <span class="op">=</span> <span class="va">scen</span>,</span>
 <span>  scenarios_names <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  pred_as_scen <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  variables_selected <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  stationary <span class="op">=</span> <span class="cn">NULL</span></span>
+<span>  stationary <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  crop_area <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span>
 <span><span class="co">#&gt; Warning: Some variables in `variables_selected` are not present in `scen`.</span></span>
 <span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Using only variables present in `scen`: bio1, bio4, and bio12</span></span>
@@ -425,18 +441,24 @@ predictors, study area and scenarios directly through
 <code>caretSDM</code> package as follows:</p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">sa</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sdm_area.html">sdm_area</a></span><span class="op">(</span></span>
-<span>  <span class="st">"input_data/current"</span>, <span class="co"># Add predictors data</span></span>
+<span>  x <span class="op">=</span> <span class="st">"input_data/current"</span>, <span class="co"># Add predictors data</span></span>
 <span>  cell_size <span class="op">=</span> <span class="fl">25000</span>,    <span class="co"># Set grid size</span></span>
 <span>  output_crs <span class="op">=</span> <span class="fl">6933</span>,    <span class="co"># Set Coordinate Reference System</span></span>
-<span>  gdal <span class="op">=</span> <span class="cn">T</span>,</span>
-<span>  crop_by <span class="op">=</span> <span class="va">parana</span>      <span class="co"># Crop predictors given the shape of the study area</span></span>
+<span>  variables_selected <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  gdal <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  crop_by <span class="op">=</span> <span class="va">parana</span>,      <span class="co"># Crop predictors given the shape of the study area</span></span>
+<span>  lines_as_sdm_area <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span> <span class="op">|&gt;</span>  </span>
 <span>  <span class="fu"><a href="../reference/predictor_names.html">set_predictor_names</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"bio01"</span>,<span class="st">"bio10"</span>, <span class="st">"bio11"</span>, <span class="st">"bio12"</span>, <span class="st">"bio13"</span>, <span class="st">"bio14"</span>, <span class="st">"bio15"</span>, <span class="st">"bio16"</span>,</span>
 <span>                        <span class="st">"bio17"</span>, <span class="st">"bio18"</span>, <span class="st">"bio19"</span>, <span class="st">"bio02"</span>, <span class="st">"bio03"</span>, <span class="st">"bio04"</span>, <span class="st">"bio05"</span>, <span class="st">"bio06"</span>,</span>
 <span>                        <span class="st">"bio07"</span>, <span class="st">"bio08"</span>, <span class="st">"bio09"</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="../reference/add_scenarios.html">add_scenarios</a></span><span class="op">(</span></span>
-<span>    <span class="st">"input_data/future"</span>, <span class="co"># Add future scenarios data</span></span>
-<span>    crop_area <span class="op">=</span> <span class="va">parana</span>   <span class="co"># Crop scenarios given the shape of the study area</span></span>
+<span>    sa <span class="op">=</span> <span class="st">"input_data/future"</span>, <span class="co"># Add future scenarios data</span></span>
+<span>    crop_area <span class="op">=</span> <span class="va">parana</span>,   <span class="co"># Crop scenarios given the shape of the study area</span></span>
+<span>    scenarios_names <span class="op">=</span> <span class="cn">NULL</span>, </span>
+<span>    pred_as_scen <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>    variables_selected <span class="op">=</span> <span class="cn">NULL</span>, </span>
+<span>    stationary <span class="op">=</span> <span class="cn">NULL</span></span>
 <span>  <span class="op">)</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="../reference/tidyverse-methods.html">select_predictors</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"bio01"</span>, <span class="st">"bio12"</span>, <span class="st">"bio13"</span>, <span class="st">"bio14"</span>, <span class="st">"bio15"</span>, <span class="st">"bio02"</span>,</span>
 <span>                      <span class="st">"bio03"</span>, <span class="st">"bio04"</span>, <span class="st">"bio05"</span>, <span class="st">"bio06"</span>, <span class="st">"bio07"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
@@ -456,7 +478,11 @@ is in occ_crs = 4326, but our records stored in <code>occ</code> object
 is transformed to 6933 (see <code><a href="../reference/occ.html">?occ</a></code> for more information on
 the data).</p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">oc</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/occurrences_sdm.html">occurrences_sdm</a></span><span class="op">(</span><span class="va">occ</span>, occ_crs <span class="op">=</span> <span class="fl">6933</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">oc</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/occurrences_sdm.html">occurrences_sdm</a></span><span class="op">(</span>occ <span class="op">=</span> <span class="va">occ</span>, </span>
+<span>                      occ_crs <span class="op">=</span> <span class="fl">6933</span>,</span>
+<span>                      independent_test <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>                      independent_test_crs <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>                      p <span class="op">=</span> <span class="fl">0.1</span><span class="op">)</span></span>
 <span><span class="va">oc</span></span>
 <span><span class="co">#&gt;              caretSDM           </span></span>
 <span><span class="co">#&gt; ................................</span></span>
@@ -481,7 +507,10 @@ the data).</p>
 <span><span class="co">#&gt; 49  Araucaria angustifolia POINT (-4726011 -3148963)</span></span>
 <span><span class="co">#&gt; 124 Araucaria angustifolia POINT (-4727265 -3148517)</span></span></code></pre></div>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_occurrences.html">plot_occurrences</a></span><span class="op">(</span><span class="va">oc</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_occurrences.html">plot_occurrences</a></span><span class="op">(</span>i <span class="op">=</span> <span class="va">oc</span>,</span>
+<span>                 spp_name <span class="op">=</span> <span class="cn">NULL</span>, </span>
+<span>                 pa <span class="op">=</span> <span class="cn">TRUE</span>, </span>
+<span>                 pa_id <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></code></pre></div>
 <p><img src="03_Araucaria_files/figure-html/plot_occurrences-1.png" class="r-plt" alt="" width="700"></p>
 </div>
 <div class="section level3">
@@ -552,13 +581,16 @@ of the Data Cleaning information there is the Duplicated Cell method.
 This method is only possible when we have both the
 <code>occurrence</code> and <code>predictors</code> data.</p>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">i</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/data_clean.html">data_clean</a></span><span class="op">(</span><span class="va">i</span>,</span>
-<span>  capitals <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  centroids <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  duplicated <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  identical <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  institutions <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  invalid <span class="op">=</span> <span class="cn">TRUE</span></span>
+<code class="sourceCode R"><span><span class="va">i</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/data_clean.html">data_clean</a></span><span class="op">(</span>occ <span class="op">=</span> <span class="va">i</span>,</span>
+<span>           capitals <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>           centroids <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>           duplicated <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>           identical <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>           institutions <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>           invalid <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>           terrestrial <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>           independent_test <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>           fun <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span>
 <span><span class="co">#&gt; Cell_ids identified, removing duplicated cell_id.</span></span>
 <span><span class="co">#&gt; Testing country capitals</span></span>
@@ -591,7 +623,8 @@ wrapper for <code><a href="https://rdrr.io/pkg/usdm/man/vif.html" class="externa
 maximum threshold of colinearity. The standard is 0.5. Here is a example
 code for demonstration:</p>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">i</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/vif_predictors.html">vif_predictors</a></span><span class="op">(</span><span class="va">i</span>,</span>
+<code class="sourceCode R"><span><span class="va">i</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/vif_predictors.html">vif_predictors</a></span><span class="op">(</span>pred <span class="op">=</span> <span class="va">i</span>,</span>
+<span>  area <span class="op">=</span> <span class="st">"all"</span>,</span>
 <span>  th <span class="op">=</span> <span class="fl">0.5</span>,</span>
 <span>  maxobservations <span class="op">=</span> <span class="fl">5000</span>,</span>
 <span>  variables_selected <span class="op">=</span> <span class="cn">NULL</span></span>
@@ -680,12 +713,15 @@ want to use to build your pseudoabsences/models. This can either be a
 vector of variables names or a previously performed selection
 method.</p>
 <div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">i</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/pseudoabsences.html">pseudoabsences</a></span><span class="op">(</span><span class="va">i</span>,</span>
+<code class="sourceCode R"><span><span class="va">i</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/pseudoabsences.html">pseudoabsences</a></span><span class="op">(</span>occ <span class="op">=</span> <span class="va">i</span>,</span>
 <span>  method <span class="op">=</span> <span class="st">"bioclim"</span>,</span>
 <span>  n_set <span class="op">=</span> <span class="fl">10</span>,</span>
 <span>  n_pa <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  variables_selected <span class="op">=</span> <span class="st">"pca"</span>,</span>
-<span>  th <span class="op">=</span> <span class="fl">0</span></span>
+<span>  th <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  size <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  size_crs <span class="op">=</span> <span class="fl">4326</span>,</span>
+<span>  mcp <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span>
 <span><span class="va">i</span></span>
 <span><span class="co">#&gt;              caretSDM           </span></span>
@@ -761,7 +797,7 @@ algorithm.</p>
 <span>  savePredictions <span class="op">=</span> <span class="st">"all"</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">i</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/train_sdm.html">train_sdm</a></span><span class="op">(</span><span class="va">i</span>,</span>
+<span><span class="va">i</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/train_sdm.html">train_sdm</a></span><span class="op">(</span>occ <span class="op">=</span> <span class="va">i</span>,</span>
 <span>  algo <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"naive_bayes"</span>, <span class="st">"kknn"</span><span class="op">)</span>,</span>
 <span>  variables_selected <span class="op">=</span> <span class="st">"pca"</span>,</span>
 <span>  ctrl <span class="op">=</span> <span class="va">ctrl_sdm</span></span>
@@ -858,10 +894,12 @@ following example, metric is set to be “ROC” and <code>th</code> is
 equal 0.9. This means that only models with ROC &gt; 0.9 will be used in
 predictions and ensembles.</p>
 <div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">i</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/predict_sdm.html">predict_sdm</a></span><span class="op">(</span><span class="va">i</span>,</span>
+<code class="sourceCode R"><span><span class="va">i</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/predict_sdm.html">predict_sdm</a></span><span class="op">(</span>m <span class="op">=</span> <span class="va">i</span>,</span>
 <span>  metric <span class="op">=</span> <span class="st">"ROC"</span>,</span>
 <span>  th <span class="op">=</span> <span class="fl">0.9</span>,</span>
-<span>  tp <span class="op">=</span> <span class="st">"prob"</span></span>
+<span>  tp <span class="op">=</span> <span class="st">"prob"</span>,</span>
+<span>  file <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  add.current <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span>
 <span><span class="va">i</span></span>
 <span><span class="co">#&gt;              caretSDM           </span></span>
@@ -947,8 +985,10 @@ predictions and ensembles.</p>
 <span><span class="co">#&gt; Prediction unit                : Occurrence Probability</span></span></code></pre></div>
 <p>Finally, we can ensemble the predictions using:</p>
 <div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">i</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ensemble_sdm.html">ensemble_sdm</a></span><span class="op">(</span><span class="va">i</span>,</span>
-<span>  method <span class="op">=</span> <span class="st">"average"</span></span>
+<code class="sourceCode R"><span><span class="va">i</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ensemble_sdm.html">ensemble_sdm</a></span><span class="op">(</span>m <span class="op">=</span> <span class="va">i</span>,</span>
+<span>  method <span class="op">=</span> <span class="st">"average"</span>,</span>
+<span>  metric <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  fun <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span>
 <span><span class="co">#&gt; Ensemble function: average</span></span>
 <span><span class="co">#&gt;   current</span></span>
@@ -1405,12 +1445,6 @@ names generated in this last step and are included in object
 <code>i</code> scenarios.</p>
 <div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">i</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/gcms_ensembles.html">gcms_ensembles</a></span><span class="op">(</span><span class="va">i</span>, gcms <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ca"</span>, <span class="st">"mi"</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; New names:</span></span>
-<span><span class="co">#&gt; New names:</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">•</span> `cell_id` -&gt; `cell_id...1`</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">•</span> `average` -&gt; `average...2`</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">•</span> `cell_id` -&gt; `cell_id...3`</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">•</span> `average` -&gt; `average...4`</span></span>
 <span><span class="va">i</span></span>
 <span><span class="co">#&gt;              caretSDM           </span></span>
 <span><span class="co">#&gt; ................................</span></span>
@@ -1520,13 +1554,17 @@ separate projections you can plot them informing the model
 above to retrieve models ids).</p>
 <div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_occurrences.html">plot_ensembles</a></span><span class="op">(</span><span class="va">i</span>,</span>
+<span>  spp_name <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  scenario <span class="op">=</span> <span class="st">"current"</span>,</span>
+<span>  id <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  ensemble_type <span class="op">=</span> <span class="st">"average"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p><img src="03_Araucaria_files/figure-html/plot_current_results-1.png" class="r-plt" alt="" width="700"></p>
 <div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_occurrences.html">plot_ensembles</a></span><span class="op">(</span><span class="va">i</span>,</span>
+<span>  spp_name <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  scenario <span class="op">=</span> <span class="st">"_ssp245_2090"</span>,</span>
+<span>  id <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  ensemble_type <span class="op">=</span> <span class="st">"average"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p><img src="03_Araucaria_files/figure-html/ssp245_2090-1.png" class="r-plt" alt="" width="700"></p>
@@ -1536,7 +1574,7 @@ using PCA axes as predictors, so there is not much sense in plotting
 these curves, but if someone want to do that, it is possible through the
 <code>pdp_sdm</code> function.</p>
 <div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/pdp_sdm.html">pdp_sdm</a></span><span class="op">(</span><span class="va">i</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/pdp_sdm.html">pdp_sdm</a></span><span class="op">(</span><span class="va">i</span>, spp <span class="op">=</span> <span class="cn">NULL</span>, algo <span class="op">=</span> <span class="cn">NULL</span>, variables_selected <span class="op">=</span> <span class="cn">NULL</span>, mean.only <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="co">#&gt; `geom_smooth()` using method = 'gam' and formula = 'y ~ s(x, bs = "cs")'</span></span></code></pre></div>
 <p><img src="03_Araucaria_files/figure-html/pdp_sdm-1.png" class="r-plt" alt="" width="700"></p>
 </div>
@@ -1552,7 +1590,7 @@ Common functions are the following:</p>
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/write_ensembles.html">write_occurrences</a></span><span class="op">(</span><span class="va">i</span>, path <span class="op">=</span> <span class="st">"results/occurrences.csv"</span>, grid <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/write_ensembles.html">write_pseudoabsences</a></span><span class="op">(</span><span class="va">i</span>, path <span class="op">=</span> <span class="st">"results/pseudoabsences"</span>, ext <span class="op">=</span> <span class="st">".csv"</span>, centroid <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/write_ensembles.html">write_grid</a></span><span class="op">(</span><span class="va">i</span>, path <span class="op">=</span> <span class="st">"results/grid_study_area.gpkg"</span>, centroid <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
-<span><span class="fu"><a href="../reference/write_ensembles.html">write_ensembles</a></span><span class="op">(</span><span class="va">i</span>, path <span class="op">=</span> <span class="st">"results/ensembles"</span>, ext <span class="op">=</span> <span class="st">".tif"</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="../reference/write_ensembles.html">write_ensembles</a></span><span class="op">(</span><span class="va">i</span>, path <span class="op">=</span> <span class="st">"results/ensembles"</span>, ext <span class="op">=</span> <span class="st">".tif"</span>, centroid <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
 </div>
 </div>
 <div class="section level2">
@@ -1567,7 +1605,7 @@ simplefeatures object instead of cells in a grid.</p>
 <div class="sourceCode" id="cb35"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">end_time</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">end_time</span> <span class="op">-</span> <span class="va">start_time</span></span>
-<span><span class="co">#&gt; Time difference of 24.88482 secs</span></span></code></pre></div>
+<span><span class="co">#&gt; Time difference of 24.29916 secs</span></span></code></pre></div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>

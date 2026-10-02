@@ -61,20 +61,43 @@ presence-pseudoabsence algorithms need to have pseudoabsence data.
 ``` r
 
 set.seed(1)
-sa <- sdm_area(bioc,
-  cell_size = 25000,
-  output_crs = 6933,
-  gdal = T
-) |>
-  add_scenarios()
+sa <- sdm_area(
+    x = bioc,
+    cell_size = 25000,
+    output_crs = 6933,
+    variables_selected = NULL,
+    gdal = TRUE, 
+    crop_by = NULL, 
+    lines_as_sdm_area = FALSE
+  ) |>
+  add_scenarios(
+    scen = NULL, 
+    scenarios_names = NULL, 
+    pred_as_scen = TRUE,
+    variables_selected = NULL, 
+    stationary = NULL, 
+    crop_area = NULL
+  )
 
-oc <- occurrences_sdm(occ, occ_crs = 6933)
+oc <- occurrences_sdm(
+  occ = occ,
+  independent_test = NULL,
+  p = 0.1,
+  occ_crs = 6933,
+  independent_test_crs = NULL,
+)
 
 i <- input_sdm(oc, sa) |>
   ### KEY DIFFERENCE: the background function. In other cases, here we should have a pseudoabsences function.
-  background() |>
+  background(
+    method = "random",
+    n_set = 1,
+    n_bg = 10000,
+    proportion = NULL
+  ) |>
   train_sdm(
     algo = c("maxent"),
+    variables_selected = NULL,
     ctrl = caret::trainControl(
       method = "repeatedcv",
       number = 4,
@@ -85,7 +108,13 @@ i <- input_sdm(oc, sa) |>
       savePredictions = "all"
     )
   ) |>
-  predict_sdm(th = 0.8)
+  predict_sdm(
+    metric = "ROC",
+    th = 0.8,
+    tp = "prob",
+    file = NULL,
+    add.current = TRUE
+  )
 i
 ```
 
@@ -160,7 +189,7 @@ standard values:
 
 ``` r
 
-background(occ,
+background(occ = i,
   pred = NULL,
   method = "random",
   n_set = 1,
@@ -186,20 +215,46 @@ applied in the `caretSDM` workflow, the workflow stops in an error:
 
 ``` r
 
-sa <- sdm_area(bioc,
+sa <- sdm_area(x = bioc,
   cell_size = 25000,
   output_crs = 6933,
-  gdal = T
+  variables_selected = NULL,
+  gdal = TRUE, 
+  crop_by = NULL, 
+  lines_as_sdm_area = FALSE
 ) |>
-  add_scenarios()
+  add_scenarios(
+    scen = NULL, 
+    scenarios_names = NULL, 
+    pred_as_scen = TRUE,
+    variables_selected = NULL, 
+    stationary = NULL, 
+    crop_area = NULL
+  )
 
-oc <- occurrences_sdm(occ, occ_crs = 6933)
+oc <- occurrences_sdm(
+  occ = occ,
+  independent_test = NULL,
+  p = 0.1,
+  occ_crs = 6933,
+  independent_test_crs = NULL
+)
 
 i <- input_sdm(oc, sa) |>
   ### Using the wrong function will return an error:
-  pseudoabsences() |>
+  pseudoabsences(
+    method = "random",
+    n_set = 10,
+    n_pa = NULL,
+    variables_selected = NULL,
+    th = 0,
+    size = 1,
+    size_crs = 4326,
+    mcp = FALSE
+  ) |>
   train_sdm(
     algo = c("maxent"),
+    variables_selected = NULL,
     ctrl = caret::trainControl(
       method = "repeatedcv",
       number = 4,
