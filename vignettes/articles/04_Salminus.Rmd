@@ -67,7 +67,9 @@ parameter `as_df = TRUE` to retrieve an example table. As standard, `GBIF_data` 
 below). An example code for this step would be:
 
 ```{r gbif_data, eval = FALSE}
-salm <- GBIF_data(c("Salminus brasiliensis"), as_df = TRUE)
+salm <- GBIF_data(s = "Salminus brasiliensis", 
+                  file = NULL, 
+                  as_df = TRUE)
 ```
 
 To make this process a little more difficult for our package to solve, we can transform the `salm` 
@@ -113,7 +115,10 @@ WorldClim_data(
   path = NULL,
   period = "current",
   variable = "bioc",
-  resolution = 10
+  resolution = 10,
+  year = "2090",
+  gcm = "mi",
+  ssp = "585"
 )
 
 # Import current bioclimatic variables to R
@@ -171,7 +176,7 @@ two different lines both with the same hydrological data, but different bioclima
 modeling. For other arguments meaning see `?sdm_area`.
 
 ```{r sdm_area}
-sa <- sdm_area(rivs,
+sa <- sdm_area(x = rivs,
   cell_size = 25000,
   output_crs = 6933,
   variables_selected = NULL,
@@ -200,10 +205,11 @@ predictors data. Note that `add_predictors` also has a `gdal` argument, which wo
 one in `sdm_area` function.
 
 ```{r add_predictors}
-sa <- add_predictors(sa,
-  bioc,
+sa <- add_predictors(sa = sa,
+  pred = bioc,
   variables_selected = NULL,
-  gdal = TRUE
+  gdal = TRUE,
+  lines_as_sdm_area = FALSE
 ) |> suppressWarnings()
 sa
 ```
@@ -218,7 +224,8 @@ considering any other argument. This happens because the argument `pred_as_scen`
 # This is an example code for when you want only to obtain the current distribution.
 # For projecting to current and future scenarios we will add all scenarios in the following steps
 # in only one run.
-sa <- add_scenarios(sa)
+sa <- add_scenarios(sa = sa, scen = NULL, scenarios_names = NULL, pred_as_scen = TRUE,
+                     variables_selected = NULL, stationary = NULL, crop_area = NULL)
 ```
 
 If we are aiming to project species distributions in other scenarios, we can download data and add
@@ -259,7 +266,8 @@ sa <- add_scenarios(sa,
   scenarios_names = NULL,
   pred_as_scen = TRUE,
   variables_selected = NULL,
-  stationary = c("LENGTH_KM", "DIST_DN_KM")
+  stationary = c("LENGTH_KM", "DIST_DN_KM"),
+  crop_area = NULL
 )
 sa
 ```
@@ -281,7 +289,12 @@ is in occ_crs = 4326, but our records stored in `salm` object is transformed to 
 more information on the data).
 
 ```{r occurrences_sdm}
-oc <- occurrences_sdm(salm, occ_crs = 6933)
+oc <- occurrences_sdm(occ = salm,
+                independent_test = NULL,
+                p = 0.1,
+                occ_crs = 6933,
+                independent_test_crs = NULL,
+                crs = NULL)
 oc
 ```
 
@@ -318,13 +331,16 @@ the Data Cleaning information there is the Duplicated Cell method (here actually
 This method is only possible when we have both the `occurrence` and `predictors` data.
 
 ```{r data_clean}
-i <- data_clean(i,
-  capitals = TRUE,
-  centroids = TRUE,
-  duplicated = TRUE,
-  identical = TRUE,
-  institutions = TRUE,
-  invalid = TRUE
+i <- data_clean(occ = i,
+           capitals = TRUE,
+           centroids = TRUE,
+           duplicated = TRUE,
+           identical = TRUE,
+           institutions = TRUE,
+           invalid = TRUE,
+           terrestrial = TRUE,
+           independent_test = TRUE,
+           fun = NULL
 )
 ```
 
@@ -338,10 +354,11 @@ is a wrapper for `usdm::vifcor`, where variables are kept given a maximum thresh
 The standard is 0.5.
 
 ```{r vif_predictors}
-i <- vif_predictors(i,
-  th = 0.5,
-  maxobservations = 5000,
-  variables_selected = NULL
+i <- vif_predictors(pred = i, 
+                    area = "all",
+                    th = 0.5,
+                    maxobservations = 5000,
+                    variables_selected = NULL
 )
 ```
 
@@ -367,12 +384,15 @@ build your pseudoabsences/models. This can either be a vector of variables names
 performed selection method.
 
 ```{r pseudoabsence}
-i <- pseudoabsences(i,
+i <- pseudoabsences(occ = i,
   method = "bioclim",
   n_set = 10,
   n_pa = NULL,
   variables_selected = "vif",
-  th = 0
+  th = 0,
+  size = 1,
+  size_crs = 4326,
+  mcp = FALSE
 )
 i
 ```
@@ -406,7 +426,7 @@ ctrl_sdm <- caret::trainControl(
   savePredictions = "all"
 )
 
-i <- train_sdm(i,
+i <- train_sdm(occ = i,
   algo = c("naive_bayes", "kknn"),
   variables_selected = "vif",
   ctrl = ctrl_sdm
@@ -425,10 +445,12 @@ predict models that passes a given validation threshold. This validation metric 
 0.9. This means that only models with ROC \> 0.9 will be used in predictions and ensembles.
 
 ```{r predict_sdm}
-i <- predict_sdm(i,
+i <- predict_sdm(m = i,
   metric = "ROC",
   th = 0.7,
-  tp = "prob"
+  tp = "prob",
+  file = NULL,
+  add.current = TRUE
 )
 i
 ```
@@ -436,8 +458,10 @@ i
 Finally, we can ensemble the predictions using:
 
 ```{r ensemble_sdm}
-i <- ensemble_sdm(i,
-  method = "average"
+i <- ensemble_sdm(m = i,
+  method = "average",
+  metric = NULL,
+  fun = NULL
 )
 i
 ```
@@ -496,14 +520,18 @@ separate projections you can plot them informing the model `id` (see row names o
 
 ```{r plot_current_results}
 plot_ensembles(i,
+  spp_name = NULL,
   scenario = "current",
+  id = NULL,
   ensemble_type = "average"
 )
 ```
 
 ```{r ssp245_2090}
 plot_ensembles(i,
+  spp_name = NULL,
   scenario = "_ssp245_2090",
+  id = NULL,
   ensemble_type = "average"
 )
 ```
@@ -512,7 +540,7 @@ Another plot widely used in SDM studies is the Partial Dependence Plot, which in
 curves to each variable. In `caretSDM` these plots can be plotted using the `pdp_sdm` function.
 
 ```{r pdp_sdm}
-pdp_sdm(i)
+pdp_sdm(i, spp = NULL, algo = NULL, variables_selected = NULL, mean.only = FALSE)
 ```
 
 ### Writting results
@@ -526,7 +554,7 @@ following:
 write_occurrences(i, path = "results/occurrences.csv", grid = FALSE)
 write_pseudoabsences(i, path = "results/pseudoabsences", ext = ".csv", centroid = FALSE)
 write_grid(i, path = "results/grid_study_area.gpkg", centroid = FALSE)
-write_ensembles(i, path = "results/ensembles", ext = ".tif")
+write_ensembles(i, path = "results/ensembles", ext = ".tif", centroid = FALSE)
 ```
 
 ## Conclusion

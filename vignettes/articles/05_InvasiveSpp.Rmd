@@ -69,7 +69,9 @@ parameter `as_df = TRUE` to retrieve an example table. As standard, `GBIF_data` 
 below). An example code for this step would be:
 
 ```{r gbif_data, eval = FALSE}
-occ <- GBIF_data(c("Araucaria angustifolia"), as_df = TRUE)
+occ <- GBIF_data(s = "Araucaria angustifolia", 
+                 file = NULL,
+                 as_df = TRUE)
 ```
 
 But we already have a `occ` object included in the package, which is the same output, but with
@@ -95,6 +97,9 @@ WorldClim_data(
   path = NULL,
   period = "current",
   variable = "bioc",
+  year = "2090",
+  gcm = "mi",
+  ssp = "585",
   resolution = 10
 )
 
@@ -205,7 +210,7 @@ or the median (for categorical variables) of the values falling within the cell.
 arguments meaning see `?sdm_area`.
 
 ```{r sdm_area}
-sa <- sdm_area(parana,
+sa <- sdm_area(x = parana,
   cell_size = 25000,
   output_crs = 6933,
   variables_selected = NULL,
@@ -233,10 +238,11 @@ predictors data. Note that `add_predictors` also has a `gdal` argument, which wo
 one in `sdm_area` function.
 
 ```{r add_predictors}
-sa <- add_predictors(sa,
-  bioc,
+sa <- add_predictors(sa = sa,
+  pred = bioc,
   variables_selected = NULL,
-  gdal = TRUE
+  gdal = TRUE,
+  lines_as_sdm_area = FALSE
 )
 sa
 ```
@@ -249,12 +255,13 @@ considering any other argument. This happens because the argument `pred_as_scen`
 region was previously set as the `scen_rs` object.
 
 ```{r add_scenarios}
-sa <- add_scenarios(sa,
+sa <- add_scenarios(sa = sa,
   scen = scen_rs,
   scenarios_names = NULL,
   pred_as_scen = FALSE,
   variables_selected = NULL,
-  stationary = NULL
+  stationary = NULL,
+  crop_area = NULL
 )
 sa
 ```
@@ -273,17 +280,23 @@ directly through `caretSDM` package as follows:
 
 ```{r caretSDM_only, eval = FALSE}
 sa <- sdm_area(
-  "input_data/current", # Add predictors data
+  x = "input_data/current", # Add predictors data
   cell_size = 25000,    # Set grid size
   output_crs = 6933,    # Set Coordinate Reference System
-  gdal = T,
-  crop_by = parana      # Crop predictors given the shape of the study area
+  variables_selected = NULL,
+  gdal = TRUE,
+  crop_by = parana,      # Crop predictors given the shape of the study area
+  lines_as_sdm_area = FALSE
 ) |>  
-  set_predictor_names(c("bio01","bio10", "bio11", "bio12", "bio13", "bio14", "bio15", "bio16",
+  set_predictor_names(new_names = c("bio01","bio10", "bio11", "bio12", "bio13", "bio14", "bio15", "bio16",
                         "bio17", "bio18", "bio19", "bio02", "bio03", "bio04", "bio05", "bio06",
                         "bio07", "bio08", "bio09")) |>
   add_scenarios(
-    "input_data/future_rs", # Add future scenarios data
+    scen = "input_data/future_rs", # Add future scenarios data
+    scenarios_names = NULL, 
+    pred_as_scen = TRUE,
+    variables_selected = NULL, 
+    stationary = NULL, 
     crop_area = scen_rs   # Crop scenarios given the shape of the invaded area
   ) |> 
   select_predictors(c("bio01", "bio12", "bio13", "bio14", "bio15", "bio02",
@@ -302,12 +315,19 @@ is in occ_crs = 4326, but our records stored in `occ` object is transformed to 6
 information on the data).
 
 ```{r occurrences_sdm}
-oc <- occurrences_sdm(occ, occ_crs = 6933)
+oc <- occurrences_sdm(occ = occ, 
+                      independent_test = NULL,
+                      p = 0.1,
+                      occ_crs = 6933,
+                      independent_test_crs = NULL)
 oc
 ```
 
 ```{r plot_occurrences}
-plot_occurrences(oc)
+plot_occurrences(i = oc, 
+                 spp_name = NULL, 
+                 pa = TRUE, 
+                 pa_id = 1)
 ```
 
 
@@ -338,14 +358,16 @@ the Data Cleaning information there is the Duplicated Cell method. This method i
 we have both the `occurrence` and `predictors` data.
 
 ```{r data_clean}
-i <- data_clean(i,
+i <- data_clean(occ = i,
   capitals = TRUE,
   centroids = TRUE,
   duplicated = TRUE,
   identical = TRUE,
   institutions = TRUE,
   invalid = TRUE,
-  terrestrial = TRUE
+  terrestrial = TRUE,
+  independent_test = TRUE,
+  fun = NULL
 )
 ```
 
@@ -358,7 +380,8 @@ users are able to perform variables selection through `usdm` package. The functi
 0.5. Here is a example code for demonstration:
 
 ```{r vif_predictors}
-i <- vif_predictors(i,
+i <- vif_predictors(pred = i,
+  area = "all",
   th = 0.5,
   maxobservations = 5000,
   variables_selected = NULL
@@ -380,12 +403,15 @@ your pseudoabsences/models. This can either be a vector of variables names or a 
 selection method.
 
 ```{r pseudoabsence}
-i <- pseudoabsences(i,
+i <- pseudoabsences(occ = i,
   method = "bioclim",
   n_set = 10,
   n_pa = NULL,
   variables_selected = "vif",
-  th = 0
+  th = 0,
+  size = 1,
+  size_crs = 4326,
+  mcp = FALSE
 )
 i
 ```
@@ -438,10 +464,12 @@ predict models that passes a given validation threshold. This validation metric 
 0.9. This means that only models with ROC \> 0.9 will be used in predictions and ensembles.
 
 ```{r predict_sdm}
-i <- predict_sdm(i,
+i <- predict_sdm(m = i,
   metric = "ROC",
   th = 0.9,
-  tp = "prob"
+  tp = "prob",
+  file = NULL,
+  add.current = TRUE
 )
 i
 ```
@@ -449,8 +477,10 @@ i
 Finally, we can ensemble the predictions using:
 
 ```{r ensemble_sdm}
-i <- ensemble_sdm(i,
-  method = "average"
+i <- ensemble_sdm(m = i,
+  method = "average",
+  metric = NULL,
+  fun = NULL
 )
 i
 ```
@@ -509,14 +539,18 @@ separate projections you can plot them informing the model `id` (see row names o
 
 ```{r plot_current_results}
 plot_ensembles(i,
+  spp_name = NULL,
   scenario = "current",
+  id = NULL,
   ensemble_type = "average"
 )
 ```
 
 ```{r ssp245_2090}
 plot_ensembles(i,
+  spp_name = NULL,
   scenario = "_ssp585_2090",
+  id = NULL,
   ensemble_type = "average"
 )
 ```
@@ -527,7 +561,7 @@ plotting these curves, but if someone want to do that, it is possible through th
 function.
 
 ```{r pdp_sdm}
-pdp_sdm(i)
+pdp_sdm(i, spp = NULL, algo = NULL, variables_selected = NULL, mean.only = FALSE)
 ```
 
 ### Writing results
@@ -541,7 +575,7 @@ following:
 write_occurrences(i, path = "results/occurrences.csv", grid = FALSE)
 write_pseudoabsences(i, path = "results/pseudoabsences", ext = ".csv", centroid = FALSE)
 write_grid(i, path = "results/grid_study_area.gpkg", centroid = FALSE)
-write_ensembles(i, path = "results/ensembles", ext = ".tif")
+write_ensembles(i, path = "results/ensembles", ext = ".tif", centroid = FALSE)
 ```
 
 ## Conclusion

@@ -68,7 +68,7 @@
 #'   i
 #' }
 #'
-#' @importFrom dplyr bind_cols
+#' @importFrom dplyr bind_cols inner_join
 #'
 #' @export
 gcms_ensembles <- function(i, gcms = NULL) {
@@ -87,7 +87,11 @@ gcms_ensembles <- function(i, gcms = NULL) {
   for (sp in rownames(y)) {
     for (sc in scen_names) {
       ysc <- y[sp, grep(sc, colnames(y))]
-      ysc <- dplyr::bind_cols(ysc)
+      ysc <- Reduce(
+        function(x, y) {dplyr::inner_join(x, y, by = "cell_id")},
+        ysc
+      )
+      #ysc <- dplyr::bind_cols(ysc)
       l2 <- list()
       for (m in emet) {
         l2[[m]] <- rowMeans(ysc[, grep(m, colnames(ysc))])

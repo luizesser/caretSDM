@@ -13,7 +13,8 @@ vif_summary(i)
 \arguments{
 \item{pred}{A \code{input_sdm} or \code{predictors} object.}
 
-\item{area}{Character. Which area should be used in vif selection? Standard is \code{"all"}.}
+\item{area}{Character. Which area should be used in vif selection? Standard is \code{"all"}.
+Alternativelly, set it to \code{"occurrences"} to perform VIF only in the occurrence records.}
 
 \item{th}{Threshold to be applied in VIF routine. See ?usdm::vifcor.}
 

@@ -113,7 +113,7 @@ train_sdm <- function(occ, pred = NULL, algo, ctrl = NULL, variables_selected = 
     pred <- occ$predictors
   }
   assert_subset_cli(class(algo), c("list", "character"), empty.ok = FALSE)
-
+  assert_logical_cli(parallel, len = 1)
   if (!is.null(ctrl)) {
     assert_list_cli(ctrl, len = 27)
     assert_names_cli(names(ctrl),
@@ -129,7 +129,7 @@ train_sdm <- function(occ, pred = NULL, algo, ctrl = NULL, variables_selected = 
   } else {
     ctrl <- caret::trainControl(
       method = "repeatedcv", number = 4, repeats = 1, classProbs = TRUE, returnResamp = "all",
-      summaryFunction = summary_sdm, savePredictions = "all", allowParallel = FALSE
+      summaryFunction = summary_sdm, savePredictions = "all", allowParallel = parallel
     )
   }
   if (ctrl$method %in% c("cv_spatial", "cv_cluster")) {

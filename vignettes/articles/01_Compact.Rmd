@@ -41,24 +41,58 @@ set.seed(1)
 
 ```{r, results="hide"}
 # Build sdm_area object
-sa <- sdm_area(rivs,
+sa <- sdm_area(x = rivs,
   cell_size = 25000,
   output_crs = 6933,
-  gdal = T,
-  lines_as_sdm_area = TRUE
+  gdal = TRUE,
+  lines_as_sdm_area = TRUE,
+  variables_selected = NULL,
+  crop_by = NULL
 ) |>
-  add_predictors(bioc) |>
-  add_scenarios() |>
+  add_predictors(pred = bioc,
+                 variables_selected = NULL, 
+                 gdal = TRUE,
+                 lines_as_sdm_area = TRUE) |>
+  add_scenarios(scenarios_names = NULL, 
+                pred_as_scen = TRUE,
+                variables_selected = NULL, 
+                stationary = NULL, 
+                crop_area = NULL) |>
   select_predictors(c("LENGTH_KM", "DIST_DN_KM", "bio1", "bio4", "bio12"))
 
 # Build occurrences_sdm object
-oc <- occurrences_sdm(salm, occ_crs = 6933)
+oc <- occurrences_sdm(occ = salm, 
+                      occ_crs = 6933,
+                      independent_test = NULL,
+                      p = 0.1,
+                      independent_test_crs = NULL)
 
 # Merge sdm_area and occurrences_sdm and perform pre-processing, processing and projecting.
 i <- input_sdm(oc, sa) |>
-  data_clean() |>
-  multicollinearity_sdm("vifcor") |>
-  pseudoabsences(method = "bioclim", variables_selected = "vif") |>
+  data_clean(species = NA, 
+           lon = NA, 
+           lat = NA,
+           capitals = TRUE,
+           centroids = TRUE,
+           duplicated = TRUE,
+           identical = TRUE,
+           institutions = TRUE,
+           invalid = TRUE,
+           terrestrial = TRUE,
+           independent_test = TRUE,
+           fun = NULL) |>
+  multicollinearity_sdm(method = "vifcor",
+                        variables_selected = NULL,
+                        cumulative_proportion = 0.99,
+                        th = 0.5) |>
+  pseudoabsences(method = "bioclim", 
+                 variables_selected = "vif",
+                 n_set = 10,
+                 n_pa = NULL,
+                 th = 0,
+                 size = 1,
+                 size_crs = 4326,
+                 mcp = FALSE) |>
   train_sdm(
     algo = c("naive_bayes", "kknn"),
     ctrl = caret::trainControl(
@@ -70,10 +104,17 @@ i <- input_sdm(oc, sa) |>
       summaryFunction = summary_sdm,
       savePredictions = "all"
     ),
-    variables_selected = "vif"
+    variables_selected = "vif",
+    parallel = FALSE
   ) |>
-  predict_sdm(th = 0.7) |>
-  ensemble_sdm() |>
+  predict_sdm(metric = "ROC",
+            th = 0.7,
+            tp = "prob",
+            file = NULL,
+            add.current = TRUE) |>
+  ensemble_sdm(method = "average",
+            metric = NULL,
+            fun = NULL) |>
   suppressWarnings()
 ```
 

@@ -7,6 +7,7 @@
 #'
 #' @param pred A \code{input_sdm} or \code{predictors} object.
 #' @param area Character. Which area should be used in vif selection? Standard is \code{"all"}.
+#' Alternativelly, set it to \code{"occurrences"} to perform VIF only in the occurrence records.
 #' @param th Threshold to be applied in VIF routine. See ?usdm::vifcor.
 #' @param maxobservations Max observations to use to calculate the VIF.
 #' @param variables_selected If there is a subset of predictors that should be used in this

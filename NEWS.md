@@ -137,4 +137,4 @@
 # caretSDM 1.9.8
 
 -   Correction in write_ensembles to incorporate changing scenarios.
--   
+-   Correction on website's articles to include all function parameters.
